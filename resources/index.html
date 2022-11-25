@@ -47,6 +47,17 @@ body{
   clip-path: circle(150px at 80% 20%);
   transition: 0.5s ease-in-out;
 }
+.container .card-gen:before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #e17000;
+  clip-path: circle(150px at 80% 20%);
+  transition: 0.5s ease-in-out;
+}
 
 .container .card:hover:before{
   clip-path: circle(300px at 80% -20%);
@@ -62,7 +73,16 @@ body{
   font-style: italic;
   color: rgba(255, 255, 255, 0.05)
 }
-
+.container .card-gen:after{
+  content: 'Blender';
+  position: absolute;
+  top: 5%;
+  left: 4%;
+  font-size: 3em;
+  font-weight: 800;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.05)
+}
 .container .card .imgBx{
   position: absolute;
   top: 50%;
@@ -161,6 +181,9 @@ body{
 .container .card .contentBx .size span:hover{
   background: #0067E1;
 }
+.container .card-gen .contentBx .size span:hover{
+  background: #e17000;
+}
 
 .container .card .contentBx .color span{
   width: 20px;
@@ -174,7 +197,9 @@ body{
 .container .card .contentBx .color span:nth-child(2){
   background: #0067E1;
 }
-
+.container .card-gen .contentBx .color span:nth-child(2){
+  background: #e17000;
+}
 .container .card .contentBx .color span:nth-child(3){
   background: #03a9f4;
 }
@@ -242,6 +267,18 @@ body{
             <h2>Dynamic FaceMeshes</h2>
            <br>
             <a href="./soar2byreskill/RaavanSession.arexport">Download Now</a>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="card-gen card">
+          <div class="imgBx">
+            <img src="./general/photosphere.png">
+          </div>
+          <div class="contentBx">
+            <h2>HighRes 360 Photosphere</h2>
+           <br>
+            <a href="./general/highRes360Sphere.fbx">Download Now</a>
           </div>
         </div>
       </div>
