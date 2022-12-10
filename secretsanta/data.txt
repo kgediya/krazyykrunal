@@ -1,0 +1,13 @@
+
+        name = parsedData['name']
+        mapped = parsedData['mapped']
+        table.update_item(
+        Key={"name": name},
+        UpdateExpression="SET mapped = :mapped",
+        ExpressionAttributeValues={":mapped": mapped},
+    )
+        table.update_item(
+        Key={"name": mapped},
+        UpdateExpression="SET secretSanta = :santa",
+        ExpressionAttributeValues={":santa": name},
+    )
