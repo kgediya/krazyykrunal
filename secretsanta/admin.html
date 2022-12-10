@@ -25,7 +25,7 @@
 <body>
     <h2>Secret Santa Admin Console 🎅</h2>
     <h4>Add Participant</h4>
-    <input type="text" style="font-family: 'PF Tempesta Five';" id="name_id" placeholder="Participant's Name">
+    <input  type="text" style="font-family: 'PF Tempesta Five'; width: fit-content;" id="name_id" placeholder="Participant's Name">
     <button style="font-family: 'PF Tempesta Five';" id="submit-new">Submit</button>
     <br>
     <h4>Remove Participant</h4>
@@ -66,7 +66,8 @@
         var submit_santa_btn = document.getElementById('submit-santa')
         submit_santa_btn.onclick = function () {
             callAwsLambdaFunction({ 'operation': 'map_giftee','name':document.getElementById('secret-santa').value},function(response){
-                response = JSON.parse(response)
+               console.log(response)
+               response = JSON.parse(response)
                 alert('Your Giftee Name Is '+response.name)
             })
 
