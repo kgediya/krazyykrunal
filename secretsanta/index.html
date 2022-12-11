@@ -31,7 +31,7 @@
             display: block;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r104/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r108/three.min.js"></script>
     <script src="https://unpkg.com/three@0.104.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <script src="https://unpkg.com/three@0.87.1/examples/js/loaders/GLTFLoader.js"></script>
@@ -45,8 +45,9 @@
         renderer,
         orbitControls,
         particles,
-        planeMesh, textMesh,
-        rotationOffset;
+        planeMesh, textMesh,boxTween,
+        animationMixer,
+        rotationOffset,clock, action;
 
     const noise = new SimplexNoise();
     const particleNum = 10000;
@@ -145,9 +146,10 @@
         particles.geometry.verticesNeedUpdate = true;
 
         renderer.render(scene, camera);
-
+        var delta = clock.getDelta();
         requestAnimationFrame(render);
         TWEEN.update();
+        if(animationMixer)animationMixer.update(delta)
     }
 
     const onResize = () => {
@@ -166,7 +168,7 @@
         -------------------------------------------------------------*/
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x000036, 0, minRange * 3);
-
+        clock = new THREE.Clock();
         /* camera
         -------------------------------------------------------------*/
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -209,7 +211,7 @@
                 });
                 geometry.center();
                 let mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(-5, 50, 0)
+                mesh.position.set(-5, 35, 0)
                 mesh.scale.set(0.001, 0.0001, 0.0001)
 
 
@@ -225,7 +227,7 @@
 
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
-        console.log('ID: '+params.id)
+        console.log('ID: ' + params.id)
         callAwsLambdaFunction({ 'operation': 'map_giftee', 'name': params.id }, function (response) {
             console.log(response)
             response = JSON.parse(response)
@@ -262,13 +264,39 @@
             var object = data.scene;
 
             object.scale.set(2, 2, 2)
-
+           
 
 
             scene.add(object);
 
         });
+       loader.load('gift.glb', function (data) {
 
+            var object = data.scene;
+           
+            object.scale.set(3, 3,3)
+           object.position.set(-5,0,0)
+            object.rotation.set(0.5,0,0)
+            console.log(data)
+
+            scene.add(object);
+
+             animationMixer = new THREE.AnimationMixer(object);
+           
+   action = animationMixer.clipAction(data.animations[0]);
+  
+   
+action.setLoop( THREE.LoopOnce );
+action.clampWhenFinished = true;
+boxTween = new TWEEN.Tween(object.scale)
+                    .start({ x: 3, y: 3, z:3 })
+                    .to({ x: 10, y: 10, z: 10 }, 1000)
+                    .easing(TWEEN.Easing.Quintic.Out)
+                    .onComplete(function(){
+                        action.play();
+                    })
+
+        });
         /* Snow Particles
         -------------------------------------------------------------*/
         const pointGeometry = new THREE.Geometry();
@@ -325,11 +353,20 @@
             .onUpdate(function () {
 
             }).onComplete(function () {
-                textMesh.start();
+               
+              
+               
             });
         const spin = () => {
             tween.start();
+            setTimeout(()=>{
+                boxTween.start()
 
+            },3000)
+         setTimeout(()=>{
+            if(textMesh)
+                textMesh.start();
+         },4300)
             document.getElementById('container').removeChild(document.getElementById('reveal_btn'))
         }
 
