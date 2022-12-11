@@ -65,6 +65,7 @@
 
         var submit_santa_btn = document.getElementById('submit-santa')
         submit_santa_btn.onclick = function () {
+            alert('No CHEATING MAN')
             callAwsLambdaFunction({ 'operation': 'map_giftee','name':document.getElementById('secret-santa').value},function(response){
                console.log(response)
                response = JSON.parse(response)
