@@ -45,9 +45,9 @@
         renderer,
         orbitControls,
         particles,
-        planeMesh, textMesh,boxTween,
+        planeMesh, textMesh, boxTween,
         animationMixer,
-        rotationOffset,clock, action;
+        rotationOffset, clock, action;
 
     const noise = new SimplexNoise();
     const particleNum = 10000;
@@ -149,7 +149,7 @@
         var delta = clock.getDelta();
         requestAnimationFrame(render);
         TWEEN.update();
-        if(animationMixer)animationMixer.update(delta)
+        if (animationMixer) animationMixer.update(delta)
     }
 
     const onResize = () => {
@@ -256,7 +256,15 @@
         spotLight.castShadow = true;
         scene.add(spotLight);
 
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
 
+        // create a global audio source
+        const sound = new THREE.Audio(listener);
+
+        // load a sound and set it as the Audio object's buffer
+        const audioLoader = new THREE.AudioLoader();
+       
         var loader = new THREE.GLTFLoader();
         loader.crossOrigin = true;
         loader.load('animated_snowglobe.glb', function (data) {
@@ -264,37 +272,42 @@
             var object = data.scene;
 
             object.scale.set(2, 2, 2)
-           
+
 
 
             scene.add(object);
 
         });
-       loader.load('gift.glb', function (data) {
+        loader.load('gift.glb', function (data) {
 
             var object = data.scene;
-           
-            object.scale.set(3, 3,3)
-           object.position.set(-5,0,0)
-            object.rotation.set(0.5,0,0)
+
+            object.scale.set(3, 3, 3)
+            object.position.set(-5, 0, 0)
+            object.rotation.set(0.5, 0, 0)
             console.log(data)
 
             scene.add(object);
 
-             animationMixer = new THREE.AnimationMixer(object);
-           
-   action = animationMixer.clipAction(data.animations[0]);
-  
-   
-action.setLoop( THREE.LoopOnce );
-action.clampWhenFinished = true;
-boxTween = new TWEEN.Tween(object.scale)
-                    .start({ x: 3, y: 3, z:3 })
-                    .to({ x: 10, y: 10, z: 10 }, 1000)
-                    .easing(TWEEN.Easing.Quintic.Out)
-                    .onComplete(function(){
-                        action.play();
-                    })
+            animationMixer = new THREE.AnimationMixer(object);
+
+            action = animationMixer.clipAction(data.animations[0]);
+
+
+            action.setLoop(THREE.LoopOnce);
+            action.clampWhenFinished = true;
+            boxTween = new TWEEN.Tween(object.scale)
+                .start({ x: 3, y: 3, z: 3 })
+                .to({ x: 10, y: 10, z: 10 }, 1000)
+                .easing(TWEEN.Easing.Quintic.Out)
+                .onComplete(function () {
+                    action.play();
+                    audioLoader.load('audios/Hohoho.mp3', function (buffer) {
+            sound.setBuffer(buffer);
+            sound.setVolume(0.8);
+            sound.play();
+        });
+                })
 
         });
         /* Snow Particles
@@ -341,7 +354,7 @@ boxTween = new TWEEN.Tween(object.scale)
         var numspins = 10
         var startRotation = 0 * (Math.PI / 180);
         var endRotation = numspins * 360 * (Math.PI / 180);
-        var duration = 5000;
+        var duration = 7100;
 
 
 
@@ -353,23 +366,30 @@ boxTween = new TWEEN.Tween(object.scale)
             .onUpdate(function () {
 
             }).onComplete(function () {
-               
-              
-               
+
+
+
             });
         const spin = () => {
             tween.start();
-            setTimeout(()=>{
+            setTimeout(() => {
                 boxTween.start()
 
-            },3000)
-         setTimeout(()=>{
-            if(textMesh)
-                textMesh.start();
-         },4300)
+            }, 5500)
+            setTimeout(() => {
+                if (textMesh)
+                    textMesh.start();
+            }, 7100)
             document.getElementById('container').removeChild(document.getElementById('reveal_btn'))
+            audioLoader.load('audios/Reveal.mp3', function (buffer) {
+            sound.setBuffer(buffer);
+            sound.setVolume(0.5);
+            sound.play();
+        });
         }
-
+        document.getElementById('reveal_btn').onclick = function () {
+            document.getElementById("backgroundMusic").play()
+        }
         document.getElementById('reveal_btn').addEventListener('touchstart', spin, false);
 
         /* rendering start
@@ -408,12 +428,15 @@ boxTween = new TWEEN.Tween(object.scale)
 </script>
 
 <body id="body">
+
     <div style="position: relative; z-index: 1; text-align: center; " id="container">
+
         <div id="WebGL-output" style="position: absolute; z-index: 2;"></div>
         <img src="./texture.png" class="imgT" id="overlay_text"
             style=" z-index: 3; width: 350px; color: antiquewhite;"></img>
         <img src="./button.png" class="imgB" id="reveal_btn"
             style=" z-index: 3; width: 350px;  color: antiquewhite;"></img>
+
     </div>
 
 
