@@ -31,7 +31,7 @@
             display: block;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r108/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r102/three.min.js"></script>
     <script src="https://unpkg.com/three@0.104.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <script src="https://unpkg.com/three@0.87.1/examples/js/loaders/GLTFLoader.js"></script>
@@ -49,12 +49,13 @@
         animationMixer,
         rotationOffset, clock, action;
 
-    const noise = new SimplexNoise();
+   const noise = new SimplexNoise();
     const particleNum = 10000;
     const maxRange = 1000;
     const minRange = maxRange / 2;
     const textureSize = 64.0;
     rotationOffset = 0.0;
+    console.log('PASSED 1st Phase')
     const drawRadialGradation = (ctx, canvasRadius, canvasW, canvasH) => {
         ctx.save();
         const gradient = ctx.createRadialGradient(canvasRadius, canvasRadius, 0, canvasRadius, canvasRadius, canvasRadius);
@@ -65,7 +66,7 @@
         ctx.fillRect(0, 0, canvasW, canvasH);
         ctx.restore();
     }
-
+    console.log('PASSED 2nd Phase')
     const getTexture = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -89,7 +90,7 @@
         texture.needsUpdate = true;
         return texture;
     }
-
+    console.log('PASSED 3rd Phase')
     const makeRoughGround = (mesh) => {
         const time = Date.now();
         mesh.geometry.vertices.forEach(function (vertex, i) {
@@ -116,7 +117,7 @@
         mesh.geometry.computeVertexNormals();
         mesh.geometry.computeFaceNormals();
     }
-
+    console.log('PASSED 4th Phase')
     const render = (timeStamp) => {
 
         // scene.rotation.y += rotationOffset
@@ -151,7 +152,7 @@
         TWEEN.update();
         if (animationMixer) animationMixer.update(delta)
     }
-
+    console.log('PASSED 5th Phase')
     const onResize = () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -161,7 +162,7 @@
         camera.updateProjectionMatrix();
     }
 
-
+    console.log('PASSED 6th Phase')
     const init = () => {
 
         /* scene
@@ -169,6 +170,7 @@
         scene = new THREE.Scene();
         scene.fog = new THREE.Fog(0x000036, 0, minRange * 3);
         clock = new THREE.Clock();
+        console.log('PASSED 8th Phase')
         /* camera
         -------------------------------------------------------------*/
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -181,6 +183,7 @@
             antialias: true,
             alpha: true
         });
+        console.log('PASSED 9th Phase')
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setClearColor(new THREE.Color(0x000036));
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -189,6 +192,7 @@
         /*
         Text Init
         */
+        console.log('PASSED 10th Phase')
         function setupText(message) {
             let loader = new THREE.FontLoader();
 
@@ -224,17 +228,21 @@
             });
         }
 
-
+        console.log('PASSED 11th Phase')
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
         console.log('ID: ' + params.id)
         callAwsLambdaFunction({ 'operation': 'map_giftee', 'name': params.id }, function (response) {
             console.log(response)
             response = JSON.parse(response)
+            if(response!=null)
             setupText(response.name)
+            else
+            setupText('HO HO HO')
 
 
         })
+        console.log('PASSED 12th Phase')
 
         /* OrbitControls
         -------------------------------------------------------------*/
@@ -387,9 +395,7 @@
             sound.play();
         });
         }
-        document.getElementById('reveal_btn').onclick = function () {
-            document.getElementById("backgroundMusic").play()
-        }
+        document.getElementById('reveal_btn').onclick = spin
         document.getElementById('reveal_btn').addEventListener('touchstart', spin, false);
 
         /* rendering start
@@ -400,7 +406,7 @@
 
 
     }
-
+    console.log('PASSED 7th Phase')
     document.addEventListener('DOMContentLoaded', () => {
         init();
     });
@@ -415,8 +421,11 @@
         var xhttp = new XMLHttpRequest();
 
         xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
+            if (this.readyState == 4 ) {
+                if(this.status == 200)
                 callback(this.responseText);
+                else
+                callback(null)
             }
         };
         xhttp.open("POST", lambdaURL, true);
