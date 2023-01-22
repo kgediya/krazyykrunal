@@ -15,29 +15,124 @@
     font-weight: 400;
     src: local('PF Tempesta Five'), url('./assets/pf_tempesta_five.woff') format('woff');
 }
-    body{
-        font-family: 'PF Tempesta Five', sans-serif;
-        font-size: small;
-    }
-    a:visited { 
- text-decoration: none; 
- color: black; 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:  'PF Tempesta Five';
+}
+
+.header {
+  text-align: center;
+  padding: 32px;
+}
+
+.row {
+  display: -ms-flexbox; /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.column {
+  -ms-flex: 25%; /* IE10 */
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    -ms-flex: 50%;
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    -ms-flex: 100%;
+    flex: 100%;
+    max-width: 100%;
+  }
 }
         </style>
 </head>
 
 <body>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+ <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <h1 style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, My Name Is Krazyy Krunal</h1>
 <h5 style="text-align: center;">STAY TUNED FOR SOMETHING KRAZYY</h5>
-<a href="https://linktr.ee/krunalgediya"><h5 style="text-align: center;">CLICK HERE FOR MORE</h5></a>
-    <!-- Use it like any other HTML element -->
+<a href="https://linktr.ee/krunalgediya"><h5 style="text-align: center;"> CLICK HERE FOR MORE</h5></a>
+<h3 style="text-align: center;">Checkout Few of My Works Below</h3>
+
+       <!--
     <model-viewer style="width: 100vw; height:100vh;"
         alt="Neil Armstrong's Spacesuit from the Smithsonian Digitization Programs Office and National Air and Space Museum"
         src="assets/avatar.glb" ar autoplay="true" auto-rotate auto-rotate-delay="1"
          shadow-intensity="1" camera-controls field-of-view="80deg">
     </model-viewer>
-    
+     -->
+
+     <div class="row"> 
+        <div class="column">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">3D Product Showcase</p>
+          <img src="./assets/workgifs/image26.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Festive Games</p>
+          <img src="./assets/workgifs/image29.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Branded Games</p>
+          <img src="./assets/workgifs/image30.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Rewards Reveal</p>
+          <img src="./assets/workgifs/image32.gif" style="width:100%">
+        
+         
+        </div>
+        <div class="column">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Product Features Games</p>
+          <img src="./assets/workgifs/image41.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Themed Product Showcases</p>
+          <img src="./assets/workgifs/image43.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Gamified Promotions</p>
+          <img src="./assets/workgifs/image44.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">2 Player Games</p>
+          <img src="./assets/workgifs/image45.gif" style="width:100%">
+          
+       
+        </div>  
+        <div class="column">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Fiction To Reality</p>
+          <img src="./assets/workgifs/image47.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Launch 360 Zones</p>
+          <img src="./assets/workgifs/image48.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Educational</p>
+          <img src="./assets/workgifs/image49.gif" style="width:100%">
+          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Try On Engagement</p>
+          <img src="./assets/workgifs/image51.gif" style="width:100%">
+        </div>
+        <div class="column">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Custom Try On</p>
+            <img src="./assets/workgifs/image46.gif" style="width:100%">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Brand Engagement</p>
+            <img src="./assets/workgifs/image40.gif" style="width:100%">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Themed Games</p>
+            <img src="./assets/workgifs/image37.gif" style="width:100%">
+            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Product Showcase</p>
+            <img src="./assets/workgifs/image36.gif" style="width:100%">
+          </div>
+      </div>
 </body>
 
 </html>
