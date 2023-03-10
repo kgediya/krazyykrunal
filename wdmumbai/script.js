@@ -52,11 +52,11 @@ class ScrollPos {
 		window.ontouchstart=()=>{
 		
 			console.log(redirection_links[current_index])
-			var a = document.createElement('a')
+			/*var a = document.createElement('a')
 			a.target = "__blank"
 			a.href = "https://"+redirection_links[current_index]
-			a.click()
-			//window.location.href = "https://"+redirection_links[current_index]
+			a.click()*/
+			window.location.href = "https://"+redirection_links[current_index]
 		
 	}
 		window.addEventListener(MOUSE_DOWN, event=>{
@@ -282,11 +282,11 @@ function init(textures) {
 	document.onclick = ()=>{
 		
 			console.log(redirection_links[current_index])
-			var a = document.createElement('a')
+			/*var a = document.createElement('a')
 			a.target = "__blank"
 			a.href = "https://"+redirection_links[current_index]
-			a.click()
-			//window.location.href = "https://"+redirection_links[current_index]
+			a.click()*/
+			window.location.href = "https://"+redirection_links[current_index]
 		
 	}
 
