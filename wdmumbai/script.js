@@ -49,16 +49,7 @@ class ScrollPos {
 		window.addEventListener(TOUCH_END, event =>{
 			this.lastDelta = 0;
 		})
-		window.ontouchstart=()=>{
-		
-			console.log(redirection_links[current_index])
-			/*var a = document.createElement('a')
-			a.target = "__blank"
-			a.href = "https://"+redirection_links[current_index]
-			a.click()*/
-			window.location.href = "https://"+redirection_links[current_index]
-		
-	}
+	
 		window.addEventListener(MOUSE_DOWN, event=>{
 			this.mouseDown = true;
 		})
@@ -147,8 +138,11 @@ const IMAGE_SIZE = 512;
 
 let imageContainer = document.getElementById("images");
 let canvas = document.createElement("canvas");
+
 		canvas.width = IMAGE_SIZE;
 		canvas.height = IMAGE_SIZE;
+		canvas.id = "image"
+		
 let ctx = canvas.getContext("2d");
 
 function resizeImage(image, size = IMAGE_SIZE) {
@@ -176,6 +170,7 @@ function loadImages() {
 				let img = document.createElement("img");
 				img.crossOrigin = "anonymous";
 				img.src = `${root}/${files[i]}.${ext}`;
+		
 				img.onload = image => {
 					return resolve(image.target);
 				};
@@ -193,8 +188,10 @@ loadImages().then((images) => {
 
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 document.body.appendChild(renderer.domElement);
- 
+
 function init(textures) {
+	const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 	let scene = new THREE.Scene();
 	let camera = new THREE.PerspectiveCamera(
 		45,
@@ -207,7 +204,8 @@ function init(textures) {
 	scene.add(camera);
 
 	let geometry = new THREE.PlaneGeometry(4.75, 7, 4, 4);
-
+	let geometry2 = new THREE.PlaneGeometry(4.75, 2, 4, 4);
+	let mat2 = new THREE.MeshBasicMaterial()
 	let material = new THREE.ShaderMaterial({
 		uniforms: {
 			time: { value: 1.0 },
@@ -220,8 +218,13 @@ function init(textures) {
 	});
 
 	let mesh = new THREE.Mesh(geometry, material);
-
+	let mesh2 = new THREE.Mesh(geometry2,mat2);
+	mesh2.position.y = -2
 	scene.add(mesh);
+scene.add(mesh2)
+mesh2.callback = ()=>{
+	window.location.href = "https://"+redirection_links[current_index]
+}
 
 	var tex1 = textures[1];
 	var tex2 = textures[0];
@@ -276,7 +279,20 @@ function init(textures) {
 	}
 
  	window.addEventListener("resize", resize);
+	 document.addEventListener('touchend', onDocumentTouchEnd, false);
 	
+	 function onDocumentTouchEnd(event) {
+		 event.preventDefault();
+	 
+		 mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+		 mouse.y = -(event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+	 
+		 raycaster.setFromCamera(mouse, camera);
+		 const intersects = raycaster.intersectObject(mesh2);
+		 for(let i=0;i<intersects.length;i++){
+			intersects[i].object.callback();
+		 }
+	 }
  	resize();
 	draw();
 	document.onclick = ()=>{
