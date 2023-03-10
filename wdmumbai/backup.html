@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Resources</title>
+    <style>
+
+@font-face {
+    font-family: 'PF Tempesta Five';
+    font-style: normal;
+    font-weight: 400;
+    src: local('PF Tempesta Five'), url('../assets/pf_tempesta_five.woff') format('woff');
+}
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+*{
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #131313;
+}
+
+.container{
+  position: relative;
+  margin: 10px;
+}
+
+.container .card{
+  position: relative;
+  width: 320px;
+  height: 450px;
+  background: #232323;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.container .card:before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f085ef;
+  clip-path: circle(150px at 80% 20%);
+  transition: 0.5s ease-in-out;
+}
+.container .card-gen:before{
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #e17000;
+  clip-path: circle(150px at 80% 20%);
+  transition: 0.5s ease-in-out;
+}
+
+.container .card:hover:before{
+  clip-path: circle(300px at 80% -20%);
+}
+
+.container .card:after{
+  content: 'WOMEN';
+  position: absolute;
+  top: 5%;
+  left: 4%;
+  font-size: 4em;
+  font-weight: 800;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.05)
+}
+.container .card-gen:after{
+  content: '3D Asset';
+  position: absolute;
+  top: 5%;
+  left: 8%;
+  font-size: 2.5em;
+  font-weight: 800;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.05)
+}
+.container .card .imgBx{
+  position: absolute;
+  top: 50%;
+ 
+  transform: translateY(-50%);
+  z-index: 10000;
+  width: 100%;
+  height: 220px;
+  transition: 0.5s;
+}
+
+.container .card:hover .imgBx{
+  top: 0%;
+  transform: translateY(0%);
+    
+}
+
+.container .card .imgBx img{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) ;
+  width: 270px;
+}
+
+.container .card .contentBx{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  text-align: center;
+  transition: 1s;
+  z-index: 10;
+}
+
+.container .card:hover .contentBx{
+  height: 210px;
+}
+
+.container .card .contentBx h2{
+  position: relative;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #fff;
+  margin: 0;
+}
+
+.container .card .contentBx .size, .container .card .contentBx .color {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 20px;
+  transition: 0.5s;opacity: 0;
+  visibility: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.container .card:hover .contentBx .size{
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.5s;
+}
+
+.container .card:hover .contentBx .color{
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0.6s;
+}
+
+.container .card .contentBx .size h3, .container .card .contentBx .color h3{
+  color: #fff;
+  font-weight: 300;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-right: 10px;
+}
+
+.container .card .contentBx .size span{
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  line-height: 26px;
+  font-size: 14px;
+  display: inline-block;
+  color: #111;
+  background: #fff;
+  margin: 0 5px;
+  transition: 0.5s;
+  color: #111;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.container .card .contentBx .size span:hover{
+  background: #0067E1;
+}
+.container .card-gen .contentBx .size span:hover{
+  background: #e17000;
+}
+
+.container .card .contentBx .color span{
+  width: 20px;
+  height: 20px;
+  background: #ff0;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.container .card .contentBx .color span:nth-child(2){
+  background: #0067E1;
+}
+.container .card-gen .contentBx .color span:nth-child(2){
+  background: #e17000;
+}
+.container .card .contentBx .color span:nth-child(3){
+  background: #03a9f4;
+}
+
+.container .card .contentBx .color span:nth-child(4){
+  background: #e91e63;
+}
+
+.container .card .contentBx a{
+  display: inline-block;
+  padding: 10px 20px;
+  background: #fff;
+  border-radius: 4px;
+  margin-top: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #111;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: 0.5s;
+  margin-top: 0;
+}
+
+.container .card:hover .contentBx a{
+  opacity: 1;
+  transform: translateY(0px);
+  transition-delay: 0.75s;
+  
+}
+.cards-container {
+    display: flex;
+}
+@media screen and (max-width: 800px) {
+ .cards-container{
+    display: block;
+ }
+}
+    </style>
+</head>
+<body>
+    <div style="display: block !important;">
+        <h1 style="text-align: center; color: #fff;" >Women's Day Mumbai 2023</h1>
+   
+    <div class="cards-container">
+      
+    <div class="container">
+        <div class="card">
+          <div class="imgBx">
+            <img src="./assets/A.png">
+          </div>
+          <div class="contentBx">
+            <h2>I AM A WOMAN</h2>
+           <br>
+            <a href="./soar2byreskill/PatchesSession.arexport">LAUNCH AR EFFECT</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="container">
+        <div class="card">
+          <div class="imgBx">
+            <img src="./assets/B.png">
+          </div>
+          <div class="contentBx">
+            <h2></h2>
+           <br>
+            <a href="./soar2byreskill/RaavanSession.arexport">LAUNCH AR GAME</a>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="card">
+          <div class="imgBx">
+            <img src="./soar2byreskill/pngs/beemyhoney.png">
+          </div><br>
+          <div class="contentBx">
+            <h2>Bee My Honey <br> Base File</h2>
+           <br>
+            <a href="./soar2byreskill/BeeMyHoney.arexport">Download Now</a>
+          </div>
+        </div>
+      </div>
+        <div class="container">
+        <div class="card">
+          <div class="imgBx">
+            <img src="./arworkshop/choco-brand.png">
+          </div>
+          <div class="contentBx">
+            <h2>AR Assets Holi</h2>
+           <br>
+            <a href="./arworkshop/AR Workshop 06032023.zip">Download Now</a>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="card-gen card">
+          <div class="imgBx">
+            <img src="./general/photosphere.png">
+          </div>
+          <div class="contentBx">
+            <h2>HighRes 360 Photosphere</h2>
+           <br>
+            <a href="./general/highRes360Sphere.fbx">Download Now</a>
+          </div>
+        </div>
+      </div>
+    
+      
+    </div>
+</div>
+</body>
+</html>
