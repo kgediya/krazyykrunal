@@ -49,7 +49,16 @@ class ScrollPos {
 		window.addEventListener(TOUCH_END, event =>{
 			this.lastDelta = 0;
 		})
+		window.ontouchstart=()=>{
 		
+			console.log(redirection_links[current_index])
+			var a = document.createElement('a')
+			a.target = "__blank"
+			a.href = "https://"+redirection_links[current_index]
+			a.click()
+			//window.location.href = "https://"+redirection_links[current_index]
+		
+	}
 		window.addEventListener(MOUSE_DOWN, event=>{
 			this.mouseDown = true;
 		})
@@ -271,10 +280,14 @@ function init(textures) {
  	resize();
 	draw();
 	document.onclick = ()=>{
-		console.log(redirection_links[current_index])
-		var a = document.createElement('a')
-		a.target = "__blank"
-		a.href = "https://"+redirection_links[current_index]
-		a.click()
+		
+			console.log(redirection_links[current_index])
+			var a = document.createElement('a')
+			a.target = "__blank"
+			a.href = "https://"+redirection_links[current_index]
+			a.click()
+			//window.location.href = "https://"+redirection_links[current_index]
+		
 	}
+
 }
