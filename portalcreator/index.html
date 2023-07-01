@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Splitter</title>
+  <style>
+    @font-face {
+      font-family: 'PF Tempesta Five';
+      font-style: normal;
+      font-weight: 400;
+      src: local('PF Tempesta Five'), url('.././assets/pf_tempesta_five.woff') format('woff');
+    }
+
+    body {
+      font-family: 'PF Tempesta Five', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #upload-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #image-upload {
+      display: none;
+    }
+
+    #image-preview {
+      max-width: 400px;
+      max-height: 400px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    #image-preview img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    #result {
+      text-align: center;
+    }
+
+    #split-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-family: 'PF Tempesta Five', Arial, sans-serif;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #split-button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #download-button {
+      display: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #00ba35;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    #download-button:hover {
+      background-color: #017225;
+    }
+    #download-portal-button {
+      display: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #005dba;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    #download-portal-button:hover {
+      background-color: #014972;
+    }
+    #loading-bar-container {
+      width: 100%;
+      height: 20px;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    #loading-bar {
+      height: 100%;
+      width: 0;
+      background-color: #4caf50;
+      transition: width 0.3s;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>360 Portal Maker</h1>
+
+  <div id="upload-container">
+    <label for="image-upload" id="upload-label">
+      <strong>Choose an image</strong>
+    </label>
+    <input type="file" id="image-upload" accept="image/*" />
+    <div id="image-preview"></div>
+  </div>
+
+  <div id="result">
+    <button id="split-button" disabled>Split Image</button>
+    <div id="loading-bar-container" class="hidden">
+      <div id="loading-bar"></div>
+    </div>
+    <div id="download-container" hidden>
+<p>Download the zip & sphere. Extract the images. Import the sphere in any software ie. Lens Studio, Meta Spark, Unity3D etc. 
+    <br> Apply the images as textures on corresponding materials
+</p>
+    </div>
+    <a id="download-button" download="split_images.zip">Download Zip</a>
+    <a id="download-portal-button" download="portal-sphere.fbx">Download Sphere</a>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+  const imageUpload = document.getElementById('image-upload');
+  const imagePreview = document.getElementById('image-preview');
+  const splitButton = document.getElementById('split-button');
+  const downloadButton = document.getElementById('download-button');
+  const downloadSphereButton = document.getElementById('download-portal-button');
+  const loadingBarContainer = document.getElementById('loading-bar-container');
+  const loadingBar = document.getElementById('loading-bar');
+
+  let zip = null; // Variable to store the generated zip
+
+  imageUpload.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+
+    if (file && file.type.match('image.*')) {
+      const reader = new FileReader();
+
+      reader.onload = function () {
+        const imageUrl = reader.result;
+        imagePreview.innerHTML = `<img src="${imageUrl}" alt="Uploaded Image" />`;
+        splitButton.disabled = false;
+
+        // Clear the cache
+        zip = null;
+        document.getElementById('download-container').hidden = true
+        downloadButton.style.display = 'none';
+        downloadSphereButton.style.display = 'none';
+      };
+
+      reader.readAsDataURL(file);
+    }
+  });
+
+  splitButton.addEventListener('click', function () {
+    const imageUrl = imagePreview.querySelector('img').src;
+    const numRows = 2;
+    const numColumns = 4;
+
+    splitButton.disabled = true;
+    loadingBar.style.width = '0';
+    loadingBarContainer.classList.remove('hidden');
+    downloadButton.style.display = 'none';
+    downloadSphereButton.style.display = 'none';
+    splitImage(imageUrl, numRows, numColumns);
+  });
+
+  function splitImage(imageUrl, numRows, numColumns) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const img = new Image();
+    img.src = imageUrl;
+
+    img.onload = function () {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+
+      const tileWidth = img.width / numColumns;
+      const tileHeight = img.height / numRows;
+
+      if (zip === null) {
+        zip = new JSZip();
+      } else {
+        // Clear the existing zip files
+        zip.forEach(function (relativePath, file) {
+          zip.remove(relativePath);
+        });
+      }
+
+      let progress = 0;
+      const totalTiles = numRows * numColumns;
+
+      function updateProgress() {
+        progress++;
+        const percentComplete = (progress / totalTiles) * 100;
+        loadingBar.style.width = `${percentComplete}%`;
+
+        if (progress === totalTiles) {
+          loadingBarContainer.classList.add('hidden');
+          downloadButton.style.display = 'inline-block';
+          downloadSphereButton.style.display = 'inline-block';
+          splitButton.disabled = false;
+          document.getElementById('download-container').hidden = false
+        }
+      }
+let currentCount = 1;
+      for (let row = 0; row < numRows; row++) {
+        for (let col = 0; col < numColumns; col++) {
+          const tileCanvas = document.createElement('canvas');
+          const tileContext = tileCanvas.getContext('2d');
+
+          tileCanvas.width = tileWidth;
+          tileCanvas.height = tileHeight;
+
+          tileContext.drawImage(
+            canvas,
+            col * tileWidth,
+            row * tileHeight,
+            tileWidth,
+            tileHeight,
+            0,
+            0,
+            tileWidth,
+            tileHeight
+          );
+
+          const imageDataURL = tileCanvas.toDataURL('image/jpeg');
+          const data = imageDataURL.replace(/^data:image\/\w+;base64,/, '');
+          const buffer = window.atob(data);
+          const array = new Uint8Array(buffer.length);
+       
+          for (let i = 0; i < buffer.length; i++) {
+            array[i] = buffer.charCodeAt(i);
+          }
+
+          zip.file(`color_${currentCount}.jpg`, array, { binary: true });
+          currentCount++;
+          updateProgress();
+        }
+      }
+
+      zip.generateAsync({ type: 'blob' }).then(function (content) {
+        const zipUrl = URL.createObjectURL(content);
+        downloadButton.href = zipUrl;
+        downloadSphereButton.href = ".././resources/general/highRes360Sphere.fbx";
+      });
+    };
+  }
+});
+
+  </script>
+</body>
+</html>
