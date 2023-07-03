@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Portal Creator</title>
+  <title>360 Portal Generator</title>
   <style>
+    /* Add your custom CSS styling here */
     @font-face {
       font-family: 'PF Tempesta Five';
       font-style: normal;
@@ -69,7 +70,7 @@
       display: none;
       padding: 10px 20px;
       font-size: 16px;
-      background-color: #00ba35;
+      background-color: #00ba3b;
       color: white;
       border: none;
       border-radius: 4px;
@@ -79,13 +80,13 @@
     }
 
     #download-button:hover {
-      background-color: #017225;
+      background-color: #005e12;
     }
-    #download-portal-button {
+#download-portal-button {
       display: none;
       padding: 10px 20px;
       font-size: 16px;
-      background-color: #005dba;
+      background-color: #008CBA;
       color: white;
       border: none;
       border-radius: 4px;
@@ -95,7 +96,7 @@
     }
 
     #download-portal-button:hover {
-      background-color: #014972;
+      background-color: #005580;
     }
     #loading-bar-container {
       width: 100%;
@@ -119,7 +120,7 @@
   </style>
 </head>
 <body>
-  <h1>360 Portal Maker</h1>
+  <h1>360 Portal Generator</h1>
 
   <div id="upload-container">
     <label for="image-upload" id="upload-label">
@@ -134,147 +135,219 @@
     <div id="loading-bar-container" class="hidden">
       <div id="loading-bar"></div>
     </div>
-    <div id="download-container" hidden>
-<p>Download the zip & sphere. Extract the images. Import the sphere in any software ie. Lens Studio, Meta Spark, Unity3D etc. 
-    <br> Apply the images as textures on corresponding materials
-</p>
-    </div>
-    <a id="download-button" download="split_images.zip">Download Zip</a>
-    <a id="download-portal-button" download="portal-sphere.fbx">Download Sphere</a>
+    <a id="download-button" download="split_images.zip">Download Images</a><br><br>
+    <a id="download-portal-button" download="portal-sphere.gltf">Download Sphere</a>
   </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-  const imageUpload = document.getElementById('image-upload');
-  const imagePreview = document.getElementById('image-preview');
-  const splitButton = document.getElementById('split-button');
-  const downloadButton = document.getElementById('download-button');
-  const downloadSphereButton = document.getElementById('download-portal-button');
-  const loadingBarContainer = document.getElementById('loading-bar-container');
-  const loadingBar = document.getElementById('loading-bar');
-
-  let zip = null; // Variable to store the generated zip
-
-  imageUpload.addEventListener('change', function (event) {
-    const file = event.target.files[0];
-
-    if (file && file.type.match('image.*')) {
-      const reader = new FileReader();
-
-      reader.onload = function () {
-        const imageUrl = reader.result;
-        imagePreview.innerHTML = `<img src="${imageUrl}" alt="Uploaded Image" />`;
-        splitButton.disabled = false;
-
-        // Clear the cache
-        zip = null;
-        document.getElementById('download-container').hidden = true
-        downloadButton.style.display = 'none';
-        downloadSphereButton.style.display = 'none';
-      };
-
-      reader.readAsDataURL(file);
-    }
-  });
-
-  splitButton.addEventListener('click', function () {
-    const imageUrl = imagePreview.querySelector('img').src;
-    const numRows = 2;
-    const numColumns = 4;
-
-    splitButton.disabled = true;
-    loadingBar.style.width = '0';
-    loadingBarContainer.classList.remove('hidden');
-    downloadButton.style.display = 'none';
-    downloadSphereButton.style.display = 'none';
-    splitImage(imageUrl, numRows, numColumns);
-  });
-
-  function splitImage(imageUrl, numRows, numColumns) {
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    const img = new Image();
-    img.src = imageUrl;
-
-    img.onload = function () {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      context.drawImage(img, 0, 0);
-
-      const tileWidth = img.width / numColumns;
-      const tileHeight = img.height / numRows;
-
-      if (zip === null) {
-        zip = new JSZip();
-      } else {
-        // Clear the existing zip files
-        zip.forEach(function (relativePath, file) {
-          zip.remove(relativePath);
-        });
-      }
-
-      let progress = 0;
-      const totalTiles = numRows * numColumns;
-
-      function updateProgress() {
-        progress++;
-        const percentComplete = (progress / totalTiles) * 100;
-        loadingBar.style.width = `${percentComplete}%`;
-
-        if (progress === totalTiles) {
-          loadingBarContainer.classList.add('hidden');
-          downloadButton.style.display = 'inline-block';
-          downloadSphereButton.style.display = 'inline-block';
-          splitButton.disabled = false;
-          document.getElementById('download-container').hidden = false
-        }
-      }
-let currentCount = 1;
-      for (let row = 0; row < numRows; row++) {
-        for (let col = 0; col < numColumns; col++) {
-          const tileCanvas = document.createElement('canvas');
-          const tileContext = tileCanvas.getContext('2d');
-
-          tileCanvas.width = tileWidth;
-          tileCanvas.height = tileHeight;
-
-          tileContext.drawImage(
-            canvas,
-            col * tileWidth,
-            row * tileHeight,
-            tileWidth,
-            tileHeight,
-            0,
-            0,
-            tileWidth,
-            tileHeight
-          );
-
-          const imageDataURL = tileCanvas.toDataURL('image/jpeg');
-          const data = imageDataURL.replace(/^data:image\/\w+;base64,/, '');
-          const buffer = window.atob(data);
-          const array = new Uint8Array(buffer.length);
-       
-          for (let i = 0; i < buffer.length; i++) {
-            array[i] = buffer.charCodeAt(i);
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <!-- Include Inflate library -->
+ 
+  <script type="module">
+  
+    import * as THREE from 'https://cdn.skypack.dev/three@0.132.2/build/three.module.js';
+      import { FBXLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/FBXLoader.js';
+      import { MTLLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/MTLLoader.js';
+      import { OBJLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/OBJLoader.js';
+      import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+      import { GLTFExporter } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/exporters/GLTFExporter.js';
+     
+      const fbxPath = '.././resources/general/sphere.fbx';
+      const materialPrefix = 'color_';
+      const numMaterials = 8;
+      var firstRun = true;
+      document.addEventListener('DOMContentLoaded', function () {
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreview = document.getElementById('image-preview');
+        const splitButton = document.getElementById('split-button');
+        const downloadButton = document.getElementById('download-button');
+        const downloadPortalBtn = document.getElementById('download-portal-button');
+        const loadingBarContainer = document.getElementById('loading-bar-container');
+        const loadingBar = document.getElementById('loading-bar');
+  
+        const loader = new FBXLoader();
+        const exporter = new GLTFExporter();
+        const Scene = new THREE.Scene();
+        let zip = null; // Variable to store the generated zip
+        var currentMat = 0;
+  
+        imageUpload.addEventListener('change', function (event) {
+          const file = event.target.files[0];
+  
+          if (file && file.type.match('image.*')) {
+            const reader = new FileReader();
+  
+            reader.onload = function () {
+              const imageUrl = reader.result;
+              imagePreview.innerHTML = `<img src="${imageUrl}" alt="Uploaded Image" />`;
+              splitButton.disabled = false;
+  
+              // Clear the cache
+              zip = null;
+              downloadButton.style.display = 'none';
+              downloadPortalBtn.style.display = 'none';
+            };
+  
+            reader.readAsDataURL(file);
           }
-
-          zip.file(`color_${currentCount}.jpg`, array, { binary: true });
-          currentCount++;
-          updateProgress();
+        });
+  const debug = console.log
+        splitButton.addEventListener('click', function () {
+          if(!firstRun){
+          location.reload()
+        return;}
+          const imageUrl = imagePreview.querySelector('img').src;
+          const numRows = 2;
+          const numColumns = 4;
+  
+          splitButton.disabled = true;
+          loadingBar.style.width = '0';
+          loadingBarContainer.classList.remove('hidden');
+          downloadButton.style.display = 'none';
+          downloadPortalBtn.style.display = 'none';
+  
+          splitImage(imageUrl, numRows, numColumns);
+        });
+        const loadTexture = (url) => {
+    return new Promise((resolve, reject) => {
+      const textureLoader = new THREE.TextureLoader();
+      textureLoader.load(
+        url,
+        (texture) => {
+          texture.needsUpdate = true;
+          resolve(texture);
+        },
+        undefined,
+        (error) => {
+          reject(error);
         }
-      }
-
-      zip.generateAsync({ type: 'blob' }).then(function (content) {
-        const zipUrl = URL.createObjectURL(content);
-        downloadButton.href = zipUrl;
-        downloadSphereButton.href = ".././resources/general/highRes360Sphere.fbx";
-      });
-    };
-  }
-});
-
-  </script>
+      );
+    });
+  };
+  
+  const loadImageAsync = async (url, targetObject) => {
+    try {
+      imagePreview.innerHTML = `<img src="${url}" alt="Uploaded Image" />`;
+      const texture = await loadTexture(url);
+      texture.name = 'color_'+(currentMat+1)
+      debug(texture);
+     const mat = new THREE.MeshBasicMaterial()
+     mat.name='color_'+(currentMat+1)
+     targetObject.material= mat
+     targetObject.material.map = texture;
+     targetObject.material.needsUpdate = true;
+      
+      currentMat = currentMat +1;
+      
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
+  
+        function splitImage(imageUrl, numRows, numColumns) {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          const img = new Image();
+          img.src = imageUrl;
+  
+          img.onload = function () {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0);
+  
+            const tileWidth = img.width / numColumns;
+            const tileHeight = img.height / numRows;
+  
+            if (zip === null) {
+              zip = new JSZip();
+            } else {
+              // Clear the existing zip files
+              zip.forEach(function (relativePath, file) {
+                zip.remove(relativePath);
+              });
+            }
+  
+            let progress = -1;
+            const totalTiles = numRows * numColumns;
+  
+            function updateProgress() {
+              progress++;
+              const percentComplete = (progress / totalTiles) * 100;
+              loadingBar.style.width = `${percentComplete}%`;
+              debug(progress)
+              if (progress === totalTiles) {
+                loadingBarContainer.classList.add('hidden');
+           
+              
+                imagePreview.innerHTML = `<img src="${imageUrl}" alt="Uploaded Image" />`;
+            
+              }
+            }
+  
+            loader.load(fbxPath, async function (fbx) {
+            
+           
+              for (let row = 0; row < numRows; row++) {
+                for (let col = 0; col < numColumns; col++) {
+               
+                  const tileCanvas = document.createElement('canvas');
+                  const tileContext = tileCanvas.getContext('2d');
+  
+                  tileCanvas.width = tileWidth;
+                  tileCanvas.height = tileHeight;
+  
+                  tileContext.drawImage(
+                    canvas,
+                    col * tileWidth,
+                    row * tileHeight,
+                    tileWidth,
+                    tileHeight,
+                    0,
+                    0,
+                    tileWidth,
+                    tileHeight
+                  );
+  
+                  const imageDataURL = tileCanvas.toDataURL('image/jpeg');
+                  const data = imageDataURL.replace(/^data:image\/\w+;base64,/, '');
+                  const buffer = window.atob(data);
+                  const array = new Uint8Array(buffer.length);
+                  
+                  const targetObject = fbx.getObjectByName('color_'+(currentMat+1));
+                  await loadImageAsync(imageDataURL,targetObject,currentMat)
+                
+                debug(currentMat)
+                  for (let i = 0; i < buffer.length; i++) {
+                    array[i] = buffer.charCodeAt(i);
+                  }
+  
+                  zip.file(`color_${currentMat}.jpg`, array, { binary: true });
+  
+                  updateProgress();
+                }
+              }
+              Scene.add(fbx)
+            debug(fbx)
+              exporter.parse(Scene, function (result) {
+                const modifiedGLTFBlob = new Blob([JSON.stringify(result)], { type: 'application/json' });
+                const downloadUrl = URL.createObjectURL(modifiedGLTFBlob);
+                zip.generateAsync({ type: 'blob' }).then(function (content) {
+                const zipUrl = URL.createObjectURL(content);
+                downloadButton.download = 'images.zip'
+                downloadButton.href = zipUrl;
+                downloadPortalBtn.download = 'portal.gltf'
+                downloadPortalBtn.href = downloadUrl;
+                updateProgress()
+                downloadButton.style.display = 'inline-block';
+                downloadPortalBtn.style.display = 'inline-block';
+                splitButton.disabled = false;
+                firstRun = false;
+              });
+              });
+  
+            
+            });
+          };
+        }
+      });</script>
 </body>
 </html>
