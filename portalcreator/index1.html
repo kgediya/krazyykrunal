@@ -232,6 +232,7 @@
      const mat = new THREE.MeshBasicMaterial()
      mat.name='color_'+(currentMat+1)
      targetObject.material= mat
+
      targetObject.material.map = texture;
      targetObject.material.needsUpdate = true;
       
@@ -330,19 +331,29 @@
               exporter.parse(Scene, function (result) {
                 const modifiedGLTFBlob = new Blob([JSON.stringify(result)], { type: 'application/json' });
                 const downloadUrl = URL.createObjectURL(modifiedGLTFBlob);
-                zip.generateAsync({ type: 'blob' }).then(function (content) {
-                const zipUrl = URL.createObjectURL(content);
-                downloadButton.download = 'images.zip'
-                downloadButton.href = zipUrl;
                 downloadPortalBtn.download = 'portal.gltf'
                 downloadPortalBtn.href = downloadUrl;
-                updateProgress()
-                downloadButton.style.display = 'inline-block';
                 downloadPortalBtn.style.display = 'inline-block';
+               
+              });
+              zip.generateAsync({ type: 'blob' }).then(function (content) {
+                const zipUrl = URL.createObjectURL(content);
+                downloadButton.download = 'images.zip'
+                downloadButton.onclick = ()=>{
+                  const portal3dobj = document.createElement('a')
+                  portal3dobj.href = fbxPath;
+                  portal3dobj.click()
+                }
+                downloadButton.href = zipUrl;
+              
+              
+                downloadButton.style.display = 'inline-block';
                 splitButton.disabled = false;
+                updateProgress()
+                
                 firstRun = false;
               });
-              });
+              
   
             
             });
