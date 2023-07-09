@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Conversion</title>
+</head>
+<body>
+  <input type="file" id="fileInput" accept="audio/*">
+  <button onclick="convertAudio()">Convert</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
+  <script>
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
+
+    async function loadFFmpeg() {
+      await ffmpeg.load();
+    }
+
+    async function convertAudio() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Please select a file.');
+        return;
+      }
+
+      await ffmpeg.run('-i', fetchFile(file));
+
+      const outputFileName = `output_${Date.now()}.m4a`;
+      ffmpeg.FS('writeFile', outputFileName, await ffmpeg.read('output.m4a'));
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(new Blob([ffmpeg.FS('readFile', outputFileName).buffer]));
+      downloadLink.download = outputFileName;
+      downloadLink.click();
+    }
+
+    window.onload = loadFFmpeg;
+  </script>
+</body>
+</html>
