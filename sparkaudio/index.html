@@ -193,7 +193,7 @@
     fileInput.addEventListener('change', function() {
       const fileNameElement = document.getElementById('fileName');
       const fileCount = this.files.length;
-      fileNameElement.textContent = `${fileCount} file${fileCount > 1 ? 's' : ''} selected`;
+      fileNameElement.textContent = fileCount>1?`${fileCount} file${fileCount > 1 ? 's' : ''} selected`:this.files[0].name;
     });
   </script>
 </body>
