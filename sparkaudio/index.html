@@ -100,8 +100,8 @@
     <button onclick="convertAudios()">Convert</button>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jszip/dist/jszip.min.js"></script>
+  <script src="./ffmpeg-wasm.js"></script>
+  <script src="../assets/jszip.js"></script>
   <script>
     const { createFFmpeg, fetchFile } = FFmpeg;
     const ffmpeg = createFFmpeg({ log: true });
