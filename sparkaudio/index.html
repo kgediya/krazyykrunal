@@ -98,7 +98,7 @@
     <div class="progress-bar">
       <div id="progressBarFill" class="progress-bar-fill"></div>
     </div>
-    <button onclick="convertAudios()">Convert</button>
+    <button id="convert" onclick="convertAudios()" disabled>Convert</button>
   </div>
 
   <script src="./ffmpeg-wasm.js"></script>
@@ -109,6 +109,8 @@
 
     async function loadFFmpeg() {
       await ffmpeg.load();
+      console.log('WASM LOADED')
+      document.getElementById('convert').disabled = false
     }
 
     async function convertAudio(inputFile, quality) {
