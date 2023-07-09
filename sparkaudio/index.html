@@ -34,7 +34,7 @@
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background-color: #4CAF50;
+      background-color: #000000;
       border-radius: 5px;
       transition: width 0.2s ease-in-out;
     }
@@ -44,14 +44,14 @@
     button {
       font-family: 'PF Tempesta Five', Arial, sans-serif;
       padding: 8px 16px;
-      background-color: #4CAF50;
+      background-color: #000000;
       color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: #282828;
     }
     input[type="file"] {
       display: none;
@@ -59,14 +59,14 @@
     .custom-file-upload {
       display: inline-block;
       padding: 8px 16px;
-      background-color: #4CAF50;
+      background-color: #000000;
       color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
     .custom-file-upload:hover {
-      background-color: #45a049;
+      background-color: #282828;
     }
     select {
       font-family: 'PF Tempesta Five', Arial, sans-serif;
@@ -111,9 +111,13 @@
     }
 
     async function convertAudio(inputFile, quality) {
+        
       const inputFileName = 'input-file';
       ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFile));
-
+      ffmpeg.setProgress(({ ratio }) => {
+        const progressBarFill = document.getElementById('progressBarFill');
+        progressBarFill.style.width = `${ratio * 100}%`;
+      });
       const outputFileName = `${inputFile.name.substring(0, inputFile.name.lastIndexOf('.'))}.m4a`;
 
       await ffmpeg.run(
@@ -193,6 +197,7 @@
     fileInput.addEventListener('change', function() {
       const fileNameElement = document.getElementById('fileName');
       const fileCount = this.files.length;
+      progressBarFill.style.width = `0%`;
       fileNameElement.textContent = fileCount>1?`${fileCount} file${fileCount > 1 ? 's' : ''} selected`:this.files[0].name;
     });
   </script>
