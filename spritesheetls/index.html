@@ -47,7 +47,7 @@
     button {
       padding: 10px 20px;
       font-size: 16px;
-      background-color: #4caf50;
+      background-color: #000000;
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -56,7 +56,7 @@
     }
 
     button:hover {
-      background-color: #45a049;
+      background-color: #2d2d2d;
     }
     input[type="file"]::-webkit-file-upload-button {
       font-family: 'PF Tempesta Five', Arial, sans-serif;
@@ -90,49 +90,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
 
   <script>
-   function generateT3D() {
-  var imageFile = document.getElementById('image').files[0];
-  var columns = parseInt(document.getElementById('columns').value);
-  var rows = parseInt(document.getElementById('rows').value);
-  var frames = parseInt(document.getElementById('frames').value);
-
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var image = new Image();
-    image.onload = function() {
-      var canvas = document.createElement('canvas');
-      canvas.width = image.width;
-      canvas.height = image.height;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(image, 0, 0);
-
-      var atlasContent = 'rows = ' + rows + '\n';
-      atlasContent += 'columns = ' + columns + '\n';
-      atlasContent += 'frames = ' + frames + '\n';
-      atlasContent += 'files = 1\n';
-      atlasContent += 'atlas0' + imageFile.name.substring(imageFile.name.lastIndexOf('.'));
-
-      // Generate animation.t3d file
-      var t3dContent = new Blob([atlasContent], {type: 'text/plain'});
-
-      // Generate zip archive
-      var zip = new JSZip();
-      zip.file('animation.t3d', t3dContent);
-      zip.file('atlas0' + imageFile.name.substring(imageFile.name.lastIndexOf('.')), imageFile);
-
-      // Download the zip archive
-      zip.generateAsync({type: 'blob'}).then(function(content) {
-        var zipFileLink = document.createElement('a');
-        zipFileLink.href = URL.createObjectURL(content);
-        zipFileLink.download = 'animation.zip';
-        zipFileLink.click();
-      });
-    };
-    image.src = e.target.result;
-  };
-  reader.readAsDataURL(imageFile);
-}
-
+   function _0x2a06(){var _0x53cc58=['target','getElementById','substring','generateAsync','columns\x20=\x20','click','1267861EcTqTw','onload','createElement','2062310aHNvzX','lastIndexOf','688eLlvnt','value','1yvMTCP','287162UCeFdY','name','animation.zip','5aeAlLw','width','file','12zuQuqL','5598ikxyYZ','rows','animation.t3d','height','files','648846YygXRI','16077666VrGjQO','src','atlas0','frames','text/plain','958240uVGJOX','frames\x20=\x20','readAsDataURL','then'];_0x2a06=function(){return _0x53cc58;};return _0x2a06();}function _0x3e63(_0x598852,_0x5e0838){var _0x2a06c0=_0x2a06();return _0x3e63=function(_0x3e634e,_0x180d24){_0x3e634e=_0x3e634e-0x186;var _0x3eefb8=_0x2a06c0[_0x3e634e];return _0x3eefb8;},_0x3e63(_0x598852,_0x5e0838);}(function(_0x441051,_0x53aa96){var _0x146b84=_0x3e63,_0x106692=_0x441051();while(!![]){try{var _0x2bb604=parseInt(_0x146b84(0x19c))/0x1*(-parseInt(_0x146b84(0x19d))/0x2)+-parseInt(_0x146b84(0x1a9))/0x3+parseInt(_0x146b84(0x18b))/0x4*(-parseInt(_0x146b84(0x1a0))/0x5)+parseInt(_0x146b84(0x1a3))/0x6*(-parseInt(_0x146b84(0x195))/0x7)+-parseInt(_0x146b84(0x19a))/0x8*(parseInt(_0x146b84(0x1a4))/0x9)+-parseInt(_0x146b84(0x198))/0xa+parseInt(_0x146b84(0x186))/0xb;if(_0x2bb604===_0x53aa96)break;else _0x106692['push'](_0x106692['shift']());}catch(_0x5348d8){_0x106692['push'](_0x106692['shift']());}}}(_0x2a06,0x3aa56));function generateT3D(){var _0xea81d0=_0x3e63,_0x3954b1=document[_0xea81d0(0x190)]('image')[_0xea81d0(0x1a8)][0x0],_0x4a77ae=parseInt(document[_0xea81d0(0x190)]('columns')[_0xea81d0(0x19b)]),_0x57e0e2=parseInt(document[_0xea81d0(0x190)](_0xea81d0(0x1a5))['value']),_0x3299b9=parseInt(document[_0xea81d0(0x190)](_0xea81d0(0x189))[_0xea81d0(0x19b)]),_0x4e5ee3=new FileReader();_0x4e5ee3[_0xea81d0(0x196)]=function(_0x4d3076){var _0x3d521f=_0xea81d0,_0x2f1223=new Image();_0x2f1223[_0x3d521f(0x196)]=function(){var _0x44c240=_0x3d521f,_0x322f1b=document[_0x44c240(0x197)]('canvas');_0x322f1b[_0x44c240(0x1a1)]=_0x2f1223[_0x44c240(0x1a1)],_0x322f1b[_0x44c240(0x1a7)]=_0x2f1223[_0x44c240(0x1a7)];var _0x40519e=_0x322f1b['getContext']('2d');_0x40519e['drawImage'](_0x2f1223,0x0,0x0);var _0x3cdf1d='rows\x20=\x20'+_0x57e0e2+'\x0a';_0x3cdf1d+=_0x44c240(0x193)+_0x4a77ae+'\x0a',_0x3cdf1d+=_0x44c240(0x18c)+_0x3299b9+'\x0a',_0x3cdf1d+='files\x20=\x201\x0a',_0x3cdf1d+='atlas0'+_0x3954b1[_0x44c240(0x19e)][_0x44c240(0x191)](_0x3954b1[_0x44c240(0x19e)][_0x44c240(0x199)]('.'));var _0x38979b=new Blob([_0x3cdf1d],{'type':_0x44c240(0x18a)}),_0x5cf049=new JSZip();_0x5cf049[_0x44c240(0x1a2)](_0x44c240(0x1a6),_0x38979b),_0x5cf049['file'](_0x44c240(0x188)+_0x3954b1[_0x44c240(0x19e)][_0x44c240(0x191)](_0x3954b1[_0x44c240(0x19e)]['lastIndexOf']('.')),_0x3954b1),_0x5cf049[_0x44c240(0x192)]({'type':'blob'})[_0x44c240(0x18e)](function(_0x23b55a){var _0x455341=_0x44c240,_0x1dfaf9=document['createElement']('a');_0x1dfaf9['href']=URL['createObjectURL'](_0x23b55a),_0x1dfaf9['download']=_0x455341(0x19f),_0x1dfaf9[_0x455341(0x194)]();});},_0x2f1223[_0x3d521f(0x187)]=_0x4d3076[_0x3d521f(0x18f)]['result'];},_0x4e5ee3[_0xea81d0(0x18d)](_0x3954b1);}
   </script>
 </body>
 </html>
