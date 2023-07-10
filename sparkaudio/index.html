@@ -78,6 +78,15 @@
     }
   </style>
   <script src="./enable-thread.js"></script>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHT3XY2K0H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHT3XY2K0H');
+</script>
 </head>
 <body>
   <div class="card">
@@ -106,7 +115,7 @@
   <script>
     const { createFFmpeg, fetchFile } = FFmpeg;
     const ffmpeg = createFFmpeg({ log: true });
-
+    console.log(gtag)
     async function loadFFmpeg() {
       await ffmpeg.load();
       console.log('WASM LOADED')
@@ -114,7 +123,10 @@
     }
 
     async function convertAudio(inputFile, quality) {
-        
+        gtag('event', 'button_click', {
+      'event_category': 'Buttons',
+      'event_label': 'Convert Audio'
+    });
       const inputFileName = 'input-file';
       ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFile));
       ffmpeg.setProgress(({ ratio }) => {
