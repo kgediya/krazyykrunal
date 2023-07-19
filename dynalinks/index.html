@@ -150,6 +150,20 @@
     .edit-button:hover {
       background-color: #222222;
     }
+    .sign-out-button {
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .sign-out-button:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
 <body>
@@ -166,6 +180,7 @@
         </table>
         <div class="button-container">
           <button id="signInButton" class="button">Sign In with Google</button>
+          <button id="signOutButton" class="sign-out-button" hidden>Sign Out</button>
           <button id="createLinkButton" class="button" hidden>Create Link</button>
         </div>
       </div>

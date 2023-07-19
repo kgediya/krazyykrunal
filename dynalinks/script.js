@@ -67,6 +67,14 @@ const firebaseConfig = {
   function enableUI(){
     document.querySelector('table').hidden = false;
     document.querySelector('#createLinkButton').hidden = false;
+    document.getElementById('signOutButton').hidden =false;
+    document.getElementById('signInButton').hidden =true;
+  }
+  function disableUI(){
+    document.querySelector('table').hidden = true;
+    document.querySelector('#createLinkButton').hidden = true;
+    document.getElementById('signOutButton').hidden =true;
+    document.getElementById('signInButton').hidden =false;
   }
   // Function to retrieve and display user's links
   function displayUserLinks() {
@@ -205,6 +213,19 @@ async function createUniqueShortLink(userId, longURL, shortURL) {
      window.location = globalIndexSnapshot.val()
     }
   }
+
+  function signOutWithGoogle() {
+    firebase.auth().signOut()
+      .then(() => {
+        // Sign-out successful. Redirect back to the sign-in page or any other page.
+        disableUI() // Replace with the desired sign-in page URL.
+      })
+      .catch((error) => {
+        // Handle sign-out error
+        console.error('Sign-out error:', error);
+      });
+  }
+
   // Event handler for "Sign In with Google" button
   document.addEventListener('DOMContentLoaded', () => {
     const signInButton = document.getElementById('signInButton');
@@ -218,6 +239,11 @@ async function createUniqueShortLink(userId, longURL, shortURL) {
   });
   document.addEventListener('DOMContentLoaded', () => {
     logQueryParameters();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const signOutButton = document.getElementById('signOutButton');
+    signOutButton.addEventListener('click', signOutWithGoogle);
   });
   function prependProtocol(linkValue) {
            
