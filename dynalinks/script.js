@@ -94,7 +94,7 @@ const firebaseConfig = {
         const linkAnchor = document.createElement('a');
         linkAnchor.href = `/dynalinks/?alias=${linkData.shortURL}`;
         linkAnchor.target = '_blank';
-        const link = window.location.href+'/?alias='+linkData.shortURL
+        const link = window.location.href+'?alias='+linkData.shortURL
         linkAnchor.textContent = link.replace('/index.html','');
         shortURLCell.appendChild(linkAnchor);
   
@@ -113,9 +113,10 @@ const firebaseConfig = {
           deleteLink(childSnapshot.key, linkData.shortURL);
         });
         actionsCell.appendChild(deleteButton);
-        
+        actionsCell.appendChild(document.createElement('br'))
+        actionsCell.appendChild(document.createElement('br'))
         const qrButton = document.createElement('button');
-        qrButton.classList.add('edit-button');
+        qrButton.classList.add('qr-button');
         qrButton.textContent = 'MakQR'
         qrButton.addEventListener('click',()=>{
             const a = document.createElement('a');
