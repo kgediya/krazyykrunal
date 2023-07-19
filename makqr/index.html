@@ -465,6 +465,18 @@ document.getElementById('download_qr').onclick = async function(){
 qrCodeObj.download({ name: "qr", extension: "png" });
 }
 
+
+async function logQueryParameters() {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    
+    // Check if there are any query parameters
+    if (urlSearchParams.has('link')) {
+      const link = urlSearchParams.get('link');
+      document.getElementById('link_data').value = link
+      
+    }
+  }
+  logQueryParameters()
     </script>
 </body>
 </html>
