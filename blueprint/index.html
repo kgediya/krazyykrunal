@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3D Room Model</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas"></div>
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.js"></script>
+    <script type="module">
+     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
+
+import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/loaders/DRACOLoader.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+
+        // Blueprint Image URL
+        const blueprintUrl = './test.png';
+
+        // Create a scene
+        const scene = new THREE.Scene();
+        console.log(scene)
+        // Create a camera
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 10);
+
+        // Create a renderer
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas').appendChild(renderer.domElement);
+        var imageData = null;
+        // Load blueprint image as a texture
+        const textureLoader = new THREE.TextureLoader();
+        const blueprintTexture = textureLoader.load(blueprintUrl, () => {
+            processBlueprint();
+            render();
+        });
+
+        // Process the blueprint image
+        function processBlueprint() {
+            // Create a canvas element
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = blueprintTexture.image.width;
+            canvas.height = blueprintTexture.image.height;
+            context.drawImage(blueprintTexture.image, 0, 0);
+            imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+            // Get the pixel data
+           
+            // Loop through each pixel to extract details
+            for (let i = 0; i < imageData.length; i += 4) {
+                const r = imageData[i];
+                const g = imageData[i + 1];
+                const b = imageData[i + 2];
+
+                // Example: Create walls from blue color
+                if (r === 0 && g === 0 && b === 255) {
+                    const wallDimensions = calculateWallDimensions(i, canvas.width);
+                    createWall(wallDimensions);
+                }
+            }
+        }
+
+        // Calculate wall dimensions based on a specific pixel index and canvas width
+        function calculateWallDimensions(pixelIndex, canvasWidth) {
+            const pixelX = pixelIndex / 4 % canvasWidth;
+            const pixelY = Math.floor(pixelIndex / (4 * canvasWidth));
+
+            const wallWidth = findWallWidth(pixelX, pixelY, canvasWidth);
+            const wallHeight = findWallHeight(pixelX, pixelY, canvasWidth);
+
+            return {
+                width: wallWidth,
+                height: wallHeight
+            };
+        }
+
+        // Find the width of the wall
+        function findWallWidth(pixelX, pixelY, canvasWidth) {
+            let wallWidth = 1;
+            let nextPixelIndex = ((pixelY * canvasWidth) + pixelX + wallWidth) * 4;
+            console.log(imageData)
+            let nextPixelR =imageData[nextPixelIndex];
+
+            while (nextPixelR === 0) {
+                wallWidth++;
+                nextPixelIndex = ((pixelY * canvasWidth) + pixelX + wallWidth) * 4;
+                nextPixelR = imageData[nextPixelIndex];
+            }
+
+            return wallWidth;
+        }
+
+        // Find the height of the wall
+        function findWallHeight(pixelX, pixelY, canvasWidth) {
+            let wallHeight = 1;
+            let nextPixelIndex = ((pixelY + wallHeight) * canvasWidth + pixelX) * 4;
+            let nextPixelR = imageData[nextPixelIndex];
+
+            while (nextPixelR === 0) {
+                wallHeight++;
+                nextPixelIndex = ((pixelY + wallHeight) * canvasWidth + pixelX) * 4;
+                nextPixelR = imageData[nextPixelIndex];
+            }
+
+            return wallHeight;
+        }
+
+        // Create a wall with given dimensions
+        function createWall({ width, height }) {
+            const wallGeometry = new THREE.BoxGeometry(width / 1, height / 1, 0.1);
+            const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xCCCCCC });
+            const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+
+            wallMesh.position.set(width / 2, height / 2, 0);
+
+            scene.add(wallMesh);
+        }
+        // Create ambient light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // Create directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(0, 1, 1);
+        scene.add(directionalLight);
+
+        // Add orbit controls
+        const controls = new OrbitControls( camera, renderer.domElement );
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true
+        controls.update();
+        // Function to handle window resize
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
+        }
+
+        // Render the scene
+        function render() {
+           
+            controls.update(); // Update orbit controls
+            renderer.render(scene, camera);
+        }
+
+        // Add event listener for window resize
+        window.addEventListener('resize', onWindowResize, false);
+        function animate() {
+
+requestAnimationFrame( animate );
+
+// required if controls.enableDamping or controls.autoRotate are set to true
+controls.update();
+
+renderer.render( scene, camera );
+
+}
+        // Start rendering the scene
+       animate()
+    </script>
+</body>
+</html>

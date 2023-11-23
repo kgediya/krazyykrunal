@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Blueprint 3D Model</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Orbit controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.0;
+
+        // Check for WebXR support
+        if ('xr' in navigator) {
+            navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+                if (supported) {
+                    const xrButton = document.createElement('button');
+                    xrButton.innerHTML = 'Enter AR';
+                    xrButton.addEventListener('click', onXRButtonClicked);
+                    document.body.appendChild(xrButton);
+                } else {
+                    initializeScene();
+                }
+            });
+        } else {
+            initializeScene();
+        }
+
+        // Constants
+        const imageWidth = 1024; // Width of the blueprint image
+        const imageHeight = 768; // Height of the blueprint image
+        const extrusionHeight = 50; // Height of the extruded walls
+
+        // Floor plane
+        let floorPlane;
+
+        function initializeScene() {
+            // Set up scene content here
+            camera.position.set(0, 0, 300); // Set the initial camera position
+
+            // Load blueprint image
+            const loader = new THREE.TextureLoader();
+            loader.load('./FloorPlan.jpg', function (texture) {
+                texture.flipY = true;
+
+                // Create floor plane with image texture
+                const floorGeometry = new THREE.PlaneGeometry(imageWidth, imageHeight);
+                const floorMaterial = new THREE.MeshBasicMaterial({ map: texture });
+                floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
+                floorPlane.scale.y = -1; // Flip the floor plane vertically
+                scene.add(floorPlane);
+
+                // Extract blue pixels and create walls
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = imageWidth;
+                canvas.height = imageHeight;
+                context.drawImage(texture.image, 0, 0);
+
+                const imageData = context.getImageData(0, 0, imageWidth, imageHeight);
+                const pixels = imageData.data;
+
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const r = pixels[i];
+                    const g = pixels[i + 1];
+                    const b = pixels[i + 2];
+
+                    if (r < 20 && g < 20 && b > 200) {
+                        const x = (i / 4) % imageWidth;
+                        const y = Math.floor((i / 4) / imageWidth);
+
+                        const geometry = new THREE.BoxGeometry(1, 1, extrusionHeight);
+                        const material = new THREE.MeshBasicMaterial({ color: 0x5A5A5A });
+                        const cube = new THREE.Mesh(geometry, material);
+                        cube.position.set(x - imageWidth / 2, y - imageHeight / 2, extrusionHeight / 2);
+                        scene.add(cube);
+                    }
+                }
+
+                scene.scale.y = -1; // Flip the entire scene vertically
+            });
+
+            // Render loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+
+        function onXRButtonClicked() {
+            navigator.xr.requestSession('immersive-ar').then((session) => {
+                const xrButton = document.querySelector('button');
+                xrButton.disabled = true;
+
+                session.updateRenderState({ baseLayer: new XRWebGLLayer(session, renderer) });
+                session.requestReferenceSpace('local').then((referenceSpace) => {
+                    session.addEventListener('end', onXREnd);
+                    session.requestAnimationFrame(onXRFrame);
+
+                    // Initialize scene content for AR here
+                    initializeSceneForAR(referenceSpace);
+                });
+            });
+        }
+
+        function onXREnd() {
+            const xrButton = document.querySelector('button');
+            xrButton.disabled = false;
+
+            // Clean up AR scene here
+        }
+
+        function onXRFrame(time, frame) {
+            const session = frame.session;
+            const pose = frame.getViewerPose(new XRReferenceSpace(session, 'local'));
+
+            // Update camera pose and render AR scene here
+
+            session.requestAnimationFrame(onXRFrame);
+        }
+    </script>
+</body>
+</html>

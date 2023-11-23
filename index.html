@@ -2,117 +2,251 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Krazyy Krunal</title>
-    <link rel="icon" type="image/x-icon" href="./favicon-32x32.png">
-     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHT3XY2K0H"></script>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-WCCGC2C');</script>
-  <!-- End Google Tag Manager -->         
-    <style>
-        @font-face {
-    font-family: 'PF Tempesta Five';
-    font-style: normal;
-    font-weight: 400;
-    src: local('PF Tempesta Five'), url('./assets/pf_tempesta_five.woff') format('woff');
-}
-* {
-  box-sizing: border-box;
-}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krazyy Krunal</title>
+  <link rel="icon" type="image/x-icon" href="./favicon-32x32.png">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHT3XY2K0H"></script>
+  <!-- Google Tag Manager -->
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js'
+      });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-WCCGC2C');
+  </script>
+  <!-- End Google Tag Manager -->
+  <style>
+    @font-face {
+      font-family: 'PF Tempesta Five';
+      font-style: normal;
+      font-weight: 400;
+      src: local('PF Tempesta Five'), url('./assets/pf_tempesta_five.woff') format('woff');
+    }
 
-body {
-  margin: 0;
-  font-family:  'PF Tempesta Five';
-}
+    * {
+      box-sizing: border-box;
+    }
 
-.header {
-  text-align: center;
-  padding: 32px;
-}
+    body {
+      margin: 0;
+      font-family: 'PF Tempesta Five';
+    }
+    .top-bar {
+            background-color: black;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
 
-.row {
-  display: -ms-flexbox; /* IE10 */
-  display: flex;
-  -ms-flex-wrap: wrap; /* IE10 */
-  flex-wrap: wrap;
-  padding: 0 4px;
-}
+        .menu-item {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
 
-/* Create four equal columns that sits next to each other */
-.column {
-  -ms-flex: 25%; /* IE10 */
-  flex: 25%;
-  max-width: 25%;
-  padding: 0 4px;
-}
+        .menu-item:hover {
+            text-decoration: underline;
+        }
 
-.column img {
-  margin-top: 8px;
-  vertical-align: middle;
-  width: 100%;
-}
+        .content-container {
+            display: none;
+            background-color: white;
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
 
-/* Responsive layout - makes a two column-layout instead of four columns */
-@media screen and (max-width: 800px) {
-  .column {
-    -ms-flex: 50%;
-    flex: 50%;
-    max-width: 50%;
-  }
-}
+        .content-container a {
+            display: block;
+            margin: 10px 0;
+            color: black;
+            text-decoration: none;
+        }
 
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .column {
-    -ms-flex: 100%;
-    flex: 100%;
-    max-width: 100%;
-  }
-}
-        </style>
+        .content-container a:hover {
+            text-decoration: underline;
+        }
+
+        .toolbar-category.open .content-container {
+            display: block;
+        }
+    .work-card {
+      background-color: white;
+      color: black;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+      cursor: pointer;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .work-card img {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .work-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      text-align: center;
+      padding: 32px;
+    }
+
+    .row {
+      display: -ms-flexbox;
+      /* IE10 */
+      display: flex;
+      -ms-flex-wrap: wrap;
+      /* IE10 */
+      flex-wrap: wrap;
+      padding: 0 4px;
+    }
+
+    /* Create four equal columns that sits next to each other */
+    .column {
+      -ms-flex: 25%;
+      /* IE10 */
+      flex: 25%;
+      max-width: 25%;
+      padding: 0 4px;
+    }
+
+    .column img {
+      margin-top: 8px;
+      vertical-align: middle;
+      width: 100%;
+    }
+
+    /* Responsive layout - makes a two column-layout instead of four columns */
+    @media screen and (max-width: 800px) {
+      .column {
+        -ms-flex: 50%;
+        flex: 50%;
+        max-width: 50%;
+      }
+    }
+
+    /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 600px) {
+      .column {
+        -ms-flex: 100%;
+        flex: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 
-<body>
+<body >
   <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCCGC2C"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCCGC2C" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <script src=
-  "https://smtpjs.com/v3/smtp.js">
-</script>
- <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-<h1 style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, My Name Is Krazyy Krunal</h1>
-<h5 style="text-align: center;">I'm an Indian XR Developer Building All Things Krazyy. Stay Tuned.</h5>
-<div style="text-align: center;">
-  <h4>Connect</h4>
-<a target="_blank" href="https://www.instagram.com/krazyykrunal/"><h5 style="text-align: center; margin-left: 0%; display: inline-block;"> INSTAGRAM </h5></a>
-<a target="_blank" href="https://lensstudio.snapchat.com/creator/H_rVvZAY8Q0cafg8oxDHfw"><h5 style="text-align: center; margin-left: 5%; display: inline-block;"> SNAPCHAT </h5></a>
-<a target="_blank" href="https://www.linkedin.com/in/krazyykrunal"><h5 style="text-align: center; margin-left: 5%; display: inline-block;"> LINKEDIN </h5></a>
-<a target="_blank" href="https://xrbazaar.co/creators/krazyykrunal/"><h5 style="text-align: center; margin-left: 5%; display: inline-block;"> XR PORTFOLIO </h5></a>
-<a target="_blank" href="https://linktr.ee/krunalgediya"><h5 style="text-align: center; margin-left: 5%; display: inline-block;"> LINKTR.EE</h5></a>
-<br>
-<h4>Tools & Resources</h4>
-<a href="/resources/"><h5 style="text-align: center; margin-left: 0%; display: inline-block;"> Resources</h5></a>
-<a href="/portalcreator/"><h5 style="text-align: center; margin-left: 5%; display: inline-block;"> Portal Generator</h5></a>
-<a href="/sparkaudio/"><h5 style="text-align: center; margin-left: 5%; display: inline-block;"> MSpark Audio Convertor</h5></a>
-<a href="/dynalinks/"><h5 style="text-align: center; margin-left: 5%; display: inline-block;">Dynalinks</h5></a>
-
-<a href="/makqr/"><h5 style="text-align: center; margin-left: 5%; display: inline-block;">Kustom MakQR</h5></a>
-<a href="/spritesheetls/"><h5 style="text-align: center; margin-left: 5%; display: inline-block;">LS Spritesheet Animation</h5></a>
-<br>
-<h4>Contact</h4>
-<a href="mailto:namaste@krazyykrunal.com?subject=XR Enquiry x Krunal&body=Hey Krunal,%0D%0AHave some AR/VR requirement for the following%0D%0A...%0D%0AAnd this is the budget we are looking for%0D%0A..."><h5 style="text-align: center; margin-left: 0%; display: inline-block;">SEND EMAIL </h5></a>
+  <script src="https://smtpjs.com/v3/smtp.js">
+  </script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <h1 style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, I'm Krazyy Krunal</h1>
+  <h5 style="text-align: center;">an Indian XR Developer Building All Things Krazyy. Stay Tuned.</h5>
+ 
+ 
+  <div class="top-bar">
+    <div class="menu-item" onclick="toggleContent('connect-content')">Connect</div>
+    <div class="menu-item" onclick="toggleContent('resources-content')">Tools & Resources</div>
+    <div class="menu-item" onclick="toggleContent('contact-content')">Contact</div>
 </div>
-<h3 style="text-align: center;">Checkout Few of My Works Below</h3>
 
-       <!--
+<!-- Connect Content -->
+<div class="toolbar-category">
+    <div style="text-align: center;" id="connect-content" >
+      <br>
+        <a target="_blank" href="https://www.instagram.com/krazyykrunal/">INSTAGRAM</a>
+        <a target="_blank" href="https://lensstudio.snapchat.com/creator/H_rVvZAY8Q0cafg8oxDHfw">SNAPCHAT</a>
+        <a target="_blank" href="https://www.linkedin.com/in/krazyykrunal">LINKEDIN</a>
+        <a target="_blank" href="https://xrbazaar.co/creators/krazyykrunal/">XR PORTFOLIO</a>
+        <a target="_blank" href="https://linktr.ee/krunalgediya">LINKTR.EE</a>
+    </div>
+</div>
+
+<!-- Tools & Resources Content -->
+<div class="toolbar-category">
+    <div style="text-align: center;" id="resources-content" >
+      <br>
+        <a href="/resources/">Resources</a>
+        <a href="/portalcreator/">Portal Generator</a>
+        <a href="/sparkaudio/">MSpark Audio Convertor</a>
+        <a href="/dynalinks/">Dynalinks</a>
+        <a href="/makqr/">Kustom MakQR</a>
+        <a href="/spritesheetls/">LS Spritesheet Animation</a>
+    </div>
+</div>
+
+<!-- Contact Content -->
+<div class="toolbar-category">
+    <div style="text-align: center;" id="contact-content" >
+      <br>
+        <a target="_blank"
+            href="mailto:kgediya0898@gmail.com?subject=XR Enquiry x Krunal&body=Hey Krunal,%0D%0AHave some AR/VR requirements for the following%0D%0A...%0D%0AAnd this is the budget we are looking for%0D%0A...">
+            SEND EMAIL
+        </a>
+    </div>
+</div>
+
+<script>
+     function toggleContent(contentId) {
+            const content = document.getElementById(contentId);
+            closeAll()
+            content.style.display = (content.style.display === 'block') ? 'none' : 'block';
+
+            // Detect clicks outside of the content and close it
+            document.addEventListener('click', function (event) {
+                if (event.target !== content ) {
+                 
+                   // closeAll()
+                }
+            });
+        }
+
+    function closeContent(contentId) {
+        const content = document.getElementById(contentId);
+        content.style.display = 'none';
+    }
+    
+    function closeAll(){
+      closeContent('contact-content');
+    closeContent('resources-content')
+    closeContent('connect-content')
+
+    }
+    closeAll()
+</script>
+  <h3 style="text-align: center;">Checkout Few of My Works Below</h3>
+
+  <!--
     <model-viewer style="width: 100vw; height:100vh;"
         alt="Neil Armstrong's Spacesuit from the Smithsonian Digitization Programs Office and National Air and Space Museum"
         src="assets/avatar.glb" ar autoplay="true" auto-rotate auto-rotate-delay="1"
@@ -120,61 +254,93 @@ body {
     </model-viewer>
      -->
 
-     <div class="row"> 
-        <div class="column">
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">3D Product Showcase</p>
-          <img src="./assets/workgifs/image26.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Festive Games</p>
-          <img src="./assets/workgifs/image29.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Branded Games</p>
-          <img src="./assets/workgifs/image30.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Rewards Reveal</p>
-          <img src="./assets/workgifs/image32.gif" style="width:100%">
-        
-         
-        </div>
-        
-      
-        <div class="column">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Location Based</p>
-          <img src="./assets/workgifs/image50.gif" style="width:100%">
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Product Features Games</p>
-          <img src="./assets/workgifs/image41.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Themed Product Showcases</p>
-          <img src="./assets/workgifs/image43.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Gamified Promotions</p>
-          <img src="./assets/workgifs/image44.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">2 Player Games</p>
-          <img src="./assets/workgifs/image45.gif" style="width:100%">
-          
-       
-        </div>  
-        <div class="column">
-       
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Fiction To Reality</p>
-          <img src="./assets/workgifs/image47.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Launch 360 Zones</p>
-          <img src="./assets/workgifs/image48.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Educational</p>
-          <img src="./assets/workgifs/image49.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Try On Engagement</p>
-          <img src="./assets/workgifs/image51.gif" style="width:100%">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Sky Segmentation</p>
-          <img src="./assets/workgifs/image10.gif" style="width:100%">
-        </div>
-        <div class="column">
-          <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Novelty Fashion</p>
-          <img src="./assets/workgifs/image20.gif" style="width:100%">
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Custom Try On</p>
-            <img src="./assets/workgifs/image46.gif" style="width:100%">
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Brand Engagement</p>
-            <img src="./assets/workgifs/image40.gif" style="width:100%">
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Themed Games</p>
-            <img src="./assets/workgifs/image37.gif" style="width:100%">
-            <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Product Showcase</p>
-            <img src="./assets/workgifs/image36.gif" style="width:100%">
-          </div>
+  <div class="row">
+    <div class="column">
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">3D Product Showcase</p>
+        <img src="./assets/workgifs/image26.gif" style="width:100%">
       </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Festive Games</p>
+        <img src="./assets/workgifs/image29.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Branded Games</p>
+        <img src="./assets/workgifs/image30.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Rewards Reveal</p>
+        <img src="./assets/workgifs/image32.gif" style="width:100%">
+      </div>
+    </div>
+
+    <div class="column">
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Location Based</p>
+        <img src="./assets/workgifs/image50.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Product Features Games</p>
+        <img src="./assets/workgifs/image41.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Themed Product Showcases</p>
+        <img src="./assets/workgifs/image43.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Gamified Promotions</p>
+        <img src="./assets/workgifs/image44.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">2 Player Games</p>
+        <img src="./assets/workgifs/image45.gif" style="width:100%">
+      </div>
+    </div>
+    <div class="column">
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Fiction To Reality</p>
+        <img src="./assets/workgifs/image47.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Launch 360 Zones</p>
+        <img src="./assets/workgifs/image48.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Educational</p>
+        <img src="./assets/workgifs/image49.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Try On Engagement</p>
+        <img src="./assets/workgifs/image51.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Sky Segmentation</p>
+        <img src="./assets/workgifs/image10.gif" style="width:100%">
+      </div>
+    </div>
+    <div class="column">
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Novelty Fashion</p>
+        <img src="./assets/workgifs/image20.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Custom Try On</p>
+        <img src="./assets/workgifs/image46.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Brand Engagement</p>
+        <img src="./assets/workgifs/image40.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Themed Games</p>
+        <img src="./assets/workgifs/image37.gif" style="width:100%">
+      </div>
+      <div class="work-card">
+        <p style="background-color: black; color: white; padding: 2% 0% 2% 5%;">Product Showcase</p>
+        <img src="./assets/workgifs/image36.gif" style="width:100%">
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

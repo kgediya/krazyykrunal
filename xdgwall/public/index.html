@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>XDG WALL</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url(./Background.png);
+      background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+      width: 100vw;
+      height: 100vh;
+      overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-y: scroll;
+     
+    }
+#center{
+  display: flex;
+      justify-content: center;
+      align-items: center;
+    
+}
+    h1 {
+      text-align: center;
+      color: #ffffff;
+      margin-top: 20px;
+      text-shadow: 2px 2px #000000;
+    }
+   
+    #canvas-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 600px;
+      margin-bottom: 20px;
+    
+    
+    }
+ 
+
+    #frame{
+      content: "";
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 600px;
+      position: absolute;
+      filter: blur(2px);
+      -webkit-filter: blur(2px);
+      background-image: url("./BG1.jpg"), url("./BG2.jpg"), url("./BG3.jpg"), url("./BG4.jpg"), url("./BG5.jpg"), url("./BG6.jpg"),url("./BG7.jpg"),url("./BG8.jpg");
+      border: none;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 2s ease-in-out;
+      /* Apply the blur effect */
+    
+     
+     
+    }
+    #canvas{
+      position: relative;
+      background-color: rgba(0, 0, 0,0.2);
+      width: 100%;
+      max-width: 790.4px;
+      height: 590.4px;
+      border: 5px solid #ffffff;
+    }
+
+    .note {
+      position: absolute;
+      padding: 10px;
+      z-index: 1;
+      border: 2px solid #ffffff;
+      border-radius: 4px;
+      cursor: move;
+      background-color: #fff;
+      
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+      transition: opacity 2s ease-in-out;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bolder;
+    
+      background-color: #000000;
+      color: #fff;
+     border: 2px solid #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0px 2px 4px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 600px) {
+      #canvas-container {
+        height: 400px;
+      }
+      .note {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>XDG मुंBAI Aagaya August Wall</h1>
+  <div id="center">
+  <div id="canvas-container">
+    <div id="frame"></div>
+    <div id="canvas"></div>
+  </div></div>
+  <div style="text-align: center; margin-bottom: 20px;">
+    <span id="notes" hidden>
+    <input type="text" id="noteText" placeholder="Type your note..." >
+    <button  onclick="addNote()" >Add Note</button>
+    <button onclick="playAnimation()">Play Animation</button></span>
+    <button id="signIn" onclick="signIn()">Sign In with Google</button>
+    <button id="signOut" onclick="signOut()" hidden>Sign Out</button>
+  </div>
+<br>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script>
+
+    // Initialize Firebase
+    const firebaseConfig = {
+    apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+    authDomain: "xdgm-memorie-wall.firebaseapp.com",
+    projectId: "xdgm-memorie-wall",
+    storageBucket: "xdgm-memorie-wall.appspot.com",
+    messagingSenderId: "644674909301",
+    appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+    measurementId: "G-ZNPNV3TGMG"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+    const auth = firebase.auth();
+
+    let currentUser = null;
+    const canvas = document.getElementById('canvas');
+    const animationButton = document.querySelector('button[data-action="play-animation"]');
+
+firebase.auth().onAuthStateChanged(function(user) {
+  
+  if (user) {
+    // User is signed in
+    currentUser = user;
+    retrieveNotes();
+    updateUI(true)
+
+  } else {
+    // User is signed out
+    currentUser = null;
+    clearCanvas();
+    updateUI(false)
+  }
+});
+    // Function to make the notes draggable
+    function makeNoteDraggable(note) {
+      let isDragging = false;
+      let offsetX, offsetY;
+
+      note.addEventListener('mousedown', startDrag);
+      note.addEventListener('touchstart', startDrag);
+
+      function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+
+        const touch = e.type === 'touchstart' ? e.touches[0] : e;
+
+        // Get the offset between the touch position and the note position
+        offsetX = touch.clientX - note.offsetLeft;
+        offsetY = touch.clientY - note.offsetTop;
+
+        if (e.type === 'mousedown') {
+          document.addEventListener('mousemove', dragNote);
+          document.addEventListener('mouseup', stopDrag);
+        } else if (e.type === 'touchstart') {
+          document.addEventListener('touchmove', dragNote);
+          document.addEventListener('touchend', stopDrag);
+        }
+      }
+
+      function dragNote(e) {
+        if (!isDragging) return;
+
+        const touch = e.type === 'touchmove' ? e.touches[0] : e;
+
+        // Calculate the new position of the note
+        const left = touch.clientX - offsetX;
+        const top = touch.clientY - offsetY;
+
+        // Restrict the note within the canvas boundaries
+        const minX = 0;
+        const minY = 0;
+        const maxX = canvas.offsetWidth - note.offsetWidth-20;
+        const maxY = canvas.offsetHeight - note.offsetHeight-20;
+
+        const newLeft = Math.max(minX, Math.min(left, maxX));
+        const newTop = Math.max(minY, Math.min(top, maxY));
+
+        // Update the note's position
+        note.style.left = `${newLeft}px`;
+        note.style.top = `${newTop}px`;
+      }
+
+      function stopDrag() {
+        isDragging = false;
+
+        document.removeEventListener('mousemove', dragNote);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', dragNote);
+        document.removeEventListener('touchend', stopDrag);
+        const noteId = note.getAttribute("data-note-id");
+        database.ref(`notes/august/${noteId}`).update({
+          top: note.style.top,
+          left: note.style.left
+        });
+      }
+    }
+    function clearCanvas() {
+      const canvas = document.getElementById('canvas');
+      canvas.innerHTML = '';
+    }
+
+    function updateUI(isSignedIn){
+      const signInBtn = document.getElementById('signIn');
+      const signOutBtn = document.getElementById('signOut');
+      const notesSection = document.getElementById('notes');
+      signInBtn.hidden = isSignedIn;
+      signOutBtn.hidden = !isSignedIn;
+      notesSection.hidden = !isSignedIn
+
+    }
+
+    // Function to sign in with Google
+    function signIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          // Sign-in successful
+          console.log(result.user);
+        })
+        .catch((error) => {
+          // Error occurred during sign-in
+          console.error(error);
+        });
+    }
+
+    // Function to sign out
+    function signOut() {
+      auth.signOut()
+        .then(() => {
+          // Sign-out successful
+          console.log('User signed out');
+        })
+        .catch((error) => {
+          // Error occurred during sign-out
+          console.error(error);
+        });
+    }
+
+    // Function to generate a random color
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Function to check if a color is dark
+    function isColorDark(color) {
+      const rgb = parseInt(color.substring(1), 16);
+      const r = (rgb >> 16) & 0xff;
+      const g = (rgb >> 8) & 0xff;
+      const b = (rgb >> 0) & 0xff;
+
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance <= 0.5;
+    }
+
+    // Function to generate a random font style
+    function getRandomFontStyle() {
+      const fontStyles = [
+        "Arial, sans-serif",
+        "Verdana, sans-serif",
+        "Helvetica, sans-serif",
+        "Georgia, serif",
+        "Courier New, monospace"
+      ];
+      return fontStyles[Math.floor(Math.random() * fontStyles.length)];
+    }
+
+    // Function to add a note to the canvas
+    function addNote() {
+      const noteText = document.getElementById('noteText').value;
+      var backColor = getRandomColor()
+      if (noteText.trim() !== '') {
+        const note = {
+          text: noteText,
+          backgroundColor: backColor,
+          fontColor: isColorDark(backColor) ? "#ffffff" : "#333",
+          fontStyle: getRandomFontStyle(),
+          borderStyle: isColorDark(backColor)?'2px solid #ffffff':'2px solid #333',
+          top: `${Math.floor(Math.random() * 500)}px`,
+          left: `${Math.floor(Math.random() * 500)}px`,
+        };
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note';
+        noteElement.innerText = note.text;
+        noteElement.style.border = note.borderStyle;
+        noteElement.style.backgroundColor = note.backgroundColor;
+        noteElement.style.color = note.fontColor;
+        noteElement.style.fontFamily = note.fontStyle;
+        noteElement.style.top = note.top;
+        noteElement.style.left = note.left;
+
+        const canvas = document.getElementById('canvas');
+        canvas.appendChild(noteElement);
+        makeNoteDraggable(noteElement);
+        database.ref('notes/august').push(note)
+          .then((result) => {
+            console.log('Note added successfully' +result );
+          })
+          .catch((error) => {
+            console.error('Error adding note:', error);
+          });
+      }
+    }
+
+    // Function to retrieve notes from the database
+    function retrieveNotes() {
+      
+      database.ref('notes/august').on('value', (snapshot) => {
+        const notes = snapshot.val();
+        if (notes) {
+          const canvas = document.getElementById('canvas');
+          canvas.innerHTML = '';
+
+          Object.keys(notes).forEach((key) => {
+            const note = notes[key];
+            
+            const noteElement = document.createElement('div');
+            noteElement.className = 'note';
+            noteElement.innerText = note.text;
+            noteElement.style.backgroundColor = note.backgroundColor;
+            noteElement.style.color = note.fontColor;
+            noteElement.style.border = note.borderStyle;
+            noteElement.style.fontFamily = note.fontStyle;
+            noteElement.style.left = note.left;
+            noteElement.style.top = note.top;
+            noteElement.setAttribute('data-note-id', key);
+            canvas.appendChild(noteElement);
+            makeNoteDraggable(noteElement);
+          });
+        }
+      });
+    }
+
+    // Call retrieveNotes to load existing notes
+    async function playAnimation() {
+      clearCanvas();
+
+      const notes = Array.from(document.querySelectorAll('.note'));
+     
+
+      for (let i = 0; i < notes.length; i++) {
+        const note = notes[i];
+        await fadeIn(note, i);
+      }
+    }
+
+    function clearCanvas() {
+      const notes = Array.from(document.querySelectorAll('.note'));
+      notes.forEach(note => {
+        note.style.opacity=0
+      });
+    }
+
+    function fadeIn(note, index) {
+      return new Promise(resolve => {
+        note.style.opacity = 0;
+        setTimeout(() => {
+          note.style.opacity = 1;
+          resolve();
+        }, 1000);
+      });
+    }
+   // retrieveNotes();
+
+   const backgroundImages = [
+      'BG1.jpg',
+      'BG2.jpg',
+      'BG3.jpg',
+      'BG4.jpg',
+      'BG5.jpg',
+      'BG6.jpg',
+      'BG7.jpg',
+      'BG8.jpg',
+     
+    ];
+
+    let currentIndex = 0;
+
+    // Function to change the background image
+    function changeBackgroundImage() {
+      const canvas = document.getElementById('frame');
+      currentIndex = (currentIndex + 1) % backgroundImages.length;
+      const imageUrl = backgroundImages[currentIndex];
+      canvas.style.backgroundImage = `url('${imageUrl}')`;
+    }
+    function preloadImages() {
+      for (let i = 0; i < backgroundImages.length; i++) {
+        const img = new Image();
+        img.src = backgroundImages[i];
+      }
+    }
+    preloadImages()
+    // Call changeBackgroundImage every 5 seconds
+    changeBackgroundImage()
+    setInterval(changeBackgroundImage, 5000);
+
+  </script>
+</body>
+</html>

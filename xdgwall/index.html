@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Virtual Canvas</title>
+  <style>
+    #canvas {
+      width: 800px;
+      height: 600px;
+      border: 2px solid black;
+      background-color: #f3f3f3;
+      position: relative;
+    }
+    .note {
+      position: absolute;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+  <h1>XDG मुंBAI Wall</h1>
+
+  <div id="canvas"></div>
+
+  <input type="text" id="noteText" placeholder="Type your note...">
+  <button onclick="addNote()">Add Note</button>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+    apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+    authDomain: "xdgm-memorie-wall.firebaseapp.com",
+    projectId: "xdgm-memorie-wall",
+    storageBucket: "xdgm-memorie-wall.appspot.com",
+    messagingSenderId: "644674909301",
+    appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+    measurementId: "G-ZNPNV3TGMG"
+  };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+
+    // Function to make the notes draggable
+    function makeNoteDraggable(note) {
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+      note.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        note.style.top = (note.offsetTop - pos2) + "px";
+        note.style.left = (note.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+    // Function to generate a random color
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Function to check if a color is dark
+    function isColorDark(color) {
+      const rgb = parseInt(color.substring(1), 16);
+      const r = (rgb >> 16) & 0xff;
+      const g = (rgb >> 8) & 0xff;
+      const b = (rgb >> 0) & 0xff;
+
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance <= 0.5;
+    }
+
+    // Function to generate a random font style
+    function getRandomFontStyle() {
+      const fontStyles = [
+        "Arial, sans-serif",
+        "Verdana, sans-serif",
+        "Helvetica, sans-serif",
+        "Georgia, serif",
+        "Courier New, monospace"
+      ];
+      return fontStyles[Math.floor(Math.random() * fontStyles.length)];
+    }
+
+    // Function to add a note to the canvas
+    function addNote() {
+      const noteText = document.getElementById('noteText').value;
+
+      if (noteText.trim() !== '') {
+        const note = {
+          text: noteText,
+          backgroundColor: getRandomColor(),
+          fontColor: isColorDark(backgroundColor) ? "#ffffff" : "#333",
+          fontStyle: getRandomFontStyle(),
+          top: `${Math.floor(Math.random() * 500)}px`,
+          left: `${Math.floor(Math.random() * 500)}px`,
+        };
+
+        database.ref('notes').push(note)
+          .then(() => {
+            console.log('Note added successfully');
+          })
+          .catch((error) => {
+            console.error('Error adding note:', error);
+          });
+      }
+    }
+
+    // Function to retrieve notes from the database
+    function retrieveNotes() {
+      database.ref('notes').on('value', (snapshot) => {
+        const notes = snapshot.val();
+        if (notes) {
+          const canvas = document.getElementById('canvas');
+          canvas.innerHTML = '';
+
+          Object.keys(notes).forEach((key) => {
+            const note = notes[key];
+            const noteElement = document.createElement('div');
+            noteElement.className = 'note';
+            noteElement.innerText = note.text;
+            noteElement.style.backgroundColor = note.backgroundColor;
+            noteElement.style.color = note.fontColor;
+            noteElement.style.fontFamily = note.fontStyle;
+            noteElement.style.left = note.left;
+            noteElement.style.top = note.top;
+
+            canvas.appendChild(noteElement);
+            makeNoteDraggable(noteElement);
+          });
+        }
+      });
+    }
+
+    // Call retrieveNotes to load existing notes
+    retrieveNotes();
+  </script>
+</body>
+</html>
