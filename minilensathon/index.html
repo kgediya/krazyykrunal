@@ -45,6 +45,13 @@
         .project-title {
             font-size: 1.2em;
             margin: 10px 0;
+            font-weight: bolder;
+            color: #000;
+        }
+        .owner-title {
+            font-size: 1em;
+            margin: 10px 0;
+            font-weight: bold;
             color: #000;
         }
 
@@ -84,6 +91,411 @@
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 <script type="module">
- const _0x4377a9=_0x27e0;(function(_0x2a0cee,_0x2280e5){const _0x3ec6a4=_0x27e0,_0x4b45ad=_0x2a0cee();while(!![]){try{const _0x385401=parseInt(_0x3ec6a4(0x1eb))/0x1*(parseInt(_0x3ec6a4(0x1f4))/0x2)+-parseInt(_0x3ec6a4(0x178))/0x3+parseInt(_0x3ec6a4(0x1ae))/0x4*(parseInt(_0x3ec6a4(0x1b7))/0x5)+-parseInt(_0x3ec6a4(0x16e))/0x6+parseInt(_0x3ec6a4(0x1b9))/0x7+-parseInt(_0x3ec6a4(0x163))/0x8*(parseInt(_0x3ec6a4(0x1db))/0x9)+parseInt(_0x3ec6a4(0x1b4))/0xa*(parseInt(_0x3ec6a4(0x167))/0xb);if(_0x385401===_0x2280e5)break;else _0x4b45ad['push'](_0x4b45ad['shift']());}catch(_0x229b35){_0x4b45ad['push'](_0x4b45ad['shift']());}}}(_0x4706,0xc975a));const allowedEmails=[_0x4377a9(0x1c1),_0x4377a9(0x212),_0x4377a9(0x21a),_0x4377a9(0x1f5),_0x4377a9(0x198),'asahebe47@gmail.com',_0x4377a9(0x20c),_0x4377a9(0x160),_0x4377a9(0x189),_0x4377a9(0x1f0),_0x4377a9(0x1f9),_0x4377a9(0x177),'gnaman719@gmail.com','haziquesayed4@gmail.com',_0x4377a9(0x192),'jobanputramohan7@gmail.com',_0x4377a9(0x1ce),_0x4377a9(0x164),_0x4377a9(0x1c8),_0x4377a9(0x1a8),_0x4377a9(0x1e6),_0x4377a9(0x171),_0x4377a9(0x185),_0x4377a9(0x1d8),_0x4377a9(0x202),_0x4377a9(0x1e8),'pranjalnahata07@gmail.com',_0x4377a9(0x205),_0x4377a9(0x1d5),_0x4377a9(0x179),_0x4377a9(0x17d),'purvasha.choudhari@gmail.com',_0x4377a9(0x1b3),_0x4377a9(0x1f6),_0x4377a9(0x195),_0x4377a9(0x210),_0x4377a9(0x1b0),_0x4377a9(0x217),_0x4377a9(0x1df),_0x4377a9(0x1fd),_0x4377a9(0x19f),_0x4377a9(0x199),_0x4377a9(0x1a7),'shubhamnileshpatil@gmail.com',_0x4377a9(0x1a4),'smkedar30@gmail.com',_0x4377a9(0x1bb),_0x4377a9(0x16c),_0x4377a9(0x1e0),'vidhi.557777@gmail.com',_0x4377a9(0x188),'vishal.rt1900@gmail.com',_0x4377a9(0x187),_0x4377a9(0x19d),_0x4377a9(0x1c7)];function _0x27e0(_0x1fbbbe,_0x36f8c2){const _0x4706bb=_0x4706();return _0x27e0=function(_0x27e067,_0x2d7859){_0x27e067=_0x27e067-0x15f;let _0x2ae628=_0x4706bb[_0x27e067];return _0x2ae628;},_0x27e0(_0x1fbbbe,_0x36f8c2);}import{initializeApp}from'https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js';import{getAuth,onAuthStateChanged,signInWithPopup,GoogleAuthProvider}from'https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js';import{getDatabase,ref,onValue,update,child,set,get}from'https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js';const firebaseConfig={'apiKey':'AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0','authDomain':_0x4377a9(0x19b),'databaseURL':_0x4377a9(0x1f1),'projectId':_0x4377a9(0x1b6),'storageBucket':'xdgm-memorie-wall.appspot.com','messagingSenderId':_0x4377a9(0x19e),'appId':'1:644674909301:web:181ac410a2407ab9ddf43c','measurementId':_0x4377a9(0x1af)};initializeApp(firebaseConfig);const database=getDatabase(),projects=[{'title':_0x4377a9(0x1b5),'project_id':_0x4377a9(0x1f2),'description':_0x4377a9(0x1e9),'videoUrl':_0x4377a9(0x184),'owner':_0x4377a9(0x192)},{'title':_0x4377a9(0x180),'project_id':_0x4377a9(0x162),'description':_0x4377a9(0x16d),'videoUrl':'https://drive.google.com/uc?id=19v8dji63L1SjEF5_ecNqgtjxXHHjdx2Y','owner':_0x4377a9(0x1cb)},{'title':_0x4377a9(0x1fb),'project_id':_0x4377a9(0x1c4),'description':'My\x20Snapchat\x20Lens\x20takes\x20you\x20on\x20a\x20vibrant\x20journey\x20through\x20a\x20coral\x20reef,\x20transforming\x20your\x20face\x20into\x20a\x20playful\x20sea\x20creature\x20with\x20interactive\x20bubbles.\x20It\x27s\x20designed\x20for\x20everyone,\x20but\x20especially\x20kids,\x20to\x20learn\x20about\x20ocean\x20life\x20and\x20have\x20fun!','videoUrl':_0x4377a9(0x1d2),'owner':'work.sghike@gmail.com'},{'title':_0x4377a9(0x1b8),'project_id':_0x4377a9(0x20e),'description':_0x4377a9(0x191),'videoUrl':_0x4377a9(0x20f),'owner':'tanay.khandal02@gmail.com'},{'title':_0x4377a9(0x193),'project_id':_0x4377a9(0x16f),'description':_0x4377a9(0x1d7),'videoUrl':_0x4377a9(0x1f3),'owner':'shreyast2003@gmail.com'},{'title':_0x4377a9(0x1ab),'project_id':_0x4377a9(0x161),'description':_0x4377a9(0x1ba),'videoUrl':_0x4377a9(0x1d4),'owner':'asahebe47@gmail.com'},{'title':_0x4377a9(0x1f8),'project_id':_0x4377a9(0x17b),'description':'Raise\x20your\x20eyebrows\x20and\x20make\x20your\x20rizz\x20stat\x20over\x209000\x20and\x20get\x20all\x20the\x20hot\x20single\x20moms\x20in\x20your\x20area.\x20I\x20wanted\x20to\x20make\x20something\x20funny\x20which\x20anyone\x20can\x20use\x20whenever\x20in\x20any\x20conversation,\x20inspired\x20by\x20kingchris\x27s\x20swag\x20jutsu','videoUrl':'https://drive.google.com/uc?id=16uz-qKnPbkXkjKpaAVgfpTjVOCKyhl4y','owner':'shubhamnileshpatil@gmail.com'},{'title':_0x4377a9(0x20b),'project_id':_0x4377a9(0x17a),'description':_0x4377a9(0x1e2),'videoUrl':_0x4377a9(0x1a6),'owner':'vidhi.557777@gmail.com'},{'title':_0x4377a9(0x1de),'project_id':_0x4377a9(0x204),'description':_0x4377a9(0x207),'videoUrl':_0x4377a9(0x1d1),'owner':_0x4377a9(0x1e6)},{'title':_0x4377a9(0x19c),'project_id':_0x4377a9(0x1ef),'description':_0x4377a9(0x1f7),'videoUrl':'https://drive.google.com/uc?id=11GnqGpub2uaDbA7Gocj93JOzdzvftfAf','owner':_0x4377a9(0x1e0)},{'title':_0x4377a9(0x186),'project_id':_0x4377a9(0x1ff),'description':_0x4377a9(0x19a),'videoUrl':'https://drive.google.com/uc?id=1_mcl4bnSRQ48nqo7r7e7Ler4sacfyGnX','owner':_0x4377a9(0x1f6)},{'title':_0x4377a9(0x1ec),'project_id':_0x4377a9(0x1a1),'description':_0x4377a9(0x194),'videoUrl':'https://drive.google.com/uc?id=1JDsdzFOzsa9z4uxiRzn8FYPvaFVtqorq','owner':_0x4377a9(0x212)},{'title':'Iron\x20Man','project_id':_0x4377a9(0x1dc),'description':'I\x20have\x20used\x20a\x203D\x20Model\x20Face\x20Mask\x20and\x20A\x20Hand\x20Tracker.\x20To\x20distract\x20children\x20while\x20getting\x20an\x20injection.','videoUrl':_0x4377a9(0x16b),'owner':_0x4377a9(0x195)},{'title':'Gobwin','project_id':_0x4377a9(0x1aa),'description':_0x4377a9(0x181),'videoUrl':'https://drive.google.com/uc?id=1JzCErtpi67l57zqS-xY90tIQFEsH8Nev','owner':_0x4377a9(0x200)},{'title':'Indian\x20Movie','project_id':_0x4377a9(0x174),'description':_0x4377a9(0x1e3),'videoUrl':_0x4377a9(0x1ca),'owner':_0x4377a9(0x198)},{'title':_0x4377a9(0x211),'project_id':_0x4377a9(0x1a0),'description':_0x4377a9(0x172),'videoUrl':_0x4377a9(0x1e7),'owner':_0x4377a9(0x201)},{'title':_0x4377a9(0x182),'project_id':_0x4377a9(0x1d6),'description':_0x4377a9(0x1d9),'videoUrl':_0x4377a9(0x1be),'owner':_0x4377a9(0x199)},{'title':_0x4377a9(0x1fc),'project_id':_0x4377a9(0x1c3),'description':_0x4377a9(0x168),'videoUrl':_0x4377a9(0x176),'owner':_0x4377a9(0x187)},{'title':_0x4377a9(0x183),'project_id':_0x4377a9(0x1ed),'description':'Experience\x20the\x20holiday\x20cheer\x20with\x20a\x20festive\x20Christmas-themed\x20face\x20mask\x20and\x20jingle\x20bells\x20music\x20in\x20this\x20joyful\x20lens!\x20The\x20approach\x20focused\x20on\x20blending\x20a\x20lively\x20Christmas\x20ambiance\x20with\x20an\x20AI-generated\x20Christmas-themed\x20face\x20mask,\x20aiming\x20to\x20create\x20a\x20fun\x20and\x20engaging\x20lens.\x20By\x20incorporating\x20familiar\x20elements\x20like\x20jingle\x20bells\x20music\x20and\x20traditional\x20Christmas\x20visuals,\x20the\x20goal\x20was\x20to\x20evoke\x20a\x20sense\x20of\x20celebration\x20and\x20delight,\x20offering\x20users\x20a\x20memorable\x20and\x20enjoyable\x20interaction\x20during\x20the\x20festive\x20period.','videoUrl':_0x4377a9(0x1bc),'owner':'premraval010@gmail.com'},{'title':_0x4377a9(0x1e5),'project_id':_0x4377a9(0x218),'description':'The\x20lens\x20is\x20about\x20how\x20children\x20might\x20feel\x20good\x20experiencing\x20under\x20water\x20experience\x20as\x20a\x20royalty.\x20To\x20make\x20children\x20and\x20people\x20feel\x20like\x20fun.','videoUrl':_0x4377a9(0x1b2),'owner':_0x4377a9(0x166)},{'title':'GenAI\x20Santa','project_id':_0x4377a9(0x1c0),'description':_0x4377a9(0x20a),'videoUrl':'https://drive.google.com/uc?id=1hcsvSU-8bHhuUP-Sf8LqRNVJqM-9Pe60','owner':'kunalrajsingh47@gmail.com'}],projectsContainer=document[_0x4377a9(0x1bd)]('projects-container'),userInfoContainer=document[_0x4377a9(0x1bd)](_0x4377a9(0x213));function renderProjects(_0x1befc4){const _0x389aa8=_0x4377a9;projectsContainer[_0x389aa8(0x1d0)]='',projects['forEach'](_0x362aba=>{const _0x45c402=_0x389aa8;if(_0x45c402(0x206)===_0x45c402(0x206)){const _0x46204d=document[_0x45c402(0x1d3)](_0x45c402(0x209));_0x46204d[_0x45c402(0x17c)][_0x45c402(0x169)](_0x45c402(0x1dd));const _0x1648da=document['createElement'](_0x45c402(0x1bf));_0x1648da[_0x45c402(0x1e1)]=_0x362aba[_0x45c402(0x20d)],_0x1648da[_0x45c402(0x196)]=![],_0x1648da[_0x45c402(0x1ac)]=!![];const _0x26c372=document[_0x45c402(0x1d3)](_0x45c402(0x209));_0x26c372['classList'][_0x45c402(0x169)]('project-title'),_0x26c372[_0x45c402(0x17e)]=_0x362aba['title'];const _0x4cdeb2=document[_0x45c402(0x1d3)](_0x45c402(0x209));_0x4cdeb2[_0x45c402(0x17c)][_0x45c402(0x169)]('project-description'),_0x4cdeb2['textContent']=_0x362aba[_0x45c402(0x18f)];const _0x154b1f=document[_0x45c402(0x1d3)](_0x45c402(0x209));_0x154b1f[_0x45c402(0x17c)][_0x45c402(0x169)](_0x45c402(0x1da));const _0x543ffc=document[_0x45c402(0x1d3)]('button');_0x543ffc[_0x45c402(0x17e)]=_0x45c402(0x18d),_0x543ffc['addEventListener']('click',()=>voteProject(_0x1befc4,_0x362aba['project_id'],_0x362aba['owner'])),_0x154b1f[_0x45c402(0x18c)](_0x543ffc),_0x46204d[_0x45c402(0x18c)](_0x1648da),_0x46204d[_0x45c402(0x18c)](_0x26c372),_0x46204d[_0x45c402(0x18c)](_0x4cdeb2),_0x46204d[_0x45c402(0x18c)](_0x154b1f),projectsContainer[_0x45c402(0x18c)](_0x46204d);}else{if(_0x1da48b[_0x45c402(0x15f)]()){var _0x33652e=_0xc77dbb[_0x45c402(0x170)]()||'';_0x114448(_0xdbd1a6,_0x33652e+',\x20'+_0x28f8ac['email']);}else _0x1d6442(_0x572b2e,_0x51564e[_0x45c402(0x175)]);}});if(_0x1befc4)userInfoContainer['textContent']='Logged\x20in\x20as:\x20'+_0x1befc4[_0x389aa8(0x175)];else{if(_0x389aa8(0x1a2)!==_0x389aa8(0x1a2)){const _0x4d44c9=_0x11c7bf(),_0x41dfdd=new _0x16d0fb();_0x5285fa(_0x4d44c9,_0x41dfdd)['then'](_0x14fd72=>{const _0x9bafbf=_0x389aa8,_0x303962=_0x14fd72[_0x9bafbf(0x1c5)];_0x202e28[_0x9bafbf(0x17e)]='Logged\x20in\x20as:\x20'+_0x303962['email'],_0x31cb4c(_0x303962);})[_0x389aa8(0x1c2)](_0x47105d=>{const _0x2e13f9=_0x389aa8;_0x382034[_0x2e13f9(0x214)](_0x47105d[_0x2e13f9(0x208)]),_0x583ed1(_0x2e13f9(0x197));});}else{const _0x483147=document[_0x389aa8(0x1d3)](_0x389aa8(0x1ea));_0x483147['textContent']=_0x389aa8(0x16a),_0x483147['addEventListener'](_0x389aa8(0x1e4),signInWithGoogle),userInfoContainer['appendChild'](_0x483147);}}}function _0x4706(){const _0x49dc5f=['ashishmaharana1998@gmail.com','11Gymito','This\x20is\x20a\x20gaming\x20lens\x20that\x20I\x20created\x20which\x20basically\x20is\x20played\x20with\x20the\x20sound\x20microphone\x20captures\x20from\x20your\x20surrounding,\x20please\x20try\x20this\x20lens\x20in\x20a\x20quiet\x20place\x20to\x20work\x20best.\x20Tap\x20to\x20start\x20the\x20game,\x20you\x20can\x20either\x20whistle\x20or\x20make\x20any\x20sound\x20to\x20make\x20the\x20runner\x20jump,\x20users\x20need\x20to\x20avoid\x20the\x20obstacle\x20that\x20is\x20rocks\x20that\x20come\x20in\x20way\x20of\x20the\x20runner\x20and\x20go\x20as\x20long\x20you\x20can,\x20this\x20is\x20an\x20endless\x20game,','add','Sign\x20In\x20To\x20VOTE','https://drive.google.com/uc?id=1CpqU_iZxubQkdydFPfNKhSsAviP08FE_','tesimsodha7046718858@gmail.com','The\x20lens\x20consist\x20of\x20a\x20default\x20a\x20joker\x20face,\x20when\x20a\x20user\x20smiles\x20the\x20joker\x20face\x20changes\x20to\x20a\x20scary\x20face\x20of\x20a\x20willy\x20wonka\x20type\x20joker.','5432688kKGVKz','mumbai','val','manavrajpurohit007@gmail.com','It\x20is\x20a\x20lens\x20about\x20alien\x20and\x20space','forEach','indian-movie','email','https://drive.google.com/uc?id=1OdaT5cjM_y_qP18WtsjJPOKK6rTQ0S-L','gaurimca2022_19@ncrdsims.edu.in','2629200owtmqy','prernachavan232@gmail.com','avatar','swag-jutsu','classList','priyanshusondhiya557@gmail.com','textContent','projects/','Willy\x20Wonka\x20Scary','It\x27s\x20the\x20Gobwin\x20time!\x20Just\x20give\x20me\x20the\x20green\x20already!Green\x20being\x20the\x20money,\x20the\x20user\x20is\x20asking\x20for\x20money\x20this\x20holiday\x20season.\x20The\x20same\x20way\x20I\x20am\x20asking\x20for\x20a\x20cash\x20prize\x20from\x20you\x20guys!','Shraddha_kadam','Merry\x20Christmas','https://drive.google.com/uc?id=11eN6-pXSw1dEo-6fA7o8iG3wA_o2Z7ds','manishchaurasia11@gmail.com','Apt’s\x20Space','wasimghole97@gmail.com','vinay.somani09@gmail.com','biz.shraystha@gmail.com','xJAjA','project_id','appendChild','Vote','/voters','description','vAQRk','Lens\x20created\x20using\x20material\x20graph\x20editor\x20using\x20java\x20script\x20-\x20There\x20are\x20two\x20buttons\x20(\x20Addition\x20and\x20Subtraction\x20)\x20FOr\x20adding\x20or\x20subtracting\x20images.','heet01622@gmail.com','Mumbai','The\x20lens\x20consists\x20of\x2017\x20unique\x20and\x20fun\x20sunglasses\x20that\x20a\x20user\x20can\x20tap\x20to\x20change,\x20the\x20sunglasses\x20were\x20designed\x20to\x20be\x20fun\x20and\x20colorful\x20so\x20that\x20children\x20enjoy\x20wearing\x20them.\x20I\x20wanted\x20to\x20create\x20a\x20lens\x20that\x20uses\x20genAI\x20and\x20is\x20also\x20interactive\x20so\x20that\x20LadinAbattle\x20can\x20use\x20this\x20lens\x20to\x20entertain\x20children.\x20','rangilamunawwar@gmail.com','autoplay','Google\x20Sign-In\x20failed.','aniketapraj1002@gmail.com','shraddhask493@gmail.com','Allows\x20user\x20to\x20dive\x20into\x20celestial\x20live\x20and\x20experience\x20a\x20submersive\x20life\x20of\x20the\x20celestial\x20being,\x20it\x20also\x20depicts\x20a\x20small\x20gesture\x20of\x20having\x20multiple\x20eye\x20sockets\x20which\x20is\x20very\x20adversive.','xdgm-memorie-wall.firebaseapp.com','Christmas\x20Earrings🎄','work.sghike@gmail.com','644674909301','sayyadhani7@gmail.com','shraddhabkedar','sunglasses','QKnMe','Error\x20getting\x20project\x20votes:','simransankhe4@gmail.com','addEventListener','https://drive.google.com/uc?id=1sDISIy8fWTl4D2MGwAD7DCE_Hwoj8pDW','shreyast2003@gmail.com','maharanaasish98@gmail.com','Logged\x20in\x20as:\x20','gobwin','Alam','controls','Vote\x20recorded!','111932qKNxZc','G-ZNPNV3TGMG','rithvikshetty2004@gmail.com','project-description','https://drive.google.com/uc?id=1tkg_lbxmSAsoAeDL9PZ_3MRW1f6JTpP8','purvikedia20@gmail.com','1556230RiIAvd','Christmas\x20Cap','xdgm-memorie-wall','270JIQlmt','Glitch\x20me','2659545dtSprx','Monster\x20flower\x20with\x20Butterfly\x20(NO\x20AI)','tanay.khandal02@gmail.com','https://drive.google.com/uc?id=1r1AZAT-tF7m0ELqc7_cMSFSdHLmz3RcH','getElementById','https://drive.google.com/uc?id=1QlzvqkTxGqE2GdJCHEFE1GmIhaibHqfr','video','genai-santa','aadarsh@humanespace.in','catch','whistle-runner','aqua','user','Error\x20getting\x20voterlist:','yashashvidevadiga@gmail.com','kunalrajsingh47@gmail.com','includes','https://drive.google.com/uc?id=1-gZ4z-QBI4K4KYNh1w-njtc7TfewxIm0','haziquesayed4@gmail.com','You\x20have\x20already\x20voted\x20for\x20another\x20project.','CKcOx','kashivaryan54@gmail.com','You\x20cannot\x20vote\x20for\x20your\x20own\x20project','innerHTML','https://drive.google.com/uc?id=1o-y4gs7CYq-folU5qimysxe_BEP6jlRI','https://drive.google.com/uc?id=1LWji8aHBYrB-LGzaDn8N1hHkFtj8KWA8','createElement','https://drive.google.com/uc?id=1MVna3I09m423zS0EL_mGjx3QkA7soCa9','premraval010@gmail.com','shraddha-kadam','I\x20thought\x20to\x20show\x20the\x20beauty\x20of\x20Mumbai\x20City\x20to\x20all\x20the\x20Snapchat\x20users\x20around\x20the\x20world\x20and\x20create\x20an\x20exictment\x20for\x20them\x20to\x20come\x20and\x20travel\x20in\x20Mumbai','manishkumar.pandey@slrtce.in','Space\x20related','reactions','36909xtEXog','iron-man','project','Earth\x20to\x20Mars','sandeep@augbox.in','unnati@humanespace.in','src','I\x20loved\x20the\x20vfx\x20and\x20the\x20character\x20of\x20avatar\x20movie\x20.\x20and\x20I\x20wanted\x20to\x20see\x20myself\x20how\x20I\x20will\x20look\x20if\x20i\x20was\x20a\x20Na\x27vi\x20.','Randomizer\x20to\x20guess\x20current\x20released\x20Indian\x20movies.\x20To\x20catch\x20the\x20trend\x20because\x20this\x20movies\x20are\x20currently\x20trending\x20easy\x20to\x20search\x20by\x20keys','click','Underwater\x20royal','manavr472@gmail.com','https://drive.google.com/uc?id=1N2Szl1bevORjpT5DHDrbWQ-FQ6X6kpcb','nayakmeet0704@gmail.com','CRITSMAS\x20CAP','button','22481fihcPt','Sunglasses','merry-christmas','title','christmas-earrings','eshiksha.ai@gmail.com','https://xdgm-memorie-wall-default-rtdb.firebaseio.com','christmas-cap','https://drive.google.com/uc?id=1UzmSj78IO2jEGPHF41gYnqEC_jzx62py','94JLYjSq','alisha20may@gmail.com','raj.jaiswar44@gmail.com','The\x20idea\x20was\x20have\x20a\x20christmas\x20ornament\x20as\x20an\x20earring.\x20Because\x20\x27tis\x20the\x20season!\x20I\x20modelled\x20the\x20ornament\x20earring\x20in\x20blender\x20and\x20rigged\x20it.\x20I\x20used\x20PBR\x20generative\x20AI\x20to\x20make\x20the\x20ornament\x20look\x20like\x20a\x20christmas\x20snow\x20globe.\x20I\x20added\x20physics\x20in\x20the\x20lens.\x20Then\x20I\x20added\x20some\x20makeup\x20and\x20snow\x20vfx.\x20Lastly,\x20I\x20used\x20texture\x20generative\x20AI\x20to\x20generate\x20a\x20fun\x20christmas\x20market\x20background\x20behind\x20the\x20user.','Swag\x20Jutsu','gauravyadav7403@student.sfit.ac.in','Please\x20log\x20in\x20to\x20vote.','Aqua','Whistle\x20Runner','saumyasanghvi03@gmail.com','uid','apts-space','deedlee.do@gmail.com','smkedar30@gmail.com','mansulkar.omkar@gmail.com','then','earth-to-mars','prateekarote07@gmail.com','ZKMKM','Going\x20to\x20Mars\x20from\x20Earth.\x20I\x20thought\x20I\x20would\x20make\x20a\x20informative\x20planet\x20models','message','div','I\x20was\x20trying\x20to\x20use\x20GenAI\x20to\x20its\x20fullest\x20and\x20only\x20using\x20Lens\x20Studio\x20Resources\x20to\x20its\x20fullest.\x20I\x20wanted\x20to\x20create\x20a\x20small\x20Santa\x20themed\x20lens\x20which\x20is\x20only\x20made\x20with\x20GenAI\x20textures\x20','Avatar','atharv.choughule@gmail.com','videoUrl','glitch-me','https://drive.google.com/uc?id=1zSeUIPAwEhtKNPxkgNaekWOpKg2B-dDk','ridsid51@gmail.com','Shraddhabkedar','aakash.mansukhani@gmail.com','user-info','error','WicuF','ZqNQc','salmaan.bhati@gmail.com','underwater-royal','/votes','aditya.patel1@aiesec.net','exists','bhanpiyaanuraag@gmail.com','alam','willy-wonka','968bRVwCA','ksaiansul@gmail.com','You\x20are\x20not\x20allowed\x20to\x20vote'];_0x4706=function(){return _0x49dc5f;};return _0x4706();}function voteProject(_0x32c920,_0xb07ae9,_0xe54049){const _0x2cfbfe=_0x4377a9;if(!_0x32c920){alert(_0x2cfbfe(0x1fa));return;}if(_0x32c920&&!allowedEmails[_0x2cfbfe(0x1c9)](_0x32c920[_0x2cfbfe(0x175)])){if('vAQRk'===_0x2cfbfe(0x190)){alert(_0x2cfbfe(0x165));return;}else _0x1b3bc2(_0x1021e3,_0x2f4caf['email']);}if(_0x32c920&&_0xe54049===_0x32c920[_0x2cfbfe(0x175)]){if('CKcOx'===_0x2cfbfe(0x1cd)){alert(_0x2cfbfe(0x1cf));return;}else _0x2b9e30[_0x2cfbfe(0x1d0)]='',_0x2795b4(_0x50fb02);}const _0x19453b=ref(database,_0x2cfbfe(0x17f)+_0xb07ae9+_0x2cfbfe(0x219)),_0xaa7f5f=ref(database,'projects/'+_0xb07ae9+_0x2cfbfe(0x18e)),_0x153ccf=ref(database,'projects/voterlist');get(_0x153ccf)[_0x2cfbfe(0x203)](_0x43fe6a=>{const _0xe5fcd5=_0x2cfbfe,_0x6e4d66=_0x43fe6a[_0xe5fcd5(0x170)]()||{};if(_0x6e4d66[_0x32c920[_0xe5fcd5(0x1fe)]]){if(_0xe5fcd5(0x18a)===_0xe5fcd5(0x18a))alert(_0xe5fcd5(0x1cc));else{_0x16b0ac[_0xe5fcd5(0x1d0)]='',_0x7b5a75[_0xe5fcd5(0x173)](_0x440b63=>{const _0x5e4f06=_0xe5fcd5,_0x23a1e8=_0x4b9b9c[_0x5e4f06(0x1d3)](_0x5e4f06(0x209));_0x23a1e8[_0x5e4f06(0x17c)][_0x5e4f06(0x169)](_0x5e4f06(0x1dd));const _0x2b9e7c=_0x39f884['createElement'](_0x5e4f06(0x1bf));_0x2b9e7c['src']=_0x440b63[_0x5e4f06(0x20d)],_0x2b9e7c[_0x5e4f06(0x196)]=![],_0x2b9e7c[_0x5e4f06(0x1ac)]=!![];const _0x4c71c8=_0x403eda[_0x5e4f06(0x1d3)](_0x5e4f06(0x209));_0x4c71c8['classList']['add']('project-title'),_0x4c71c8[_0x5e4f06(0x17e)]=_0x440b63[_0x5e4f06(0x1ee)];const _0xadbc5=_0x199420['createElement'](_0x5e4f06(0x209));_0xadbc5[_0x5e4f06(0x17c)][_0x5e4f06(0x169)](_0x5e4f06(0x1b1)),_0xadbc5['textContent']=_0x440b63['description'];const _0x4759b2=_0x3bf614[_0x5e4f06(0x1d3)](_0x5e4f06(0x209));_0x4759b2['classList'][_0x5e4f06(0x169)](_0x5e4f06(0x1da));const _0x1ce676=_0x201d89[_0x5e4f06(0x1d3)](_0x5e4f06(0x1ea));_0x1ce676[_0x5e4f06(0x17e)]=_0x5e4f06(0x18d),_0x1ce676[_0x5e4f06(0x1a5)]('click',()=>_0x5abdf9(_0x1c493c,_0x440b63[_0x5e4f06(0x18b)],_0x440b63['owner'])),_0x4759b2['appendChild'](_0x1ce676),_0x23a1e8['appendChild'](_0x2b9e7c),_0x23a1e8[_0x5e4f06(0x18c)](_0x4c71c8),_0x23a1e8[_0x5e4f06(0x18c)](_0xadbc5),_0x23a1e8[_0x5e4f06(0x18c)](_0x4759b2),_0x5a9fe3[_0x5e4f06(0x18c)](_0x23a1e8);});if(_0x52485b)_0x4b6c71[_0xe5fcd5(0x17e)]=_0xe5fcd5(0x1a9)+_0xafb905[_0xe5fcd5(0x175)];else{const _0x24b0d0=_0x38b807[_0xe5fcd5(0x1d3)](_0xe5fcd5(0x1ea));_0x24b0d0[_0xe5fcd5(0x17e)]='Sign\x20In\x20To\x20VOTE',_0x24b0d0['addEventListener'](_0xe5fcd5(0x1e4),_0x327f4f),_0x10812a[_0xe5fcd5(0x18c)](_0x24b0d0);}}}else{if(_0xe5fcd5(0x215)===_0xe5fcd5(0x216))_0x5d1b14['error'](_0x1c167c[_0xe5fcd5(0x208)]),_0x5b2391('Google\x20Sign-In\x20failed.');else{const _0x5b5d81=confirm('Once\x20you\x20vote,\x20you\x20cannot\x20vote\x20for\x20any\x20other\x20project.\x20Are\x20you\x20sure\x20you\x20want\x20to\x20vote\x20for\x20this\x20project?');_0x5b5d81&&get(_0x19453b)[_0xe5fcd5(0x203)](_0x70e82a=>{const _0x28a266=_0xe5fcd5;if(_0x70e82a[_0x28a266(0x15f)]()){const _0x488434=_0x70e82a[_0x28a266(0x170)]()||0x0;set(_0x19453b,_0x488434+0x1),alert(_0x28a266(0x1ad)),update(_0x153ccf,{[_0x32c920[_0x28a266(0x1fe)]]:!![]});}else set(_0x19453b,0x1),alert(_0x28a266(0x1ad)),update(_0x153ccf,{[_0x32c920[_0x28a266(0x1fe)]]:!![]});get(_0xaa7f5f)[_0x28a266(0x203)](_0x24d2d8=>{const _0x50c762=_0x28a266;if(_0x24d2d8['exists']()){var _0x2cf87a=_0x24d2d8[_0x50c762(0x170)]()||'';set(_0xaa7f5f,_0x2cf87a+',\x20'+_0x32c920[_0x50c762(0x175)]);}else set(_0xaa7f5f,_0x32c920[_0x50c762(0x175)]);});})['catch'](_0x58fb93=>{const _0x3f58e0=_0xe5fcd5;console[_0x3f58e0(0x214)](_0x3f58e0(0x1a3),_0x58fb93);});}}})[_0x2cfbfe(0x1c2)](_0x251316=>{const _0x58c877=_0x2cfbfe;console[_0x58c877(0x214)](_0x58c877(0x1c6),_0x251316);});}function checkAuthState(){const _0x1b34ce=getAuth();onAuthStateChanged(_0x1b34ce,_0x2eee18=>{const _0x227994=_0x27e0;userInfoContainer[_0x227994(0x1d0)]='',renderProjects(_0x2eee18);});}function signInWithGoogle(){const _0x444523=_0x4377a9,_0x251923=getAuth(),_0x9fe302=new GoogleAuthProvider();signInWithPopup(_0x251923,_0x9fe302)[_0x444523(0x203)](_0x4e1993=>{const _0x4f45ee=_0x444523,_0x3ebf01=_0x4e1993[_0x4f45ee(0x1c5)];userInfoContainer[_0x4f45ee(0x17e)]=_0x4f45ee(0x1a9)+_0x3ebf01[_0x4f45ee(0x175)],renderProjects(_0x3ebf01);})['catch'](_0x28db6e=>{const _0x4f4ddf=_0x444523;console[_0x4f4ddf(0x214)](_0x28db6e[_0x4f4ddf(0x208)]),alert(_0x4f4ddf(0x197));});}checkAuthState();</script>
+ const allowedEmails = [
+  'aadarsh@humanespace.in',
+  'aakash.mansukhani@gmail.com',
+  'aditya.patel1@aiesec.net',
+  'alisha20may@gmail.com',
+  'aniketapraj1002@gmail.com',
+  'asahebe47@gmail.com',
+  'atharv.choughule@gmail.com',
+  'bhanpiyaanuraag@gmail.com',
+  'biz.shraystha@gmail.com',
+  'eshiksha.ai@gmail.com',
+  'gauravyadav7403@student.sfit.ac.in',
+  'gaurimca2022_19@ncrdsims.edu.in',
+  'gnaman719@gmail.com',
+  'haziquesayed4@gmail.com',
+  'heet01622@gmail.com',
+  'jobanputramohan7@gmail.com',
+  'kashivaryan54@gmail.com',
+  'ksaiansul@gmail.com',
+  'kunalrajsingh47@gmail.com',
+  'maharanaasish98@gmail.com',
+  'manavr472@gmail.com',
+  'manavrajpurohit007@gmail.com',
+  'manishchaurasia11@gmail.com',
+  'manishkumar.pandey@slrtce.in',
+  'mansulkar.omkar@gmail.com',
+  'nayakmeet0704@gmail.com',
+  'pranjalnahata07@gmail.com',
+  'prateekarote07@gmail.com',
+  'premraval010@outlook.com',
+  'prernachavan232@gmail.com',
+  'priyanshusondhiya557@gmail.com',
+  'purvasha.choudhari@gmail.com',
+  'purvikedia20@gmail.com',
+  'raj.jaiswar44@gmail.com',
+  'rangilamunawwar@gmail.com',
+  'ridsid51@gmail.com',
+  'rithvikshetty2004@gmail.com',
+  'salmaan.bhati@gmail.com',
+  'sandeep@augbox.in',
+  'saumyasanghvi03@gmail.com',
+  'sayyadhani7@gmail.com',
+  'shraddhask493@gmail.com',
+  'shreyast2003@gmail.com',
+  'shubhamnileshpatil@gmail.com',
+  'simransankhe4@gmail.com',
+  'smkedar30@gmail.com',
+  'tanay.khandal02@gmail.com',
+  'tesimsodha7046718858@gmail.com',
+  'unnati@humanespace.in',
+  'vidhi.557777@gmail.com',
+  'vinay.somani09@gmail.com',
+  'vishal.rt1900@gmail.com',
+  'wasimghole97@gmail.com',
+  'work.sghike@gmail.com',
+  'yashashvidevadiga@gmail.com',
+ 
+];
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js';
+    import { getDatabase, ref, onValue, update, child, set,get } from 'https://www.gstatic.com/firebasejs/9.1.2/firebase-database.js';
+
+    // Initialize Firebase with your project configuration
+    const firebaseConfig = {
+    apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+    authDomain: "xdgm-memorie-wall.firebaseapp.com",
+    databaseURL: "https://xdgm-memorie-wall-default-rtdb.firebaseio.com",
+    projectId: "xdgm-memorie-wall",
+    storageBucket: "xdgm-memorie-wall.appspot.com",
+    messagingSenderId: "644674909301",
+    appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+    measurementId: "G-ZNPNV3TGMG"
+  };
+
+    initializeApp(firebaseConfig);
+
+    const database = getDatabase();
+
+    // Sample data for projects
+    const projects = [
+        {
+            title: 'Christmas Cap',
+            project_id:'christmas-cap',
+            description: 'CRITSMAS CAP',
+            videoUrl: 'https://drive.google.com/uc?id=11eN6-pXSw1dEo-6fA7o8iG3wA_o2Z7ds',
+            owner:"heet01622@gmail.com",
+            ownerName:"Heet Ruparel"
+        },
+        {
+            title: 'Willy Wonka Scary',
+            project_id:'willy-wonka',
+            description: 'The lens consist of a default a joker face, when a user smiles the joker face changes to a scary face of a willy wonka type joker.',
+            videoUrl: 'https://drive.google.com/uc?id=19v8dji63L1SjEF5_ecNqgtjxXHHjdx2Y',
+            owner:"haziquesayed4@gmail.com",
+            ownerName:"Mohammed Hazique Sayed"
+        },
+        {
+            title: 'Aqua',
+            project_id:'aqua',
+            description: "My Snapchat Lens takes you on a vibrant journey through a coral reef, transforming your face into a playful sea creature with interactive bubbles. It's designed for everyone, but especially kids, to learn about ocean life and have fun!",
+            videoUrl: 'https://drive.google.com/uc?id=1LWji8aHBYrB-LGzaDn8N1hHkFtj8KWA8',
+            owner:"work.sghike@gmail.com",
+            ownerName:"Sudhanshu"
+        },
+        {
+            title: 'Glitch me',
+            project_id:'glitch-me',
+            description: 'Lens created using material graph editor using java script - There are two buttons ( Addition and Subtraction ) FOr adding or subtracting images.',
+            videoUrl: 'https://drive.google.com/uc?id=1zSeUIPAwEhtKNPxkgNaekWOpKg2B-dDk',
+            owner:"tanay.khandal02@gmail.com",
+            ownerName:"Tanay Khandal"
+        },
+        {
+            title: 'Mumbai',
+            project_id:'mumbai',
+            description: 'I thought to show the beauty of Mumbai City to all the Snapchat users around the world and create an exictment for them to come and travel in Mumbai',
+            videoUrl: 'https://drive.google.com/uc?id=1UzmSj78IO2jEGPHF41gYnqEC_jzx62py',
+            owner:"shreyast2003@gmail.com",
+            ownerName: "Shreyas Thakur"
+        },
+        {
+            title: 'Alam',
+            project_id:'alam',
+            description: 'Monster flower with Butterfly (NO AI)',
+            videoUrl: 'https://drive.google.com/uc?id=1MVna3I09m423zS0EL_mGjx3QkA7soCa9',
+            owner:"asahebe47@gmail.com",
+            ownerName:"OD Alam"
+        },
+        {
+            title: 'Swag Jutsu',
+            project_id:'swag-jutsu',
+            description: "Raise your eyebrows and make your rizz stat over 9000 and get all the hot single moms in your area. I wanted to make something funny which anyone can use whenever in any conversation, inspired by kingchris's swag jutsu",
+            videoUrl: 'https://drive.google.com/uc?id=16uz-qKnPbkXkjKpaAVgfpTjVOCKyhl4y',
+            owner:"shubhamnileshpatil@gmail.com",
+            ownerName:"Shubham Patil"
+        },
+        {
+            title: 'Avatar',
+            project_id:'avatar',
+            description: "I loved the vfx and the character of avatar movie . and I wanted to see myself how I will look if i was a Na'vi .",
+            videoUrl: 'https://drive.google.com/uc?id=1sDISIy8fWTl4D2MGwAD7DCE_Hwoj8pDW',
+            owner:"vidhi.557777@gmail.com",
+            ownerName: "Vidhi Bhanushali"
+        },
+        {
+            title: 'Earth to Mars',
+            project_id:'earth-to-mars',
+            description: 'Going to Mars from Earth. I thought I would make a informative planet models',
+            videoUrl: 'https://drive.google.com/uc?id=1o-y4gs7CYq-folU5qimysxe_BEP6jlRI',
+            owner:"manavr472@gmail.com",
+            ownerName:"Manav Rajpurohit"
+        },
+        {
+            title: 'Christmas Earrings🎄',
+            project_id:'christmas-earrings',
+            description: "The idea was have a christmas ornament as an earring. Because 'tis the season! I modelled the ornament earring in blender and rigged it. I used PBR generative AI to make the ornament look like a christmas snow globe. I added physics in the lens. Then I added some makeup and snow vfx. Lastly, I used texture generative AI to generate a fun christmas market background behind the user.",
+            videoUrl: 'https://drive.google.com/uc?id=11GnqGpub2uaDbA7Gocj93JOzdzvftfAf',
+            owner:"unnati@humanespace.in",
+            ownerName:"Unnati Israni"
+        },
+        {
+            title: "Apt’s Space",
+            project_id:'apts-space',
+            description: "Allows user to dive into celestial live and experience a submersive life of the celestial being, it also depicts a small gesture of having multiple eye sockets which is very adversive.",
+            videoUrl: 'https://drive.google.com/uc?id=1_mcl4bnSRQ48nqo7r7e7Ler4sacfyGnX',
+            owner:"raj.jaiswar44@gmail.com",
+            ownerName:"Raj Jaiswar"
+        },
+     
+        {
+            title: 'Sunglasses',
+            project_id:'sunglasses',
+            description: 'The lens consists of 17 unique and fun sunglasses that a user can tap to change, the sunglasses were designed to be fun and colorful so that children enjoy wearing them. I wanted to create a lens that uses genAI and is also interactive so that LadinAbattle can use this lens to entertain children. ',
+            videoUrl: 'https://drive.google.com/uc?id=1JDsdzFOzsa9z4uxiRzn8FYPvaFVtqorq',
+            owner:"aakash.mansukhani@gmail.com",
+            ownerName:"Aakash Mansukhani"
+        },
+        {
+            title: 'Iron Man',
+            project_id:'iron-man',
+            description: 'I have used a 3D Model Face Mask and A Hand Tracker. To distract children while getting an injection.',
+            videoUrl: 'https://drive.google.com/uc?id=1CpqU_iZxubQkdydFPfNKhSsAviP08FE_',
+            owner:"rangilamunawwar@gmail.com",
+            ownerName: "Mohammed Munawwar Rangila"
+        },
+        {
+            title: 'Gobwin',
+            project_id:'gobwin',
+            description: "It's the Gobwin time! Just give me the green already!Green being the money, the user is asking for money this holiday season. The same way I am asking for a cash prize from you guys!",
+            videoUrl: 'https://drive.google.com/uc?id=1JzCErtpi67l57zqS-xY90tIQFEsH8Nev',
+            owner:"deedlee.do@gmail.com",
+            ownerName:"Aadarsh Pandey"
+        },
+        {
+            title: 'Indian Movie',
+            project_id:'indian-movie',
+            description: "Randomizer to guess current released Indian movies. To catch the trend because this movies are currently trending easy to search by keys",
+            videoUrl: 'https://drive.google.com/uc?id=1-gZ4z-QBI4K4KYNh1w-njtc7TfewxIm0',
+            owner:"aniketapraj1002@gmail.com",
+            ownerName:"Aniket Apraj"
+        },
+        {
+            title: 'Shraddhabkedar',
+            project_id:'shraddhabkedar',
+            description: 'It is a lens about alien and space',
+            videoUrl: 'https://drive.google.com/uc?id=1N2Szl1bevORjpT5DHDrbWQ-FQ6X6kpcb',
+            owner:"smkedar30@gmail.com",
+            ownerName:"Shraddha Kedar"
+        },
+        {
+            title: 'Shraddha_kadam',
+            project_id:'shraddha-kadam',
+            description: 'Space related',
+            videoUrl: 'https://drive.google.com/uc?id=1QlzvqkTxGqE2GdJCHEFE1GmIhaibHqfr',
+            owner:"shraddhask493@gmail.com",
+            ownerName:"Shraddha Kadam"
+        },
+        {
+            title: 'Whistle Runner',
+            project_id:'whistle-runner',
+            description: 'This is a gaming lens that I created which basically is played with the sound microphone captures from your surrounding, please try this lens in a quiet place to work best. Tap to start the game, you can either whistle or make any sound to make the runner jump, users need to avoid the obstacle that is rocks that come in way of the runner and go as long you can, this is an endless game,',
+            videoUrl: 'https://drive.google.com/uc?id=1OdaT5cjM_y_qP18WtsjJPOKK6rTQ0S-L',
+            owner:"wasimghole97@gmail.com",
+            ownerName:"Wasim Ghole"
+        },
+        {
+            title: 'Merry Christmas',
+            project_id:'merry-christmas',
+            description: 'Experience the holiday cheer with a festive Christmas-themed face mask and jingle bells music in this joyful lens! The approach focused on blending a lively Christmas ambiance with an AI-generated Christmas-themed face mask, aiming to create a fun and engaging lens. By incorporating familiar elements like jingle bells music and traditional Christmas visuals, the goal was to evoke a sense of celebration and delight, offering users a memorable and enjoyable interaction during the festive period.',
+            videoUrl: 'https://drive.google.com/uc?id=1r1AZAT-tF7m0ELqc7_cMSFSdHLmz3RcH',
+            owner:"premraval010@outlook.com",
+            ownerName:"Prem Raval"
+        },
+      
+        {
+            title: 'Underwater royal',
+            project_id:'underwater-royal',
+            description: 'The lens is about how children might feel good experiencing under water experience as a royalty. To make children and people feel like fun.',
+            videoUrl: 'https://drive.google.com/uc?id=1tkg_lbxmSAsoAeDL9PZ_3MRW1f6JTpP8',
+            owner:"ashishmaharana1998@gmail.com",
+            ownerName:"Ashish Mahrana"
+        },
+        {
+            title: 'GenAI Santa',
+            project_id:'genai-santa',
+            description: 'I was trying to use GenAI to its fullest and only using Lens Studio Resources to its fullest. I wanted to create a small Santa themed lens which is only made with GenAI textures ',
+            videoUrl: 'https://drive.google.com/uc?id=1hcsvSU-8bHhuUP-Sf8LqRNVJqM-9Pe60',
+            owner:"kunalrajsingh47@gmail.com",
+            ownerName:"Kunalraj Singh"
+        },
+        // Add more projects here
+    ];
+
+    const projectsContainer = document.getElementById('projects-container');
+    const userInfoContainer = document.getElementById('user-info');
+
+    // Function to render projects
+    function renderProjects(user) {
+       
+        // Clear existing content
+        projectsContainer.innerHTML = '';
+
+        projects.forEach(project => {
+            const projectElement = document.createElement('div');
+            projectElement.classList.add('project');
+
+            const videoElement = document.createElement('video');
+            videoElement.src = project.videoUrl;
+            videoElement.autoplay = false;
+            videoElement.controls = true;
+
+            const titleElement = document.createElement('div');
+            titleElement.classList.add('project-title');
+            titleElement.textContent = project.title;
+
+            const ownerElement = document.createElement('div');
+            ownerElement.classList.add('owner-title');
+            ownerElement.textContent = 'By '+ project.ownerName;
+
+            const descriptionElement = document.createElement('div');
+            descriptionElement.classList.add('project-description');
+            descriptionElement.textContent = project.description;
+
+            const reactionsElement = document.createElement('div');
+            reactionsElement.classList.add('reactions');
+           
+            projectElement.appendChild(videoElement);
+            projectElement.appendChild(titleElement);
+            projectElement.appendChild(ownerElement);
+            projectElement.appendChild(descriptionElement);
+            projectElement.appendChild(reactionsElement);
+
+            projectsContainer.appendChild(projectElement);
+        });
+
+        // Render login button or Google Sign-In button
+        if (user) {
+            userInfoContainer.textContent = `Logged in as: ${user.email}`;
+        } else {
+            const googleSignInButton = document.createElement('button');
+            googleSignInButton.textContent = 'Sign in with Google';
+            googleSignInButton.addEventListener('click', signInWithGoogle);
+            userInfoContainer.appendChild(googleSignInButton);
+        }
+    }
+
+    // Function to handle voting
+    function voteProject(user, projectId, owner) {
+    if (!user) {
+        alert('Please log in to vote.');
+        return;
+    }
+    if (user && !allowedEmails.includes(user.email)) {
+        alert('You are not allowed to vote');
+        return;
+    }
+    if (user && owner === user.email) {
+        alert('You cannot vote for your own project');
+        return;
+    }
+
+    const projectVotesRef = ref(database, `projects/${projectId}/votes`);
+    const userVotesRef = ref(database, `projects/${projectId}/voters`);
+    const voterlistRef = ref(database, `projects/voterlist`);
+
+    // Check if the user has already voted on another project
+    get(voterlistRef)
+        .then((voterlistSnapshot) => {
+            const voterlist = voterlistSnapshot.val() || {};
+            
+            if (voterlist[user.uid]) {
+                alert('You have already voted for another project.');
+            } else {
+                // User hasn't voted on another project, proceed to vote for the current project
+                const confirmVote = confirm('Once you vote, you cannot vote for any other project. Are you sure you want to vote for this project?');
+                
+                if (confirmVote) {
+                    get(projectVotesRef)
+                        .then((snapshot) => {
+                            if (snapshot.exists()) {
+                                const currentVotes = snapshot.val() || 0;
+
+                             
+                                    // Update votes in the database
+                                    set(projectVotesRef, currentVotes + 1);
+                                    alert('Vote recorded!');
+                                    
+                                    // Update the voterlist to mark that the user has voted
+                                    update(voterlistRef, { [user.uid]: true });
+                                
+                            } else {
+                                // If the project reference doesn't exist, create it and set the initial votes
+                                set(projectVotesRef, 1);
+                                alert('Vote recorded!');
+                                
+                                // Update the voterlist to mark that the user has voted
+                                update(voterlistRef, { [user.uid]: true });
+                            }
+                            get(userVotesRef)
+                            .then((snapshot)=>{
+                                if(snapshot.exists()){
+                                    var currentVoters = snapshot.val()||""
+                                    set(userVotesRef,currentVoters+", "+user.email)
+                                }
+                                else{
+                                    set(userVotesRef,user.email)
+                                }
+                            })
+                        })
+                        .catch((error) => {
+                            console.error('Error getting project votes:', error);
+                        });
+                }
+            }
+        })
+        .catch((error) => {
+            console.error('Error getting voterlist:', error);
+        });
+}
+    // Function to check user authentication status
+    function checkAuthState() {
+        const auth = getAuth();
+        onAuthStateChanged(auth, user => {
+            userInfoContainer.innerHTML = ''; // Clear existing content
+            renderProjects(user);
+        });
+    }
+
+    // Function to sign in with Google
+    function signInWithGoogle() {
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then(result => {
+                const user = result.user;
+                userInfoContainer.textContent = `Logged in as: ${user.email}`;
+                renderProjects(user);
+            })
+            .catch(error => {
+                console.error(error.message);
+                alert('Google Sign-In failed.');
+            });
+    }
+
+    // Check authentication state when the page loads
+    checkAuthState();</script>
 </body>
 </html>
