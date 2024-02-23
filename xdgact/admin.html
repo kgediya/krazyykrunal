@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Allocation - Admin</title>
+<style>
+/* CSS Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.admin-user-list {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-user-list h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.admin-user-list p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.button-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.button-section button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.situation-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+</style>
+</head>
+<body>
+<div class="admin-container">
+  <h1>Admin Dashboard</h1>
+  <textarea id="situationInput" class="situation-input" placeholder="Enter situations (one per line)"></textarea>
+  <div id="adminUserList" class="admin-user-list"></div>
+  <div class="button-section">
+    <button onclick="startAllocation()">Start Allocation</button>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script>
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+    authDomain: "xdgm-memorie-wall.firebaseapp.com",
+    projectId: "xdgm-memorie-wall",
+    storageBucket: "xdgm-memorie-wall.appspot.com",
+    messagingSenderId: "644674909301",
+    appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+    measurementId: "G-ZNPNV3TGMG"
+  };
+firebase.initializeApp(firebaseConfig);
+
+// Get a reference to the database service
+var database = firebase.database();
+
+// Function to start allocation
+function startAllocation() {
+  const situationInput = document.getElementById("situationInput").value.trim();
+  const situations = situationInput.split('\n').filter(situation => situation.trim() !== '');
+  if (situations.length === 0) {
+    alert("Please enter at least one situation.");
+    return;
+  }
+
+  const usersRef = database.ref('users');
+  usersRef.once('value', function(snapshot) {
+    const users = snapshot.val();
+    const userIds = Object.keys(users);
+    shuffleArray(userIds); // Shuffle the user IDs array
+    const numGroups = Math.ceil(userIds.length / 3);
+    const adminUserListDiv = document.getElementById("adminUserList");
+    adminUserListDiv.innerHTML = "<h2>User List:</h2>";
+
+    for (let i = 0; i < numGroups; i++) {
+      const group = userIds.slice(i * 3, (i + 1) * 3);
+      const groupDiv = document.createElement("div");
+      groupDiv.classList.add("group");
+      groupDiv.innerHTML = `<p><strong>Group ${i + 1}:</strong></p>`;
+
+      group.forEach(userId => {
+        const memberName = document.createElement("p");
+        memberName.textContent = users[userId];
+        groupDiv.appendChild(memberName);
+      });
+
+      // Distribute situations evenly within the groups
+      const situationIndex = i % situations.length;
+      const situation = situations[situationIndex];
+      const situationElem = document.createElement("p");
+      situationElem.textContent = `Situation: ${situation}`;
+      groupDiv.appendChild(situationElem);
+      groupDiv.appendChild(document.createElement("br"))
+      adminUserListDiv.appendChild(groupDiv);
+
+      // Store group information in Firebase (not needed for this interface)
+    }
+  });
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+</script>
+</body>
+</html>

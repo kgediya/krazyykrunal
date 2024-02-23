@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Model Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #model-viewer-container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        #model-viewer {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+    <!-- Include Model Viewer library -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+<!-- Include THREE.js and FBXLoader -->
+    <script type="module" src="https://cdn.skypack.dev/three@110.0.1/build/three.module.js"></script>
+    <script type="module" src="https://cdn.skypack.dev/three@110.0.1/examples/jsm/loaders/FBXLoader.js"></script>
+</head>
+<body>
+
+    <h1>3D Model Viewer</h1>
+
+    <form id="upload-form">
+        <label for="model-file">Choose a 3D model (FBX or GLB):</label>
+        <input type="file" id="model-file" accept=".fbx, .glb" required>
+        <button type="button" id="load-model">Load Model</button>
+    </form>
+
+    <div id="model-viewer-container" style="display: none;">
+        <model-viewer id="model-viewer" src="" shadow-intensity="1" camera-controls  alt="3D Model"></model-viewer>
+    </div>
+
+    <script type="module">
+        function loadModel() {
+            const fileInput = document.getElementById('model-file');
+            const modelViewer = document.getElementById('model-viewer');
+            const uploadForm = document.getElementById('upload-form');
+
+            if (fileInput.files.length > 0) {
+                const modelFile = fileInput.files[0];
+
+                // Check the file extension
+                const fileExtension = modelFile.name.split('.').pop().toLowerCase();
+
+                if (fileExtension === 'fbx') {
+                    // Convert FBX to GLB using THREE.js
+                    const fbxLoader = new THREE.FBXLoader();
+                    fbxLoader.load(URL.createObjectURL(modelFile), (fbxModel) => {
+                        const gltfLoader = new THREE.GLTFLoader();
+                        gltfLoader.parse(fbxModel, '', (gltf) => {
+                            // Set the model URL for Model Viewer
+                            modelViewer.setAttribute('src', URL.createObjectURL(new Blob([gltf.scene.serialize()], { type: 'model/gltf-binary' })));
+
+                            // Display Model Viewer container
+                            document.getElementById('model-viewer-container').style.display = 'block';
+                        });
+                    });
+                } else if (fileExtension === 'glb') {
+                    console.log('Loading the model')
+                    // Set the model URL for Model Viewer
+                    modelViewer.setAttribute('src', URL.createObjectURL(modelFile));
+
+                    // Display Model Viewer container
+                    document.getElementById('model-viewer-container').style.display = 'block';
+                } else {
+                    alert('Please select a valid 3D model file (FBX or GLB).');
+                }
+
+                // Reset the file input and form
+                fileInput.value = '';
+                uploadForm.reset();
+            } else {
+                alert('Please select a valid 3D model file (FBX or GLB).');
+            }
+        }
+
+        document.getElementById('load-model').onclick = loadModel;
+    </script>
+
+</body>
+</html>
