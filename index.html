@@ -28,137 +28,175 @@
   </script>
   <!-- End Google Tag Manager -->
   <style>
-    @font-face {
-      font-family: 'PF Tempesta Five';
-      font-style: normal;
-      font-weight: 400;
-      src: local('PF Tempesta Five'), url('./assets/pf_tempesta_five.woff') format('woff');
-    }
+ @font-face {
+  font-family: 'PF Tempesta Five';
+  font-style: normal;
+  font-weight: 400;
+  src: local('PF Tempesta Five'), url('./assets/pf_tempesta_five.woff') format('woff');
+}
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: 'PF Tempesta Five';
-    }
-    .top-bar {
-            background-color: black;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-        }
+body {
+  margin: 0;
+  color: white;
+  font-family: 'PF Tempesta Five';
+  background-image: url("./background.jpeg"), linear-gradient(rgba(0, 0, 0, 0.66), rgba(255, 255, 255, 0.736)); /* Image and white overlay */
+  background-blend-mode: overlay; /* Blend the image and overlay */
+  background-size: fill; /* Cover the entire background */
+  background-position: center; /* Center the background */
+}
 
-        .menu-item {
-            margin: 0 15px;
-            text-decoration: none;
-            color: white;
-            cursor: pointer;
-        }
 
-        .menu-item:hover {
-            text-decoration: underline;
-        }
+.top-bar {
+  background-color: rgba(0, 0, 0, 0.5); /* Blurry black background */
+  -webkit-backdrop-filter: blur(10px); /* Blurry effect */
+  backdrop-filter: blur(10px); /* Blurry effect */
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
 
-        .content-container {
-            display: none;
-            background-color: white;
-            position: absolute;
-            top: 40px;
-            left: 0;
-            right: 0;
-            z-index: 1;
-            border: 1px solid #ccc;
-            padding: 20px;
-        }
+.menu-item {
+  margin: 0 15px;
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+}
 
-        .content-container a {
-            display: block;
-            margin: 10px 0;
-            color: black;
-            text-decoration: none;
-        }
+.menu-item:hover {
+  text-decoration: underline;
+}
 
-        .content-container a:hover {
-            text-decoration: underline;
-        }
+.content-container {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.9); /* Glassy white background */
+  border-radius: 15px; /* Rounded corners */
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  border: 1px solid #ccc;
+  padding: 20px;
+  -webkit-backdrop-filter: blur(5px); /* Blurry effect */
+  backdrop-filter: blur(5px); /* Blurry effect */
+}
 
-        .toolbar-category.open .content-container {
-            display: block;
-        }
-    .work-card {
-      background-color: white;
-      color: black;
-      padding: 20px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-      cursor: pointer;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-    }
+.content-container a {
+  display: block;
+  margin: 10px 0;
+  color: black;
+  text-decoration: none;
+}
 
-    .work-card img {
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-    }
+.content-container a:hover {
+  text-decoration: underline;
+}
 
-    .work-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-    }
+.toolbar-category.open .content-container {
+  display: block;
+}
 
-    .header {
-      text-align: center;
-      padding: 32px;
-    }
+.work-card {
+  background-color: rgba(255, 255, 255, 0.4); /* Glassy white background */
+  color: black;
+  padding: 20px;
+ margin-top: 10x;
+ margin-bottom: 10px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 15px; /* Rounded corners */
+  -webkit-backdrop-filter: blur(5px); /* Blurry effect */
+  backdrop-filter: blur(5px); /* Blurry effect */
+}
 
-    .row {
-      display: -ms-flexbox;
-      /* IE10 */
-      display: flex;
-      -ms-flex-wrap: wrap;
-      /* IE10 */
-      flex-wrap: wrap;
-      padding: 0 4px;
-    }
+.work-card img {
+  width: 100%;
+ 
+  max-width: 100%;
+  height: auto;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px; /* Rounded corners */
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 5px solid  rgba(0, 0, 0, 0.905)
+}
 
-    /* Create four equal columns that sits next to each other */
-    .column {
-      -ms-flex: 25%;
-      /* IE10 */
-      flex: 25%;
-      max-width: 25%;
-      padding: 0 4px;
-    }
+.work-card p {
+  margin: 0px ;
+  padding: 2% 0% 2% 5% ;
+  background-color: rgba(0, 0, 0, 0.905) !important;
+  color: rgb(255, 255, 255) ; 
+   -webkit-backdrop-filter: blur(5px); /* Blurry effect */
+  backdrop-filter: blur(5px); /* Blurry effect */
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+ a{
+  color: white;
+ }
+.work-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+}
 
-    .column img {
-      margin-top: 8px;
-      vertical-align: middle;
-      width: 100%;
-    }
+.header {
+  text-align: center;
+  padding: 32px;
+}
 
-    /* Responsive layout - makes a two column-layout instead of four columns */
-    @media screen and (max-width: 800px) {
-      .column {
-        -ms-flex: 50%;
-        flex: 50%;
-        max-width: 50%;
-      }
-    }
+.row {
+  display: -ms-flexbox;
+  /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap;
+  /* IE10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
 
-    /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-    @media screen and (max-width: 600px) {
-      .column {
-        -ms-flex: 100%;
-        flex: 100%;
-        max-width: 100%;
-      }
-    }
+/* Create four equal columns that sit next to each other */
+.column {
+  -ms-flex: 25%;
+  /* IE10 */
+  flex: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+/* Responsive layout - makes a two-column layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    -ms-flex: 50%;
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    -ms-flex: 100%;
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+
   </style>
 </head>
 
@@ -170,7 +208,7 @@
   <script src="https://smtpjs.com/v3/smtp.js">
   </script>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <h1 style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, I'm Krazyy Krunal</h1>
+  <h1 id="typewriter" style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, I'm Krazyy Krunal</h1>
   <h5 style="text-align: center;">an XR Developer/Prototyper Building All Things Krazyy. Stay Tuned.</h5>
  
  
@@ -215,7 +253,49 @@
         </a>
     </div>
 </div>
+<script>
+  // List of greetings in different languages
+  const greetings = [
+    "કેમ છો",
+    "कसा काय",
+    "Bonjour",
+    "नमस्ते",
+    "Hello",
+    // Add more greetings as needed
+  ];
 
+  // Initialize index for cycling through greetings
+  let currentIndex = 0;
+
+  // Function to implement typewriter effect
+  function typeWriter(text, i, interval) {
+    if (i < text.length) {
+      document.getElementById("typewriter").innerHTML = text.substring(0, i + 1);
+      setTimeout(function() {
+        typeWriter(text, i + 1, interval);
+      }, interval);
+    } else {
+      // Move to the next greeting after a delay
+      setTimeout(changeGreeting, 2000);
+    }
+  }
+
+  // Function to change the greeting
+  function changeGreeting() {
+    const greeting = greetings[currentIndex];
+    const prevInd = (currentIndex-1)>=0?currentIndex-1:greetings.length-1
+    const currentText = document.getElementById("typewriter").innerText;
+    const newText = currentText.replace(greetings[prevInd], greeting);
+    currentIndex = (currentIndex + 1) % greetings.length;
+    typeWriter(newText, 0, 100); // Start typing the new greeting
+
+    // Update index for cycling through greetings
+   
+  }
+
+  // Initial call to start the typewriter effect
+  typeWriter("Hello, I'm Krazyy Krunal", 0, 100);
+</script>
 <script>
      function toggleContent(contentId) {
             const content = document.getElementById(contentId);

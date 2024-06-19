@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audio Conversion</title>
+  <style>
+    @font-face {
+      font-family: 'PF Tempesta Five';
+      font-style: normal;
+      font-weight: 400;
+      src: local('PF Tempesta Five'), url('.././assets/pf_tempesta_five.woff') format('woff');
+    }
+    body {
+      font-family: 'PF Tempesta Five', Arial, sans-serif;
+    }
+    .card {
+      max-width: 400px;
+      margin: 10% auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+    .input-wrapper {
+      margin-bottom: 10px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #f2f2f2;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      margin-top: 15px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #000000;
+      border-radius: 5px;
+      transition: width 0.2s ease-in-out;
+    }
+    #qualityControl {
+      margin-top: 10px;
+    }
+    button {
+      font-family: 'PF Tempesta Five', Arial, sans-serif;
+      padding: 8px 16px;
+      background-color: #000000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #282828;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .custom-file-upload {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #000000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .custom-file-upload:hover {
+      background-color: #282828;
+    }
+    select {
+      font-family: 'PF Tempesta Five', Arial, sans-serif;
+      padding: 5px;
+      border-radius: 4px;
+    }
+    .file-name {
+      margin-top: 5px;
+    }
+  </style>
+  <script src="./enable-thread.js"></script>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHT3XY2K0H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JHT3XY2K0H');
+</script>
+</head>
+<body>
+  <div class="card">
+    <h1>Audio Conversion</h1>
+    <div class="input-wrapper">
+      <input type="file" id="fileInput" accept="video/*" multiple>
+      <label for="fileInput" class="custom-file-upload">Choose Files</label>
+    </div>
+    <div class="file-name" id="fileName"></div>
+    <div id="qualityControl">
+      <label for="quality">Quality:</label>
+      <select id="quality">
+        <option value="64k">Low</option>
+        <option value="128k" selected>Medium</option>
+        <option value="256k">High</option>
+      </select>
+    </div>
+    <div class="progress-bar">
+      <div id="progressBarFill" class="progress-bar-fill"></div>
+    </div>
+    <button id="convert" onclick="convertAudios()" disabled>Convert</button>
+  </div>
+
+  <script src="./ffmpeg-wasm.js"></script>
+  <script src="../assets/jszip.js"></script>
+  <script>
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
+    console.log(gtag)
+    async function loadFFmpeg() {
+      await ffmpeg.load();
+      console.log('WASM LOADED')
+      document.getElementById('convert').disabled = false
+    }
+
+    async function convertAudio(inputFile, quality) {
+        gtag('event', 'button_click', {
+      'event_category': 'Buttons',
+      'event_label': 'Convert Audio'
+    });
+      const inputFileName = 'input-file';
+      ffmpeg.FS('writeFile', inputFileName, await fetchFile(inputFile));
+      ffmpeg.setProgress(({ ratio }) => {
+        const progressBarFill = document.getElementById('progressBarFill');
+        progressBarFill.style.width = `${ratio * 100}%`;
+      });
+      const outputFileName = `${inputFile.name.substring(0, inputFile.name.lastIndexOf('.'))}.mp4`;
+
+      await ffmpeg.run(
+        '-i', inputFileName,
+        '-vf','scale=720:1280',
+        outputFileName
+      );
+
+      const outputData = ffmpeg.FS('readFile', outputFileName);
+      console.log(outputData)
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(new Blob([outputData.buffer]));
+      downloadLink.download = outputFileName;
+      downloadLink.click();
+    }
+
+    async function convertAudios() {
+      const fileInput = document.getElementById('fileInput');
+      const files = fileInput.files;
+
+      if (files.length === 0) {
+        alert('Please select at least one file.');
+        return;
+      }
+
+      const qualityControl = document.getElementById('quality');
+      const quality = qualityControl.value;
+
+      if (files.length === 1) {
+        convertAudio(files[0], quality);
+        return;
+      }
+
+      const zip = new JSZip();
+
+      ffmpeg.setProgress(({ ratio }) => {
+        const progressBarFill = document.getElementById('progressBarFill');
+        progressBarFill.style.width = `${ratio * 100}%`;
+      });
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        const inputFileName = `input-file-${i}`;
+        ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
+
+        const outputFileName = `${file.name.substring(0, file.name.lastIndexOf('.'))}.m4a`;
+
+        await ffmpeg.run(
+          '-i', inputFileName,
+          '-ac', '1',
+          '-ar', '44100',
+          '-c:a','aac',
+          '-b:a', quality,
+          outputFileName
+        );
+
+        const outputData = ffmpeg.FS('readFile', outputFileName);
+
+        zip.file(outputFileName, outputData.buffer);
+      }
+
+      const zipData = await zip.generateAsync({ type: 'blob' });
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(zipData);
+      downloadLink.download = 'converted_audios.zip';
+      downloadLink.click();
+    }
+
+    window.onload = loadFFmpeg;
+
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', function() {
+      const fileNameElement = document.getElementById('fileName');
+      const fileCount = this.files.length;
+      progressBarFill.style.width = `0%`;
+      fileNameElement.textContent = fileCount>1?`${fileCount} file${fileCount > 1 ? 's' : ''} selected`:this.files[0].name;
+    });
+  </script>
+</body>
+</html>
