@@ -345,57 +345,64 @@
     ];
 
     const projectsContainer = document.getElementById('projects-container');
-    const userInfoContainer = document.getElementById('user-info');
+const userInfoContainer = document.getElementById('user-info');
 
-    // Function to render projects
-    function renderProjects(user) {
-       
-        // Clear existing content
-        projectsContainer.innerHTML = '';
+// Function to render projects
+function renderProjects(user) {
+    // Clear existing content
+    projectsContainer.innerHTML = '';
 
-        projects.forEach(project => {
-            const projectElement = document.createElement('div');
-            projectElement.classList.add('project');
+    projects.forEach(project => {
+        const projectElement = document.createElement('div');
+        projectElement.classList.add('project');
 
-            const videoElement = document.createElement('video');
-            videoElement.src = project.videoUrl;
-            videoElement.autoplay = false;
-            videoElement.controls = true;
+        // Using iframe for Google Drive embed
+        const videoFrame = document.createElement('iframe');
+        videoFrame.src = `https://drive.google.com/file/d/${getDriveFileId(project.videoUrl)}/preview`;
+        videoFrame.setAttribute('allowfullscreen', '');
 
-            const titleElement = document.createElement('div');
-            titleElement.classList.add('project-title');
-            titleElement.textContent = project.title;
+        const titleElement = document.createElement('div');
+        titleElement.classList.add('project-title');
+        titleElement.textContent = project.title;
 
-            const ownerElement = document.createElement('div');
-            ownerElement.classList.add('owner-title');
-            ownerElement.textContent = 'By '+ project.ownerName;
+        const ownerElement = document.createElement('div');
+        ownerElement.classList.add('owner-title');
+        ownerElement.textContent = 'By ' + project.ownerName;
 
-            const descriptionElement = document.createElement('div');
-            descriptionElement.classList.add('project-description');
-            descriptionElement.textContent = project.description;
+        const descriptionElement = document.createElement('div');
+        descriptionElement.classList.add('project-description');
+        descriptionElement.textContent = project.description;
 
-            const reactionsElement = document.createElement('div');
-            reactionsElement.classList.add('reactions');
-           
-            projectElement.appendChild(videoElement);
-            projectElement.appendChild(titleElement);
-            projectElement.appendChild(ownerElement);
-            projectElement.appendChild(descriptionElement);
-            projectElement.appendChild(reactionsElement);
+        const reactionsElement = document.createElement('div');
+        reactionsElement.classList.add('reactions');
 
-            projectsContainer.appendChild(projectElement);
-        });
+        projectElement.appendChild(videoFrame); // Append iframe instead of video element
+        projectElement.appendChild(titleElement);
+        projectElement.appendChild(ownerElement);
+        projectElement.appendChild(descriptionElement);
+        projectElement.appendChild(reactionsElement);
 
-        // Render login button or Google Sign-In button
-        if (user) {
-            userInfoContainer.textContent = `Logged in as: ${user.email}`;
-        } else {
-            const googleSignInButton = document.createElement('button');
-            googleSignInButton.textContent = 'Sign in with Google';
-            googleSignInButton.addEventListener('click', signInWithGoogle);
-            userInfoContainer.appendChild(googleSignInButton);
-        }
+        projectsContainer.appendChild(projectElement);
+    });
+
+    // Render login button or Google Sign-In button
+    if (user) {
+        userInfoContainer.textContent = `Logged in as: ${user.email}`;
+    } else {
+        const googleSignInButton = document.createElement('button');
+        googleSignInButton.textContent = 'Sign in with Google';
+        googleSignInButton.addEventListener('click', signInWithGoogle);
+        userInfoContainer.appendChild(googleSignInButton);
     }
+}
+
+// Function to extract Google Drive file ID
+function getDriveFileId(url) {
+    // Example URL format: https://drive.google.com/uc?id=1r1AZAT-tF7m0ELqc7_cMSFSdHLmz3RcH
+    const startIndex = url.indexOf('id=') + 3;
+    const fileId = url.substring(startIndex);
+    return fileId;
+}
 
     // Function to handle voting
     function voteProject(user, projectId, owner) {
@@ -497,5 +504,6 @@
 
     // Check authentication state when the page loads
     checkAuthState();</script>
+ 
 </body>
 </html>
