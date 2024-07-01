@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lens Video Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0; /* Fallback color */
+            background-image: linear-gradient(135deg, #b3edff, #000000);
+            background-attachment: fixed;
+            background-size: cover;
+            backdrop-filter: blur(10px); /* For browsers supporting backdrop-filter */
+            -webkit-backdrop-filter: blur(10px); /* For Safari and older Chrome versions */
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.427); /* Semi-transparent white */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 300px;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px; /* Adjust spacing between cards */
+            backdrop-filter: blur(10px); /* For browsers supporting backdrop-filter */
+            -webkit-backdrop-filter: blur(10px); /* For Safari and older Chrome versions */
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #000000;
+        }
+        .card p {
+            color: #000000;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .try-lens {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #FFFC00;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .try-lens:hover {
+            background-color:rgb(0, 0, 0);
+            color: #FFFC00;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px; /* Adjust font size for mobile */
+            color: #f2ff01;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background-color: #000000; /* Snapchat yellow background */
+            padding: 10px 20px; /* Padding inside the rounded rectangle */
+            border-radius: 20px; /* Rounded corners */
+            /* Ensure inline block for padding to work correctly */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Shadow for depth */
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">Lens Jam Submissions</h1>
+    <div class="container">
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1UVVEl-5VlJCErxUBFpaJsii9IVxe_Umc/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Say Dracarys</h2>
+                <p>By: Aniket Jagdish Apraj</p>
+                <p>Control a dragon using joystick and voice commands.</p>
+                <a href="https://lens.snapchat.com/f3760a0e86064e4a9c5f22083ce0fc5f?share_id=_wq5NoKRsy8&locale=en-IN" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/10v8bp-4535ZCwUV2FU_bBIN8Wm3uSusu/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>OD Bitmoji</h2>
+                <p>By: OD Alam</p>
+                <p>A unique Bitmoji experience.</p>
+                <a href="https://lens.snapchat.com/a556e28b-3704-4a1d-8499-07fcec9300d9" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1EHRszpcNNYTOy2YqG0B6IPhBMrLAYuPU/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>My friends</h2>
+                <p>By: Omkar</p>
+                <p>Celebrate India's victory with friends.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=a494c39e1d7f4b858d466f1d18b22360&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1irNqtYVhHuICquR6Y1_G4BTXuKyVQmWP/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Push The Ball Game</h2>
+                <p>By: Wasim Ghole</p>
+                <p>Physics-based game with Bitmoji characters.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=5fc95ccf9a6f48ec8d6cda3b1aa52c0a&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/128H1kP1hR5AJ8ZguaLZoJMEiSLCBdUIj/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>World cup in hand</h2>
+                <p>By: Nilesh Jain</p>
+                <p>Hold and balance the World Cup trophy.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=8415eaef2dd144bc821fbc46e39d45ad&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1zyhUIKSl4l-KOmC6vtUKp7vUlCDoIsmN/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>GANGNAM STYLE</h2>
+                <p>By: Sudhanshu Ghike</p>
+                <p>Dance to Gangnam Style with Bitmojis.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=03f1fed5ece646b79df03d4d6ac4793b&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1bfK-iA0gwOOeRlNWOsMb8BOIn0IuZaAZ/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Happy Rath Yatra</h2>
+                <p>By: Jeevan Naidu</p>
+                <p>Celebrate Rath Yatra festival with animated chariots.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=22fd4e3c3c1d4d4182b154d4a5690728&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1Q6eE_vFHIaq8b8Wz755BJ5HG7a4jEmgu/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Fairy wings x Rain</h2>
+                <p>By: Aditi Patil</p>
+                <p>Transform into a fairy with wings and rain effects.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=ba10d96976ef4525b842d52f4a68a71b&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1-yeWGrvT5vrRdFObMv85iwKXkupBjpqT/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Bitmoji Dance Club</h2>
+                <p>By: Aditi Patil</p>
+                <p>Dance with your Bitmoji in a virtual club.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=4aba4a7cce9a4f65a49270a75465a079&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/19R3O_r5aHt5jX-GlcbGDOyDiD15TpTbx/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>SUKUNA- Jujutsu</h2>
+                <p>By: Priyanka Manjale</p>
+                <p>Transform into Sukuna with face tattoos and red lens.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=6a38a2293d614af6b6d2b8bba38e77fb&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/13hMB8NrAs-j1Apjlw0HN1NfHb1y3ngjt/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Dance with Bitmoji</h2>
+                <p>By: Manav Rajpurohit</p>
+                <p>Bitmojis dancing to nostalgic Hindi party songs.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=5d2045290b5449a3a689d25c4ffc390c&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1Oc0j8W53dxbZ-ZPRaHnqE0amOt9e3ZMG/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Jagganath swami</h2>
+                <p>By: Prashant Dalai</p>
+                <p>Experience Jagannath festival with 3D models and sky segmentation.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=8c18e8a0c362442ba23ce1051e0f26a8&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/10sr7Vq_6bZbiDEKh6DxNsI6aTd7K-Uj2/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Rick Rolled x DDO</h2>
+                <p>By: Meet</p>
+                <p>Rick Roll dance mixed with Phir Hera Pheri theme.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=acdd26052d6c4c458aa1d91f849f1a68&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1dMeLNCoYmdoV3CnlMaI7TrGEccG_bc89/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Super Mario</h2>
+                <p>By: Mohd. Hazique Sayed</p>
+                <p>Transform into Mario with head morph and iconic gloves.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=241d2a43e974437789f4c8704fde64c2&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1VSINi5Gyjqn9UY_OCce3iFhjrw0eigN_/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Bitmoji Reaction</h2>
+                <p>By: Mrical Singhal</p>
+                <p>Express reactions through your Bitmoji.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=fff95a9654d6448483e667b7fba1f2a4&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+       
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1uDbP0j2-X50fV78C5cHyeG6ErPcWaneR/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Butterfly Dance</h2>
+                <p>By: Aditi Patil</p>
+                <p>Transform into a butterfly with dance moves.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=5834f8fd4c994f68a895ff284a3b86a1&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1SRsAGMUWx87e2xG9Ri8NvdvYM3i3qZa3/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Bitmoji in Ocean</h2>
+                <p>By: Aditi Patil</p>
+                <p>Swim with your Bitmoji in a personalized ocean scene.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=cb5297190f2944658c3ce4195800f6c4&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1Xwm-vFW5b8Nr4bJMPj4hhW0uOUsA9jAc/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>2024 Olympics</h2>
+                <p>By: Aditi Patil</p>
+                <p>Celebrate the Olympics with festive confetti and caps.</p>
+                <a href="https://www.snapchat.com/lens/2e67ea86a1db40f4a6cf5cf8c2ad0a30?type=SNAPCODE&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1eCiKxUiXJ_rV73VzDQONnfJhaYhQMT5d/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Stop The Wars</h2>
+                <p>By: Aakash Mansukhani</p>
+                <p>Experience the adverse effects of war on soldiers.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=5c81e42fa40d4369be1a80465071cf0e&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1vyFWHq6CXJbkHo7rf0p8B5pgRGWeax9d/preview" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h2>Indian Goddess</h2>
+                <p>By: Unnati Israni</p>
+                <p>Transform into a desi Indian goddess with cartoon shader and traditional elements.</p>
+                <a href="https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=116f59403c4447fca19274fbc94b0a05&metadata=01" class="try-lens" target="_blank">Try Lens</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
