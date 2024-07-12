@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Things Krazyy</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+header {
+    background-color: black;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    height: 80px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 1rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.hero {
+    background: url('hero-bg.jpg') no-repeat center center/cover;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.services, .about, .contact {
+    padding: 2rem;
+    text-align: center;
+}
+
+.services h2, .about h2, .contact h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.service-item {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="All Things Krazyy Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <h1>Spicing Up Reality with XR Innovations</h1>
+        <p>Bridging the gap between tradition and technology</p>
+    </section>
+
+    <section id="services" class="services">
+        <h2>Our Services</h2>
+        <div class="service-item">
+            <h3>AR Solutions</h3>
+            <p>Experience the best of augmented reality with our innovative solutions.</p>
+        </div>
+        <div class="service-item">
+            <h3>VR Experiences</h3>
+            <p>Immerse yourself in our cutting-edge virtual reality experiences.</p>
+        </div>
+        <div class="service-item">
+            <h3>3D Modelling</h3>
+            <p>Get high-quality 3D models for your projects.</p>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <h2>About Us</h2>
+        <p>All Things Krazyy is an XR services and products firm based in Mumbai, dedicated to integrating traditional culture with modern technology.</p>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2>Contact Us</h2>
+        <p>Email: contact@allthingskrazyy.com</p>
+        <p>Phone: +91-123-456-7890</p>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 All Things Krazyy. All rights reserved.</p>
+    </footer>
+</body>
+</html>
