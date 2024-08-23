@@ -43,7 +43,7 @@ body {
   margin: 0;
   color: white;
   font-family: 'PF Tempesta Five';
-  background-image: url("./background.jpeg"), linear-gradient(rgba(0, 0, 0, 0.66), rgba(255, 255, 255, 0.736)); /* Image and white overlay */
+  background-color: black;/* Image and white overlay */
   background-blend-mode: overlay; /* Blend the image and overlay */
   -webkit-background-blend-mode: overlay;
   background-size: fill; /* Cover the entire background */
@@ -52,7 +52,7 @@ body {
 
 
 .top-bar {
-  background-color: rgba(0, 0, 0, 0.5); /* Blurry black background */
+  background-color: rgb(255, 0, 0); /* Blurry black background */
   -webkit-backdrop-filter: blur(10px); /* Blurry effect */
   backdrop-filter: blur(10px); /* Blurry effect */
   color: white;
@@ -103,10 +103,14 @@ body {
   display: block;
 }
 
+.toolbar-category a{
+  color: red;
+}
+
 .work-card {
-  background-color: rgba(255, 255, 255, 0.4); /* Glassy white background */
+  background-color: rgb(255, 255, 255); /* Glassy white background */
   color: black;
-  padding: 20px;
+  padding: 2px;
  margin-top: 10x;
  margin-bottom: 10px;
   text-align: center;
@@ -209,13 +213,14 @@ body {
   <script src="https://smtpjs.com/v3/smtp.js">
   </script>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <h1 id="typewriter" style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, I'm Krazyy Krunal</h1>
+ 
+  <h3 id="typewriter" style="text-align: center; margin: 1% 1% 1% 1%;">Namaste, I'm Krazyy Krunal</h3>
   <h5 style="text-align: center;">an XR Developer/Prototyper Building All Things Krazyy. Stay Tuned.</h5>
  
  
   <div class="top-bar">
     <div class="menu-item" onclick="toggleContent('connect-content')">Connect</div>
-    <div class="menu-item" onclick="toggleContent('resources-content')">Tools & Resources</div>
+    <div class="menu-item" onclick="toggleContent('resources-content')">Tools</div>
     <div class="menu-item" onclick="toggleContent('contact-content')">Contact</div>
 </div>
 
