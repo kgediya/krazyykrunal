@@ -26,7 +26,7 @@
 
         .imgB {
             position: relative;
-            top: 80vh;
+            top: 58vh;
             margin: 0 auto;
             display: block;
         }
@@ -218,14 +218,14 @@
                 });
                 geometry.center();
                 let mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(-5, 35, 80)
+                mesh.position.set(-5, 45, 80)
                 mesh.scale.set(0.001, 0.0001, 0.0001)
 
 
                 rotationGroup.add(mesh);
                 textMesh = new TWEEN.Tween(mesh.scale)
                     .start({ x: 0, y: 0, z: 0 })
-                    .to({ x: 0.08, y: 0.08, z: 0.08 }, 1000)
+                    .to({ x: 0.07, y: 0.07, z: 0.07 }, 800)
                     .easing(TWEEN.Easing.Quintic.Out)
 
             });
@@ -296,7 +296,7 @@ scene.add(dirLight.target);
             var object = data.scene;
 
             object.scale.set(3, 3, 3)
-            object.position.set(-5, 5, 90)
+            object.position.set(-5, 13, 85)
             object.rotation.set(0.5, 0, 0)
             console.log(data)
 
