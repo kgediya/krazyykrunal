@@ -18,6 +18,26 @@
             font-family: 'PF Tempesta Five', sans-serif;
             font-size: small;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
     </style>
 
 </head>
@@ -37,6 +57,19 @@
     <select name="attendees_name" style="font-family: 'PF Tempesta Five';" id="secret-santa"></select>
     <button style="font-family: 'PF Tempesta Five';" id="submit-santa">Reveal</button>
 
+    <h4>Participants List (with UUIDs)</h4>
+    <table id="participants-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>UUID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Participant rows will be populated here -->
+        </tbody>
+    </table>
+
     <script type="module">
         const selectElement = document.getElementById('attendees')
         const lambdaURL = "https://klowln2vbpv2qlzkyirioteeeu0fucxh.lambda-url.us-east-1.on.aws/"
@@ -46,22 +79,26 @@
             callAwsLambdaFunction({ 'operation': 'add_attendee', 'name': document.getElementById('name_id').value }, () => {
                 updateSelectData(selectElement)
                 updateSelectData(document.getElementById('secret-santa'))
+                updateParticipantsTable()  // Update the table with the new participant
                 document.getElementById('name_id').value = ''
                 alert('Attendee Added')
             })
         }
+
         var submit_remove_btn = document.getElementById('submit-remove')
         submit_remove_btn.onclick = function () {
             console.log(document.getElementById('attendees').value)
             callAwsLambdaFunction({ 'operation': 'remove_attendee', 'name': document.getElementById('attendees').value }, () => {
                 updateSelectData(selectElement)
                 updateSelectData(document.getElementById('secret-santa'))
+                updateParticipantsTable()  // Update the table after removal
                 alert('Attendee Removed')
             })
         }
+
         updateSelectData(selectElement)
         updateSelectData(document.getElementById('secret-santa'))
-
+        updateParticipantsTable()  // Initial load of the participants table
 
         var submit_santa_btn = document.getElementById('submit-santa')
         submit_santa_btn.onclick = function () {
@@ -69,59 +106,8 @@
             callAwsLambdaFunction({ 'operation': 'map_giftee','name':document.getElementById('secret-santa').value},function(response){
                console.log(response)
                response = JSON.parse(response)
-                alert('Your Giftee Name Is '+response.name)
+               alert('Your Giftee Name Is '+response.name)
             })
-
-
-            /*
-            callAwsLambdaFunction({ 'operation': 'get_attendees' }, function (response) {
-                const attendee_data = JSON.parse(response).Items;
-                var giftee_assigned = true;
-                var mapped = ''
-                attendee_data.forEach((element,index) => {
-                    console.log(element)
-                    if (element.name === document.getElementById('secret-santa').value)
-                    if( element.mapped == 'none')  {
-                        giftee_assigned = false;
-                       // return;
-                    }else{
-                        mapped = element.mapped;
-                    }
-
-
-                })
-                if (!giftee_assigned) {
-                    var randomIndex = getRandomInt(0,attendee_data.length-1)
-                    while(attendee_data[randomIndex].name==document.getElementById('secret-santa').value){
-                        randomIndex = getRandomInt(0,attendee_data.length-1)
-                    }
-                   callAwsLambdaFunction({ 'operation': 'map_giftee','name':document.getElementById('secret-santa').value,'mapped':attendee_data[randomIndex].name }, function (response) {
-                        alert(attendee_data[randomIndex].name)
-            })
-                  
-           
-                } else {
-                   
-                    alert('Your Giftee is Already Assigned: '+mapped)
-                }
-
-            })
-
-
-           /* 
-            callAwsLambdaFunction({ 'operation': 'map_giftee','name':document.getElementById('secret-santa').value,'mapped':'Jeetesh' }, function (response) {
-                console.log(response)
-            }) 
-
-            */
-        }
-
-        function getRandomInt(min, max) {
-            // Ensure that min and max are both integers
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            // Return a random integer between min and max, inclusive
-            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
         function updateSelectData(parent) {
@@ -133,10 +119,34 @@
                     option.innerText = element.name
                     option.name = element.name
                     parent.appendChild(option)
-
                 });
             })
         }
+
+        function updateParticipantsTable() {
+            callAwsLambdaFunction({ 'operation': 'get_attendees' }, function (response) {
+                const tableBody = document.getElementById('participants-table').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = '';  // Clear the current table data
+
+                const attendees = JSON.parse(response).Items;
+                attendees.forEach(element => {
+                    const row = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = element.name;
+                    const uuidCell = document.createElement('td');
+                    const uuidLink = document.createElement('a');
+                    uuidLink.href = "https://krazyykrunal.com/secretsanta/?id=" + element.uuid;  // Generate the URL with UUID
+                    uuidLink.textContent = element.uuid;
+                    uuidLink.target = "_blank";  // Open the link in a new tab
+                    uuidCell.appendChild(uuidLink);
+
+                    row.appendChild(nameCell);
+                    row.appendChild(uuidCell);
+                    tableBody.appendChild(row);
+                });
+            })
+        }
+
         function callAwsLambdaFunction(data, callback) {
             var xhttp = new XMLHttpRequest();
 
@@ -148,7 +158,6 @@
             xhttp.open("POST", lambdaURL, true);
             xhttp.setRequestHeader('Content-type', 'application/json');
             xhttp.send(JSON.stringify(data));
-
         }
     </script>
 </body>
