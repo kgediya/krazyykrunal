@@ -26,7 +26,7 @@
 
         .imgB {
             position: relative;
-            top: 50vh;
+            top: 45vh;
             margin: 0 auto;
             display: block;
         }
@@ -86,8 +86,8 @@
         // drawSnowCrystal(ctx, canvasRadius);
 
         const texture = new THREE.Texture(canvas);
-        //texture.minFilter = THREE.NearestFilter;
-        texture.type = THREE.FloatType;
+        texture.minFilter = THREE.NearestFilter;
+       // texture.type = THREE.FloatType;
         texture.needsUpdate = true;
         return texture;
     }
