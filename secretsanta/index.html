@@ -26,7 +26,7 @@
 
         .imgB {
             position: relative;
-            bottom: -47vh;
+            bottom: -70vh;
             margin: 0 auto;
             display: block;
         }
@@ -35,6 +35,7 @@
     <script src="https://unpkg.com/three@0.104.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
     <script src="https://unpkg.com/three@0.87.1/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.87.1/examples/js/loaders/RGBELoader.js"></script>
 
 </head>
 <script type="module">
@@ -46,7 +47,7 @@
         orbitControls,
         particles,
         planeMesh, textMesh, boxTween,
-        animationMixer,
+        animationMixer,rotationGroup,
         rotationOffset, clock, action;
 
    const noise = new SimplexNoise();
@@ -171,6 +172,8 @@
         scene.fog = new THREE.Fog(0x000036, 0, minRange * 3);
         clock = new THREE.Clock();
         console.log('PASSED 8th Phase')
+        rotationGroup = new THREE.Group()
+        scene.add(rotationGroup)
         /* camera
         -------------------------------------------------------------*/
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -215,14 +218,14 @@
                 });
                 geometry.center();
                 let mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(-5, 35, 0)
+                mesh.position.set(-5, 35, 80)
                 mesh.scale.set(0.001, 0.0001, 0.0001)
 
 
-                scene.add(mesh);
+                rotationGroup.add(mesh);
                 textMesh = new TWEEN.Tween(mesh.scale)
                     .start({ x: 0, y: 0, z: 0 })
-                    .to({ x: 0.1, y: 0.1, z: 0.1 }, 1000)
+                    .to({ x: 0.08, y: 0.08, z: 0.08 }, 1000)
                     .easing(TWEEN.Easing.Quintic.Out)
 
             });
@@ -253,16 +256,17 @@
 
         /* AmbientLight
         -------------------------------------------------------------*/
-        const ambientLight = new THREE.AmbientLight(0xFFFFFF);
-        scene.add(ambientLight);
+        const ambientLight = new THREE.AmbientLight(0x787878, 1); // Color, Intensity
+        ambientLight.position.set(0,3.851,0)
+scene.add(ambientLight);
 
-        /* SpotLight
-        -------------------------------------------------------------*/
-        const spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.distance = 2000;
-        spotLight.position.set(0, 100, 0);
-        spotLight.castShadow = true;
-        scene.add(spotLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.36); // Strong intensity
+dirLight.position.set(5, 0, 100); 
+dirLight.target.position.set(0,0,0)// Adjust position
+dirLight.castShadow = true; // Enable shadows if needed
+scene.add(dirLight);
+scene.add(dirLight.target);
 
         const listener = new THREE.AudioListener();
         camera.add(listener);
@@ -272,7 +276,28 @@
 
         // load a sound and set it as the Audio object's buffer
         const audioLoader = new THREE.AudioLoader();
-       
+       const objectLoader = new THREE.ObjectLoader();
+
+       objectLoader.load(
+  'Scene.json', // URL to the scene.json file
+  (loadedScene) => {
+    loadedScene.scale.set(30,30,30)
+    // Scene successfully loaded
+   // rotationGroup.add(loadedScene);
+
+    // Start rendering
+   // animate();
+  },
+  (xhr) => {
+    // Progress callback (optional)
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  },
+  (error) => {
+    // Error callback
+    console.error('An error happened:', error);
+  }
+);
+
         var loader = new THREE.GLTFLoader();
         loader.crossOrigin = true;
         loader.load('animated_snowglobe.glb', function (data) {
@@ -283,7 +308,7 @@
 
 
 
-            scene.add(object);
+            rotationGroup.add(object);
 
         });
         loader.load('gift.glb', function (data) {
@@ -291,11 +316,11 @@
             var object = data.scene;
 
             object.scale.set(3, 3, 3)
-            object.position.set(-5, 0, 0)
+            object.position.set(-5, 5, 90)
             object.rotation.set(0.5, 0, 0)
             console.log(data)
 
-            scene.add(object);
+            rotationGroup.add(object);
 
             animationMixer = new THREE.AnimationMixer(object);
 
@@ -367,7 +392,7 @@
 
 
 
-        var tween = new TWEEN.Tween(scene.rotation)
+        var tween = new TWEEN.Tween(rotationGroup.rotation)
             .start({ x: 0, y: startRotation, z: 0 })
             .to({ x: 0, y: endRotation, z: 0 }, duration)
             .easing(TWEEN.Easing.Quintic.InOut)
@@ -442,7 +467,7 @@
 
         <div id="WebGL-output" style="position: absolute; z-index: 2;"></div>
         <img src="./texture.png" class="imgT" id="overlay_text"
-            style=" z-index: 3; width: 350px; color: antiquewhite;"></img>
+            style=" z-index: 3; width: 60vw; color: antiquewhite;"></img>
         <img src="./button.png" class="imgB" id="reveal_btn"
             style=" z-index: 3; width: 350px;  color: antiquewhite;"></img>
 
