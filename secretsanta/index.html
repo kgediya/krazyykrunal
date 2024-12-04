@@ -9,11 +9,11 @@
         body {
             margin: 0;
             overflow: hidden;
-            background: #000046;
-            /* fallback for old browsers */
+            /*  background: #000046;
+           fallback for old browsers 
             background: -webkit-linear-gradient(to top, #1CB5E0, #000046);
-            /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to top, #1CB5E0, #000046);
+            /* Chrome 10-25, Safari 5.1-6 
+            background: linear-gradient(to top, #1CB5E0, #000046);*/
             /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         }
 
@@ -218,7 +218,7 @@
                 });
                 geometry.center();
                 let mesh = new THREE.Mesh(geometry, material);
-                mesh.position.set(-5, 45, 80)
+                mesh.position.set(-5, 23, 80)
                 mesh.scale.set(0.001, 0.0001, 0.0001)
 
 
@@ -261,9 +261,9 @@
 scene.add(ambientLight);
 
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 1.36); // Strong intensity
+const dirLight = new THREE.DirectionalLight(0xffffff, 2.36); // Strong intensity
 dirLight.position.set(5, 0, 100); 
-dirLight.target.position.set(0,0,0)// Adjust position
+dirLight.target.position.set(0,-10,0)// Adjust position
 dirLight.castShadow = true; // Enable shadows if needed
 scene.add(dirLight);
 scene.add(dirLight.target);
@@ -285,7 +285,7 @@ scene.add(dirLight.target);
             var object = data.scene;
 
             object.scale.set(2, 2, 2)
-
+            object.rotation.set(0,60,0)
 
 
             rotationGroup.add(object);
@@ -296,8 +296,8 @@ scene.add(dirLight.target);
             var object = data.scene;
 
             object.scale.set(3, 3, 3)
-            object.position.set(-5, 13, 85)
-            object.rotation.set(0.5, 0, 0)
+            object.position.set(-5, -15, 56)
+            object.rotation.set(0.3, 0, 0)
             console.log(data)
 
             rotationGroup.add(object);
@@ -359,7 +359,7 @@ scene.add(dirLight.target);
 
         particles = new THREE.Points(pointGeometry, pointMaterial);
         particles.geometry.velocities = velocities;
-        scene.add(particles);
+        rotationGroup.add(particles);
 
         /* resize
         -------------------------------------------------------------*/
