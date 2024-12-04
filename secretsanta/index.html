@@ -25,8 +25,9 @@
         }
 
         .imgB {
-            position: relative;
-            bottom: -70vh;
+            position: absolute;
+            left:  35vw;
+            bottom: -80vh;
             margin: 0 auto;
             display: block;
         }
@@ -278,26 +279,6 @@ scene.add(dirLight.target);
         const audioLoader = new THREE.AudioLoader();
        const objectLoader = new THREE.ObjectLoader();
 
-       objectLoader.load(
-  'Scene.json', // URL to the scene.json file
-  (loadedScene) => {
-    loadedScene.scale.set(30,30,30)
-    // Scene successfully loaded
-   // rotationGroup.add(loadedScene);
-
-    // Start rendering
-   // animate();
-  },
-  (xhr) => {
-    // Progress callback (optional)
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-  },
-  (error) => {
-    // Error callback
-    console.error('An error happened:', error);
-  }
-);
-
         var loader = new THREE.GLTFLoader();
         loader.crossOrigin = true;
         loader.load('animated_snowglobe.glb', function (data) {
@@ -355,15 +336,23 @@ scene.add(dirLight.target);
             // const color = new THREE.Color(0xffffff);
             // pointGeometry.colors.push(color);
         }
+// Create a texture loader instance
+const textureLoader = new THREE.TextureLoader();
 
-        const pointMaterial = new THREE.PointsMaterial({
-            size: 8,
+// Load the texture (replace with actual path to your texture)
+const pointTexture = textureLoader.load('texture.png');
+
+// Create the point material with the loaded texture
+
+
+       const pointMaterial = new THREE.PointsMaterial({
+            size: 4,
             color: 0xffffff,
             vertexColors: false,
             map: getTexture(),
-            // blending: THREE.AdditiveBlending,
+             blending: THREE.AdditiveBlending,
             transparent: true,
-            // opacity: 0.8,
+             opacity: 0.8,
             fog: true,
             depthWrite: false
         });
