@@ -19,15 +19,14 @@
 
         .imgT {
             position: relative;
-            top: 10vh;
+            top: 3vh;
             margin: 0 auto;
             display: block;
         }
 
         .imgB {
-            position: absolute;
-            left:  35vw;
-            bottom: -80vh;
+            position: relative;
+            top: 2vh;
             margin: 0 auto;
             display: block;
         }
@@ -277,7 +276,7 @@ scene.add(dirLight.target);
 
         // load a sound and set it as the Audio object's buffer
         const audioLoader = new THREE.AudioLoader();
-       const objectLoader = new THREE.ObjectLoader();
+     
 
         var loader = new THREE.GLTFLoader();
         loader.crossOrigin = true;
@@ -336,16 +335,8 @@ scene.add(dirLight.target);
             // const color = new THREE.Color(0xffffff);
             // pointGeometry.colors.push(color);
         }
-// Create a texture loader instance
-const textureLoader = new THREE.TextureLoader();
 
-// Load the texture (replace with actual path to your texture)
-const pointTexture = textureLoader.load('texture.png');
-
-// Create the point material with the loaded texture
-
-
-       const pointMaterial = new THREE.PointsMaterial({
+        const pointMaterial = new THREE.PointsMaterial({
             size: 4,
             color: 0xffffff,
             vertexColors: false,
