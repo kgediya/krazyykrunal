@@ -198,7 +198,7 @@
         console.log('PASSED 10th Phase')
         function setupText(message) {
             let loader = new THREE.FontLoader();
-
+            message = message.toUpperCase()
             loader.load("https://s3-us-west-2.amazonaws.com/s.cdpn.io/254249/helvetiker_regular.typeface.json", function (font) {
 
                 let geometry = new THREE.TextGeometry(message, {
@@ -239,7 +239,7 @@
             console.log(response)
             response = JSON.parse(response)
             if(response!=null)
-            setupText(response.name.toUpperCase())
+            setupText(response.name)
             else
             setupText('HO HO HO')
 
