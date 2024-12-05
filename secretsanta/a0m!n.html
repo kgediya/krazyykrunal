@@ -13,32 +13,67 @@
             font-weight: 400;
             src: local('PF Tempesta Five'), url('../assets/pf_tempesta_five.woff') format('woff');
         }
-
+    
         body {
             font-family: 'PF Tempesta Five', sans-serif;
             font-size: small;
+            background-color: #f1f8f6; /* Light wintery background */
+            color: #2e4c46; /* Festive green for text */
+            background-image: url('background.png'); /* Optional: Add a snowflake pattern */
+            background-repeat: no-repeat;
+            background-size: cover;
+           
+            padding: 20px;
         }
-
+    
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            border: 1px solid #c0392b; /* Christmas red border */
         }
-
+    
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #c0392b; /* Christmas red border */
         }
-
+    
         th, td {
-            padding: 8px;
+            padding: 12px;
             text-align: left;
         }
-
+    
         th {
-            background-color: #f2f2f2;
+            background-color: #e74c3c; /* Christmas red */
+            color: white;
         }
-
+    
+        td {
+            background-color: #ecf0f1; /* Light snow-like background for cells */
+        }
+    
+        tr:nth-child(even) {
+            background-color: #bdc3c7; /* Alternating row colors for better readability */
+        }
+    
+        tr:hover {
+            background-color: #f39c12; /* Hover effect in golden color for festive touch */
+        }
+    
+        .christmas-header {
+            font-size: 2rem;
+            color: #d35400; /* Bright orange for a festive title */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    
+        .christmas-footer {
+            text-align: center;
+            color: #8e44ad; /* Festive purple for footer */
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
     </style>
+    
 
 </head>
 
@@ -57,7 +92,7 @@
     <select name="attendees_name" style="font-family: 'PF Tempesta Five';" id="secret-santa"></select>
     <button style="font-family: 'PF Tempesta Five';" id="submit-santa">Reveal</button>
 
-    <h4>Participants List (with UUIDs)</h4>
+    <h4>Participants List</h4>
     <table id="participants-table">
         <thead>
             <tr>
