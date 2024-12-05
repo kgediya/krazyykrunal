@@ -239,7 +239,7 @@
             console.log(response)
             response = JSON.parse(response)
             if(response!=null)
-            setupText(response.name)
+            setupText(response.name.toUpperCase())
             else
             setupText('HO HO HO')
 
