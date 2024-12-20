@@ -18,14 +18,14 @@
             background-color: #f1f8f3;
             color: #333;
         }
-
+    
         header {
             margin-top: 20px;
             text-align: center;
             color: #0c648a;
             font-size: 2.5rem;
         }
-
+    
         .container {
             max-width: 800px;
             margin: 20px;
@@ -37,46 +37,100 @@
             font-size: medium;
             border: 2px solid #0c648a;
         }
-
+    
         .list {
             margin: 20px 0;
+            padding-left: 0;
         }
-
+    
         .list-item {
             margin: 10px 0;
-            display: flex;
-            align-items: center;
+            display: flex; /* Aligns checkbox and label horizontally */
+            align-items: center; /* Centers vertically */
+            justify-content: flex-start;
+            opacity: 0; /* Initially hidden */
+            animation: fadeIn 0.5s forwards;
         }
-
+    
+        /* Staggered animation delays for each list item */
+        .list-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+    
+        .list-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+    
+        .list-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+    
+        .list-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+    
+        .list-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+    
+        .list-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+    
+        .list-item:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+    
+        .list-item:nth-child(8) {
+            animation-delay: 0.8s;
+        }
+    
+        .list-item:nth-child(9) {
+            animation-delay: 0.9s;
+        }
+    
+        .list-item:nth-child(10) {
+            animation-delay: 1s;
+        }
+    
         .list-item input[type="checkbox"] {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
+            margin-right: 12px; /* Space between checkbox and label */
+            width: 24px; /* Fixed size for checkbox */
+            height: 24px;
             border-radius: 50%;
             appearance: none;
             border: 2px solid #0c648a;
             background-color: white;
             position: relative;
             cursor: pointer;
+            flex-shrink: 0; /* Prevents the checkbox from shrinking */
         }
-
+    
         .list-item input[type="checkbox"]:checked {
             background-color: #0c648a;
             border-color: #0c648a;
         }
-
+    
         .list-item input[type="checkbox"]:checked::after {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 10px;
-            height: 10px;
+            width: 14px; /* Small white dot when checked */
+            height: 14px;
             background-color: white;
             border-radius: 50%;
         }
-
+    
+        .list-item label {
+            font-size: 1rem;
+            color: #333;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+    
         button {
             padding: 12px 24px;
             background-color: #52b788;
@@ -88,56 +142,103 @@
             transition: background-color 0.3s ease;
             font-family: 'Mountains of Christmas', cursive;
         }
-
+    
         button:hover {
             background-color: #2d8a56;
         }
-
+    
         #submit-quiz {
             margin-top: 10px;
             background-color: #52b788;
         }
-
+    
         #submit-quiz:hover {
             background-color: #2d8a56;
         }
-
+    
         #thank-you-message {
             display: none;
             text-align: center;
             font-size: 18px;
             color: green;
         }
-
+    
         .question-text {
-            font-family: 'Open Sans', sans-serif; /* Complementary font for questions */
+            font-family: 'Open Sans', sans-serif;
             font-size: 1.1rem;
-            color:  #0c648a;
+            color: #0c648a;
             font-weight: bold;
             font-style: normal;
             text-transform: uppercase;
         }
+    
         .subtitle {
-    font-size: 1rem;
-    color: #0c648a;
-    text-align: center;
-    font-weight: 500;
-    margin-top: 10px;
-}
-
+            font-size: 1rem;
+            color: #0c648a;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+    
         #login-button {
-            background-color: #1d72b8; /* Blue accent for login */
+            background-color: #1d72b8;
             color: white;
             padding: 10px 20px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 16px;
         }
-
+    
         #login-button:hover {
             background-color: #155a8a;
         }
+    
+        /* Mobile responsiveness */
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+    
+            header {
+                font-size: 2rem;
+            }
+    
+            .list-item {
+                justify-content: flex-start;
+                margin-left: 0;
+                margin-right: 0;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+    
+            .list-item input[type="checkbox"] {
+                width: 28px; /* Adjust checkbox size for mobile */
+                height: 28px;
+            }
+    
+            .list-item label {
+                font-size: 0.9rem;
+            }
+    
+            button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    
+        /* Keyframe for fade-in animation */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
+    
 </head>
 
 <body>
@@ -150,7 +251,7 @@
     <div class="container">
         <button id="login-button">Login with Google</button>
         <div id="user-info" style="display: none;">
-            <p>Welcome, <span id="user-name"></span>!</p>
+            <p id="info-text">Welcome, <span id="user-name"></span>!</p>
         </div>
         <div id="thank-you-message">
             <p>Thank you for completing the quiz!</p>
@@ -213,7 +314,7 @@
     { text: "Ignored community feedback on your lens", type: 'naughty' },
     { text: "Created a lens with inappropriate content", type: 'naughty' },
     { text: "Didn’t optimize your assets for better performance", type: 'naughty' },
-    { text: "Failed to update your lens with new features or improvements", type: 'naughty' },
+    { text: "Didn't update your lens with new features or improvements", type: 'naughty' },
     { text: "Didn’t properly credit folks who helped ideate/build your lens", type: 'naughty' },
     { text: "Released a lens without considering user experience", type: 'naughty' },
     { text: "Forgot to save your lens project while working", type: 'naughty' },
@@ -253,6 +354,8 @@
         function loadQuiz() {
             const quizSection = document.getElementById('quiz-questions');
             quizSection.innerHTML = '';
+            var infoTitle = document.getElementById('info-text').innerText
+            document.getElementById('info-text').innerText = infoTitle+' Select All That Apply'
             const randomizedQuestions = questions.sort(() => Math.random() - 0.5);
             randomizedQuestions.forEach((question, index) => {
                 const listItem = document.createElement('div');
