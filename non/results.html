@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Naughty or Nice Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas&family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Mountains of Christmas', cursive;
+            background: url("https://www.transparenttextures.com/patterns/nice-snow.png");
+            background-size: cover;
+            color: #0b4d5e; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+            background-color: #e0f7fa; 
+        }
+
+        header {
+            margin-top: 20px;
+            text-align: center;
+            color: #0c648a;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .leaderboard {
+            margin-top: 30px;
+            width: 48%;
+            box-sizing: border-box;
+        }
+
+        .leaderboard h2 {
+            color: #64b5b7;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .leaderboard h2::after {
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 3px;
+            background-color: #0c648a;
+            right: 0;
+            top: 0;
+        }
+
+        .leaderboard ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .leaderboard li {
+           
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            font-family: 'Open Sans', sans-serif;
+            text-transform: uppercase; /* Capitalize text */
+        }
+
+        .leaderboard li:hover {
+            transform: translateY(-5px);
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #0c648a;
+        }
+
+        .total-score {
+            font-weight: 700;
+            color: #388e3c;
+        }
+
+        .nice {
+            background-color: #c8e6c9;
+        }
+
+        .naughty {
+            background-color: #ffcdd2;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .leaderboard {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .leaderboard ul {
+                padding-left: 20px;
+            }
+
+            .leaderboard li {
+                padding: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .leaderboard li .rank {
+                margin-bottom: 10px;
+            }
+
+            .total-score {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Naughty or Nice Quiz Leaderboard 🎅🎄
+    </header>
+
+    <div class="container">
+        <div class="leaderboard">
+            <h2>Nice List</h2>
+            <ul id="nice-list">
+                <!-- Nice leaderboard will populate here -->
+            </ul>
+        </div>
+        <div class="leaderboard">
+            <h2>Naughty List</h2>
+            <ul id="naughty-list">
+                <!-- Naughty leaderboard will populate here -->
+            </ul>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, onChildAdded, onChildRemoved, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+            authDomain: "xdgm-memorie-wall.firebaseapp.com",
+            projectId: "xdgm-memorie-wall",
+            storageBucket: "xdgm-memorie-wall.appspot.com",
+            messagingSenderId: "644674909301",
+            appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+            measurementId: "G-ZNPNV3TGMG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const niceList = [];
+        const naughtyList = [];
+
+        function updateLeaderboard() {
+            const niceListElement = document.getElementById("nice-list");
+            const naughtyListElement = document.getElementById("naughty-list");
+
+            niceListElement.innerHTML = '';
+            naughtyListElement.innerHTML = '';
+
+            niceList.sort((a, b) => b.totalScore - a.totalScore);
+            niceList.forEach((entry, index) => {
+                const listItem = document.createElement("li");
+                listItem.classList.add("nice");
+                listItem.innerHTML = `                
+                    <span class="rank">#${index + 1}</span>
+                    <span>${entry.name}</span>
+                    <span class="total-score">Score: ${entry.totalScore}</span>
+                `;
+                niceListElement.appendChild(listItem);
+            });
+
+            naughtyList.sort((a, b) => a.totalScore - b.totalScore);
+            naughtyList.forEach((entry, index) => {
+                const listItem = document.createElement("li");
+                listItem.classList.add("naughty");
+                listItem.innerHTML = `
+                    <span class="rank">#${index + 1}</span>
+                    <span>${entry.name}</span>
+                    <span class="total-score">Score: ${entry.totalScore}</span>
+                `;
+                naughtyListElement.appendChild(listItem);
+            });
+        }
+
+        function listenForNewEntries() {
+            const resultsRef = ref(database, 'quizResults');
+
+            onChildAdded(resultsRef, (data) => {
+                const result = data.val();
+                const entry = {
+                    name: result.name,
+                    totalScore: result.totalScore,
+                    result: result.result
+                };
+
+                if (entry.result === 'Nice') {
+                    niceList.push(entry);
+                } else {
+                    naughtyList.push(entry);
+                }
+
+                updateLeaderboard();
+            });
+
+            onChildRemoved(resultsRef, (data) => {
+                const result = data.val();
+                const entry = {
+                    name: result.name,
+                    totalScore: result.totalScore,
+                    result: result.result
+                };
+
+                if (entry.result === 'Nice') {
+                    const index = niceList.findIndex((e) => e.name === entry.name);
+                    if (index !== -1) niceList.splice(index, 1);
+                } else {
+                    const index = naughtyList.findIndex((e) => e.name === entry.name);
+                    if (index !== -1) naughtyList.splice(index, 1);
+                }
+
+                updateLeaderboard();
+            });
+        }
+
+        async function loadLeaderboard() {
+            const resultsRef = ref(database, 'quizResults');
+            const snapshot = await get(resultsRef);
+            const data = snapshot.val();
+
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const result = data[key];
+                    const entry = {
+                        name: result.name,
+                        totalScore: result.totalScore,
+                        result: result.result
+                    };
+
+                    if (entry.result === 'Nice') {
+                        niceList.push(entry);
+                    } else {
+                        naughtyList.push(entry);
+                    }
+                }
+            }
+
+            updateLeaderboard();
+        }
+
+        async function initLeaderboard() {
+           // await loadLeaderboard();
+            listenForNewEntries();
+        }
+
+        initLeaderboard();
+    </script>
+</body>
+</html>

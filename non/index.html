@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naughty or Nice Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet"> <!-- Added Open Sans for questions -->
+    <style>
+        body {
+            font-family: 'Mountains of Christmas', cursive;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f1f8f3;
+            color: #333;
+        }
+
+        header {
+            margin-top: 20px;
+            text-align: center;
+            color: #0c648a;
+            font-size: 2.5rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px;
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-size: medium;
+            border: 2px solid #0c648a;
+        }
+
+        .list {
+            margin: 20px 0;
+        }
+
+        .list-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .list-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            appearance: none;
+            border: 2px solid #0c648a;
+            background-color: white;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .list-item input[type="checkbox"]:checked {
+            background-color: #0c648a;
+            border-color: #0c648a;
+        }
+
+        .list-item input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #52b788;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            font-family: 'Mountains of Christmas', cursive;
+        }
+
+        button:hover {
+            background-color: #2d8a56;
+        }
+
+        #submit-quiz {
+            margin-top: 10px;
+            background-color: #52b788;
+        }
+
+        #submit-quiz:hover {
+            background-color: #2d8a56;
+        }
+
+        #thank-you-message {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            color: green;
+        }
+
+        .question-text {
+            font-family: 'Open Sans', sans-serif; /* Complementary font for questions */
+            font-size: 1.1rem;
+            color:  #0c648a;
+            font-weight: bold;
+            font-style: normal;
+            text-transform: uppercase;
+        }
+        .subtitle {
+    font-size: 1rem;
+    color: #0c648a;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+        #login-button {
+            background-color: #1d72b8; /* Blue accent for login */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #login-button:hover {
+            background-color: #155a8a;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Santa's Personality Test</h1>
+        <h4>By XDG मुंBAI and Humane Space</h2>
+        <p>Take the quiz and see where you stand!</p>
+        
+    </header>
+    <div class="container">
+        <button id="login-button">Login with Google</button>
+        <div id="user-info" style="display: none;">
+            <p>Welcome, <span id="user-name"></span>!</p>
+        </div>
+        <div id="thank-you-message">
+            <p>Thank you for completing the quiz!</p>
+        </div>
+        <div class="list" id="quiz-section" style="display: none;">
+            <div id="quiz-questions"></div>
+            <button id="submit-quiz">SUBMIT</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+            authDomain: "xdgm-memorie-wall.firebaseapp.com",
+            projectId: "xdgm-memorie-wall",
+            storageBucket: "xdgm-memorie-wall.appspot.com",
+            messagingSenderId: "644674909301",
+            appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+            measurementId: "G-ZNPNV3TGMG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth();
+
+        const questions = [
+    // Nice questions
+    { text: "Helped a fellow developer debug their lens", type: 'nice' },
+    { text: "Shared SnapAR tips in a community forum/group", type: 'nice' },
+    { text: "Created an AR lens that went viral (100k+ views)", type: 'nice' },
+    { text: "Participated in a SnapAR peer review session", type: 'nice' },
+    { text: "Taught someone how to use Lens Studio", type: 'nice' },
+    { text: "Incorporated accessibility features in your lens", type: 'nice' },
+    { text: "Gave constructive feedback to another creator", type: 'nice' },
+    { text: "Created an AR lens for a social cause", type: 'nice' },
+    { text: "Submitted your lens before the deadline", type: 'nice' },
+    { text: "Promoted SnapAR at a local event", type: 'nice' },
+    { text: "Collaborated with other creators on a lens project", type: 'nice' },
+    { text: "Created an immersive AR experience for an event", type: 'nice' },
+    { text: "Helped organize a SnapAR workshop or event", type: 'nice' },
+    { text: "Created a lens for SwaggAR", type: 'nice' },
+    { text: "Integrated new technologies or trends into your lens", type: 'nice' },
+    { text: "Provided mentorship to a new SnapAR creator", type: 'nice' },
+    { text: "Promoted SnapAR in a tech blog or vlog", type: 'nice' },
+    { text: "Engaged with your community regularly to improve your lenses", type: 'nice' },
+
+    // Naughty questions
+    { text: "Forgot to test your lens on multiple devices", type: 'naughty' },
+    { text: "Didn’t follow SnapAR submission guidelines", type: 'naughty' },
+    { text: "Used too many assets, making the lens laggy", type: 'naughty' },
+    { text: "Missed a SnapAR event or meetup you signed up for", type: 'naughty' },
+    { text: "Gave harsh criticism without solutions", type: 'naughty' },
+    { text: "Claimed someone else’s work as your own", type: 'naughty' },
+    { text: "Asked something on the community which you could easily Google", type: 'naughty' },
+    { text: "Overlooked bugs and released a glitchy lens", type: 'naughty' },
+    { text: "Ignored community feedback on your lens", type: 'naughty' },
+    { text: "Created a lens with inappropriate content", type: 'naughty' },
+    { text: "Didn’t optimize your assets for better performance", type: 'naughty' },
+    { text: "Failed to update your lens with new features or improvements", type: 'naughty' },
+    { text: "Didn’t properly credit folks who helped ideate/build your lens", type: 'naughty' },
+    { text: "Released a lens without considering user experience", type: 'naughty' },
+    { text: "Forgot to save your lens project while working", type: 'naughty' },
+    { text: "Ignored best practices for AR development", type: 'naughty' },
+    { text: "Released a lens without considering accessibility for all users", type: 'naughty' },
+    { text: "Used misleading titles or tags to gain more views", type: 'naughty' },
+    { text: "Didn’t optimize your lens for lower-end devices", type: 'naughty' }
+];
+
+
+        const loginButton = document.getElementById("login-button");
+        loginButton.addEventListener("click", async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                const userId = user.uid;
+
+                document.getElementById("user-info").style.display = "block";
+                document.getElementById("user-name").textContent = user.displayName;
+                document.getElementById("login-button").style.display = "none";
+                const userResultRef = ref(database, 'quizResults/' + userId);
+                get(userResultRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        document.getElementById("quiz-section").style.display = "none";
+                        document.getElementById("thank-you-message").style.display = "block";
+                    } else {
+                        loadQuiz();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error during login:", error);
+            }
+        });
+
+        function loadQuiz() {
+            const quizSection = document.getElementById('quiz-questions');
+            quizSection.innerHTML = '';
+            const randomizedQuestions = questions.sort(() => Math.random() - 0.5);
+            randomizedQuestions.forEach((question, index) => {
+                const listItem = document.createElement('div');
+                listItem.className = 'list-item';
+                listItem.innerHTML = `<input type="checkbox" id="question-${index}">
+                                      <label for="question-${index}" class="question-text">${question.text}</label>`;
+                quizSection.appendChild(listItem);
+            });
+
+            document.getElementById('quiz-section').style.display = 'block';
+        }
+
+        window.submitQuiz = function () {
+            const checkboxes = document.querySelectorAll('.list-item input[type="checkbox"]');
+            let niceScore = 0;
+            let naughtyScore = 0;
+
+            questions.forEach((question, index) => {
+                const checkbox = document.getElementById(`question-${index}`);
+                if (checkbox && checkbox.checked) {
+                    if (question.type === 'nice') niceScore++;
+                    else naughtyScore++;
+                }
+            });
+
+            const totalScore = niceScore - naughtyScore;
+            const result = niceScore >= naughtyScore ? "Nice" : "Naughty";
+
+            const userId = auth.currentUser.uid;
+
+            set(ref(database, 'quizResults/'+userId), {
+                userId: userId,
+                name: document.getElementById("user-name").textContent,
+                niceScore: niceScore,
+                naughtyScore: naughtyScore,
+                totalScore: totalScore,
+                result: result
+            });
+
+             document.getElementById("quiz-section").style.display = "none";
+            document.getElementById("thank-you-message").style.display = "block";
+        }
+
+        document.getElementById("submit-quiz").addEventListener("click", submitQuiz);
+    </script>
+</body>
+
+</html>
