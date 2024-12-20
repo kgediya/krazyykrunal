@@ -11,12 +11,15 @@
         body {
             font-family: 'Mountains of Christmas', cursive;
             margin: 0;
+            background: url("https://i.pinimg.com/736x/d4/29/6f/d4296f6561bf0a4c8dff9ec0a82291eb.jpg");
             padding: 0;
+           background-size: cover;
+         
             display: flex;
             flex-direction: column;
             align-items: center;
             background-color: #f1f8f3;
-            color: #333;
+            color:#0c648a;
         }
     
         header {
@@ -30,7 +33,7 @@
             max-width: 800px;
             margin: 20px;
             padding: 20px;
-            text-align: center;
+           
             background: #ffffff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -125,7 +128,7 @@
     
         .list-item label {
             font-size: 1rem;
-            color: #333;
+            color:#0c648a;
             display: inline-flex;
             align-items: center;
             cursor: pointer;
@@ -200,6 +203,7 @@
             }
     
             header {
+            margin: 20%;
                 font-size: 2rem;
             }
     
@@ -207,7 +211,7 @@
                 justify-content: flex-start;
                 margin-left: 0;
                 margin-right: 0;
-                padding-left: 20px;
+                padding-left: 0px;
                 padding-right: 20px;
             }
     
@@ -243,14 +247,14 @@
 
 <body>
     <header>
-        <h1>Santa's Personality Test</h1>
+        <h1>Santa's Personality Test 2024</h1>
         <h4>By XDG मुंBAI and Humane Space</h2>
         <p>Take the quiz and see where you stand!</p>
         
     </header>
     <div class="container">
         <button id="login-button">Login with Google</button>
-        <div id="user-info" style="display: none;">
+        <div id="user-info" style="display: none; text-align: center;">
             <p id="info-text">Welcome, <span id="user-name"></span>!</p>
         </div>
         <div id="thank-you-message">
@@ -258,7 +262,8 @@
         </div>
         <div class="list" id="quiz-section" style="display: none;">
             <div id="quiz-questions"></div>
-            <button id="submit-quiz">SUBMIT</button>
+            <div style="text-align: center;"> <button  id="submit-quiz">SUBMIT</button></div>
+           
         </div>
     </div>
 
@@ -288,19 +293,19 @@
     { text: "Created an AR lens that went viral (100k+ views)", type: 'nice' },
     { text: "Participated in a SnapAR peer review session", type: 'nice' },
     { text: "Taught someone how to use Lens Studio", type: 'nice' },
-    { text: "Incorporated accessibility features in your lens", type: 'nice' },
+    { text: "Didn't ignore accessibility features in your lens", type: 'nice' },
     { text: "Gave constructive feedback to another creator", type: 'nice' },
     { text: "Created an AR lens for a social cause", type: 'nice' },
     { text: "Submitted your lens before the deadline", type: 'nice' },
     { text: "Promoted SnapAR at a local event", type: 'nice' },
     { text: "Collaborated with other creators on a lens project", type: 'nice' },
     { text: "Created an immersive AR experience for an event", type: 'nice' },
-    { text: "Helped organize a SnapAR workshop or event", type: 'nice' },
+    { text: "Helped organize/volunteer a SnapAR workshop or event", type: 'nice' },
     { text: "Created a lens for SwaggAR", type: 'nice' },
     { text: "Integrated new technologies or trends into your lens", type: 'nice' },
     { text: "Provided mentorship to a new SnapAR creator", type: 'nice' },
     { text: "Promoted SnapAR in a tech blog or vlog", type: 'nice' },
-    { text: "Engaged with your community regularly to improve your lenses", type: 'nice' },
+    { text: "Didn't stay inactive in the community", type: 'nice' },
 
     // Naughty questions
     { text: "Forgot to test your lens on multiple devices", type: 'naughty' },
