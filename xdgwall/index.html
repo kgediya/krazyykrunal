@@ -8,6 +8,8 @@
       background-color: var(--bg-color, #f4f4f9);
       color: var(--font-color, #333);
       text-align: center;
+      justify-content: center;
+      align-items: center; 
       margin: 0;
       padding: 0;
     }
@@ -55,16 +57,18 @@
     input, button {
       padding: 10px;
       margin: 5px;
-      border-radius: 5px;
+      border-radius: 100px;
       border: 1px solid #ccc;
       font-size: 16px;
+
     }
 
     button {
-      background-color: #0056b3;
-      color: white;
-      cursor: pointer;
-    }
+  background-color: #0056b3;
+  color: white;
+  cursor: pointer;
+  border-radius: 100px; /* Adjust this value for more or less rounding */
+}
 
     button:hover {
       background-color: #004494;
@@ -98,12 +102,13 @@
 <body>
   <h1 id="title-text">XDG Wall</h1>
 
-  <button id="googleSignInButton">Sign in with Google</button>
+ 
   <button id="googleSignOutButton" style="display: none;">Sign Out</button>
 
   <div id="canvas"></div>
+  <button id="googleSignInButton" style="left: 42%;  position: absolute;">Sign in with Google</button>
+  <div id="controls" hidden>
 
-  <div id="controls">
     <input type="text" id="noteText" placeholder="Type your note..." disabled>
     <button onclick="addNote()" disabled>Add Note</button>
   </div>
@@ -409,6 +414,7 @@ function makeNoteDraggable(note) {
         signInButton.style.display = 'none';
         signOutButton.style.display = 'none';
         noteInput.disabled = false;
+        document.getElementById('controls').hidden = false
         addNoteButton.disabled = false;
       } else {
         signInButton.style.display = 'block';
