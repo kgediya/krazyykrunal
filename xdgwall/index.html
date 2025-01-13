@@ -18,7 +18,9 @@
     }
 
     #canvas {
-      width: 800px;
+      min-width: 700px;
+      min-height: 600px;
+      width: 700px;
       height: 600px;
       border: 2px dashed var(--border-color, #0056b3);
       background-color: var(--canvas-bg, #eef7ff);
@@ -26,6 +28,7 @@
       margin: 20px auto;
       border-radius: 10px;
       overflow: hidden;
+      transition: width 0.5s ease, height 0.5s ease;
     }
 
     .note {
@@ -131,7 +134,7 @@
     database.ref(`events/${eventId}/name`).on("value",(snapshot)=>{
       try{
         const name = snapshot.val()
-        if(name)
+        if(name!=undefined)
         document.getElementById('title-text').innerText+=" | "+name
       }
       catch{
@@ -141,37 +144,102 @@ console.log('ERROR FETCHING NAME')
     })
     let firstLoad = false;
     function retrieveNotes() {
+  database.ref(eventDatabasePath).on("value", (snapshot) => {
+    const notes = snapshot.val();
+    const canvas = document.getElementById("canvas");
+    canvas.innerHTML = "";
 
-      database.ref(eventDatabasePath).on("value", (snapshot) => {
-        const notes = snapshot.val();
-        const canvas = document.getElementById("canvas");
-        canvas.innerHTML = "";
+    let maxWidth = canvas.offsetWidth;
+    let maxHeight = canvas.offsetHeight;
 
-        if (notes) {
-          
-          Object.keys(notes).forEach((key,index) => {
-            const note = notes[key];
-            const noteElement = document.createElement("div");
-            noteElement.className = "note";
-            noteElement.innerText = note.text;
-            noteElement.style.backgroundColor = note.backgroundColor;
-            noteElement.style.color = note.fontColor;
-            noteElement.style.top = note.top;
-            noteElement.style.left = note.left;
-            noteElement.dataset.id = key; // Add note ID for database reference
-            canvas.appendChild(noteElement);
-            makeNoteDraggable(noteElement);
-            if(!firstLoad){
-            setTimeout(() => {
-              noteElement.classList.add("fade-in");
-            }, index * 100);}else{
-              noteElement.style.opacity=1
-            }
-          });
-          firstLoad = true
+    if (notes) {
+      Object.keys(notes).forEach((key, index) => {
+        const note = notes[key];
+        const noteElement = document.createElement("div");
+        noteElement.className = "note";
+        noteElement.innerText = note.text;
+        noteElement.style.backgroundColor = note.backgroundColor;
+        noteElement.style.color = note.fontColor;
+        noteElement.style.top = note.top;
+        noteElement.style.left = note.left;
+        noteElement.dataset.id = key; // Add note ID for database reference
+        canvas.appendChild(noteElement);
+        makeNoteDraggable(noteElement);
+
+        // Calculate note boundaries for canvas expansion
+        const noteTop = parseInt(noteElement.style.top, 10);
+        const noteLeft = parseInt(noteElement.style.left, 10);
+        const noteRight = noteLeft + noteElement.offsetWidth;
+        const noteBottom = noteTop + noteElement.offsetHeight;
+
+        if (noteRight > maxWidth) maxWidth = noteRight;
+        if (noteBottom > maxHeight) maxHeight = noteBottom;
+
+        if (!firstLoad) {
+          setTimeout(() => {
+            noteElement.classList.add("fade-in");
+          }, index * 100);
+        } else {
+          noteElement.style.opacity = 1;
         }
       });
+      console.log('RESZING')
+      // Expand canvas size if necessary
+     adjustCanvasSize()
+
+      firstLoad = true;
     }
+  });
+}
+function adjustCanvasSize() {
+  const canvas = document.getElementById("canvas");
+  const notes = document.querySelectorAll(".note");
+
+  if (notes.length === 0) {
+    canvas.style.width = "700px";
+    canvas.style.height = "600px";
+    return;
+  }
+
+  // Initialize boundaries
+  let maxRight = 0, maxBottom = 0;
+  let minLeft = canvas.offsetWidth, minTop = canvas.offsetHeight;
+
+  notes.forEach(note => {
+    const rect = note.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
+
+    // Calculate note positions relative to canvas
+    const noteRight = rect.right - canvasRect.left;
+    const noteBottom = rect.bottom - canvasRect.top;
+    const noteLeft = rect.left - canvasRect.left;
+    const noteTop = rect.top - canvasRect.top;
+
+    // Update boundaries
+    maxRight = Math.max(maxRight, noteRight);
+    maxBottom = Math.max(maxBottom, noteBottom);
+    minLeft = Math.min(minLeft, noteLeft);
+    minTop = Math.min(minTop, noteTop);
+  });
+
+  // Determine new canvas size
+  const newWidth = Math.max(700, maxRight + 20); // Add padding
+  const newHeight = Math.max(600, maxBottom + 20);
+
+  const newMinWidth = Math.min(newWidth, 700);
+  const newMinHeight = Math.min(newHeight, 600);
+
+  // Update canvas dimensions
+  canvas.style.width = `${newWidth}px`;
+  canvas.style.height = `${newHeight}px`;
+
+  // Shrink back if notes fit within original bounds
+  if (maxRight <= 700 && maxBottom <= 600) {
+    canvas.style.width = `${newMinWidth}px`;
+    canvas.style.height = `${newMinHeight}px`;
+  }
+}
+
 
     function makeNoteDraggable(note) {
       let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -248,10 +316,10 @@ console.log('ERROR FETCHING NAME')
       borderColor: "#0288d1"
     },
     {
-      backgroundColor: "#fff3e0",
-      textColor: "#f57c00",
-      borderColor: "#ff5722"
-    },
+  backgroundColor: "#000000",  // Black background
+  textColor: "#089BFF",        // Blue text color
+  borderColor: "#FF6086"       // Pink border color
+},
     {
       backgroundColor: "#f3e5f5",
       textColor: "#6a1b9a",
@@ -298,6 +366,7 @@ console.log('ERROR FETCHING NAME')
 
         database.ref(eventDatabasePath).push(note)
           .then(() => {
+            adjustCanvasSize()
             console.log('Note added successfully');
           })
           .catch((error) => {
