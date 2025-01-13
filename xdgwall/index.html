@@ -1,83 +1,338 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Virtual Canvas</title>
+  <title>XDG Wall</title>
   <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: var(--bg-color, #f4f4f9);
+      color: var(--font-color, #333);
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin: 20px 0;
+      color: var(--title-color, #0056b3);
+    }
+
     #canvas {
       width: 800px;
       height: 600px;
-      border: 2px solid black;
-      background-color: #f3f3f3;
+      border: 2px dashed var(--border-color, #0056b3);
+      background-color: var(--canvas-bg, #eef7ff);
       position: relative;
+      margin: 20px auto;
+      border-radius: 10px;
+      overflow: hidden;
     }
+
     .note {
       position: absolute;
       padding: 10px;
-      border: 1px solid #333;
-      border-radius: 4px;
+      border: 2px solid #333;
+      border-radius: 6px;
       cursor: move;
+      font-size: 14px;
+      text-align: center;
+      max-width: 200px;
+      word-wrap: break-word;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .note.fade-in {
+      opacity: 1;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #0056b3;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004494;
+    }
+
+    input {
+      width: 300px;
+    }
+
+    @media (max-width: 768px) {
+      #canvas {
+        height: 400px;
+      }
+
+      .note {
+        font-size: 12px;
+        max-width: 150px;
+      }
+
+      input {
+        width: 200px;
+      }
+
+      button {
+        padding: 8px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>XDG मुंBAI Wall</h1>
+  <h1 id="title-text">XDG Wall</h1>
+
+  <button id="googleSignInButton">Sign in with Google</button>
+  <button id="googleSignOutButton" style="display: none;">Sign Out</button>
 
   <div id="canvas"></div>
 
-  <input type="text" id="noteText" placeholder="Type your note...">
-  <button onclick="addNote()">Add Note</button>
+  <div id="controls">
+    <input type="text" id="noteText" placeholder="Type your note..." disabled>
+    <button onclick="addNote()" disabled>Add Note</button>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script>
-    // Initialize Firebase
+  
     const firebaseConfig = {
-    apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
-    authDomain: "xdgm-memorie-wall.firebaseapp.com",
-    projectId: "xdgm-memorie-wall",
-    storageBucket: "xdgm-memorie-wall.appspot.com",
-    messagingSenderId: "644674909301",
-    appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
-    measurementId: "G-ZNPNV3TGMG"
-  };
+      apiKey: "AIzaSyCiG3pBNppvdiZUv2nS0Zpmv8kMGRiQGh0",
+      authDomain: "xdgm-memorie-wall.firebaseapp.com",
+      projectId: "xdgm-memorie-wall",
+      storageBucket: "xdgm-memorie-wall.appspot.com",
+      messagingSenderId: "644674909301",
+      appId: "1:644674909301:web:181ac410a2407ab9ddf43c",
+      measurementId: "G-ZNPNV3TGMG"
+    };
 
     firebase.initializeApp(firebaseConfig);
 
+    const auth = firebase.auth();
     const database = firebase.database();
 
-    // Function to make the notes draggable
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('eventid') || 'default';
+    const eventDatabasePath = `events/${eventId}/notes`;
+    database.ref(`events/${eventId}/name`).on("value",(snapshot)=>{
+      try{
+        const name = snapshot.val()
+        document.getElementById('title-text').innerText+=" | "+name
+      }
+      catch{
+console.log('ERROR FETCHING NAME')
+      }
+    
+    })
+    let firstLoad = false;
+    function retrieveNotes() {
+
+      database.ref(eventDatabasePath).on("value", (snapshot) => {
+        const notes = snapshot.val();
+        const canvas = document.getElementById("canvas");
+        canvas.innerHTML = "";
+
+        if (notes) {
+          
+          Object.keys(notes).forEach((key,index) => {
+            const note = notes[key];
+            const noteElement = document.createElement("div");
+            noteElement.className = "note";
+            noteElement.innerText = note.text;
+            noteElement.style.backgroundColor = note.backgroundColor;
+            noteElement.style.color = note.fontColor;
+            noteElement.style.top = note.top;
+            noteElement.style.left = note.left;
+            noteElement.dataset.id = key; // Add note ID for database reference
+            canvas.appendChild(noteElement);
+            makeNoteDraggable(noteElement);
+            if(!firstLoad){
+            setTimeout(() => {
+              noteElement.classList.add("fade-in");
+            }, index * 100);}else{
+              noteElement.style.opacity=1
+            }
+          });
+          firstLoad = true
+        }
+      });
+    }
+
     function makeNoteDraggable(note) {
       let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
-      note.onmousedown = dragMouseDown;
-
-      function dragMouseDown(e) {
-        e = e || window.event;
+      note.onmousedown = (e) => {
         e.preventDefault();
         pos3 = e.clientX;
         pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-      }
 
-      function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        note.style.top = (note.offsetTop - pos2) + "px";
-        note.style.left = (note.offsetLeft - pos1) + "px";
-      }
+        document.onmousemove = (e) => {
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          note.style.top = (note.offsetTop - pos2) + "px";
+          note.style.left = (note.offsetLeft - pos1) + "px";
+        };
 
-      function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
+        document.onmouseup = () => {
+          document.onmouseup = null;
+          document.onmousemove = null;
+
+          updateNotePosition(note); // Update the note position in the database on mouse up
+        };
+      };
+    }
+
+    function updateNotePosition(note) {
+      const noteId = note.dataset.id;
+      const top = note.style.top;
+      const left = note.style.left;
+
+      database.ref(`${eventDatabasePath}/${noteId}`).update({
+        top: top,
+        left: left
+      }).then(() => {
+        console.log('Note position updated successfully');
+      }).catch((error) => {
+        console.error('Error updating note position:', error);
+      });
+    }
+
+    function getEventName(eventId) {
+      const monthMap = {
+        jan: "January", feb: "February", mar: "March", apr: "April",
+        may: "May", jun: "June", july: "July", aug: "August",
+        sep: "September", oct: "October", nov: "November", dec: "December"
+      };
+
+      const month = eventId.startsWith("july") ? "July" : monthMap[eventId.slice(0, 3)];
+      const year = "20" + eventId.slice(month === "July" ? 4 : 3);
+      return `${month} ${year}`;
+    }
+    function getRandomTheme(seed) {
+  const themes = [
+    {
+      backgroundColor: "#f0f4f8",
+      textColor: "#333",
+      borderColor: "#1d72b8"
+    },
+    {
+      backgroundColor: "#fffbf0",
+      textColor: "#2c3e50",
+      borderColor: "#e67e22"
+    },
+    {
+      backgroundColor: "#e8f5e9",
+      textColor: "#1b5e20",
+      borderColor: "#388e3c"
+    },
+    {
+      backgroundColor: "#eceff1",
+      textColor: "#1a237e",
+      borderColor: "#0288d1"
+    },
+    {
+      backgroundColor: "#fff3e0",
+      textColor: "#f57c00",
+      borderColor: "#ff5722"
+    },
+    {
+      backgroundColor: "#f3e5f5",
+      textColor: "#6a1b9a",
+      borderColor: "#9c27b0"
+    },
+    {
+      backgroundColor: "#e3f2fd",
+      textColor: "#0d47a1",
+      borderColor: "#1976d2"
+    }
+  ];
+
+  const randomIndex = Math.abs(seed) % themes.length;
+  return themes[randomIndex];
+}
+
+    function applyTheme(monthYear) {
+      const seed = monthYear.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const theme = getRandomTheme(seed);
+
+      document.body.style.setProperty('--bg-color', theme.backgroundColor);
+      document.body.style.setProperty('--font-color', theme.textColor);
+      document.body.style.setProperty('--title-color', theme.textColor);
+      document.body.style.setProperty('--canvas-bg', theme.backgroundColor);
+      document.body.style.setProperty('--border-color', theme.borderColor);
+    }
+
+    const monthYear = getEventName(eventId);
+    applyTheme(monthYear);
+    document.getElementById('title-text').innerText += ` - ${getEventName(eventId)}`;
+
+    function addNote() {
+      const noteText = document.getElementById('noteText').value;
+
+      if (noteText.trim() !== '') {
+        const bgColor = getRandomColor();
+        const note = {
+          text: noteText,
+          backgroundColor: bgColor,
+          fontColor: isColorDark(bgColor) ? "#ffffff" : "#333",
+          top: `${Math.floor(Math.random() * 500)}px`,
+          left: `${Math.floor(Math.random() * 500)}px`,
+        };
+
+        database.ref(eventDatabasePath).push(note)
+          .then(() => {
+            console.log('Note added successfully');
+          })
+          .catch((error) => {
+            console.error('Error adding note:', error);
+          });
       }
     }
 
-    // Function to generate a random color
+    auth.onAuthStateChanged((user) => {
+      const signInButton = document.getElementById('googleSignInButton');
+      const signOutButton = document.getElementById('googleSignOutButton');
+      const noteInput = document.getElementById('noteText');
+      const addNoteButton = document.querySelector('#controls button');
+
+      if (user) {
+        signInButton.style.display = 'none';
+        signOutButton.style.display = 'none';
+        noteInput.disabled = false;
+        addNoteButton.disabled = false;
+      } else {
+        signInButton.style.display = 'block';
+        signOutButton.style.display = 'none';
+        noteInput.disabled = true;
+        addNoteButton.disabled = true;
+      }
+    });
+
+    document.getElementById('googleSignInButton').onclick = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider);
+    };
+
+    document.getElementById('googleSignOutButton').onclick = () => {
+      auth.signOut();
+    };
+
     function getRandomColor() {
       const letters = "0123456789ABCDEF";
       let color = "#";
@@ -87,7 +342,6 @@
       return color;
     }
 
-    // Function to check if a color is dark
     function isColorDark(color) {
       const rgb = parseInt(color.substring(1), 16);
       const r = (rgb >> 16) & 0xff;
@@ -98,69 +352,6 @@
       return luminance <= 0.5;
     }
 
-    // Function to generate a random font style
-    function getRandomFontStyle() {
-      const fontStyles = [
-        "Arial, sans-serif",
-        "Verdana, sans-serif",
-        "Helvetica, sans-serif",
-        "Georgia, serif",
-        "Courier New, monospace"
-      ];
-      return fontStyles[Math.floor(Math.random() * fontStyles.length)];
-    }
-
-    // Function to add a note to the canvas
-    function addNote() {
-      const noteText = document.getElementById('noteText').value;
-
-      if (noteText.trim() !== '') {
-        const note = {
-          text: noteText,
-          backgroundColor: getRandomColor(),
-          fontColor: isColorDark(backgroundColor) ? "#ffffff" : "#333",
-          fontStyle: getRandomFontStyle(),
-          top: `${Math.floor(Math.random() * 500)}px`,
-          left: `${Math.floor(Math.random() * 500)}px`,
-        };
-
-        database.ref('notes').push(note)
-          .then(() => {
-            console.log('Note added successfully');
-          })
-          .catch((error) => {
-            console.error('Error adding note:', error);
-          });
-      }
-    }
-
-    // Function to retrieve notes from the database
-    function retrieveNotes() {
-      database.ref('notes').on('value', (snapshot) => {
-        const notes = snapshot.val();
-        if (notes) {
-          const canvas = document.getElementById('canvas');
-          canvas.innerHTML = '';
-
-          Object.keys(notes).forEach((key) => {
-            const note = notes[key];
-            const noteElement = document.createElement('div');
-            noteElement.className = 'note';
-            noteElement.innerText = note.text;
-            noteElement.style.backgroundColor = note.backgroundColor;
-            noteElement.style.color = note.fontColor;
-            noteElement.style.fontFamily = note.fontStyle;
-            noteElement.style.left = note.left;
-            noteElement.style.top = note.top;
-
-            canvas.appendChild(noteElement);
-            makeNoteDraggable(noteElement);
-          });
-        }
-      });
-    }
-
-    // Call retrieveNotes to load existing notes
     retrieveNotes();
   </script>
 </body>
