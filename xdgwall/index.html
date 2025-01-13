@@ -131,6 +131,7 @@
     database.ref(`events/${eventId}/name`).on("value",(snapshot)=>{
       try{
         const name = snapshot.val()
+        if(name)
         document.getElementById('title-text').innerText+=" | "+name
       }
       catch{
