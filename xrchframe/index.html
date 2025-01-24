@@ -31,8 +31,8 @@
       padding: 20px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       max-width: 400px;
-      width: 90%;
-      text-align: center; /* Ensure everything inside is centered */
+      width: 70%;
+      text-align: center;
     }
 
     .container input,
@@ -41,8 +41,11 @@
       margin-bottom: 15px;
       display: block;
       width: 100%;
-      padding: 10px;
-      border: none;
+      border: dashed 1px #000000;
+     padding-bottom: 10px;
+     padding-top: 10px;
+      
+      text-align: center;
       border-radius: 20px;
       font-size: 1rem;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -69,51 +72,50 @@
     }
 
     /* Custom styling for the file input */
-   /* Custom styling for the file input */
-.file-input-wrapper {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  text-align: center;
-  border-radius: 20px;
-}
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      text-align: center;
+      border-radius: 20px;
+    }
 
-.file-input-wrapper input[type="file"] {
-  opacity: 0; /* Hide default file input */
-  position: absolute;
-  z-index: 1; /* Ensure it's above other elements */
-  top: 0;
-  text-align: center;
-  left: 0;
-  width: 100%;  /* Ensure file input takes full width */
-  height: 100%; /* Ensure file input takes full height */
-  cursor: pointer;
-  border-radius: 20px;
-}
+    .file-input-wrapper input[type="file"] {
+      opacity: 0; /* Hide default file input */
+      position: absolute;
+      z-index: 1; /* Ensure it's above other elements */
+      top: 0;
+      text-align: center;
+      left: 0;
+      width: 100%; /* Ensure file input takes full width */
+      height: 100%; /* Ensure file input takes full height */
+      cursor: pointer;
+      border-radius: 20px;
+    }
 
-.choose-file-button {
-  padding: 1% 0; /* Vertically expand the button by 30% based on width */
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: white;
-  border-radius: 20px; /* Keep rounded corners */
-  text-align: center;
-  font-weight: bold;
-  text-transform: uppercase;
-  cursor: pointer;
-  width: 100%;  /* Makes the button take up full width of the container */
-  font-size: 1.2rem;  /* Increases font size */
-  transition: 0.3s;
-  position: relative; /* Ensure the custom button is above the file input */
-  z-index: 0;
-  display: flex;  /* Use flexbox to center the text */
-  justify-content: center;  /* Horizontally center the text */
-  align-items: center;  /* Vertically center the text */
-  box-sizing: border-box; /* Make sure padding is within the border-radius */
-}
+    .choose-file-button {
+      padding: 1% 0; /* Vertically expand the button */
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      border-radius: 20px; /* Keep rounded corners */
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%; /* Makes the button take up full width of the container */
+      font-size: 1.2rem; /* Increases font size */
+      transition: 0.3s;
+      position: relative;
+      z-index: 0;
+      display: flex; /* Use flexbox to center the text */
+      justify-content: center; /* Horizontally center the text */
+      align-items: center; /* Vertically center the text */
+      box-sizing: border-box; /* Make sure padding is within the border-radius */
+    }
 
-.choose-file-button:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
+    .choose-file-button:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
     /* Centering the input fields */
     .container input#nameInput {
@@ -149,10 +151,33 @@
       pointer-events: none;
     }
 
+    /* Responsive styling */
     @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem; /* Reduce font size for mobile screens */
+      }
+
+      .container {
+        max-width: 90%; /* Make container width responsive */
+        padding: 10px; /* Reduce padding on mobile */
+      }
+
+      .choose-file-button {
+        font-size: 1rem; /* Make button font size smaller */
+        padding: 2% 0; /* Adjust padding for mobile */
+      }
+
       .preview {
         width: 250px;
-        height: 312.5px;
+        height: 312.5px; /* Adjust preview size */
+      }
+
+      .container input,
+      .container select,
+      .container button {
+       padding-top: 10px;
+       padding-bottom: 10px; /* Adjust input/button padding */
+        font-size: 0.9rem; /* Adjust font size */
       }
     }
   </style>
@@ -162,10 +187,10 @@
   <h1>Phase 3 Finalists</h1>
   <div class="container">
     <label for="nameInput">Enter Your Name</label>
-    <input type="text" id="nameInput" placeholder="Your Name">
+    <input type="text" id="nameInput" placeholder="Your Name"  style="text-transform: uppercase;">
 
     <label for="teamSelect">Select Your Team</label>
-    <select id="teamSelect">
+    <select id="teamSelect"  style="text-transform: uppercase;">
       <option value="Rizzlers">Rizzlers</option>
       <option value="Spambots">Spambots</option>
       <option value="Team Procrastinators">Team Procrastinators</option>
@@ -212,14 +237,14 @@
       <input type="file" id="fileInput" accept="image/*">
       <span class="choose-file-button">Upload Your Image</span>
     </div>
-<br>
+    <br>
     <div class="preview" id="preview">
       <canvas id="canvas" width="300" height="375" style="display: none;" hidden></canvas>
       <img id="frameImage" class="frame" alt="Frame Overlay" style="display: none;" hidden>
     </div>
     <br>
-    <button id="generatePreviewBtn" disabled>Generate Preview</button>
-    <button id="downloadBtn" disabled>Download</button>
+    <button id="generatePreviewBtn" style="text-transform: uppercase;" disabled>Generate Preview</button>
+    <button id="downloadBtn"  style="text-transform: uppercase;" disabled>Download</button>
   </div>
 
   <script>
@@ -307,16 +332,16 @@
         ctx.fillText(team, 512, 1155.4);
 
         generatedImage = canvas.toDataURL(); // Save the final image
- preview.style.display = 'flex'
+        preview.style.display = 'flex';
         // Update the preview with fade-in animation
         preview.style.backgroundImage = `url(${generatedImage})`;
         preview.style.backgroundSize = 'cover';
         preview.style.backgroundPosition = 'center';
-        setTimeout(()=>{
-            preview.style.opacity = 1;
-        },10)
-         // Fade in the preview
-       
+        setTimeout(() => {
+          preview.style.opacity = 1;
+        }, 10);
+        // Fade in the preview
+
         // Enable the download button
         downloadBtn.disabled = false;
       };
