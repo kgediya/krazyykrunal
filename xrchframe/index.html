@@ -7,179 +7,181 @@
   <title>Phase 3 Finalists</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      margin: 0;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow: hidden;
-    }
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  margin: 0;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 2rem;
-    }
+h1 {
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
 
-    .container {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      max-width: 400px;
-      width: 70%;
-      text-align: center;
-    }
+.container {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  display: flex;  /* This enables Flexbox */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center;
+  width: 90%; /* Ensure it's responsive */
+  text-align: center;
+}
 
-    .container input,
-    .container select,
-    .container button {
-      margin-bottom: 15px;
-      display: block;
-      width: 100%;
-      border: dashed 1px #000000;
-     padding-bottom: 10px;
-     padding-top: 10px;
-      
-      text-align: center;
-      border-radius: 20px;
-      font-size: 1rem;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      outline: none;
-      transition: 0.3s;
-    }
+.container input,
+.container select,
+.container button {
+  margin-bottom: 15px;
+  display: block;
+  width: 90%;
+  padding: 10px;
+  
+  border: dashed 1px #000000;
+  text-align: center;
+  border-radius: 20px;
+  font-size: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: 0.3s;
+}
 
-    .container input:hover,
-    .container select:hover,
-    .container button:hover {
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
+.container input:hover,
+.container select:hover,
+.container button:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
-    .container button {
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.container button {
+    width: 100%;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-    .container button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
+.container button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
 
-    /* Custom styling for the file input */
-    .file-input-wrapper {
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      text-align: center;
-      border-radius: 20px;
-    }
+/* Custom styling for the file input */
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  text-align: center;
+  border-radius: 20px;
+}
 
-    .file-input-wrapper input[type="file"] {
-      opacity: 0; /* Hide default file input */
-      position: absolute;
-      z-index: 1; /* Ensure it's above other elements */
-      top: 0;
-      text-align: center;
-      left: 0;
-      width: 100%; /* Ensure file input takes full width */
-      height: 100%; /* Ensure file input takes full height */
-      cursor: pointer;
-      border-radius: 20px;
-    }
+.file-input-wrapper input[type="file"] {
+  opacity: 0; /* Hide default file input */
+  position: absolute;
+  z-index: 1; /* Ensure it's above other elements */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensure file input takes full width */
+  height: 100%; /* Ensure file input takes full height */
+  cursor: pointer;
+  border-radius: 20px;
+}
 
-    .choose-file-button {
-      padding: 1% 0; /* Vertically expand the button */
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: white;
-      border-radius: 20px; /* Keep rounded corners */
-      text-align: center;
-      font-weight: bold;
-      text-transform: uppercase;
-      cursor: pointer;
-      width: 100%; /* Makes the button take up full width of the container */
-      font-size: 1.2rem; /* Increases font size */
-      transition: 0.3s;
-      position: relative;
-      z-index: 0;
-      display: flex; /* Use flexbox to center the text */
-      justify-content: center; /* Horizontally center the text */
-      align-items: center; /* Vertically center the text */
-      box-sizing: border-box; /* Make sure padding is within the border-radius */
-    }
+.choose-file-button {
+  padding: 1% 0; /* Vertically expand the button */
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  border-radius: 20px; /* Keep rounded corners */
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  width: 100%; /* Makes the button take up full width of the container */
+  font-size: 1.2rem; /* Increases font size */
+  transition: 0.3s;
+  position: relative;
+  z-index: 0;
+  display: flex; /* Use flexbox to center the text */
+  justify-content: center; /* Horizontally center the text */
+  align-items: center; /* Vertically center the text */
+  box-sizing: border-box; /* Make sure padding is within the border-radius */
+}
 
-    .choose-file-button:hover {
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
+.choose-file-button:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 
-    /* Centering the input fields */
-    .container input#nameInput {
-      text-align: center; /* Center-align the name input */
-    }
+/* Centering the input fields */
+.container input#nameInput {
+  text-align: center; /* Center-align the name input */
+}
 
-    .preview {
-      position: relative;
-      margin: auto;
-      width: 300px;
-      height: 375px;
-      border-radius: 20px;
-      overflow: hidden;
-      background: #f3f3f3;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
+.preview {
+  position: relative;
+  margin: auto;
+  width: 300px;
+  height: 375px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f3f3f3;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
 
-    .preview img {
-      max-width: 100%;
-      max-height: 100%;
-    }
+.preview img {
+  max-width: 100%;
+  max-height: 100%;
+}
 
-    .frame {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
+.frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 
-    /* Responsive styling */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.5rem; /* Reduce font size for mobile screens */
-      }
+/* Responsive styling */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem; /* Reduce font size for mobile screens */
+  }
 
-      .container {
-        max-width: 90%; /* Make container width responsive */
-        padding: 10px; /* Reduce padding on mobile */
-      }
+  .container {
+    max-width: 80%; /* Make container width responsive */
+    padding: 10px; /* Reduce padding on mobile */
+  }
 
-      .choose-file-button {
-        font-size: 1rem; /* Make button font size smaller */
-        padding: 2% 0; /* Adjust padding for mobile */
-      }
+  .choose-file-button {
+    font-size: 1rem; /* Make button font size smaller */
+    padding: 2% 0; /* Adjust padding for mobile */
+  }
 
-      .preview {
-        width: 250px;
-        height: 312.5px; /* Adjust preview size */
-      }
+  .preview {
+    width: 250px;
+    height: 312.5px; /* Adjust preview size */
+  }
 
-      .container input,
-      .container select,
-      .container button {
-       padding-top: 10px;
-       padding-bottom: 10px; /* Adjust input/button padding */
-        font-size: 0.9rem; /* Adjust font size */
-      }
-    }
+  .container input,
+  .container select,
+  .container button {
+    padding-top: 10px;
+    padding-bottom: 10px; /* Adjust input/button padding */
+    font-size: 0.9rem; /* Adjust font size */
+  }
+}
   </style>
 </head>
 
