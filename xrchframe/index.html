@@ -9,8 +9,8 @@
   <style>
    body {
   font-family: Arial, sans-serif;
-  background: url('./background.png') no-repeat center center; /* Adds the background image */
-  background-size: cover; /* Ensures the image covers the entire background */
+  background: url('./background.png') no-repeat center center;
+  background-size: cover;
   margin: 0;
   color: white;
   text-align: center;
@@ -18,8 +18,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  overflow: hidden;
+  min-height: calc(100vh - 1px); /* Handles browser address bar issue */
+  overflow-y: auto; /* Allows scrolling */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 body,h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif; /* Apply custom font to headings */
@@ -28,6 +29,15 @@ h1 {
   margin-bottom: 20px;
   font-size: 2rem;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-y: scroll; /* Enable scrolling */
+  overscroll-behavior: none; /* Prevent the scroll bounce */
+  background: url('./background.png') no-repeat center center fixed; /* Keep background fixed */
+  background-size: cover;
+}
 
 .container {
   background: white;
@@ -35,12 +45,12 @@ h1 {
   padding: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   max-width: 400px;
-  display: flex;  /* This enables Flexbox */
-  flex-direction: column; /* Stack items vertically */
-  align-items: center;
   width: 90%; 
-  max-height: 70%; /* Ensure it's responsive */
   text-align: center;
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  max-height: none; /* Allow content to determine height */
 }
 
 .container input,
@@ -166,7 +176,7 @@ h1 {
 
   .container {
     max-width: 80%;
-    max-height: 90%; /* Make container width responsive */
+    max-height:none; /* Make container width responsive */
     padding: 10px; /* Reduce padding on mobile */
   }
 
@@ -188,10 +198,12 @@ h1 {
     font-size: 0.9rem; /* Adjust font size */
   }
 }
+
+
   </style>
 </head>
 
-<body>
+<body><br><br><br>
   <h1>Get Your Customized <br> XR Creator Hackathon 
   Phase 3 <br> Finalist Photo Here</h1>
   <div class="container">
@@ -378,6 +390,8 @@ generatePreviewBtn.addEventListener('click', () => {
       link.href = generatedImage;
       link.click();
     });
+
+    
   </script>
 </body>
 
