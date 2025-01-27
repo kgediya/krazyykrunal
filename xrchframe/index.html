@@ -386,8 +386,9 @@ generatePreviewBtn.addEventListener('click', () => {
 });
 
     downloadBtn.addEventListener('click', () => {
+      const name = (document.getElementById('nameInput').value || 'Participant').toUpperCase()
       const link = document.createElement('a');
-      link.download = `Finalist_Image.png`;
+      link.download = `${name.split(' ')[0]}_Finalist_Image.png`;
       link.href = generatedImage;
       link.click();
     });
