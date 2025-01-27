@@ -272,95 +272,104 @@ h1 {
     let img = new Image();
     let generatedImage = null;
 
-    fileInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
+    let uploadedImage = null; // Variable to store the uploaded image data
 
-      if (!file) return;
+fileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
 
-      const reader = new FileReader();
+  if (!file) return;
 
-      reader.onload = (e) => {
-        img.src = e.target.result;
-        img.onload = () => {
-          const aspectRatio = 1024 / 1024;
-          let width, height;
+  const reader = new FileReader();
 
-          if (img.width / img.height > aspectRatio) {
-            height = img.height;
-            width = height * aspectRatio;
-          } else {
-            width = img.width;
-            height = width / aspectRatio;
-          }
+  reader.onload = (e) => {
+    uploadedImage = e.target.result; // Store the image data in a variable
+    // Enable the preview button once an image is selected
+    generatePreviewBtn.disabled = false;
+  };
 
-          canvas.width = 1024;
-          canvas.height = 1280;
+  reader.readAsDataURL(file);
+});
 
-          ctx.drawImage(
-            img,
-            (img.width - width) / 2,
-            (img.height - height) / 2,
-            width,
-            height,
-            0,
-            225,
-            1024,
-            1024
-          );
+generatePreviewBtn.addEventListener('click', () => {
+  if (!uploadedImage) {
+    console.error("No image uploaded!");
+    return;
+  }
 
-          // Enable preview button
-          generatePreviewBtn.disabled = false;
-        };
-      };
+  const img = new Image();
+  img.src = uploadedImage;
 
-      reader.readAsDataURL(file);
-    });
+  img.onload = () => {
+    const aspectRatio = 1024 / 1024;
+    let width, height;
 
-    generatePreviewBtn.addEventListener('click', () => {
-      // Draw the image and frame on the canvas
+    if (img.width / img.height > aspectRatio) {
+      height = img.height;
+      width = height * aspectRatio;
+    } else {
+      width = img.width;
+      height = width / aspectRatio;
+    }
+
+    canvas.width = 1024;
+    canvas.height = 1280;
+
+    // Draw the uploaded image on the canvas
+    ctx.drawImage(
+      img,
+      (img.width - width) / 2,
+      (img.height - height) / 2,
+      width,
+      height,
+      0,
+      225,
+      1024,
+      1024
+    );
+
+    // Draw the frame
+    const overlay = new Image();
+    overlay.src = frameImage.src;
+
+    overlay.onload = () => {
+      ctx.drawImage(overlay, 0, 0, 1024, 1280);
+
+      // Draw the name and team name
       const name = (document.getElementById('nameInput').value || 'Participant').toUpperCase();
       const team = document.getElementById('teamSelect').value.toUpperCase();
 
-      // Draw the image
-      ctx.drawImage(canvas, 0, 0, 1024, 1280);
+      ctx.font = 'bold 48px Arial';
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.fillText(name, 512, 1100.4); // User's name
 
-      // Draw the frame
-      const overlay = new Image();
-      overlay.src = frameImage.src;
+      // Set opacity for team name to 50%
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // 50% opacity
+      ctx.fillText(team, 512, 1155.4);
 
-      overlay.onload = () => {
-        // Draw the overlay image once it's loaded
-        ctx.drawImage(overlay, 0, 0, 1024, 1280);
+      // Generate and display the final image
+      generatedImage = canvas.toDataURL();
+      preview.style.display = 'flex';
+      preview.style.backgroundImage = `url(${generatedImage})`;
+      preview.style.backgroundSize = 'cover';
+      preview.style.backgroundPosition = 'center';
+      setTimeout(() => {
+        preview.style.opacity = 1;
+      }, 10);
 
-        // Draw the name and team name on top of the frame
-        ctx.font = 'bold 48px Arial';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'center';
-        ctx.fillText(name, 512, 1100.4); // User's name
+      // Enable the download button
+      downloadBtn.disabled = false;
+    };
 
-        // Set opacity for team name to 50%
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; // 50% opacity
-        ctx.fillText(team, 512, 1155.4);
+    overlay.onerror = () => {
+      console.error("Error loading the frame image.");
+    };
+  };
 
-        generatedImage = canvas.toDataURL(); // Save the final image
-        preview.style.display = 'flex';
-        // Update the preview with fade-in animation
-        preview.style.backgroundImage = `url(${generatedImage})`;
-        preview.style.backgroundSize = 'cover';
-        preview.style.backgroundPosition = 'center';
-        setTimeout(() => {
-          preview.style.opacity = 1;
-        }, 10);
-        // Fade in the preview
-
-        // Enable the download button
-        downloadBtn.disabled = false;
-      };
-
-      overlay.onerror = () => {
-        console.error("Error loading the frame image.");
-      };
-    });
+  img.onerror = () => {
+    console.error("Error loading the uploaded image.");
+  };
+});
 
     downloadBtn.addEventListener('click', () => {
       const link = document.createElement('a');
