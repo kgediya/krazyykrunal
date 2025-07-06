@@ -355,9 +355,12 @@ footer button {
 
 /* Print — hide config panel */
 @media print {
-  .config,
-  #po-number-section input {
+  .config {
     display: none !important;
+  }
+  #po-number-section input {
+    display: inline-block !important;
+    font-weight: bold;
   }
 
   #po-number-section {
