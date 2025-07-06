@@ -21,14 +21,14 @@ function generateInvoiceNo() {
   const mm = (today.getMonth() + 1).toString().padStart(2, '0');
   const yy = today.getFullYear().toString().slice(-2);
 
-  const firstItemInput = document.querySelector('#items-body input[type="text"]');
+  const firstItemInput = document.querySelector('#items-body textarea');
   let initials = 'XXX';
 
   if (firstItemInput && firstItemInput.value.trim().length > 0) {
     const words = firstItemInput.value.trim().toUpperCase().split(/\s+/);
 
     if (words.length === 1 && words[0].length >= 3) {
-      initials = words[0].slice(0, 3); // Use first 3 letters of the word
+      initials = words[0].slice(0, 3);
     } else {
       const letters = words.slice(0, 3).map(word => word[0]);
       while (letters.length < 3) {
@@ -38,7 +38,8 @@ function generateInvoiceNo() {
     }
   }
 
-  const invoiceNo = `PROINV${dd}${mm}${yy}${initials}`;
+  const prefix = document.getElementById("invoice-type").value === "proforma" ? "PROINV" : "INV";
+  const invoiceNo = `${prefix}${dd}${mm}${yy}${initials}`;
   document.getElementById("invoice-no").innerText = invoiceNo;
   return invoiceNo;
 }
@@ -168,6 +169,7 @@ const poSection = document.getElementById("po-number-section");
 function updateConditionalSections() {
   const type = invoiceType.value;
   const client = clientSelect.value;
+generateInvoiceNo()
 
   noteSection.style.display = type === "proforma" ? "block" : "none";
 
@@ -194,6 +196,36 @@ function updateSOWVisibility() {
 
 sowToggle.addEventListener("change", updateSOWVisibility);
 
+const sowTemplates = {
+  lens: [
+    "Conceptualization and custom design of immersive Snapchat Lens for World Music Day",
+    "Asset creation, integration, optimization and final deployment",
+    "Lens link: https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=b2e753138b3e4f328094501298a951dc&metadata=01"
+  ],
+ meetup: [
+  "Conceptualization, branding, and theme planning for the community event",
+  "Venue coordination, equipment setup, and guest experience management",
+  "Event link (Bevy): https://bevy.com/community-event"
+],
+};
+
+function updateSOWContent() {
+  const contentType = document.getElementById("content-type").value;
+  const sowList = document.getElementById("sow-list");
+  const template = sowTemplates[contentType] || [];
+
+  // Clear existing
+  sowList.innerHTML = "";
+
+  // Populate new SOW items
+  template.forEach(item => {
+    const li = document.createElement("li");
+    li.innerHTML = item;
+    sowList.appendChild(li);
+  });
+}
+document.getElementById("content-type").addEventListener("change", updateSOWContent);
+updateSOWContent();
 // Initial runs
 generateInvoiceNo();
 updateConditionalSections();

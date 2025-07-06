@@ -22,8 +22,8 @@ header {
 }
 
 .logo {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   background: none;
   display: flex;
   align-items: center;
