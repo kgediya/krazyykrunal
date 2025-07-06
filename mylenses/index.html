@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Lenses Wrapper</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      transform-origin: top left;
+      transition: transform 0.3s ease;
+    }
+    .wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <iframe id="lensIframe" src="https://my-lenses.snapchat.com" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    function resizeIframe() {
+      const iframe = document.getElementById('lensIframe');
+      const scale = Math.min(window.innerWidth / 1440, 1); // assuming portal is ~1440px wide
+      iframe.style.transform = `scale(${scale})`;
+      iframe.style.width = `${1440}px`;
+      iframe.style.height = `${window.innerHeight / scale}px`;
+    }
+
+    window.addEventListener('resize', resizeIframe);
+    window.addEventListener('load', resizeIframe);
+  </script>
+</body>
+</html>

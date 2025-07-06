@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Feed</title>
+</head>
+<body>
+    <h1>Instagram Feed</h1>
+    <div id="insta-feed"></div>
+
+    <script>
+        // Define the username and the CORS proxy
+        const username = 'your_public_username';  // Replace with the actual username
+        const proxy = 'https://cors-anywhere.herokuapp.com/'; // CORS proxy URL
+        const url = `https://www.instagram.com/${username}/`;
+
+        // Fetch Instagram data
+        fetch(proxy + url)
+            .then(response => response.text())
+            .then(data => {
+                // Extract the shared data from the page HTML
+                const jsonString = data.match(/window\._sharedData = (.*);<\/script>/)?.[1];
+
+                if (jsonString) {
+                    // Parse the JSON data
+                    const jsonData = JSON.parse(jsonString);
+                    const mediaEdges = jsonData.entry_data.ProfilePage[0].graphql.user.edge_owner_to_timeline_media.edges;
+
+                    // Display first 6 posts
+                    mediaEdges.slice(0, 6).forEach(edge => {
+                        const imgUrl = edge.node.thumbnail_src;
+                        const postUrl = `https://www.instagram.com/p/${edge.node.shortcode}/`;
+
+                        // Create anchor tag for each post
+                        const postElement = document.createElement('a');
+                        postElement.href = postUrl;
+                        postElement.target = '_blank';
+                        postElement.innerHTML = `<img src="${imgUrl}" width="200" style="margin:10px;" />`;
+                        document.getElementById('insta-feed').appendChild(postElement);
+                    });
+                } else {
+                    console.error('Failed to extract Instagram data.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching Instagram feed:', error);
+            });
+    </script>
+</body>
+</html>
