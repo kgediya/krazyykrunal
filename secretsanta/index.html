@@ -238,8 +238,10 @@
         callAwsLambdaFunction({ 'operation': 'map_giftee', 'name': params.id }, function (response) {
             console.log(response)
             response = JSON.parse(response)
-            if(response!=null)
-            setupText(response.name)
+            if(response!=null){
+                 let name = response.requester && response.requester.name ? response.requester.name : "Santa";
+        document.getElementById('greeting_text').innerText = `MERRY CHRISTMAS ${name.toUpperCase()} ❄️`;
+            setupText(response.giftee.name)}
             else
             setupText('HO HO HO')
 
@@ -448,6 +450,7 @@ scene.add(dirLight.target);
         <div id="WebGL-output" style="position: absolute; z-index: 2;"></div>
         <img src="./texture.png" class="imgT" id="overlay_text"
             style=" z-index: 3; width: 350px; color: antiquewhite;"></img>
+            <div id="greeting_text" style="z-index: 4; position: relative; top: 5vh; font-size: 24px; color: #fff; text-shadow: 0 2px 8px #333; font-family: Arial, sans-serif;"></div>
         <img src="./button.png" class="imgB" id="reveal_btn"
             style=" z-index: 3; width: 350px;  color: antiquewhite;"></img>
 
