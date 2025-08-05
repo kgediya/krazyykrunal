@@ -1,28 +1,27 @@
 document.addEventListener("DOMContentLoaded", function() {
   // Typewriter and Menu code here...
 // Typewriter effect
-const greetings = [
-  "કેમ છો", "कसा काय", "नमस्ते", "வணக்கம்", "നമസ്കാരം", "ನಮಸ್ಕಾರ", "హలో", "ਹੈਲੋ", "Bonjour", "Hola",
-  "مرحبا", "Ciao", "여보세요", "Привет", "こんにちは", "你好", "Hello"
-];
-let currentIndex = 0;
-function typeWriter(text, i, interval) {
-  if (i < text.length) {
-    document.getElementById("typewriter").innerHTML = text.substring(0, i + 1);
-    setTimeout(function() {
-      typeWriter(text, i + 1, interval);
-    }, interval);
-  } else {
-    setTimeout(changeGreeting, 1400);
-  }
-}
-function changeGreeting() {
-  const greeting = greetings[currentIndex];
-  currentIndex = (currentIndex + 1) % greetings.length;
-  typeWriter(greeting + ", I'm Krazyy Krunal", 0, 90);
-}
-typeWriter("Hello, I'm Krazyy Krunal", 0, 90);
+ const greetings = [
+    "કેમ છો", "कसा काय", "नમस्ते", "வணக்கம்", "നമസ്കാരം", "ನಮಸ್ಕಾರ", "హలో", "ਹੈਲੋ", "Bonjour", "Hola",
+    "مرحبا", "Ciao", "여보세요", "Привет", "こんにちは", "你好", "Hello"
+  ];
+  let currentIndex = 0;
+  const greetingEl = document.getElementById('greeting-anim');
 
+  // Pre-calculate the longest greeting for min-width
+  let maxLen = Math.max(...greetings.map(g => g.length));
+ // greetingEl.style.minWidth = (maxLen ) + 'em'; // tweak multiplier as needed for your font
+
+  function showGreeting() {
+    greetingEl.style.opacity = 0;
+    setTimeout(() => {
+      greetingEl.textContent = greetings[currentIndex];
+      greetingEl.style.opacity = 1;
+      currentIndex = (currentIndex + 1) % greetings.length;
+    }, 380); // fade out duration
+  }
+  //showGreeting();
+  //setInterval(showGreeting, 2300);
   // Menu logic, unchanged from your code
   const menuSubmenus = {
     'menu-connect': 'connect-submenu',
