@@ -1,6 +1,6 @@
 html, body {
   margin: 0;
-  padding: 12px; /* or 24px; adjust as you prefer */
+  padding: 10px; /* or 24px; adjust as you prefer */
   min-height: 100vh;
   background: #000;
   color: #fff;
@@ -174,7 +174,7 @@ html, body {
 #project-gallery {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 36px 0;
+  padding: 20px 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 18px;
@@ -182,6 +182,7 @@ html, body {
 .work-card {
   background: #161616;
   border-radius: 16px;
+ margin: 2%;
   box-shadow: 0 4px 24px rgba(0,0,0,0.10);
   overflow: hidden;
   outline: none;
