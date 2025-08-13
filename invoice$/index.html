@@ -1,143 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Proforma Invoice | Krazyy Krunal</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Generator | Krazyy Krunal</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-
 <body>
-    <div class="invoice-container">
-        <header>
-            <div class="logo"><img src="./KK.png" alt=""></div>
-            <div class="contact">
-                <p><strong>Krunal Bharat Gediya</strong><br>
-                    133E Meghwadi Behind D Block, Lalbaug, Mumbai 400012<br>
-                    <strong>Mob:</strong> +91 8080706835<br>
-                    <strong>Email:</strong> kgediya0898@gmail.com
-                </p>
-            </div>
-        </header>
-<section class="config">
-  <label>
-    Invoice Type:
-    <select id="invoice-type">
-      <option value="proforma">Proforma Invoice</option>
-      <option value="standard">Standard Invoice</option>
-    </select>
-  </label>
+  <div class="invoice-container">
+    <header>
+      <div class="logo"><img src="./KK.png" alt=""></div>
+      <div class="contact">
+        <p><strong>Krunal Bharat Gediya</strong><br>
+          133E Meghwadi Behind D Block, Lalbaug, Mumbai 400012<br>
+          <strong>Mob:</strong> +91 8080706835<br>
+          <strong>Email:</strong> kgediya0898@gmail.com
+        </p>
+      </div>
+    </header>
 
-  <label>
-    Client:
-    <select id="client-select">
-      <option value="snap">Snap Camera India</option>
-      <option value="other">Other</option>
-    </select>
-  </label>
-  <label>
-  Content Type:
-  <select id="content-type">
-    <option value="lens">Snapchat Lens</option>
-    <option value="meetup">Community Meetup</option>
-  </select>
-</label>
-  <label>
-  <input type="checkbox" id="toggle-sow" checked>
-  Include Scope of Work
-</label>
+    <section class="config">
+      <label>
+        Invoice Type:
+        <select id="invoice-type">
+          <option value="proforma">Proforma Invoice</option>
+          <option value="standard">Standard Invoice</option>
+        </select>
+      </label>
 
-<label>
-  <input type="checkbox" id="save-to-cloud" >
-  Save to cloud (Valtown)
-</label>
-</section>
-        <hr>
+      <label>
+        Client:
+        <select id="client-select">
+          <option value="snap">Snap Camera India</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
 
-        <section class="invoice-meta">
-           <div class="client-info">
-  <strong>Bill To:</strong><br>
-  <div class="editable" id="client-name" contenteditable="true">Snap Camera India Private Limited</div>
-  <div class="editable" id="client-address" contenteditable="true">Diamond Centre, Unit No 26 Ground Floor, near Vardhman <br>Industrial Estate Vikhroli MUMBAI-400083 Maharashtra INDIA
+      <label>
+        Content Type:
+        <select id="content-type">
+          <option value="lens">Snapchat Lens</option>
+          <option value="meetup">Community Meetup</option>
+        </select>
+      </label>
+
+      <label>
+        <input type="checkbox" id="toggle-sow" checked>
+        Include Scope of Work
+      </label>
+
+      <label>
+        Currency:
+        <select id="currency-select">
+          <option value="INR" selected>INR (₹)</option>
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+        </select>
+      </label>
+
+      <label>
+        <input type="checkbox" id="save-to-cloud">
+        Save to cloud (Google Drive)
+      </label>
+    </section>
+
+    <hr>
+
+    <section class="invoice-meta">
+      <div class="client-info">
+        <strong>Bill To:</strong><br>
+        <div class="editable" id="client-name" contenteditable="true">Snap Camera India Private Limited</div>
+        <div class="editable" id="client-address" contenteditable="true">
+          Diamond Centre, Unit No 26 Ground Floor, near Vardhman <br>
+          Industrial Estate Vikhroli MUMBAI-400083 Maharashtra INDIA
+        </div>
+      </div>
+      <div>
+        <strong>Date:</strong> <span id="invoice-date"></span><br>
+        <strong>Invoice No:</strong> <span id="invoice-no"></span>
+      </div>
+      <div id="po-number-section" style="display: none;">
+        <strong>PO Number: </strong>
+        <input type="text" id="po-number" placeholder="Enter PO Number">
+      </div>
+    </section>
+
+    <section class="bank-details">
+      <h3>Banking Details</h3>
+      <table>
+        <tr><td><strong>Bank Name / Branch:</strong></td><td>Indian Bank Parel</td></tr>
+        <tr><td><strong>IFSC Code:</strong></td><td>IDIB000P578</td></tr>
+        <tr><td><strong>Bank A/C No.:</strong></td><td>50086731541</td></tr>
+        <tr><td><strong>PAN:</strong></td><td>CLRPG3545G</td></tr>
+      </table>
+    </section>
+
+    <section class="items">
+      <table id="items-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Service</th>
+            <th>Rate (<span id="currency-symbol-rate">INR</span>)</th>
+            <th>Amount (<span id="currency-symbol-amt">INR</span>)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="items-body"></tbody>
+      </table>
+      <button id="add-row">+ Add Item</button>
+    </section>
+
+    <section class="summary">
+      Subtotal: <span id="subtotal-currency">₹</span><span id="subtotal">0.00</span>
+    </section>
+
+    <section class="invoice-note" id="note-section">
+      <h3>Note:</h3>
+      <p>
+        This is a <strong>Proforma Invoice</strong> issued for internal processing and approval purposes only.<br>
+        It is <strong>not a tax invoice</strong> and <strong>not valid for payment</strong> until formally approved.
+      </p>
+      <hr>
+    </section>
+
+    <section class="invoice-sow" id="sow-section">
+      <h3>Scope of Work (SOW):</h3>
+      <ul id="sow-list" contenteditable="true"></ul>
+    </section>
+
+    <footer>
+      <p>Thanks for the business ✨ Stay Krazyy!</p>
+      <button id="download">Download Invoice</button>
+    </footer>
   </div>
-</div>
-            <div>
-                   <strong>Date:</strong> <span id="invoice-date"></span><br>
-                <strong>Invoice No:</strong> <span id="invoice-no"></span>
-             
-            </div>
-            <div id="po-number-section" style="display: none;">
-  <strong>PO Number: </strong>
-  <input type="text" id="po-number" placeholder="Enter PO Number">
-</div>
-        </section>
 
-        <section class="bank-details">
-            <h3>Banking Details</h3>
-            <table>
-                <tr>
-                    <td><strong>Bank Name / Branch:</strong></td>
-                    <td>Indian Bank Parel</td>
-                </tr>
-                <tr>
-                    <td><strong>IFSC Code:</strong></td>
-                    <td>IDIB000P578</td>
-                </tr>
-                <tr>
-                    <td><strong>Bank A/C No.:</strong></td>
-                    <td>50086731541</td>
-                </tr>
-                <tr>
-                    <td><strong>PAN:</strong></td>
-                    <td>CLRPG3545G</td>
-                </tr>
-            </table>
-        </section>
-
-        <section class="items">
-            <table id="items-table">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Service</th>
-                        <th>Rate (INR)</th>
-                        <th>Amount (INR)</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="items-body">
-                    <!-- Rows go here -->
-                </tbody>
-            </table>
-            <button id="add-row">+ Add Item</button>
-        </section>
-
-        <section class="summary">
-            Subtotal: ₹<span id="subtotal">0.00</span>
-        </section>
-<section class="invoice-note" id="note-section">
-  <h3>Note:</h3>
-  <p>
-    This is a <strong>Proforma Invoice</strong> issued for internal processing and approval purposes only.<br>
-    It is <strong>not a tax invoice</strong> and <strong>not valid for payment</strong> until formally approved.
-  </p>
-  <hr>
-</section>
-
-<section class="invoice-sow" id="sow-section">
-  <h3>Scope of Work (SOW):</h3>
-  <ul id="sow-list" contenteditable="true">
-    <!-- Will be populated dynamically -->
-  </ul>
-</section>
-        <footer>
-            <p>Thanks for the business ✨ Stay Krazyy!</p>
-            <button id="download">Download Invoice</button>
-        </footer>
-    </div>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
-
 </html>
