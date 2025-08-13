@@ -1,0 +1,73 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0; padding: 0;
+  background: #fcfcfe;
+  color: #222;
+}
+
+header, footer {
+  background: #15182b;
+  color: #fff;
+  text-align: center;
+  padding: 12px 0;
+  letter-spacing: 1.5px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 80vh;
+  margin: 1rem;
+  gap: 2rem;
+}
+
+#blocklyDiv {
+  height: 100%;
+  width: 60vw;
+  min-width: 350px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f6f9ff;
+}
+
+.codePanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  background: #f2f0fb;
+  box-shadow: 0 0 6px rgba(80,80,110,0.04);
+  padding: 1rem;
+}
+
+#codeArea {
+  background: #18101d;
+  color: #fae28a;
+  padding: 1em;
+  font-family: 'Fira Mono', monospace;
+  font-size: 1em;
+  border-radius: 6px;
+  height: 320px;         /* Fixed height */
+  width: 100%;           /* Stretches to parent */
+  min-width: 0;          /* Ensures proper shrinking in flex */
+  overflow: auto;        /* Scroll if content too large */
+  white-space: pre-wrap; /* Wrap long lines */
+  word-break: break-all; /* Break very long words if needed */
+  box-sizing: border-box;
+  resize: none;          /* Prevent manual resize (optional) */
+}
+
+#copyBtn {
+  margin-top: 1rem;
+  background: #4f8de2;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 0.7em 1.5em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.22s;
+}
+#copyBtn:hover {
+  background: #314a8d;
+}
