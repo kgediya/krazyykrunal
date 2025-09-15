@@ -200,7 +200,7 @@ html, body {
   object-fit: cover;
   display: block;
   flex: 1 0 auto;
-  filter: grayscale(100%) brightness(0.85);
+  filter: grayscale(50%) brightness(0.85);
   transition: filter 0.26s, scale 0.24s;
 }
 .work-card .work-title {
