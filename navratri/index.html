@@ -34,13 +34,8 @@
       transition: opacity 2s ease-in-out;
     }
 
-    .devi-container.fade-in {
-      opacity: 1;
-    }
-
-    .devi-container.fade-out {
-      opacity: 0;
-    }
+    .devi-container.fade-in { opacity: 1; }
+    .devi-container.fade-out { opacity: 0; }
 
     .overlay {
       position: absolute;
@@ -49,6 +44,7 @@
       transform: translateX(-50%);
       text-align: center;
       width: 80%;
+      max-width: 900px; /* prevent extra wide banner on desktop */
     }
 
     .text-box {
@@ -57,7 +53,6 @@
       border-radius: 20px;
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
-      display: block;
       width: 100%;
       box-sizing: border-box;
     }
@@ -111,6 +106,44 @@
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* --- Responsive Optimizations --- */
+    @media (max-width: 768px) {
+      /* Mobile screens */
+      .overlay {
+        bottom: 2%;     /* tighter at bottom */
+        width: 95%;
+      }
+      .text-box {
+        padding: 15px 20px;  /* smaller box */
+        border-radius: 12px;
+      }
+      .devi-name {
+        font-size: 2em;  /* smaller heading */
+        margin-bottom: 10px;
+      }
+      .quote {
+        font-size: 1.1em; /* reduce quote size */
+        padding: 10px 5px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      /* Desktops / Landscape */
+      .overlay {
+        bottom: 3%; /* move further down so Devi head visible */
+        width: 60%;
+      }
+      .text-box {
+        padding: 20px 30px;
+      }
+      .devi-name {
+        font-size: 3.5em;
+      }
+      .quote {
+        font-size: 1.3em;
+      }
+    }
   </style>
 </head>
 <body>
@@ -150,7 +183,7 @@
 
     function createDeviDisplay() {
       const container = document.getElementById('devi-display-container');
-      container.innerHTML = ""; // clear previous
+      container.innerHTML = "";
 
       const devi = getDeviOfTheDay();
       const deviElement = document.createElement('div');
@@ -177,7 +210,6 @@
       deviElement.appendChild(overlayElement);
       container.appendChild(deviElement);
 
-      // Fade in
       requestAnimationFrame(() => {
         deviElement.classList.add('fade-in');
       });
@@ -192,7 +224,7 @@
 
         setTimeout(() => {
           createDeviDisplay();
-        }, 2000); // matches transition
+        }, 2000);
       } else {
         createDeviDisplay();
       }
@@ -208,7 +240,7 @@
           currentDay = newDay;
           updateDeviSmooth();
         }
-      }, 60000); // check every minute
+      }, 60000);
     };
   </script>
 
