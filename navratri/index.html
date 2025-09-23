@@ -9,52 +9,66 @@
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Playfair Display', serif;
-      color: white;
-      overflow: hidden;
-      position: relative;
-      background: #000;
-    }
+   body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Playfair Display', serif;
+    color: white;
+    overflow: hidden;   /* prevent scrolling */
+    position: relative;
+    background: #000;
+    height: 100dvh;     /* full dynamic viewport height */
+  }
 
-    .devi-container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      background-size: cover;
-      background-position: center;
-      transition: opacity 2s ease-in-out;
-    }
+   .devi-container {
+    width: 100vw;
+    height: 100dvh;     /* always full inner window height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 2s ease-in-out;
+    overflow: hidden;   /* block scroll */
+  }
 
     .devi-container.fade-in { opacity: 1; }
     .devi-container.fade-out { opacity: 0; }
 
     .overlay {
-      position: absolute;
-      bottom: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      width: 80%;
-      max-width: 900px; /* prevent extra wide banner on desktop */
-    }
+    position: absolute;
+    bottom: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 85%;
+    max-width: 900px;
+  }
 
-    .text-box {
-      background: rgba(0, 0, 0, 0.45);
-      padding: 25px 40px;
-      border-radius: 20px;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      width: 100%;
-      box-sizing: border-box;
+  .text-box {
+    background: rgba(0, 0, 0, 0.45);
+    padding: 20px 25px;
+    border-radius: 16px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    width: 100%;
+    max-height: 35dvh;      /* keep it compact on small screens */
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+
+    .day-number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 0px 0px 10px rgba(255, 215, 0, 0.9), 0 0 20px rgba(255, 215, 0, 0.6);
+      margin: 0 0 10px 0;
+      letter-spacing: 2px;
     }
 
     .devi-name {
@@ -90,11 +104,11 @@
       height: 100%;
       pointer-events: none;
       z-index: 100;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
+      background-size: 100% 100%;        /* fill screen */
+  background-repeat: no-repeat;
+  background-position: center; 
       opacity: 0.85;
-      background-image: url('https://i.ibb.co/L5t8s8v/gold-frame.png'); 
+      background-image: url('./devis/frame.png'); 
     }
 
     @keyframes fadeIn {
@@ -109,33 +123,23 @@
 
     /* --- Responsive Optimizations --- */
     @media (max-width: 768px) {
-      /* Mobile screens */
-      .overlay {
-        bottom: 2%;     /* tighter at bottom */
-        width: 95%;
-      }
-      .text-box {
-        padding: 15px 20px;  /* smaller box */
-        border-radius: 12px;
-      }
-      .devi-name {
-        font-size: 2em;  /* smaller heading */
-        margin-bottom: 10px;
-      }
-      .quote {
-        font-size: 1.1em; /* reduce quote size */
-        padding: 10px 5px;
-      }
-    }
+    .overlay { bottom: 1.5%; width: 95%; }
+    .text-box { padding: 12px 15px; border-radius: 10px; max-height: 30dvh; }
+    .day-number { font-size: 1.2em; }
+    .devi-name { font-size: 1.6em; margin-bottom: 6px; }
+    .quote { font-size: 1em; padding: 6px 4px; line-height: 1.2; }
+  }
 
     @media (min-width: 1024px) {
-      /* Desktops / Landscape */
       .overlay {
-        bottom: 3%; /* move further down so Devi head visible */
+        bottom: 3%;
         width: 60%;
       }
       .text-box {
         padding: 20px 30px;
+      }
+      .day-number {
+        font-size: 2.2em;
       }
       .devi-name {
         font-size: 3.5em;
@@ -171,12 +175,13 @@
       const index = (diffDays - 1) % devis.length;
 
       if (diffDays >= 1 && diffDays <= 9) {
-        return devis[index];
+        return { ...devis[index], day: diffDays };
       } else {
         return {
           name: "Durga Maa",
           quote: "May the divine grace of Maa Durga bless you always.",
-          image: "./devis/Durga.png"
+          image: "./devis/Durga.png",
+          day: null
         };
       }
     }
@@ -195,6 +200,13 @@
 
       const textBox = document.createElement('div');
       textBox.className = 'text-box';
+
+      if (devi.day) {
+        const dayElement = document.createElement('h2');
+        dayElement.className = 'day-number';
+        dayElement.textContent = `Day ${devi.day}`;
+        textBox.appendChild(dayElement);
+      }
 
       const nameElement = document.createElement('h1');
       nameElement.className = 'devi-name';
