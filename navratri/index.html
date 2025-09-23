@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navaratri Devotion</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Playfair Display', serif;
+      color: white;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+    }
+
+    .devi-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .devi-container.active {
+      opacity: 1;
+    }
+
+ .overlay {
+  position: absolute;
+  bottom: 5%;           /* push near bottom */
+  left: 50%;
+  transform: translateX(-50%); /* center horizontally only */
+  text-align: center;
+  width: 80%;           /* increase width */
+}
+
+/* Wider blur background */
+.text-box {
+  background: rgba(0, 0, 0, 0.45); /* slightly stronger for readability */
+  padding: 25px 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  display: block;       /* full width card */
+  width: 100%;
+  box-sizing: border-box;
+}
+    .devi-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 4.5em;
+      color: #FFD700;
+      text-shadow: 0px 0px 15px rgba(255, 215, 0, 0.8), 2px 2px 5px rgba(0,0,0,0.7);
+      animation: fadeIn 1.5s forwards;
+      opacity: 0;
+      margin: 0 0 20px 0;
+    }
+
+    .quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 2em;
+      font-style: italic;
+      line-height: 1.4;
+      color: #f5f5f5;
+      text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+      border-top: 2px solid rgba(255,215,0,0.4);
+      border-bottom: 2px solid rgba(255,215,0,0.4);
+      padding: 20px 10px;
+      margin: 0;
+      animation: slideIn 2s forwards;
+      opacity: 0;
+    }
+
+    .frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.85;
+      background-image: url('https://i.ibb.co/L5t8s8v/gold-frame.png'); 
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="devi-display-container"></div>
+  <div class="frame"></div>
+
+  <script>
+    const devis = [
+      { name: "Devi Shailputri", quote: "The daughter of the mountains, she brings purity and strength.", image: "./devis/Shailputri.png" },
+      { name: "Devi Brahmacharini", quote: "The ascetic goddess, embodying penance and determination.", image: "./devis/Brahmacharini.png" },
+      { name: "Devi Chandraghanta", quote: "She who adorns the half-moon, fearless and benevolent.", image: "./devis/Chandraghanta.png" },
+      { name: "Devi Kushmanda", quote: "The creator of the universe, radiating life and energy.", image: "./devis/Kushmanda.png" },
+      { name: "Devi Skandamata", quote: "The mother of Skanda, symbol of nurturing love and protection.", image: "./devis/Skandamata.png" },
+      { name: "Devi Katyayani", quote: "The warrior goddess, destroyer of evil and injustice.", image: "./devis/Katyayani.png" },
+      { name: "Devi Kalaratri", quote: "The destroyer of darkness, she vanquishes ignorance.", image: "./devis/Kalaratri.png" },
+      { name: "Devi Mahagauri", quote: "The goddess of purity and serenity, illuminating the path of righteousness.", image: "./devis/Mahagauri.png" },
+      { name: "Devi Siddhidatri", quote: "The bestower of all supernatural powers and spiritual enlightenment.", image: "./devis/Siddhidatri.png" }
+    ];
+
+    function getDeviOfTheDay() {
+      const today = new Date();
+      const navaratriStart = new Date(today.getFullYear(), 8, 22); 
+      const diffTime = today - navaratriStart;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const index = (diffDays - 1) % devis.length;
+
+      if (diffDays >= 1 && diffDays <= 9) {
+        return devis[index];
+      } else {
+        return {
+          name: "Durga Maa",
+          quote: "May the divine grace of Maa Durga bless you always.",
+          image: "./devis/Durga.png"
+        };
+      }
+    }
+
+    function createDeviDisplay() {
+      const container = document.getElementById('devi-display-container');
+      const devi = getDeviOfTheDay();
+
+      const deviElement = document.createElement('div');
+      deviElement.className = 'devi-container';
+      deviElement.style.backgroundImage = `url('${devi.image}')`;
+
+      const overlayElement = document.createElement('div');
+      overlayElement.className = 'overlay';
+
+      // Text box wrapper
+      const textBox = document.createElement('div');
+      textBox.className = 'text-box';
+
+      const nameElement = document.createElement('h1');
+      nameElement.className = 'devi-name';
+      nameElement.textContent = devi.name;
+
+      const quoteElement = document.createElement('p');
+      quoteElement.className = 'quote';
+      quoteElement.textContent = devi.quote;
+
+      textBox.appendChild(nameElement);
+      textBox.appendChild(quoteElement);
+      overlayElement.appendChild(textBox);
+      deviElement.appendChild(overlayElement);
+      container.appendChild(deviElement);
+
+      setTimeout(() => {
+        deviElement.classList.add('active');
+      }, 100); 
+    }
+
+    window.onload = createDeviDisplay;
+  </script>
+
+</body>
+</html>
