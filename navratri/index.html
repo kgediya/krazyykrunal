@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -29,55 +29,59 @@
       top: 0;
       left: 0;
       opacity: 0;
-      transition: opacity 2s ease-in-out;
       background-size: cover;
       background-position: center;
+      transition: opacity 2s ease-in-out;
     }
 
-    .devi-container.active {
+    .devi-container.fade-in {
       opacity: 1;
     }
 
- .overlay {
-  position: absolute;
-  bottom: 5%;           /* push near bottom */
-  left: 50%;
-  transform: translateX(-50%); /* center horizontally only */
-  text-align: center;
-  width: 80%;           /* increase width */
-}
+    .devi-container.fade-out {
+      opacity: 0;
+    }
 
-/* Wider blur background */
-.text-box {
-  background: rgba(0, 0, 0, 0.45); /* slightly stronger for readability */
-  padding: 25px 40px;
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  display: block;       /* full width card */
-  width: 100%;
-  box-sizing: border-box;
-}
+    .overlay {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 80%;
+    }
+
+    .text-box {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 25px 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
     .devi-name {
       font-family: 'Great Vibes', cursive;
-      font-size: 4.5em;
+      font-size: 3em;
       color: #FFD700;
       text-shadow: 0px 0px 15px rgba(255, 215, 0, 0.8), 2px 2px 5px rgba(0,0,0,0.7);
       animation: fadeIn 1.5s forwards;
       opacity: 0;
-      margin: 0 0 20px 0;
+      margin: 0 0 15px 0;
     }
 
     .quote {
       font-family: 'Playfair Display', serif;
-      font-size: 2em;
+      font-size: 1.5em;
       font-style: italic;
       line-height: 1.4;
       color: #f5f5f5;
       text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
       border-top: 2px solid rgba(255,215,0,0.4);
       border-bottom: 2px solid rgba(255,215,0,0.4);
-      padding: 20px 10px;
+      padding: 15px 10px;
       margin: 0;
       animation: slideIn 2s forwards;
       opacity: 0;
@@ -127,10 +131,9 @@
       { name: "Devi Siddhidatri", quote: "The bestower of all supernatural powers and spiritual enlightenment.", image: "./devis/Siddhidatri.png" }
     ];
 
-    function getDeviOfTheDay() {
-      const today = new Date();
-      const navaratriStart = new Date(today.getFullYear(), 8, 22); 
-      const diffTime = today - navaratriStart;
+    function getDeviOfTheDay(date = new Date()) {
+      const navaratriStart = new Date(date.getFullYear(), 8, 22); 
+      const diffTime = date - navaratriStart;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       const index = (diffDays - 1) % devis.length;
 
@@ -147,8 +150,9 @@
 
     function createDeviDisplay() {
       const container = document.getElementById('devi-display-container');
-      const devi = getDeviOfTheDay();
+      container.innerHTML = ""; // clear previous
 
+      const devi = getDeviOfTheDay();
       const deviElement = document.createElement('div');
       deviElement.className = 'devi-container';
       deviElement.style.backgroundImage = `url('${devi.image}')`;
@@ -156,7 +160,6 @@
       const overlayElement = document.createElement('div');
       overlayElement.className = 'overlay';
 
-      // Text box wrapper
       const textBox = document.createElement('div');
       textBox.className = 'text-box';
 
@@ -174,12 +177,39 @@
       deviElement.appendChild(overlayElement);
       container.appendChild(deviElement);
 
-      setTimeout(() => {
-        deviElement.classList.add('active');
-      }, 100); 
+      // Fade in
+      requestAnimationFrame(() => {
+        deviElement.classList.add('fade-in');
+      });
     }
 
-    window.onload = createDeviDisplay;
+    function updateDeviSmooth() {
+      const container = document.getElementById('devi-display-container');
+      const current = container.querySelector('.devi-container');
+      if (current) {
+        current.classList.remove('fade-in');
+        current.classList.add('fade-out');
+
+        setTimeout(() => {
+          createDeviDisplay();
+        }, 2000); // matches transition
+      } else {
+        createDeviDisplay();
+      }
+    }
+
+    window.onload = () => {
+      updateDeviSmooth();
+
+      let currentDay = new Date().getDate();
+      setInterval(() => {
+        const newDay = new Date().getDate();
+        if (newDay !== currentDay) {
+          currentDay = newDay;
+          updateDeviSmooth();
+        }
+      }, 60000); // check every minute
+    };
   </script>
 
 </body>
