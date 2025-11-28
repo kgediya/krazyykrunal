@@ -120,21 +120,7 @@
     transition: width 0.3s ease;
   }
 
-  .avatar {
-    position: fixed;
-    top: 74px;
-    right: 18px;
-    font-size: 2.4rem;
-    z-index: 1001;
-    animation: float 3s ease-in-out infinite;
-  }
-
-  @keyframes float {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0); }
-  }
-
+  /* Sections */
   .section {
     min-height: 100vh;
     padding: 130px 10% 80px;
@@ -217,40 +203,63 @@
     box-shadow: 0 0 25px rgba(255,255,0,0.18);
   }
 
-  /* Collectibles now TOP-RIGHT of card */
+  /* GIF layout: side-by-side (text left, gif right) */
+  .stage-card.gif-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .stage-card.gif-layout .stage-text {
+    flex: 1.5;
+  }
+  .stage-card.gif-layout .media {
+    flex: 1;
+    margin-top: 0;
+  }
+
+  /* Collectibles top-right, smaller & pulsing */
   .collectible {
-    width: 64px;
-    height: 64px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: radial-gradient(circle, var(--snap-yellow) 0, #f9c400 40%, #7c4a00 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     color: #000;
-    font-size: 1.9rem;
+    font-size: 1.6rem;
     cursor: pointer;
     position: absolute;
     right: 18px;
     top: 18px;
-    transform: scale(0.2);
+    transform: scale(0.1);
     opacity: 0;
     transition: transform 0.4s ease, opacity 0.4s ease;
     box-shadow: 0 0 16px rgba(255,255,0,0.7);
   }
+
   .collectible.revealed {
     opacity: 1;
     transform: scale(1);
+    animation: pulse 1.3s ease-in-out infinite alternate;
   }
+
   .collectible.collected {
     transform: scale(0) rotate(360deg);
     opacity: 0;
+    animation: none;
   }
 
-  /* Hint bubble just under collectible */
+  @keyframes pulse {
+    from { transform: scale(1); box-shadow: 0 0 12px rgba(255,255,0,0.6); }
+    to   { transform: scale(1.12); box-shadow: 0 0 20px rgba(255,255,0,0.9); }
+  }
+
+  /* Hint bubble just under collectible (only first section uses it) */
   .hint {
     position: absolute;
     right: 18px;
-    top: 92px;
+    top: 80px;
     background: rgba(0,0,0,0.8);
     border: 1px solid rgba(255,255,255,0.3);
     padding: 4px 10px;
@@ -347,13 +356,7 @@
     }
 
     .xp-bar-wrap {
-      top: 84px; /* push XP bar further down so it doesn’t clip XP/Level text */
-    }
-
-    .avatar {
-      top: 104px;
-      right: 12px;
-      font-size: 2rem;
+      top: 84px;
     }
 
     .section {
@@ -365,17 +368,25 @@
     p, .bullet { font-size: 0.95rem; }
 
     .collectible {
-      width: 58px;
-      height: 58px;
-      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      font-size: 1.4rem;
       right: 12px;
-      top: 18px;
+      top: 14px;
     }
 
     .hint {
       right: 12px;
-      top: 86px;
+      top: 74px;
       font-size: 0.7rem;
+    }
+
+    /* GIF layout collapses to stacked on mobile */
+    .stage-card.gif-layout {
+      flex-direction: column;
+    }
+    .stage-card.gif-layout .media {
+      margin-top: 16px;
     }
   }
 </style>
@@ -396,12 +407,8 @@
 </div>
 
 <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar"></div></div>
-<div class="avatar">😎</div>
 
-<!-- === CONTENT SECTIONS STAY THE SAME AS LAST VERSION === -->
-<!-- For brevity I'll keep just one example; you can keep all your stages here unchanged.
-     Only change is that the .collectible + .hint positions are now handled by CSS. -->
-
+<!-- STAGE 0 -->
 <section class="section">
   <div class="stage-card">
     <div class="stage-label">Stage 0 · Insert Coin: Welcome to XDG मुंBAI</div>
@@ -412,7 +419,8 @@
     <p>From student makers to studio pros, XDG मुंBAI has been part of national initiatives like XR hackathons, Wave Summit events, and community-driven Lens Studio jams — helping hundreds of creators take their <span class="highlight">first AR lens to production.</span></p>
     <p>Tonight, you’re in the XDG arcade — and our game of choice is <span class="highlight">SnapAR.</span></p>
     <div class="collectible" data-id="0">🌐</div>
-    <div class="hint">Tap</div>
+    <!-- Hint only here -->
+    <div class="hint">Tap the Power-Up</div>
   </div>
 </section>
 
@@ -428,118 +436,123 @@
       <img src="https://developers.snap.com/img/lens-studio/games-overview1.png" alt="Snap Games Overview">
     </div>
     <div class="collectible" data-id="1">⚡</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 2 -->
+<!-- STAGE 2 (GIF layout) -->
 <section class="section">
-  <div class="stage-card">
-    <div class="stage-label">Stage 2 · Enter the Snap ARcade</div>
-    <h2>Why SnapAR & Snapchat?</h2>
-    <p>The <span class="highlight">SnapAR ecosystem</span> gives you everything a game dev dreams of in one place:</p>
-    <div class="bullet">A massive, global audience already inside the Snapchat camera.</div>
-    <div class="bullet">Lens Studio — a free, powerful editor with real-time preview, asset library, scripting and templates.</div>
-    <div class="bullet">Trackers, physics, VFX, audio, UI and Bitmoji — no engine switch needed.</div>
-    <div class="bullet">AR across mobile, Spectacles and the wider Snap platform.</div>
-    <p>Think of it as: <span class="highlight">Unity + social graph + distribution + monetization</span> — but focused on fast, snackable gameplay.</p>
+  <div class="stage-card gif-layout">
+    <div class="stage-text">
+      <div class="stage-label">Stage 2 · Enter the Snap ARcade</div>
+      <h2>Why SnapAR & Snapchat?</h2>
+      <p>The <span class="highlight">SnapAR ecosystem</span> gives you everything a game dev dreams of in one place:</p>
+      <div class="bullet">A massive, global audience already inside the Snapchat camera.</div>
+      <div class="bullet">Lens Studio — a free, powerful editor with real-time preview, asset library, scripting and templates.</div>
+      <div class="bullet">Trackers, physics, VFX, audio, UI and Bitmoji — no engine switch needed.</div>
+      <div class="bullet">AR across mobile, Spectacles and the wider Snap platform.</div>
+      <p>Think of it as: <span class="highlight">Unity + social graph + distribution + monetization</span> — but focused on fast, snackable gameplay.</p>
+    </div>
     <div class="media">
       <img src="https://developers.snap.com/img/lens-studio/games-overview2.gif" alt="Games Overview 2">
     </div>
     <div class="collectible" data-id="2">🌍</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 3 -->
+<!-- STAGE 3 (GIF layout) -->
 <section class="section">
-  <div class="stage-card">
-    <div class="stage-label">Stage 3 · Unlock: Instant Reach</div>
-    <h2>Instant Distribution & Viral Sharing</h2>
-    <p>Every arcade needs players. On Snapchat, you don’t chase installs — your game <span class="highlight">spawns directly in the camera.</span></p>
-    <div class="bullet"><span class="highlight">Instant Distribution</span> — Publish once in Lens Studio and your game can appear in the Camera Carousel, Lens Explorer and Search.</div>
-    <div class="bullet"><span class="highlight">Zero Install Friction</span> — Friends open a Snap, tap your Lens, and they’re instantly in the game.</div>
-    <div class="bullet"><span class="highlight">Viral Sharing</span> — Every playthrough can become content via Snaps, Stories or Spotlight, turning gameplay into discoverable video.</div>
+  <div class="stage-card gif-layout">
+    <div class="stage-text">
+      <div class="stage-label">Stage 3 · Unlock: Instant Reach</div>
+      <h2>Instant Distribution & Viral Sharing</h2>
+      <p>Every arcade needs players. On Snapchat, you don’t chase installs — your game <span class="highlight">spawns directly in the camera.</span></p>
+      <div class="bullet"><span class="highlight">Instant Distribution</span> — Publish once in Lens Studio and your game can appear in the Camera Carousel, Lens Explorer and Search.</div>
+      <div class="bullet"><span class="highlight">Zero Install Friction</span> — Friends open a Snap, tap your Lens, and they’re instantly in the game.</div>
+      <div class="bullet"><span class="highlight">Viral Sharing</span> — Every playthrough can become content via Snaps, Stories or Spotlight, turning gameplay into discoverable video.</div>
+    </div>
     <div class="media">
       <img src="https://developers.snap.com/img/lens-studio/games-overview3.gif" alt="Viral Sharing GIF">
     </div>
     <div class="collectible" data-id="3">💛</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 4 -->
+<!-- STAGE 4 (GIF layout) -->
 <section class="section">
-  <div class="stage-card">
-    <div class="stage-label">Stage 4 · Co-Op Mode</div>
-    <h2>Powered by Friends</h2>
-    <p>Snap Lens games are designed for <span class="highlight">friend energy</span>, not solo grinding.</p>
-    <div class="bullet">Friend-specific <span class="highlight">Leaderboards</span> turn a simple endless-runner into a “beat your bestie” loop.</div>
-    <div class="bullet"><span class="highlight">Bitmoji avatars</span> put players directly inside the game as themselves.</div>
-    <div class="bullet"><span class="highlight">Turn-Based play</span> lets friends trade moves via Snaps — like a DM-based game night.</div>
-    <p>Result: your game becomes part of their <span class="highlight">daily chat habits</span>, not just a one-time try.</p>
+  <div class="stage-card gif-layout">
+    <div class="stage-text">
+      <div class="stage-label">Stage 4 · Co-Op Mode</div>
+      <h2>Powered by Friends</h2>
+      <p>Snap Lens games are designed for <span class="highlight">friend energy</span>, not solo grinding.</p>
+      <div class="bullet">Friend-specific <span class="highlight">Leaderboards</span> turn a simple endless-runner into a “beat your bestie” loop.</div>
+      <div class="bullet"><span class="highlight">Bitmoji avatars</span> put players directly inside the game as themselves.</div>
+      <div class="bullet"><span class="highlight">Turn-Based play</span> lets friends trade moves via Snaps — like a DM-based game night.</div>
+      <p>Result: your game becomes part of their <span class="highlight">daily chat habits</span>, not just a one-time try.</p>
+    </div>
     <div class="media">
       <img src="https://developers.snap.com/img/lens-studio/games-overview4.gif" alt="Powered by Friends">
     </div>
     <div class="collectible" data-id="4">👥</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 5 -->
+<!-- STAGE 5 (GIF layout) -->
 <section class="section">
-  <div class="stage-card">
-    <div class="stage-label">Stage 5 · Async Battles</div>
-    <h2>Turn-Based Games</h2>
-    <p>Snap’s <span class="highlight">Turn Based</span> system lets you build two-player, asynchronous games where state is passed back and forth in each Snap.</p>
-    <div class="bullet">Players take turns on their own time — perfect for busy friends.</div>
-    <div class="bullet">Lens handles <span class="highlight">session linking and game state sharing</span> for you.</div>
-    <div class="bullet">Great for tic-tac-toe, strategy duels, trick shots, pool, or “try to beat my move” arcade challenges.</div>
-    <p>You focus on the gameplay; Turn Based components handle the <span class="highlight">networky glue.</span></p>
+  <div class="stage-card gif-layout">
+    <div class="stage-text">
+      <div class="stage-label">Stage 5 · Async Battles</div>
+      <h2>Turn-Based Games</h2>
+      <p>Snap’s <span class="highlight">Turn Based</span> system lets you build two-player, asynchronous games where state is passed back and forth in each Snap.</p>
+      <div class="bullet">Players take turns on their own time — perfect for busy friends.</div>
+      <div class="bullet">Lens handles <span class="highlight">session linking and game state sharing</span> for you.</div>
+      <div class="bullet">Great for tic-tac-toe, strategy duels, trick shots, pool, or “try to beat my move” arcade challenges.</div>
+      <p>You focus on the gameplay; Turn Based components handle the <span class="highlight">networky glue.</span></p>
+    </div>
     <div class="media">
       <img src="https://developers.snap.com/img/lens-studio/games-overview10.gif" alt="Turn Based GIF">
     </div>
     <div class="collectible" data-id="5">🔄</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 6 -->
+<!-- STAGE 6 (GIF layout) -->
 <section class="section">
-  <div class="stage-card">
-    <div class="stage-label">Stage 6 · High Score Table</div>
-    <h2>Leaderboards</h2>
-    <p>Every arcade has a “TOP 10” screen. Snapchat gives you that out of the box.</p>
-    <div class="bullet"><span class="highlight">Leaderboard component</span> handles score submission and ranking automatically.</div>
-    <div class="bullet"><span class="highlight">Score Widgets</span> let you show global or friend-only rankings inside your game UI.</div>
-    <div class="bullet">Ideal for hypercasual games, endless runners, reflex games — anything with <span class="highlight">“just one more run”</span> energy.</div>
+  <div class="stage-card gif-layout">
+    <div class="stage-text">
+      <div class="stage-label">Stage 6 · High Score Table</div>
+      <h2>Leaderboards</h2>
+      <p>Every arcade has a “TOP 10” screen. Snapchat gives you that out of the box.</p>
+      <div class="bullet"><span class="highlight">Leaderboard component</span> handles score submission and ranking automatically.</div>
+      <div class="bullet"><span class="highlight">Score Widgets</span> let you show global or friend-only rankings inside your game UI.</div>
+      <div class="bullet">Ideal for hypercasual games, endless runners, reflex games — anything with <span class="highlight">“just one more run”</span> energy.</div>
+    </div>
     <div class="media">
       <img src="https://developers.snap.com/img/lens-studio/games-overview11.gif" alt="Leaderboard GIF">
     </div>
     <div class="collectible" data-id="6">🏆</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 7 -->
+<!-- STAGE 7 (GIF layout) -->
 <section class="section">
-  <div class="stage-card">
-    <div class="stage-label">Stage 7 · Bitmoji Bonus Round</div>
-    <h2>Bitmoji: Play As Yourself</h2>
-    <p><span class="highlight">Bitmoji</span> makes your game instantly personal — players see their own avatar, not a generic character.</p>
-    <div class="bullet"><span class="highlight">Bitmoji 3D</span> for full character action: runners, platformers, arcade brawlers.</div>
-    <div class="bullet"><span class="highlight">Bitmoji Stickers</span> for reactions, emotes, score screens and UI.</div>
-    <div class="bullet">New <span class="highlight">Bitmoji Suite</span> tools help devs build more advanced Bitmoji games faster — ready-made animations, outfits & game assets.</div>
-    <p>Think “character select screen” but automatically generated from every player’s existing Bitmoji.</p>
+  <div class="stage-card gif-layout">
+    <div class="stage-text">
+      <div class="stage-label">Stage 7 · Bitmoji Bonus Round</div>
+      <h2>Bitmoji: Play As Yourself</h2>
+      <p><span class="highlight">Bitmoji</span> makes your game instantly personal — players see their own avatar, not a generic character.</p>
+      <div class="bullet"><span class="highlight">Bitmoji 3D</span> for full character action: runners, platformers, arcade brawlers.</div>
+      <div class="bullet"><span class="highlight">Bitmoji Stickers</span> for reactions, emotes, score screens and UI.</div>
+      <div class="bullet">New <span class="highlight">Bitmoji Suite</span> tools help devs build more advanced Bitmoji games faster — ready-made animations, outfits & game assets.</div>
+      <p>Think “character select screen” but automatically generated from every player’s existing Bitmoji.</p>
+    </div>
     <div class="media">
       <img src="https://developers.snap.com/img/lens-studio/games-overview12.gif" alt="Bitmoji GIF">
     </div>
     <div class="collectible" data-id="7">🙂</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 8 -->
+<!-- STAGE 8 (no gif) -->
 <section class="section">
   <div class="stage-card">
     <div class="stage-label">Stage 8 · Dev Loadout</div>
@@ -551,11 +564,10 @@
     <div class="bullet"><span class="highlight">Joystick</span> component — customizable analog control with scripting hooks.</div>
     <p>Combine these with AR inputs (face tracking, device motion, hand gestures) to create hybrid mechanics you can’t really do in a flat 2D game.</p>
     <div class="collectible" data-id="8">🎮</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 9 -->
+<!-- STAGE 9 (no gif) -->
 <section class="section">
   <div class="stage-card">
     <div class="stage-label">Stage 9 · Performance & Spotlight Meta</div>
@@ -569,11 +581,10 @@
     <div class="bullet"><span class="highlight">Picture-in-Picture</span> — game full screen with a camera window for expressions.</div>
     <div class="bullet"><span class="highlight">Camera Toggle</span> — for “record mode” vs “deep play mode”.</div>
     <div class="collectible" data-id="9">📸</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
 
-<!-- STAGE 10 -->
+<!-- STAGE 10 (no gif) -->
 <section class="section">
   <div class="stage-card">
     <div class="stage-label">Stage 10 · Final Boss: Ship & Scale</div>
@@ -584,14 +595,13 @@
     <div class="bullet"><span class="highlight">Discovery Flywheel</span> — Turn Based, Leaderboards and Bitmoji all create “back-and-forth” content that pushes your Lens higher in the carousel.</div>
     <div class="bullet">Explore Lens Studio <span class="highlight">sample projects</span>, the Games section of the Asset Library, and docs for game templates.</div>
     <div class="collectible" data-id="10">🎁</div>
-    <div class="hint">Tap</div>
   </div>
 </section>
+
 <!-- LEVEL UP SCREEN -->
 <div class="level-up" id="level-up">
   <h1>★ LEVEL CLEARED ★</h1>
   <h2>You’re ready to build your first Snapchat Game Lens</h2>
-  
   <div class="button" onclick="window.open('https://ar.snap.com/download', '_blank')">
     Download Lens Studio
   </div>
@@ -620,6 +630,7 @@
         const col = sec.querySelector('.collectible');
         const hint = sec.querySelector('.hint');
         if (col) col.classList.add('revealed');
+        // Only first section has a hint; show it once it comes into view
         if (hint && !hint.classList.contains('next-mode')) hint.classList.add('show');
       }
     });
@@ -645,7 +656,7 @@
         const hint = section.querySelector('.hint');
         const nextSection = section.nextElementSibling;
 
-        // Turn hint into "Next Section" button
+        // For first section only: turn hint into "Next Section" button
         if (hint) {
           hint.textContent = "Next Section";
           hint.classList.remove('show');
