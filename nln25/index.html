@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Next Level November – XDG Mumbai × SnapAR</title>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Press+Start+2P&display=swap');
+
+  :root {
+    --snap-yellow: #fffc33;
+    --arcade-cyan: #43ffd2;
+    --arcade-pink: #ff4fa3;
+    --bg-dark: #050509;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #151522 0, #050509 40%, #000 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.03) 1px,
+      transparent 2px,
+      transparent 3px
+    );
+    mix-blend-mode: soft-light;
+    opacity: 0.4;
+    z-index: 0;
+  }
+
+  /* HUD */
+  .hud {
+    position: fixed;
+    top: 6px;
+    left: 10px;
+    right: 10px;
+    z-index: 1001;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--snap-yellow);
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hud-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hud-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    color: var(--snap-yellow);
+    text-transform: uppercase;
+  }
+
+  .hud-sub {
+    font-size: 0.65rem;
+    color: #ccc;
+  }
+
+  .hud-stats {
+    display: flex;
+    gap: 18px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    flex-wrap: nowrap;
+  }
+
+  .hud-stat-label {
+    color: var(--arcade-cyan);
+  }
+
+  .hud-stat-value {
+    color: var(--snap-yellow);
+    margin-left: 4px;
+  }
+
+  /* XP bar just under HUD */
+  .xp-bar-wrap {
+    position: fixed;
+    top: 56px;
+    left: 10px;
+    right: 10px;
+    height: 8px;
+    background: #222;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid #555;
+    z-index: 1001;
+  }
+  .xp-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--snap-yellow), var(--arcade-pink));
+    transition: width 0.3s ease;
+  }
+
+  .avatar {
+    position: fixed;
+    top: 74px;
+    right: 18px;
+    font-size: 2.4rem;
+    z-index: 1001;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+  }
+
+  .section {
+    min-height: 100vh;
+    padding: 130px 10% 80px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease-out;
+    position: relative;
+    z-index: 1;
+  }
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .stage-card {
+    border-radius: 16px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.08), rgba(0,0,0,0.9));
+    padding: 24px 22px 30px;
+    padding-right: 22px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+    position: relative;
+  }
+
+  .stage-label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--arcade-cyan);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+    color: var(--snap-yellow);
+    margin: 0 0 20px 0;
+    text-shadow: 0 0 16px rgba(255,255,0,0.5);
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  p, .bullet {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .bullet {
+    padding-left: 18px;
+    position: relative;
+  }
+  .bullet::before {
+    content: "◆";
+    position: absolute;
+    left: 0;
+    color: var(--snap-yellow);
+    font-size: 0.7rem;
+    top: 5px;
+  }
+
+  .highlight {
+    color: var(--arcade-cyan);
+    font-weight: 600;
+  }
+
+  .media {
+    margin-top: 16px;
+  }
+
+  .media img, .media video {
+    width: 100%;
+    max-width: 650px;
+    margin: 10px 0;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(255,255,0,0.18);
+  }
+
+  /* Collectibles now TOP-RIGHT of card */
+  .collectible {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--snap-yellow) 0, #f9c400 40%, #7c4a00 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    font-size: 1.9rem;
+    cursor: pointer;
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    transform: scale(0.2);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    box-shadow: 0 0 16px rgba(255,255,0,0.7);
+  }
+  .collectible.revealed {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .collectible.collected {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
+
+  /* Hint bubble just under collectible */
+  .hint {
+    position: absolute;
+    right: 18px;
+    top: 92px;
+    background: rgba(0,0,0,0.8);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    white-space: nowrap;
+  }
+  .hint::after {
+    content: "▶";
+    margin-left: 4px;
+    color: var(--snap-yellow);
+    font-size: 0.6rem;
+  }
+  .hint.show {
+    opacity: 1;
+  }
+
+  .hint.next-mode {
+    background: var(--snap-yellow);
+    color: #000;
+    border-color: #000;
+    cursor: pointer;
+  }
+  .hint.next-mode::after {
+    content: "↓";
+    color: #000;
+  }
+
+  .level-up {
+    display: none;
+    text-align: center;
+    padding: 140px 10% 80px;
+    z-index: 2;
+    position: relative;
+  }
+  .level-up.visible {
+    display: block;
+    animation: fadeIn 1s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9);}
+    to { opacity: 1; transform: scale(1);}
+  }
+
+  .button {
+    margin-top: 30px;
+    display: inline-block;
+    padding: 14px 28px;
+    background: var(--snap-yellow);
+    color: #000;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+    font-family: 'Press Start 2P', cursive;
+    text-transform: uppercase;
+  }
+  .button:hover {
+    background: #fff78f;
+    transform: translateY(-3px);
+  }
+
+  .level-up h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.6rem;
+  }
+
+  /* MOBILE OPTIMISATION */
+  @media (max-width: 900px) {
+    .hud {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .hud-title {
+      font-size: 0.6rem;
+    }
+
+    .hud-sub {
+      font-size: 0.6rem;
+    }
+
+    .hud-stats {
+      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      row-gap: 4px;
+      font-size: 0.6rem;
+    }
+
+    .xp-bar-wrap {
+      top: 84px; /* push XP bar further down so it doesn’t clip XP/Level text */
+    }
+
+    .avatar {
+      top: 104px;
+      right: 12px;
+      font-size: 2rem;
+    }
+
+    .section {
+      padding: 150px 6% 70px;
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.4rem; }
+    p, .bullet { font-size: 0.95rem; }
+
+    .collectible {
+      width: 58px;
+      height: 58px;
+      font-size: 1.6rem;
+      right: 12px;
+      top: 18px;
+    }
+
+    .hint {
+      right: 12px;
+      top: 86px;
+      font-size: 0.7rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="hud-title-block">
+    <div class="hud-title">Next Level November</div>
+    <div class="hud-sub">XDG मुंBAI × SnapAR · Arcade Game Lens Workshop</div>
+  </div>
+  <div class="hud-stats">
+    <div><span class="hud-stat-label">LEVEL</span><span class="hud-stat-value" id="hud-level">1</span></div>
+    <div><span class="hud-stat-label">XP</span><span class="hud-stat-value" id="hud-xp">0</span></div>
+    <div><span class="hud-stat-label">TOKENS</span><span class="hud-stat-value" id="hud-tokens">0</span></div>
+  </div>
+</div>
+
+<div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar"></div></div>
+<div class="avatar">😎</div>
+
+<!-- === CONTENT SECTIONS STAY THE SAME AS LAST VERSION === -->
+<!-- For brevity I'll keep just one example; you can keep all your stages here unchanged.
+     Only change is that the .collectible + .hint positions are now handled by CSS. -->
+
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 0 · Insert Coin: Welcome to XDG मुंBAI</div>
+    <h1>XDG मुंBAI</h1>
+    <h2>मुंBAI's XR Arcade of Makers</h2>
+    <p><span class="highlight">XDG मुंBAI</span> is a non-profit, independent community for all things XR — AR, VR — based in Mumbai.</p>
+    <p>We host <span class="highlight">meet-ups, workshops, fun sessions and networking events</span> where developers, designers and artists learn, prototype and ship immersive experiences together.</p>
+    <p>From student makers to studio pros, XDG मुंBAI has been part of national initiatives like XR hackathons, Wave Summit events, and community-driven Lens Studio jams — helping hundreds of creators take their <span class="highlight">first AR lens to production.</span></p>
+    <p>Tonight, you’re in the XDG arcade — and our game of choice is <span class="highlight">SnapAR.</span></p>
+    <div class="collectible" data-id="0">🌐</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 1 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 1 · Title Screen</div>
+    <h1>Next Level November</h1>
+    <h2>XDG Mumbai × SnapAR — Building Games on Snapchat</h2>
+    <p>Snapchat isn’t just for filters — it’s a <span class="highlight">social game console in your pocket.</span> With Lens Studio, you can build AR-powered, social-first games that run directly inside the camera.</p>
+    <p>In this workshop, we’ll think like arcade devs: fast loops, tight mechanics, and friend-powered replayability — but all inside a Lens.</p>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview1.png" alt="Snap Games Overview">
+    </div>
+    <div class="collectible" data-id="1">⚡</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 2 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 2 · Enter the Snap ARcade</div>
+    <h2>Why SnapAR & Snapchat?</h2>
+    <p>The <span class="highlight">SnapAR ecosystem</span> gives you everything a game dev dreams of in one place:</p>
+    <div class="bullet">A massive, global audience already inside the Snapchat camera.</div>
+    <div class="bullet">Lens Studio — a free, powerful editor with real-time preview, asset library, scripting and templates.</div>
+    <div class="bullet">Trackers, physics, VFX, audio, UI and Bitmoji — no engine switch needed.</div>
+    <div class="bullet">AR across mobile, Spectacles and the wider Snap platform.</div>
+    <p>Think of it as: <span class="highlight">Unity + social graph + distribution + monetization</span> — but focused on fast, snackable gameplay.</p>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview2.gif" alt="Games Overview 2">
+    </div>
+    <div class="collectible" data-id="2">🌍</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 3 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 3 · Unlock: Instant Reach</div>
+    <h2>Instant Distribution & Viral Sharing</h2>
+    <p>Every arcade needs players. On Snapchat, you don’t chase installs — your game <span class="highlight">spawns directly in the camera.</span></p>
+    <div class="bullet"><span class="highlight">Instant Distribution</span> — Publish once in Lens Studio and your game can appear in the Camera Carousel, Lens Explorer and Search.</div>
+    <div class="bullet"><span class="highlight">Zero Install Friction</span> — Friends open a Snap, tap your Lens, and they’re instantly in the game.</div>
+    <div class="bullet"><span class="highlight">Viral Sharing</span> — Every playthrough can become content via Snaps, Stories or Spotlight, turning gameplay into discoverable video.</div>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview3.gif" alt="Viral Sharing GIF">
+    </div>
+    <div class="collectible" data-id="3">💛</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 4 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 4 · Co-Op Mode</div>
+    <h2>Powered by Friends</h2>
+    <p>Snap Lens games are designed for <span class="highlight">friend energy</span>, not solo grinding.</p>
+    <div class="bullet">Friend-specific <span class="highlight">Leaderboards</span> turn a simple endless-runner into a “beat your bestie” loop.</div>
+    <div class="bullet"><span class="highlight">Bitmoji avatars</span> put players directly inside the game as themselves.</div>
+    <div class="bullet"><span class="highlight">Turn-Based play</span> lets friends trade moves via Snaps — like a DM-based game night.</div>
+    <p>Result: your game becomes part of their <span class="highlight">daily chat habits</span>, not just a one-time try.</p>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview4.gif" alt="Powered by Friends">
+    </div>
+    <div class="collectible" data-id="4">👥</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 5 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 5 · Async Battles</div>
+    <h2>Turn-Based Games</h2>
+    <p>Snap’s <span class="highlight">Turn Based</span> system lets you build two-player, asynchronous games where state is passed back and forth in each Snap.</p>
+    <div class="bullet">Players take turns on their own time — perfect for busy friends.</div>
+    <div class="bullet">Lens handles <span class="highlight">session linking and game state sharing</span> for you.</div>
+    <div class="bullet">Great for tic-tac-toe, strategy duels, trick shots, pool, or “try to beat my move” arcade challenges.</div>
+    <p>You focus on the gameplay; Turn Based components handle the <span class="highlight">networky glue.</span></p>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview10.gif" alt="Turn Based GIF">
+    </div>
+    <div class="collectible" data-id="5">🔄</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 6 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 6 · High Score Table</div>
+    <h2>Leaderboards</h2>
+    <p>Every arcade has a “TOP 10” screen. Snapchat gives you that out of the box.</p>
+    <div class="bullet"><span class="highlight">Leaderboard component</span> handles score submission and ranking automatically.</div>
+    <div class="bullet"><span class="highlight">Score Widgets</span> let you show global or friend-only rankings inside your game UI.</div>
+    <div class="bullet">Ideal for hypercasual games, endless runners, reflex games — anything with <span class="highlight">“just one more run”</span> energy.</div>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview11.gif" alt="Leaderboard GIF">
+    </div>
+    <div class="collectible" data-id="6">🏆</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 7 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 7 · Bitmoji Bonus Round</div>
+    <h2>Bitmoji: Play As Yourself</h2>
+    <p><span class="highlight">Bitmoji</span> makes your game instantly personal — players see their own avatar, not a generic character.</p>
+    <div class="bullet"><span class="highlight">Bitmoji 3D</span> for full character action: runners, platformers, arcade brawlers.</div>
+    <div class="bullet"><span class="highlight">Bitmoji Stickers</span> for reactions, emotes, score screens and UI.</div>
+    <div class="bullet">New <span class="highlight">Bitmoji Suite</span> tools help devs build more advanced Bitmoji games faster — ready-made animations, outfits & game assets.</div>
+    <p>Think “character select screen” but automatically generated from every player’s existing Bitmoji.</p>
+    <div class="media">
+      <img src="https://developers.snap.com/img/lens-studio/games-overview12.gif" alt="Bitmoji GIF">
+    </div>
+    <div class="collectible" data-id="7">🙂</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 8 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 8 · Dev Loadout</div>
+    <h2>Game Components & Inputs</h2>
+    <p>Lens Studio provides a <span class="highlight">games toolbox</span> so you don’t rebuild basics from scratch:</p>
+    <div class="bullet"><span class="highlight">Character Controller</span> — movement & collision for Bitmoji or custom characters.</div>
+    <div class="bullet"><span class="highlight">Camera Controller</span> — Follow, third-person, orbit camera setups.</div>
+    <div class="bullet"><span class="highlight">Input Actions</span> — map taps, swipes, joystick, face gestures, voice to in-game actions.</div>
+    <div class="bullet"><span class="highlight">Joystick</span> component — customizable analog control with scripting hooks.</div>
+    <p>Combine these with AR inputs (face tracking, device motion, hand gestures) to create hybrid mechanics you can’t really do in a flat 2D game.</p>
+    <div class="collectible" data-id="8">🎮</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 9 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 9 · Performance & Spotlight Meta</div>
+    <h2>Best Practices: FPS, Inputs & Spotlight</h2>
+    <p>To keep your Lens feeling like a smooth arcade machine:</p>
+    <div class="bullet"><span class="highlight">Performance</span> — Aim for 30 FPS on a wide device range. Keep textures light, meshes simple, and logic tight.</div>
+    <div class="bullet"><span class="highlight">Bitmoji Cost</span> — 3D Bitmoji is heavier; simplify other visuals when using it.</div>
+    <div class="bullet"><span class="highlight">Input</span> — Use Touch Blocking so Snapchat’s default swipe gestures don’t yank players out of the Lens during intense taps/swipes.</div>
+    <p>For Spotlight and video engagement, remember:</p>
+    <div class="bullet"><span class="highlight">Camera-On overlays</span> — keep the face visible; reactions drive shares.</div>
+    <div class="bullet"><span class="highlight">Picture-in-Picture</span> — game full screen with a camera window for expressions.</div>
+    <div class="bullet"><span class="highlight">Camera Toggle</span> — for “record mode” vs “deep play mode”.</div>
+    <div class="collectible" data-id="9">📸</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+
+<!-- STAGE 10 -->
+<section class="section">
+  <div class="stage-card">
+    <div class="stage-label">Stage 10 · Final Boss: Ship & Scale</div>
+    <h2>Monetization, Discovery & Next Steps</h2>
+    <p>Building the game is Level 1. Level 2 is <span class="highlight">shipping and growing it.</span></p>
+    <div class="bullet"><span class="highlight">Lens Creator Rewards</span> — earn payouts when your Lenses become top performers. Games often over-index on engagement.</div>
+    <div class="bullet"><span class="highlight">Challenge Tags</span> — monthly build challenges with prize pools; submit your game Lens and compete globally.</div>
+    <div class="bullet"><span class="highlight">Discovery Flywheel</span> — Turn Based, Leaderboards and Bitmoji all create “back-and-forth” content that pushes your Lens higher in the carousel.</div>
+    <div class="bullet">Explore Lens Studio <span class="highlight">sample projects</span>, the Games section of the Asset Library, and docs for game templates.</div>
+    <div class="collectible" data-id="10">🎁</div>
+    <div class="hint">Tap</div>
+  </div>
+</section>
+<!-- LEVEL UP SCREEN -->
+<div class="level-up" id="level-up">
+  <h1>★ LEVEL CLEARED ★</h1>
+  <h2>You’re ready to build your first Snapchat Game Lens</h2>
+  
+  <div class="button" onclick="window.open('https://ar.snap.com/download', '_blank')">
+    Download Lens Studio
+  </div>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section');
+  const collectibles = document.querySelectorAll('.collectible');
+  const xpBar = document.getElementById('xp-bar');
+  const hudLevel = document.getElementById('hud-level');
+  const hudXp = document.getElementById('hud-xp');
+  const hudTokens = document.getElementById('hud-tokens');
+
+  const totalTokens = collectibles.length;
+  const xpPerToken = 100;
+  const maxXp = totalTokens * xpPerToken;
+
+  let collectedCount = 0;
+  let currentXp = 0;
+
+  function revealSections() {
+    const trigger = window.innerHeight * 0.85;
+    sections.forEach((sec) => {
+      if (sec.getBoundingClientRect().top < trigger) {
+        sec.classList.add('visible');
+        const col = sec.querySelector('.collectible');
+        const hint = sec.querySelector('.hint');
+        if (col) col.classList.add('revealed');
+        if (hint && !hint.classList.contains('next-mode')) hint.classList.add('show');
+      }
+    });
+  }
+
+  function updateHud() {
+    currentXp = collectedCount * xpPerToken;
+    const xpPercent = (currentXp / maxXp) * 100;
+    xpBar.style.width = xpPercent + "%";
+    hudXp.textContent = currentXp;
+    hudTokens.textContent = collectedCount + "/" + totalTokens;
+    hudLevel.textContent = Math.max(1, collectedCount);
+  }
+
+  collectibles.forEach(col => {
+    col.addEventListener('click', () => {
+      if (!col.classList.contains('collected')) {
+        col.classList.add('collected');
+        collectedCount++;
+        updateHud();
+
+        const section = col.closest('.section');
+        const hint = section.querySelector('.hint');
+        const nextSection = section.nextElementSibling;
+
+        // Turn hint into "Next Section" button
+        if (hint) {
+          hint.textContent = "Next Section";
+          hint.classList.remove('show');
+          hint.classList.add('next-mode', 'show');
+          if (nextSection) {
+            hint.onclick = () => {
+              nextSection.scrollIntoView({ behavior: "smooth" });
+            };
+          } else {
+            hint.onclick = null;
+          }
+        }
+
+        // Auto-scroll as well
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: "smooth" });
+        }
+
+        if (collectedCount === totalTokens) {
+          const levelUp = document.getElementById('level-up');
+          levelUp.classList.add('visible');
+          levelUp.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    });
+  });
+
+  window.addEventListener('scroll', revealSections);
+  window.onload = () => {
+    revealSections();
+    updateHud();
+  };
+</script>
+
+</body>
+</html>
