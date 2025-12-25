@@ -56,25 +56,26 @@
       100%{transform:translate3d(-40px,30px,0) rotate(2deg)}
     }
 
-   .app{
-  height:100%;
-  display:flex;
-  flex-direction:column;
-  padding: calc(12px + var(--safe)) 14px calc(14px + var(--safeB));
-  gap:12px;
+    .app{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      padding: calc(12px + var(--safe)) 14px calc(14px + var(--safeB));
+      gap:12px;
 
-  /* ✅ FULL SCREEN */
-  width: 100%;
-  max-width: none;
-  margin: 0;
-}
+      /* FULL SCREEN */
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
 
-.sigBtn{
-  cursor:pointer;
-}
-.sigBtn:active{
-  transform: translateY(1px);
-}
+    .sigBtn{
+        z-index: 100;
+      cursor:pointer;
+    }
+    .sigBtn:active{
+      transform: translateY(1px);
+    }
 
     .top{
       display:flex;
@@ -151,6 +152,7 @@
       user-select:none;
       box-shadow: 0 10px 26px rgba(0,0,0,.2);
       backdrop-filter: blur(8px);
+      cursor:pointer;
     }
     .pill strong{color:var(--gold)}
     .pill:active{transform: translateY(1px)}
@@ -191,32 +193,39 @@
       100%{ transform: translate3d(0,0,0) scale(1); }
     }
 
-    /* layers */
+    /* Layers */
     .treeWrap{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      z-index: 2;
+      pointer-events:auto; /* allow message + star taps */
+    }
+
+    /* Tree ignores touches so it doesn't block */
+    .tree{ pointer-events:none; }
+    .tree svg{ pointer-events:none; }
+
+    /* Star is clickable */
+    .tip{ pointer-events:auto; }
+
+#placedLayer{
   position:absolute;
   inset:0;
-  display:grid;
-  place-items:center;
-  z-index: 2;
-
-  /* ✅ IMPORTANT: allow children (message, close button) to receive taps */
-  pointer-events:auto;
+  z-index: 3;
+  pointer-events: none; /* 🔑 THIS IS THE FIX */
 }
 
-/* ✅ make the tree graphics ignore touches so they don't block anything */
-.tree{
-  pointer-events:none;
-}
-.tree svg{
-  pointer-events:none;
-}
-
-/* ✅ but the star should still be clickable */
-.tip{
-  pointer-events:auto;
-}
- #placedLayer{ position:absolute; inset:0; z-index: 3; }
-    .controls{ position:absolute; left:12px; right:12px; bottom:12px; display:flex; gap:10px; pointer-events:auto; z-index: 6; }
+    .controls{
+      position:absolute;
+      left:12px; right:12px;
+      bottom:12px;
+       pointer-events: auto;
+      display:flex; gap:10px;
+   
+      z-index: 3;
+    }
 
     /* Toast */
     .toast{
@@ -249,7 +258,7 @@
       width:min(86vw, 420px);
       aspect-ratio: 1 / 1.08;
       position:relative;
-      transform: translateY(10px);
+      transform: translateY(-6px); /* a bit more present */
       filter: drop-shadow(0 30px 50px rgba(0,0,0,.45));
     }
     .tree svg{width:100%; height:100%}
@@ -263,11 +272,10 @@
       font-size:24px;
       filter: drop-shadow(0 8px 12px rgba(0,0,0,.35));
       opacity:.92;
-      pointer-events:auto;
       user-select:none;
       cursor:pointer;
+      z-index: 5;
     }
-    /* bigger invisible hit area */
     .tip::before{
       content:"";
       position:absolute;
@@ -290,7 +298,7 @@
       50%{ transform: scale(1.08); opacity:.75; }
     }
 
-    /* Message card (dismissible) */
+    /* Message card */
     .message{
       position:absolute;
       left:50%;
@@ -311,7 +319,7 @@
     .message.hidden{
       opacity: 0;
       transform: translate(-50%,-46%) scale(.98);
-      pointer-events:none; /* critical */
+      pointer-events:none;
     }
     .message h1{ margin:0; font-size: 22px; letter-spacing:.2px; }
     .message p{
@@ -320,33 +328,21 @@
       color: var(--muted);
       line-height:1.45;
     }
+
     .signature{
       margin-top:10px;
       display:inline-flex;
       gap:10px;
+      color:white;
       align-items:center;
       padding:8px 12px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
       font-size:13px;
+      user-select:none;
     }
     .signature b{color:var(--gold)}
-
-    .msgClose{
-      position:absolute;
-      right:10px; top:10px;
-      width:36px; height:36px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.06);
-      display:grid;
-      place-items:center;
-      user-select:none;
-      font-size:16px;
-      cursor:pointer;
-    }
-    .msgClose:active{ transform: translateY(1px); }
 
     .reopen{
       position:absolute;
@@ -366,6 +362,7 @@
       transition: opacity .2s ease;
       z-index: 8;
       user-select:none;
+      cursor:pointer;
     }
     .reopen.show{ opacity:1; pointer-events:auto; }
 
@@ -454,6 +451,7 @@
       transform: translate(-50%,-50%);
       user-select:none;
       touch-action:none;
+        pointer-events: auto; /* allow drag & tap */
     }
     .placed span{font-size:22px}
     .placed .miniTag{
@@ -620,11 +618,11 @@
         </div>
 
         <div class="message" id="message">
-              <h1 id="headline">Merry Christmas, Ms. Pixieji 🧚✨</h1>
+          <h1 id="headline">"Mewwwiest & Krazyyest Kristmas, Pixieji🧚✨</h1>
           <p id="copy"></p>
-        <button class="signature sigBtn" id="sigBtn" type="button" aria-label="Toggle message">
-  ✨ Start decorating <span style="opacity:.75">— Mr. Kind 💛</span>
-</button>
+          <button class="signature sigBtn" id="sigBtn" type="button" aria-label="Toggle message">
+            ✨ Start decorating 
+          </button>
           <div class="sr" id="ariaLive" aria-live="polite"></div>
         </div>
       </div>
@@ -680,15 +678,14 @@
       const aurora = document.getElementById("aurora");
 
       const btnDance = document.getElementById("btnDance");
-      const btnSing = document.getElementById("btnSing");
+      const btnSing  = document.getElementById("btnSing");
       const btnClear = document.getElementById("btnClear");
-const sigBtn = document.getElementById("sigBtn");
 
+      const sigBtn = document.getElementById("sigBtn");
       const pillHint = document.getElementById("pillHint");
       const badge = document.getElementById("badge");
       const star = document.getElementById("star");
       const message = document.getElementById("message");
-      const msgClose = document.getElementById("msgClose");
       const reopen = document.getElementById("reopen");
 
       const modalBack = document.getElementById("modalBack");
@@ -700,17 +697,18 @@ const sigBtn = document.getElementById("sigBtn");
 
       // ✅ Poetic + funny + Theobroma thank-you
       document.getElementById("copy").innerHTML =
-        "Ms. Pixieji 🧚✨,<br>" +
-        "I built you a tiny snow-globe universe—where cheetah prints are royal robes 🐆, " +
-        "bikes and cars purr like compliments 🏍️🚗, and every dress moment deserves slow-motion applause 👗.<br><br>" +
-        "Also… thank you for the lovely <b>Theobroma cake</b> 🍰 — " +
-        "I took one bite and briefly forgot my name. " +
-        "If joy had a flavour, it would be <i>that</i> (with extra frosting and zero regrets).<br><br>" +
-        "Tap ornaments. Drag chaos into elegance. " +
-        "And when you want instant sparkle—tap the ⭐ and pretend it’s totally normal to summon magic on demand.<br><br>" +
-        "Always cheering for you (and still thinking about that cake),<br><b>Mr. Kind</b> 💛";
 
-      let sparkle = 0;
+
+"Last Christmas I wished for someone true and genuine, and this year you’re here with me.<br>" +
+"Maybe Santa IS real after all.<br><br>" +
+"Thank you for entering my life truly.<br>" +
+"Received your Strawberry Bento Cheesecake and will have it with the whole family tonight after dinner to celebrate Christmas.<br><br>" +
+"Everything and anything I do for you will always feel less, but here’s an interactive Kristmas Kard for you🎄<br><br>" +
+"Sorry for being away haha, was buzyy wrapping this up for you.<br>" +
+"Can you find all the secret easter eggs?<br>" +
+"Start decorating and seee.<br><br>" +
+"Your Mr. Kind ❣️🦵";
+    let sparkle = 0;
       let danceMode = false;
 
       // --- Audio (WebAudio) ---
@@ -738,7 +736,7 @@ const sigBtn = document.getElementById("sigBtn");
         });
       }
 
-      // Jingle Bells hook: E E E | E E E | E G C D E
+      // Jingle Bells hook
       function jingleBells(){
         const E=659, G=784, C=523, D=587;
         playMelody([E,E,E, E,E,E, E,G,C,D,E], 170, "triangle", 0.055);
@@ -794,28 +792,30 @@ const sigBtn = document.getElementById("sigBtn");
       [closeX, btnOkay].forEach(el => el.addEventListener("click", closeModal));
       modalBack.addEventListener("click", (e)=>{ if(e.target === modalBack) closeModal(); });
 
-      // --- Dismiss / reopen message (fixed + UX polish) ---
+      // --- Message toggle (FIXED) ---
       function hideMessage(){
-  message.classList.add("hidden");
-  reopen.classList.add("show");
-  sigBtn.innerHTML = "💌 Open message <span style='opacity:.75'>— Mr. Kind 💛</span>";
-  showToast("Decorate time 🎄 Tap ⭐ for magic!", 1400);
-}
+        message.classList.add("hidden");
+        reopen.classList.add("show");
+        sigBtn.innerHTML = "💌 Open message <span style='opacity:.75'>— Mr. Kind 💛</span>";
+        showToast("Decorate time 🎄 Tap ⭐ for magic!", 1400);
+        
+      }
 
-function showMessage(){
-  message.classList.remove("hidden");
-  reopen.classList.remove("show");
-  sigBtn.innerHTML = "✨ Start decorating <span style='opacity:.75'>— Mr. Kind 💛</span>";
-  showToast("Message back 💛", 1200);
-}
+      function showMessage(){
+        message.classList.remove("hidden");
+        reopen.classList.remove("show");
+        sigBtn.innerHTML = "✨ Start decorating <span style='opacity:.75'>— Mr. Kind 💛</span>";
+        showToast("Message back 💛", 1200);
+      }
 
-      msgClose.addEventListener("click", (e)=>{ e.stopPropagation(); hideMessage(); });
+      // IMPORTANT: you removed msgClose from HTML, so DO NOT reference it.
       reopen.addEventListener("click", (e)=>{ e.stopPropagation(); showMessage(); });
-sigBtn.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  if(message.classList.contains("hidden")) showMessage();
-  else hideMessage();
-});
+      sigBtn.addEventListener("click", (e)=>{
+        
+        e.stopPropagation();
+        if(message.classList.contains("hidden")) showMessage();
+        else hideMessage();
+      });
 
       // swipe down to dismiss (mobile)
       let startY = null;
@@ -825,15 +825,6 @@ sigBtn.addEventListener("click", (e)=>{
         const dy = e.touches[0].clientY - startY;
         if(dy > 45){ hideMessage(); startY = null; }
       }, {passive:true});
-
-      // UX improvement: don't steal star taps if message is open—auto-hint to close once
-      let nudged = false;
-      star.addEventListener("click", ()=>{
-        if(!message.classList.contains("hidden") && !nudged){
-          nudged = true;
-          showToast("Tip: close the message ✕ to tap ⭐ easily ✨", 1700);
-        }
-      }, {capture:true});
 
       // --- Easter egg state ---
       const egg = { starTaps:0, badgeTaps:0, cheetahPlaced:0, speedCombo:0 };
@@ -906,7 +897,7 @@ sigBtn.addEventListener("click", (e)=>{
         return s;
       }
 
-      // Better UX: allow delete by double-tap a placed ornament (common on mobile)
+      // UX: remove ornament by double-tap
       function removePlaced(el){
         el.style.transition = "transform .18s ease, opacity .18s ease";
         el.style.opacity = "0";
@@ -920,18 +911,14 @@ sigBtn.addEventListener("click", (e)=>{
       ornaments.addEventListener("click", (e)=>{
         const orb = e.target.closest(".orb");
         if(!orb) return;
-        const kind = orb.dataset.kind;
-        spawn(kind);
+        spawn(orb.dataset.kind);
       });
 
-      // Long-press on ornament box -> cheetah rain (UX: cancel if user scrolls)
+      // Long-press on ornament box -> cheetah rain
       let lpTimer = null;
-      let lpMoved = false;
       ornaments.addEventListener("pointerdown", (e)=>{
         const orb = e.target.closest(".orb");
         if(!orb) return;
-        lpMoved = false;
-
         lpTimer = setTimeout(()=>{
           showToast("Easter egg: Cheetah rain 🌧️🐆", 1600);
           const r = stageRect();
@@ -940,17 +927,16 @@ sigBtn.addEventListener("click", (e)=>{
           }
         }, 520);
       });
-      ornaments.addEventListener("pointermove", ()=>{ lpMoved = true; clearTimeout(lpTimer); });
       ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
         ornaments.addEventListener(ev, ()=> clearTimeout(lpTimer));
       });
+      ornaments.addEventListener("pointermove", ()=> clearTimeout(lpTimer));
 
-      // Draggable ornaments (UX: keep within bounds + double-tap remove + triple-tap glow toggle)
+      // Draggable ornaments
       function makeDraggable(el){
         let dragging = false;
         let offsetX = 0, offsetY = 0;
 
-        // tap memory
         el._tap = {t:0, n:0};
 
         el.addEventListener("pointerdown", (e)=>{
@@ -962,20 +948,17 @@ sigBtn.addEventListener("click", (e)=>{
           el.classList.add("showTag");
           addSpark(1);
 
-          // tap counting
           const now = performance.now();
           if(now - el._tap.t < 420) el._tap.n++; else el._tap.n = 1;
           el._tap.t = now;
 
-          // double tap = delete
-          if(el._tap.n === 2){
+          if(el._tap.n === 3){
             removePlaced(el);
             dragging = false;
             return;
           }
 
-          // triple tap = glow toggle
-          if(el._tap.n === 3){
+          if(el._tap.n === 2){
             el.classList.toggle("glow");
             showToast(el.classList.contains("glow") ? "Glow ON ✨" : "Glow OFF 🌙", 1100);
             beep(el.classList.contains("glow") ? 880 : 440, 0.08, "triangle", 0.05);
@@ -997,7 +980,6 @@ sigBtn.addEventListener("click", (e)=>{
           const onMove = (ev)=>{
             if(!dragging) return;
             moveTo(ev.clientX, ev.clientY);
-
             if(danceMode && el.dataset.kind === "dance"){
               el.style.transform = `translate(-50%,-50%) rotate(${Math.sin(performance.now()/60)*10}deg) scale(1.02)`;
             } else {
@@ -1011,7 +993,6 @@ sigBtn.addEventListener("click", (e)=>{
             el.removeEventListener("pointermove", onMove);
             el.removeEventListener("pointerup", onUp);
             el.removeEventListener("pointercancel", onUp);
-
             trySpeedCombo();
             el.style.transform = "translate(-50%,-50%)";
           };
@@ -1055,7 +1036,7 @@ sigBtn.addEventListener("click", (e)=>{
         }
       }
 
-      // Star magic: click + 7-tap ritual + long-press glow night mode
+      // Star magic
       function sparkleBurst(x, y, count=10){
         for(let i=0;i<count;i++){
           setTimeout(()=>{
@@ -1082,7 +1063,7 @@ sigBtn.addEventListener("click", (e)=>{
       });
 
       star.addEventListener("click", ()=>{
-        // UX: if message blocks, dismiss it automatically
+        // UX: if message is open, hide it so ⭐ feels responsive
         if(!message.classList.contains("hidden")) hideMessage();
 
         egg.starTaps++;
@@ -1119,7 +1100,7 @@ sigBtn.addEventListener("click", (e)=>{
         }
       });
 
-      // Dance Mode (UX: keep glow controlled; avoid heavy toggling)
+      // Dance Mode
       let danceRAF = null;
       function setDanceMode(on){
         danceMode = on;
@@ -1151,7 +1132,7 @@ sigBtn.addEventListener("click", (e)=>{
       }
       btnDance.addEventListener("click", ()=> setDanceMode(!danceMode));
 
-      // Sing -> Christmas tune + glow pulse + notes
+      // Sing -> tune + glow pulse + notes
       btnSing.addEventListener("click", ()=>{
         showToast("🎤 Christmas mode: ON (Pixieji remix)", 1700);
         addSpark(4);
@@ -1174,7 +1155,7 @@ sigBtn.addEventListener("click", (e)=>{
         }
       });
 
-      // Reset (UX: confirm via toast)
+      // Reset
       btnClear.addEventListener("click", ()=>{
         placedLayer.innerHTML = "";
         sparkle = 0;
@@ -1188,13 +1169,13 @@ sigBtn.addEventListener("click", (e)=>{
       // Hint pill
       pillHint.addEventListener("click", ()=>{
         const hints = [
-          "Close the message ✕ to tap ⭐ easily ✨",
+          "Tap the pill: ‘Start decorating’ to hide/show message 💌",
           "Long-press ⭐ for Glow Night Mode 🌙",
           "Long-press an ornament in the box for a secret 👀",
           "Put 🏍️ and 🚗 close for speed combo 🏁",
           "Tap ⭐ seven times for the ritual 👑",
-          "Double-tap a placed ornament to remove it 🫧",
-          "Triple-tap a placed ornament to toggle glow ✨",
+          "Triple-tap a placed ornament to remove it 🫧",
+          "Double-tap a placed ornament to toggle glow ✨",
         ];
         showToast(hints[Math.floor(Math.random()*hints.length)], 1900);
         beep(740,0.07,"triangle",0.04);
@@ -1222,11 +1203,11 @@ sigBtn.addEventListener("click", (e)=>{
         }
       });
 
-      // Message card tap: rotating compliments (poetic + funny)
+      // Message card tap: rotating compliments
       const compliments = [
         "Cheetah print? The universe said: ‘Yes, queen.’ 🐆✨",
         "Your vibe is so fast my Wi-Fi gets breathless 🏍️💨",
-        "Elegant dress moment detected: cameras automatically go cinematic 👗🎬",
+        "Elegant dress moment detected: cameras go cinematic 👗🎬",
         "If you dance, the floor files a ‘too iconic’ complaint 💃",
         "If you sing, carolers resign respectfully 🎶🧚",
         "Theobroma cake: 1 • Me: 0 • Crumbs: everywhere 🍰😌"
@@ -1242,8 +1223,8 @@ sigBtn.addEventListener("click", (e)=>{
       // Modal "more secrets"
       btnMore.addEventListener("click", ()=>{
         const text = [
-          "Double-tap a placed ornament to remove it 🫧",
-          "Triple-tap a placed ornament to toggle glow ✨",
+          "Triple-tap a placed ornament to remove it 🫧",
+          "Double-tap a placed ornament to toggle glow ✨",
           "Long-press ⭐ for Glow Night Mode 🌙✨",
           "Long-press an ornament in the box for cheetah rain 🌧️🐆",
           "Put 🏍️ and 🚗 close for speed combo 🏁",
@@ -1252,10 +1233,10 @@ sigBtn.addEventListener("click", (e)=>{
         openModal(text[Math.floor(Math.random()*text.length)], ["Keep going 😌", "More sparkle ✨"]);
       });
 
-      // Welcome (UX: auto-dismiss message after first read-ish)
+      // Welcome
       setTimeout(()=> showToast("Hello Ms. Pixieji 🧚 — from Mr. Kind 💛", 1800), 350);
       setTimeout(()=> showToast("Tip: tap ornaments below to decorate 🎄", 1600), 2400);
-      setTimeout(()=> hideMessage(), 3600); // ✅ fixes star UX instantly without forcing
+
 
       // Pre-place a few ornaments
       setTimeout(()=>{
@@ -1273,13 +1254,9 @@ sigBtn.addEventListener("click", (e)=>{
         lastTouchEnd = now;
       }, { passive: false });
 
-      // Escape key closes modal (desktop UX)
+      // Escape closes modal (desktop)
       document.addEventListener("keydown", (e)=>{
-        if(e.key === "Escape"){
-          closeModal();
-          // If message is hidden, bring it back (nice)
-          // (No forced behavior; just gentle)
-        }
+        if(e.key === "Escape") closeModal();
       });
     })();
   </script>
