@@ -20,6 +20,14 @@
       --safe: env(safe-area-inset-top, 0px);
       --safeB: env(safe-area-inset-bottom, 0px);
     }
+html, body { height: 100%; }
+body { min-height: 100dvh; }  /* dynamic viewport (Safari) */
+
+.app{
+  min-height: 100dvh;
+  height: 100dvh;
+  padding: calc(10px + var(--safe)) 12px calc(12px + var(--safeB));
+}
 
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -217,15 +225,23 @@
   pointer-events: none; /* 🔑 THIS IS THE FIX */
 }
 
-    .controls{
-      position:absolute;
-      left:12px; right:12px;
-      bottom:12px;
-       pointer-events: auto;
-      display:flex; gap:10px;
-   
-      z-index: 3;
-    }
+   .stage{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  padding-bottom: calc(12px + var(--safeB));
+}
+
+.controls{
+  position: relative;      /* ✅ was absolute */
+  left: auto; right: auto; bottom: auto;
+  margin-top: auto;        /* ✅ pushes controls to bottom */
+  display: flex;
+  gap: 10px;
+  z-index: 6;
+}
+
 
     /* Toast */
     .toast{
@@ -328,6 +344,17 @@
       color: var(--muted);
       line-height:1.45;
     }
+.message{
+  top: 45%;
+  transform: translate(-50%,-50%);
+  max-height: calc(100% - 92px); /* leaves room for controls */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 14px;
+}
+
+.message h1{ font-size: clamp(18px, 2.4vh, 22px); }
+.message p{ font-size: clamp(12px, 1.8vh, 13px); }
 
     .signature{
       margin-top:10px;
@@ -1239,12 +1266,7 @@
 
 
       // Pre-place a few ornaments
-      setTimeout(()=>{
-        const sr = stageRect();
-        spawn("star", sr.width*0.50, sr.height*0.36);
-        spawn("heart", sr.width*0.42, sr.height*0.48);
-        spawn("dress", sr.width*0.58, sr.height*0.50);
-      }, 180);
+     
 
       // iOS double-tap zoom prevention
       let lastTouchEnd = 0;
