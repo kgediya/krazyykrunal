@@ -199,6 +199,12 @@ footer button {
     color: #000;
   }
 
+  .invoice-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
   table {
     page-break-inside: avoid;
   }

@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#090b14" />
+  <title>For Ms. Pixieji 🧚 — A Christmas Card</title>
+
+  <style>
+    :root{
+      --bg0:#070915;
+      --bg1:#0a0f24;
+      --border: rgba(255,255,255,.16);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --gold: #ffd36a;
+      --mint: #9dffd7;
+      --pink: #ff8bd3;
+
+      --safe: env(safe-area-inset-top, 0px);
+      --safeB: env(safe-area-inset-bottom, 0px);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 30% 10%, rgba(255,211,106,.22), transparent 55%),
+        radial-gradient(900px 600px at 80% 25%, rgba(255,139,211,.18), transparent 52%),
+        radial-gradient(900px 600px at 50% 90%, rgba(157,255,215,.16), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow:hidden;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* subtle animated glitter */
+    .glitter{
+      position:fixed; inset:-50px;
+      background:
+        radial-gradient(circle at 12% 22%, rgba(255,255,255,.18) 0 2px, transparent 3px),
+        radial-gradient(circle at 62% 42%, rgba(255,255,255,.12) 0 1.5px, transparent 3px),
+        radial-gradient(circle at 82% 72%, rgba(255,255,255,.12) 0 1.6px, transparent 3px),
+        radial-gradient(circle at 32% 72%, rgba(255,255,255,.10) 0 1.4px, transparent 3px),
+        radial-gradient(circle at 42% 12%, rgba(255,255,255,.14) 0 1.8px, transparent 3px);
+      opacity:.55;
+      filter: blur(.2px);
+      animation: drift 10s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes drift{
+      0%{transform:translate3d(0,0,0) rotate(0deg)}
+      100%{transform:translate3d(-40px,30px,0) rotate(2deg)}
+    }
+
+   .app{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  padding: calc(12px + var(--safe)) 14px calc(14px + var(--safeB));
+  gap:12px;
+
+  /* ✅ FULL SCREEN */
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.sigBtn{
+  cursor:pointer;
+}
+.sigBtn:active{
+  transform: translateY(1px);
+}
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    .badge{
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-radius:18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      min-width: 0;
+      user-select:none;
+    }
+
+    .pixie{
+      width:38px; height:38px; border-radius:14px;
+      display:grid; place-items:center;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,211,106,.35), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(255,139,211,.28), transparent 55%),
+        rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* cheetah pattern overlay */
+    .pixie::after{
+      content:"";
+      position:absolute; inset:-10px;
+      background:
+        radial-gradient(circle, rgba(0,0,0,.55) 0 2px, transparent 3px) 0 0/18px 18px,
+        radial-gradient(circle, rgba(0,0,0,.45) 0 2px, transparent 3px) 9px 9px/18px 18px;
+      opacity:.22;
+      mix-blend-mode: soft-light;
+      transform: rotate(-10deg);
+    }
+
+    .badge .txt{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .badge .txt b{
+      font-size:14px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .badge .txt span{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .pillrow{ display:flex; gap:8px; align-items:center; }
+    .pill{
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      user-select:none;
+      box-shadow: 0 10px 26px rgba(0,0,0,.2);
+      backdrop-filter: blur(8px);
+    }
+    .pill strong{color:var(--gold)}
+    .pill:active{transform: translateY(1px)}
+
+    .stage{
+      flex:1;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.16);
+      background:
+        radial-gradient(800px 500px at 30% 20%, rgba(255,211,106,.14), transparent 60%),
+        radial-gradient(700px 500px at 80% 30%, rgba(255,139,211,.12), transparent 60%),
+        radial-gradient(700px 500px at 50% 90%, rgba(157,255,215,.10), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 30px 80px rgba(0,0,0,.38);
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* Aurora glow overlay */
+    .aurora{
+      position:absolute; inset:-40px;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .35s ease;
+      background:
+        radial-gradient(700px 450px at 20% 30%, rgba(157,255,215,.18), transparent 60%),
+        radial-gradient(700px 450px at 80% 35%, rgba(255,139,211,.14), transparent 60%),
+        radial-gradient(900px 600px at 50% 80%, rgba(255,211,106,.12), transparent 65%);
+      filter: blur(6px);
+      animation: auroraMove 6s ease-in-out infinite;
+      mix-blend-mode: screen;
+      z-index: 1;
+    }
+    .aurora.on{ opacity:1; }
+    @keyframes auroraMove{
+      0%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(-18px,12px,0) scale(1.02); }
+      100%{ transform: translate3d(0,0,0) scale(1); }
+    }
+
+    /* layers */
+    .treeWrap{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  z-index: 2;
+
+  /* ✅ IMPORTANT: allow children (message, close button) to receive taps */
+  pointer-events:auto;
+}
+
+/* ✅ make the tree graphics ignore touches so they don't block anything */
+.tree{
+  pointer-events:none;
+}
+.tree svg{
+  pointer-events:none;
+}
+
+/* ✅ but the star should still be clickable */
+.tip{
+  pointer-events:auto;
+}
+ #placedLayer{ position:absolute; inset:0; z-index: 3; }
+    .controls{ position:absolute; left:12px; right:12px; bottom:12px; display:flex; gap:10px; pointer-events:auto; z-index: 6; }
+
+    /* Toast */
+    .toast{
+      position:absolute;
+      left:50%;
+      top:14px;
+      transform: translate(-50%, -12px);
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,12,25,.55);
+      color: rgba(255,255,255,.88);
+      font-size:12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.26);
+      backdrop-filter: blur(10px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease, transform .2s ease;
+      max-width: 92%;
+      text-align:center;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      z-index: 10;
+    }
+    .toast.show{opacity:1; transform: translate(-50%, 0px)}
+
+    /* Tree */
+    .tree{
+      width:min(86vw, 420px);
+      aspect-ratio: 1 / 1.08;
+      position:relative;
+      transform: translateY(10px);
+      filter: drop-shadow(0 30px 50px rgba(0,0,0,.45));
+    }
+    .tree svg{width:100%; height:100%}
+
+    /* STAR + bigger tap area + halo */
+    .tip{
+      position:absolute;
+      left:50%;
+      top:10%;
+      transform: translate(-50%,-50%);
+      font-size:24px;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,.35));
+      opacity:.92;
+      pointer-events:auto;
+      user-select:none;
+      cursor:pointer;
+    }
+    /* bigger invisible hit area */
+    .tip::before{
+      content:"";
+      position:absolute;
+      inset:-18px;
+      border-radius:999px;
+      background: transparent;
+    }
+    .tip::after{
+      content:"";
+      position:absolute;
+      inset:-16px;
+      border-radius:999px;
+      background: radial-gradient(circle, rgba(255,211,106,.35), transparent 60%);
+      opacity:.6;
+      animation: starHalo 1.8s ease-in-out infinite;
+      pointer-events:none;
+    }
+    @keyframes starHalo{
+      0%,100%{ transform: scale(.92); opacity:.45; }
+      50%{ transform: scale(1.08); opacity:.75; }
+    }
+
+    /* Message card (dismissible) */
+    .message{
+      position:absolute;
+      left:50%;
+      top:52%;
+      transform: translate(-50%,-50%);
+      text-align:center;
+      width: min(88%, 420px);
+      padding:14px 14px 12px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,12,25,.38);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 50px rgba(0,0,0,.32);
+      pointer-events:auto;
+      z-index: 7;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .message.hidden{
+      opacity: 0;
+      transform: translate(-50%,-46%) scale(.98);
+      pointer-events:none; /* critical */
+    }
+    .message h1{ margin:0; font-size: 22px; letter-spacing:.2px; }
+    .message p{
+      margin:8px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height:1.45;
+    }
+    .signature{
+      margin-top:10px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      font-size:13px;
+    }
+    .signature b{color:var(--gold)}
+
+    .msgClose{
+      position:absolute;
+      right:10px; top:10px;
+      width:36px; height:36px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      display:grid;
+      place-items:center;
+      user-select:none;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .msgClose:active{ transform: translateY(1px); }
+
+    .reopen{
+      position:absolute;
+      left:50%;
+      top:16px;
+      transform: translateX(-50%);
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,12,25,.55);
+      color: rgba(255,255,255,.88);
+      font-size:12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.26);
+      backdrop-filter: blur(10px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .2s ease;
+      z-index: 8;
+      user-select:none;
+    }
+    .reopen.show{ opacity:1; pointer-events:auto; }
+
+    /* Controls */
+    .btn{
+      flex:1;
+      border:1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      color:var(--text);
+      padding:12px 12px;
+      border-radius:18px;
+      font-weight:700;
+      font-size:14px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.28);
+      backdrop-filter: blur(10px);
+      user-select:none;
+      cursor:pointer;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.secondary{ flex:.9; font-weight:650; opacity:.96; }
+
+    /* Tray */
+    .tray{
+      width: 100%;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      border-radius:22px;
+      padding:10px;
+      box-shadow: 0 18px 45px rgba(0,0,0,.26);
+      backdrop-filter: blur(10px);
+    }
+    .trayHeader{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .trayHeader b{ font-size:13px; letter-spacing:.25px; }
+    .small{ font-size:12px; color:var(--muted); }
+
+    .ornaments{
+      display:flex;
+      gap:10px;
+      overflow:auto;
+      padding-bottom:2px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width:none;
+    }
+    .ornaments::-webkit-scrollbar{display:none}
+
+    .orb{
+      width:52px; height:52px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.07);
+      display:grid;
+      place-items:center;
+      flex: 0 0 auto;
+      user-select:none;
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .orb:active{transform: translateY(1px) scale(.99)}
+    .orb span{font-size:24px}
+    .orb.cheetah::after{
+      content:"";
+      position:absolute; inset:-8px;
+      background:
+        radial-gradient(circle, rgba(0,0,0,.65) 0 2px, transparent 3px) 0 0/18px 18px,
+        radial-gradient(circle, rgba(0,0,0,.50) 0 2px, transparent 3px) 9px 9px/18px 18px;
+      opacity:.25;
+      mix-blend-mode: soft-light;
+      transform: rotate(10deg);
+    }
+
+    /* Placed ornaments */
+    .placed{
+      position:absolute;
+      width:46px; height:46px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 18px 40px rgba(0,0,0,.26);
+      backdrop-filter: blur(10px);
+      transform: translate(-50%,-50%);
+      user-select:none;
+      touch-action:none;
+    }
+    .placed span{font-size:22px}
+    .placed .miniTag{
+      position:absolute;
+      bottom:-10px;
+      font-size:10px;
+      padding:3px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(10,12,25,.55);
+      color: rgba(255,255,255,.78);
+      white-space:nowrap;
+      opacity:0;
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events:none;
+      transform: translateY(0);
+    }
+    .placed.showTag .miniTag{opacity:1; transform: translateY(-2px)}
+    .placed.glow{
+      box-shadow:
+        0 18px 40px rgba(0,0,0,.26),
+        0 0 22px rgba(255,211,106,.22),
+        0 0 44px rgba(255,139,211,.18);
+      border-color: rgba(255,255,255,.28);
+    }
+
+    /* Modal */
+    .modalBack{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.55);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      display:grid;
+      place-items:center;
+      padding:20px 16px;
+      z-index: 20;
+    }
+    .modalBack.show{opacity:1; pointer-events:auto}
+    .modal{
+      width: min(420px, 100%);
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      box-shadow: 0 30px 90px rgba(0,0,0,.45);
+      backdrop-filter: blur(12px);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .modal h2{ margin:2px 2px 6px; font-size:18px; letter-spacing:.2px; }
+    .modal p{ margin:0 2px 10px; font-size:13px; color:var(--muted); line-height:1.45; white-space:pre-line; }
+    .modal .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      font-size:12px;
+      user-select:none;
+    }
+    .closeX{
+      position:absolute;
+      right:10px; top:10px;
+      width:40px; height:40px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      display:grid;
+      place-items:center;
+      font-size:16px;
+      user-select:none;
+      cursor:pointer;
+    }
+    .closeX:active{transform: translateY(1px)}
+
+    .sr{
+      position:absolute;
+      width:1px;height:1px;
+      padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0,0,0,0);
+      white-space:nowrap;border:0;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .glitter{animation:none}
+      .aurora{animation:none}
+      .tip::after{animation:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glitter"></div>
+
+  <div class="app" id="app">
+    <div class="top">
+      <div class="badge" id="badge">
+        <div class="pixie" aria-hidden="true">🧚</div>
+        <div class="txt">
+          <b>Ms. Pixieji</b>
+          <span>decorate • drag • tap ⭐ for magic</span>
+        </div>
+      </div>
+      <div class="pillrow">
+        <div class="pill" id="pillScore">✨ <strong id="spark">0</strong></div>
+        <div class="pill" id="pillHint">🕵️‍♀️ hint</div>
+      </div>
+    </div>
+
+    <div class="stage" id="stage" role="application" aria-label="Interactive Christmas card stage">
+      <div class="aurora" id="aurora" aria-hidden="true"></div>
+      <div class="toast" id="toast">Hello Ms. Pixieji 🧚</div>
+      <div class="reopen" id="reopen">Tap to open message 💌</div>
+
+      <div class="treeWrap">
+        <div class="tree" id="tree">
+          <div class="tip" id="star" title="Tap for magic">⭐</div>
+
+          <svg viewBox="0 0 360 390" aria-hidden="true">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="rgba(157,255,215,.22)"/>
+                <stop offset="1" stop-color="rgba(255,255,255,.04)"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="rgba(255,211,106,.20)"/>
+                <stop offset="1" stop-color="rgba(255,255,255,.03)"/>
+              </linearGradient>
+              <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="b"/>
+                <feColorMatrix in="b" type="matrix"
+                  values="1 0 0 0 0
+                          0 1 0 0 0
+                          0 0 1 0 0
+                          0 0 0 .9 0"/>
+              </filter>
+            </defs>
+
+            <path d="M180 34
+                     C145 70, 120 95, 95 120
+                     C125 115, 140 120, 165 128
+                     C128 150, 102 175, 70 205
+                     C108 200, 136 210, 170 224
+                     C132 245, 98 276, 58 315
+                     C108 302, 150 314, 180 330
+                     C210 314, 252 302, 302 315
+                     C262 276, 228 245, 190 224
+                     C224 210, 252 200, 290 205
+                     C258 175, 232 150, 195 128
+                     C220 120, 235 115, 265 120
+                     C240 95, 215 70, 180 34 Z"
+                  fill="url(#g1)" stroke="rgba(255,255,255,.16)" stroke-width="1.2" filter="url(#soft)"/>
+
+            <path d="M160 310
+                     C165 290, 195 290, 200 310
+                     L205 360
+                     C205 372, 155 372, 155 360 Z"
+                  fill="url(#g2)" stroke="rgba(255,255,255,.16)" stroke-width="1.2"/>
+
+            <path d="M110 170 C145 152, 215 152, 250 170"
+                  fill="none" stroke="rgba(255,211,106,.35)" stroke-width="10" stroke-linecap="round" opacity=".28"/>
+          </svg>
+        </div>
+
+        <div class="message" id="message">
+              <h1 id="headline">Merry Christmas, Ms. Pixieji 🧚✨</h1>
+          <p id="copy"></p>
+        <button class="signature sigBtn" id="sigBtn" type="button" aria-label="Toggle message">
+  ✨ Start decorating <span style="opacity:.75">— Mr. Kind 💛</span>
+</button>
+          <div class="sr" id="ariaLive" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div id="placedLayer"></div>
+
+      <div class="controls">
+        <button class="btn" id="btnDance">💃 Dance Mode</button>
+        <button class="btn secondary" id="btnSing">🎤 Sing</button>
+        <button class="btn secondary" id="btnClear">🧼 Reset</button>
+      </div>
+
+      <div class="modalBack" id="modalBack" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+          <div class="closeX" id="closeX" aria-label="Close">✕</div>
+          <h2 id="modalTitle">You found a secret ✨</h2>
+          <p id="modalText">…</p>
+          <div class="row" id="modalChips"></div>
+          <div style="margin-top:10px; display:flex; gap:10px;">
+            <button class="btn" id="btnOkay">Okay 😌</button>
+            <button class="btn secondary" id="btnMore">More secrets 🔎</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tray">
+      <div class="trayHeader">
+        <b>Ornament Box 🎄</b>
+        <span class="small">tap to add • long-press for easter egg</span>
+      </div>
+      <div class="ornaments" id="ornaments">
+        <div class="orb cheetah" data-kind="cheetah" title="Cheetah Sparkle"><span>🐆</span></div>
+        <div class="orb" data-kind="bike" title="Sporty Bike"><span>🏍️</span></div>
+        <div class="orb" data-kind="car" title="Car Energy"><span>🚗</span></div>
+        <div class="orb" data-kind="dress" title="Elegant Dress"><span>👗</span></div>
+        <div class="orb" data-kind="dance" title="Dance"><span>💃</span></div>
+        <div class="orb" data-kind="sing" title="Sing"><span>🎶</span></div>
+        <div class="orb" data-kind="star" title="Extra Star"><span>✨</span></div>
+        <div class="orb" data-kind="heart" title="Kind Heart"><span>💛</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const stage = document.getElementById("stage");
+      const placedLayer = document.getElementById("placedLayer");
+      const ornaments = document.getElementById("ornaments");
+      const toast = document.getElementById("toast");
+      const sparkEl = document.getElementById("spark");
+      const ariaLive = document.getElementById("ariaLive");
+      const aurora = document.getElementById("aurora");
+
+      const btnDance = document.getElementById("btnDance");
+      const btnSing = document.getElementById("btnSing");
+      const btnClear = document.getElementById("btnClear");
+const sigBtn = document.getElementById("sigBtn");
+
+      const pillHint = document.getElementById("pillHint");
+      const badge = document.getElementById("badge");
+      const star = document.getElementById("star");
+      const message = document.getElementById("message");
+      const msgClose = document.getElementById("msgClose");
+      const reopen = document.getElementById("reopen");
+
+      const modalBack = document.getElementById("modalBack");
+      const closeX = document.getElementById("closeX");
+      const btnOkay = document.getElementById("btnOkay");
+      const btnMore = document.getElementById("btnMore");
+      const modalText = document.getElementById("modalText");
+      const modalChips = document.getElementById("modalChips");
+
+      // ✅ Poetic + funny + Theobroma thank-you
+      document.getElementById("copy").innerHTML =
+        "Ms. Pixieji 🧚✨,<br>" +
+        "I built you a tiny snow-globe universe—where cheetah prints are royal robes 🐆, " +
+        "bikes and cars purr like compliments 🏍️🚗, and every dress moment deserves slow-motion applause 👗.<br><br>" +
+        "Also… thank you for the lovely <b>Theobroma cake</b> 🍰 — " +
+        "I took one bite and briefly forgot my name. " +
+        "If joy had a flavour, it would be <i>that</i> (with extra frosting and zero regrets).<br><br>" +
+        "Tap ornaments. Drag chaos into elegance. " +
+        "And when you want instant sparkle—tap the ⭐ and pretend it’s totally normal to summon magic on demand.<br><br>" +
+        "Always cheering for you (and still thinking about that cake),<br><b>Mr. Kind</b> 💛";
+
+      let sparkle = 0;
+      let danceMode = false;
+
+      // --- Audio (WebAudio) ---
+      let audioCtx = null;
+      function beep(freq=440, dur=0.08, type="sine", gain=0.04){
+        try{
+          audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+          const t0 = audioCtx.currentTime;
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = type;
+          o.frequency.setValueAtTime(freq, t0);
+          g.gain.setValueAtTime(0, t0);
+          g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+          o.connect(g); g.connect(audioCtx.destination);
+          o.start(t0);
+          o.stop(t0 + dur + 0.02);
+        }catch(e){}
+      }
+
+      function playMelody(notes, tempoMs=170, wave="triangle", gain=0.055){
+        notes.forEach((n, i)=>{
+          setTimeout(()=>{ if(n) beep(n, 0.12, wave, gain); }, i*tempoMs);
+        });
+      }
+
+      // Jingle Bells hook: E E E | E E E | E G C D E
+      function jingleBells(){
+        const E=659, G=784, C=523, D=587;
+        playMelody([E,E,E, E,E,E, E,G,C,D,E], 170, "triangle", 0.055);
+      }
+
+      function twinkle(){
+        [880, 988, 784, 659].forEach((n,i)=>setTimeout(()=>beep(n,0.06,"triangle",0.04), i*55));
+      }
+
+      function rev(){
+        let f = 120;
+        for(let i=0;i<9;i++){
+          setTimeout(()=>beep(f+=70, 0.06, "sawtooth", 0.035), i*55);
+        }
+      }
+
+      // --- helpers ---
+      let toastTimer = null;
+      function showToast(text, ms=1500){
+        toast.textContent = text;
+        ariaLive.textContent = text;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(()=>toast.classList.remove("show"), ms);
+      }
+
+      function addSpark(n=1){
+        sparkle += n;
+        sparkEl.textContent = String(sparkle);
+      }
+
+      function rand(min,max){ return Math.random()*(max-min)+min; }
+      function setAurora(on){ aurora.classList.toggle("on", !!on); }
+      function stageRect(){ return stage.getBoundingClientRect(); }
+
+      // --- modal ---
+      function openModal(text, chips=[]){
+        modalText.textContent = text;
+        modalChips.innerHTML = "";
+        chips.forEach(c=>{
+          const d = document.createElement("div");
+          d.className = "chip";
+          d.textContent = c;
+          modalChips.appendChild(d);
+        });
+        modalBack.classList.add("show");
+        modalBack.setAttribute("aria-hidden","false");
+      }
+      function closeModal(){
+        modalBack.classList.remove("show");
+        modalBack.setAttribute("aria-hidden","true");
+      }
+      [closeX, btnOkay].forEach(el => el.addEventListener("click", closeModal));
+      modalBack.addEventListener("click", (e)=>{ if(e.target === modalBack) closeModal(); });
+
+      // --- Dismiss / reopen message (fixed + UX polish) ---
+      function hideMessage(){
+  message.classList.add("hidden");
+  reopen.classList.add("show");
+  sigBtn.innerHTML = "💌 Open message <span style='opacity:.75'>— Mr. Kind 💛</span>";
+  showToast("Decorate time 🎄 Tap ⭐ for magic!", 1400);
+}
+
+function showMessage(){
+  message.classList.remove("hidden");
+  reopen.classList.remove("show");
+  sigBtn.innerHTML = "✨ Start decorating <span style='opacity:.75'>— Mr. Kind 💛</span>";
+  showToast("Message back 💛", 1200);
+}
+
+      msgClose.addEventListener("click", (e)=>{ e.stopPropagation(); hideMessage(); });
+      reopen.addEventListener("click", (e)=>{ e.stopPropagation(); showMessage(); });
+sigBtn.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  if(message.classList.contains("hidden")) showMessage();
+  else hideMessage();
+});
+
+      // swipe down to dismiss (mobile)
+      let startY = null;
+      message.addEventListener("touchstart", (e)=>{ startY = e.touches[0].clientY; }, {passive:true});
+      message.addEventListener("touchmove", (e)=>{
+        if(startY == null) return;
+        const dy = e.touches[0].clientY - startY;
+        if(dy > 45){ hideMessage(); startY = null; }
+      }, {passive:true});
+
+      // UX improvement: don't steal star taps if message is open—auto-hint to close once
+      let nudged = false;
+      star.addEventListener("click", ()=>{
+        if(!message.classList.contains("hidden") && !nudged){
+          nudged = true;
+          showToast("Tip: close the message ✕ to tap ⭐ easily ✨", 1700);
+        }
+      }, {capture:true});
+
+      // --- Easter egg state ---
+      const egg = { starTaps:0, badgeTaps:0, cheetahPlaced:0, speedCombo:0 };
+      let starTapReset = null;
+      let starPressTimer = null;
+      let nightGlow = false;
+
+      // --- Ornaments ---
+      const KIND = {
+        cheetah: { emoji:"🐆", tag:"Cheetah mode", spark:3, fx:"cheetah" },
+        bike:   { emoji:"🏍️", tag:"Sport bike", spark:2, fx:"rev" },
+        car:    { emoji:"🚗", tag:"Car vibes", spark:2, fx:"rev" },
+        dress:  { emoji:"👗", tag:"Elegant", spark:2, fx:"glow" },
+        dance:  { emoji:"💃", tag:"Dance!", spark:2, fx:"dance" },
+        sing:   { emoji:"🎶", tag:"Sing!", spark:2, fx:"sing" },
+        star:   { emoji:"✨", tag:"Sparkle", spark:1, fx:"glow" },
+        heart:  { emoji:"💛", tag:"Kind", spark:2, fx:"glow" },
+      };
+
+      function spawn(kind, x=null, y=null){
+        const def = KIND[kind] || KIND.star;
+        const s = document.createElement("div");
+        s.className = "placed";
+        s.dataset.kind = kind;
+
+        const span = document.createElement("span");
+        span.textContent = def.emoji;
+
+        const tag = document.createElement("div");
+        tag.className = "miniTag";
+        tag.textContent = def.tag;
+
+        s.appendChild(span);
+        s.appendChild(tag);
+
+        const r = stageRect();
+        const px = x ?? (r.width * rand(0.30, 0.70));
+        const py = y ?? (r.height * rand(0.35, 0.80));
+
+        s.style.left = px + "px";
+        s.style.top  = py + "px";
+
+        placedLayer.appendChild(s);
+        addSpark(def.spark);
+
+        if(def.fx === "rev") rev();
+        else if(def.fx === "sing") beep(784,0.10,"sine",0.05);
+        else if(def.fx === "dance") beep(659,0.10,"triangle",0.05);
+        else twinkle();
+
+        if(def.fx === "glow"){
+          s.classList.add("glow");
+          setTimeout(()=>s.classList.remove("glow"), 650);
+        }
+
+        if(kind === "cheetah"){
+          egg.cheetahPlaced++;
+          s.classList.add("glow");
+          if(egg.cheetahPlaced === 1){
+            openModal(
+              "Cheetah secret unlocked 🐆✨\nNow put 🏍️ and 🚗 close for a speed combo.",
+              ["🐆 spotted", "Next: 🏍️+🚗"]
+            );
+          } else {
+            showToast("Cheetah sparkle x" + egg.cheetahPlaced + " 🐆", 1300);
+          }
+        }
+
+        makeDraggable(s);
+        return s;
+      }
+
+      // Better UX: allow delete by double-tap a placed ornament (common on mobile)
+      function removePlaced(el){
+        el.style.transition = "transform .18s ease, opacity .18s ease";
+        el.style.opacity = "0";
+        el.style.transform = "translate(-50%,-50%) scale(.85)";
+        setTimeout(()=> el.remove(), 180);
+        showToast("Poof! Ornament vanished ✨", 900);
+        beep(440,0.06,"triangle",0.04);
+      }
+
+      // Tap ornaments to add
+      ornaments.addEventListener("click", (e)=>{
+        const orb = e.target.closest(".orb");
+        if(!orb) return;
+        const kind = orb.dataset.kind;
+        spawn(kind);
+      });
+
+      // Long-press on ornament box -> cheetah rain (UX: cancel if user scrolls)
+      let lpTimer = null;
+      let lpMoved = false;
+      ornaments.addEventListener("pointerdown", (e)=>{
+        const orb = e.target.closest(".orb");
+        if(!orb) return;
+        lpMoved = false;
+
+        lpTimer = setTimeout(()=>{
+          showToast("Easter egg: Cheetah rain 🌧️🐆", 1600);
+          const r = stageRect();
+          for(let i=0;i<8;i++){
+            setTimeout(()=>spawn("cheetah", rand(40, r.width-40), rand(120, r.height-60)), i*60);
+          }
+        }, 520);
+      });
+      ornaments.addEventListener("pointermove", ()=>{ lpMoved = true; clearTimeout(lpTimer); });
+      ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
+        ornaments.addEventListener(ev, ()=> clearTimeout(lpTimer));
+      });
+
+      // Draggable ornaments (UX: keep within bounds + double-tap remove + triple-tap glow toggle)
+      function makeDraggable(el){
+        let dragging = false;
+        let offsetX = 0, offsetY = 0;
+
+        // tap memory
+        el._tap = {t:0, n:0};
+
+        el.addEventListener("pointerdown", (e)=>{
+          dragging = true;
+          el.setPointerCapture(e.pointerId);
+          const rect = el.getBoundingClientRect();
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+          el.classList.add("showTag");
+          addSpark(1);
+
+          // tap counting
+          const now = performance.now();
+          if(now - el._tap.t < 420) el._tap.n++; else el._tap.n = 1;
+          el._tap.t = now;
+
+          // double tap = delete
+          if(el._tap.n === 2){
+            removePlaced(el);
+            dragging = false;
+            return;
+          }
+
+          // triple tap = glow toggle
+          if(el._tap.n === 3){
+            el.classList.toggle("glow");
+            showToast(el.classList.contains("glow") ? "Glow ON ✨" : "Glow OFF 🌙", 1100);
+            beep(el.classList.contains("glow") ? 880 : 440, 0.08, "triangle", 0.05);
+            addSpark(2);
+          }
+
+          function moveTo(clientX, clientY){
+            const r = stageRect();
+            const x = clientX - r.left - offsetX + el.offsetWidth/2;
+            const y = clientY - r.top  - offsetY + el.offsetHeight/2;
+
+            const clampedX = Math.max(24, Math.min(r.width - 24, x));
+            const clampedY = Math.max(80, Math.min(r.height - 24, y));
+
+            el.style.left = clampedX + "px";
+            el.style.top  = clampedY + "px";
+          }
+
+          const onMove = (ev)=>{
+            if(!dragging) return;
+            moveTo(ev.clientX, ev.clientY);
+
+            if(danceMode && el.dataset.kind === "dance"){
+              el.style.transform = `translate(-50%,-50%) rotate(${Math.sin(performance.now()/60)*10}deg) scale(1.02)`;
+            } else {
+              el.style.transform = "translate(-50%,-50%)";
+            }
+          };
+
+          const onUp = ()=>{
+            dragging = false;
+            el.classList.remove("showTag");
+            el.removeEventListener("pointermove", onMove);
+            el.removeEventListener("pointerup", onUp);
+            el.removeEventListener("pointercancel", onUp);
+
+            trySpeedCombo();
+            el.style.transform = "translate(-50%,-50%)";
+          };
+
+          el.addEventListener("pointermove", onMove);
+          el.addEventListener("pointerup", onUp);
+          el.addEventListener("pointercancel", onUp);
+        });
+      }
+
+      function distance(a,b){
+        const ax = parseFloat(a.style.left), ay = parseFloat(a.style.top);
+        const bx = parseFloat(b.style.left), by = parseFloat(b.style.top);
+        return Math.hypot(ax-bx, ay-by);
+      }
+
+      function trySpeedCombo(){
+        const items = [...placedLayer.querySelectorAll(".placed")];
+        const bikes = items.filter(n=>n.dataset.kind==="bike");
+        const cars  = items.filter(n=>n.dataset.kind==="car");
+        if(!bikes.length || !cars.length) return;
+
+        let close = false;
+        outer:
+        for(const b of bikes){
+          for(const c of cars){
+            if(distance(b,c) < 90){ close = true; break outer; }
+          }
+        }
+        if(close){
+          egg.speedCombo++;
+          addSpark(5);
+          rev();
+          showToast("Speed combo unlocked 🏍️💨🚗  +5✨", 1700);
+          if(egg.speedCombo === 1){
+            openModal(
+              "Speed combo = activated 😮‍💨\nNext secret: tap ⭐ seven times… slowly 😉",
+              ["🏍️+🚗 close", "Next: ⭐ ritual"]
+            );
+          }
+        }
+      }
+
+      // Star magic: click + 7-tap ritual + long-press glow night mode
+      function sparkleBurst(x, y, count=10){
+        for(let i=0;i<count;i++){
+          setTimeout(()=>{
+            spawn(Math.random() < 0.55 ? "star" : "heart",
+              x + rand(-140,140),
+              y + rand(-120,120)
+            );
+          }, i*35);
+        }
+      }
+
+      star.addEventListener("pointerdown", ()=>{
+        clearTimeout(starPressTimer);
+        starPressTimer = setTimeout(()=>{
+          nightGlow = !nightGlow;
+          setAurora(nightGlow);
+          showToast(nightGlow ? "Glow Night Mode 🌙✨" : "Glow Night Mode off ☀️", 1500);
+          addSpark(3);
+          beep(nightGlow ? 740 : 440, 0.10, "triangle", 0.05);
+        }, 520);
+      });
+      ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
+        star.addEventListener(ev, ()=> clearTimeout(starPressTimer));
+      });
+
+      star.addEventListener("click", ()=>{
+        // UX: if message blocks, dismiss it automatically
+        if(!message.classList.contains("hidden")) hideMessage();
+
+        egg.starTaps++;
+        addSpark(1);
+        twinkle();
+
+        const r = stageRect();
+        sparkleBurst(r.width/2, r.height*0.22, 8);
+
+        showToast("⭐ Pixie magic!", 900);
+
+        clearTimeout(starTapReset);
+        starTapReset = setTimeout(()=> egg.starTaps = 0, 2200);
+
+        if(egg.starTaps === 7){
+          egg.starTaps = 0;
+          setAurora(true);
+          addSpark(10);
+          jingleBells();
+          showToast("Ritual complete 👑✨", 1600);
+
+          const sr = stageRect();
+          for(let i=0;i<16;i++){
+            setTimeout(()=>spawn(Math.random()<.5?"star":"heart",
+              rand(30, sr.width-30),
+              rand(90, sr.height-40)
+            ), i*55);
+          }
+
+          openModal(
+            "⭐ Pixie Blessing unlocked 👑\nYou are pure magic, Ms. Pixieji.\nMr. Kind is officially your fan club (and yes, still haunted by that Theobroma cake).",
+            ["👑 main character", "🍰 cake legend", "✨ sparkle storm"]
+          );
+        }
+      });
+
+      // Dance Mode (UX: keep glow controlled; avoid heavy toggling)
+      let danceRAF = null;
+      function setDanceMode(on){
+        danceMode = on;
+        btnDance.textContent = on ? "🪩 Dance Mode ON" : "💃 Dance Mode";
+        showToast(on ? "Dance floor engaged 🪩" : "Dance mode off 🌙", 1300);
+        if(on){
+          let t0 = performance.now();
+          const step = () => {
+            const t = (performance.now() - t0) / 1000;
+            const items = [...placedLayer.querySelectorAll(".placed")];
+            items.forEach((el, i)=>{
+              const kind = el.dataset.kind;
+              const wob = (kind==="dance" || kind==="dress") ? 1 : 0.4;
+              const rot = Math.sin(t*3 + i) * 8 * wob;
+              const scl = 1 + (Math.sin(t*4 + i*0.6) * 0.02 * wob);
+              el.style.transform = `translate(-50%,-50%) rotate(${rot}deg) scale(${scl})`;
+            });
+            danceRAF = requestAnimationFrame(step);
+          };
+          danceRAF = requestAnimationFrame(step);
+          beep(659,0.10,"triangle",0.05);
+        } else {
+          if(danceRAF) cancelAnimationFrame(danceRAF);
+          danceRAF = null;
+          [...placedLayer.querySelectorAll(".placed")].forEach(el=>{
+            el.style.transform = "translate(-50%,-50%)";
+          });
+        }
+      }
+      btnDance.addEventListener("click", ()=> setDanceMode(!danceMode));
+
+      // Sing -> Christmas tune + glow pulse + notes
+      btnSing.addEventListener("click", ()=>{
+        showToast("🎤 Christmas mode: ON (Pixieji remix)", 1700);
+        addSpark(4);
+        jingleBells();
+
+        const items = [...placedLayer.querySelectorAll(".placed")];
+        items.forEach((el, i)=>{
+          setTimeout(()=>{
+            el.classList.add("glow");
+            setTimeout(()=> el.classList.remove("glow"), 900);
+          }, i*60);
+        });
+
+        const r = stageRect();
+        for(let i=0;i<6;i++){
+          setTimeout(()=>spawn("sing",
+            r.width*0.5 + rand(-140,140),
+            r.height*0.62 + rand(-90,90)
+          ), i*70);
+        }
+      });
+
+      // Reset (UX: confirm via toast)
+      btnClear.addEventListener("click", ()=>{
+        placedLayer.innerHTML = "";
+        sparkle = 0;
+        sparkEl.textContent = "0";
+        setDanceMode(false);
+        setAurora(false);
+        showToast("Reset done. New vibes loading 🎄", 1400);
+        beep(330,0.08,"sine",0.05);
+      });
+
+      // Hint pill
+      pillHint.addEventListener("click", ()=>{
+        const hints = [
+          "Close the message ✕ to tap ⭐ easily ✨",
+          "Long-press ⭐ for Glow Night Mode 🌙",
+          "Long-press an ornament in the box for a secret 👀",
+          "Put 🏍️ and 🚗 close for speed combo 🏁",
+          "Tap ⭐ seven times for the ritual 👑",
+          "Double-tap a placed ornament to remove it 🫧",
+          "Triple-tap a placed ornament to toggle glow ✨",
+        ];
+        showToast(hints[Math.floor(Math.random()*hints.length)], 1900);
+        beep(740,0.07,"triangle",0.04);
+      });
+
+      // Badge 5 taps easter egg
+      let badgeTimer = null;
+      badge.addEventListener("click", ()=>{
+        egg.badgeTaps++;
+        clearTimeout(badgeTimer);
+        badgeTimer = setTimeout(()=> egg.badgeTaps = 0, 1600);
+        beep(523 + egg.badgeTaps*40, 0.06, "sine", 0.04);
+
+        if(egg.badgeTaps === 5){
+          egg.badgeTaps = 0;
+          openModal(
+            "✨ Secret unlocked: ‘Pixieji Mode’ 🧚\nDecorate, then hit 💃 and 🎤.\n(Also yes… the cake is still living rent-free in my brain.)",
+            ["🧚 Pixieji Mode", "🍰 Theobroma approved", "🪩 full vibe"]
+          );
+          addSpark(7);
+          const r = stageRect();
+          spawn("dress", r.width*0.36, r.height*0.60);
+          spawn("dance", r.width*0.50, r.height*0.67);
+          spawn("sing",  r.width*0.64, r.height*0.60);
+        }
+      });
+
+      // Message card tap: rotating compliments (poetic + funny)
+      const compliments = [
+        "Cheetah print? The universe said: ‘Yes, queen.’ 🐆✨",
+        "Your vibe is so fast my Wi-Fi gets breathless 🏍️💨",
+        "Elegant dress moment detected: cameras automatically go cinematic 👗🎬",
+        "If you dance, the floor files a ‘too iconic’ complaint 💃",
+        "If you sing, carolers resign respectfully 🎶🧚",
+        "Theobroma cake: 1 • Me: 0 • Crumbs: everywhere 🍰😌"
+      ];
+      let cIdx = 0;
+      message.addEventListener("click", ()=>{
+        cIdx = (cIdx + 1) % compliments.length;
+        showToast(compliments[cIdx], 1700);
+        addSpark(2);
+        beep(660,0.07,"triangle",0.05);
+      });
+
+      // Modal "more secrets"
+      btnMore.addEventListener("click", ()=>{
+        const text = [
+          "Double-tap a placed ornament to remove it 🫧",
+          "Triple-tap a placed ornament to toggle glow ✨",
+          "Long-press ⭐ for Glow Night Mode 🌙✨",
+          "Long-press an ornament in the box for cheetah rain 🌧️🐆",
+          "Put 🏍️ and 🚗 close for speed combo 🏁",
+          "Tap ⭐ 7 times for the ‘Pixie Blessing’ 👑"
+        ];
+        openModal(text[Math.floor(Math.random()*text.length)], ["Keep going 😌", "More sparkle ✨"]);
+      });
+
+      // Welcome (UX: auto-dismiss message after first read-ish)
+      setTimeout(()=> showToast("Hello Ms. Pixieji 🧚 — from Mr. Kind 💛", 1800), 350);
+      setTimeout(()=> showToast("Tip: tap ornaments below to decorate 🎄", 1600), 2400);
+      setTimeout(()=> hideMessage(), 3600); // ✅ fixes star UX instantly without forcing
+
+      // Pre-place a few ornaments
+      setTimeout(()=>{
+        const sr = stageRect();
+        spawn("star", sr.width*0.50, sr.height*0.36);
+        spawn("heart", sr.width*0.42, sr.height*0.48);
+        spawn("dress", sr.width*0.58, sr.height*0.50);
+      }, 180);
+
+      // iOS double-tap zoom prevention
+      let lastTouchEnd = 0;
+      document.addEventListener("touchend", (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 250) e.preventDefault();
+        lastTouchEnd = now;
+      }, { passive: false });
+
+      // Escape key closes modal (desktop UX)
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape"){
+          closeModal();
+          // If message is hidden, bring it back (nice)
+          // (No forced behavior; just gentle)
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

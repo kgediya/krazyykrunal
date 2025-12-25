@@ -2,6 +2,95 @@
 const GOOGLE_DRIVE_FOLDER_ID = "1joq5uw5Qq_Qt_BE4fm-dqOtJ64dIVOC2";
 const VALTOWN_TOKEN_URL = "https://krazyykrunal--a701dafe5a3611f09f24f69ea79377d9.web.val.run";
 
+// === STORAGE KEYS ===
+const STORAGE_KEYS = {
+  clientName: 'invoice_client_name',
+  clientAddress: 'invoice_client_address',
+  invoiceType: 'invoice_type',
+  clientSelect: 'invoice_client_select',
+  contentType: 'invoice_content_type',
+  currency: 'invoice_currency',
+  toggleSow: 'invoice_toggle_sow',
+  saveToCloud: 'invoice_save_to_cloud',
+  poNumber: 'invoice_po_number',
+  items: 'invoice_items',
+  sow: 'invoice_sow'
+};
+
+let hasLoadedSow = false;
+
+// === SAVE/LOAD FUNCTIONS ===
+function saveToStorage() {
+  localStorage.setItem(STORAGE_KEYS.clientName, document.getElementById('client-name').innerText.trim());
+  localStorage.setItem(STORAGE_KEYS.clientAddress, document.getElementById('client-address').innerText.trim());
+  localStorage.setItem(STORAGE_KEYS.invoiceType, document.getElementById('invoice-type').value);
+  localStorage.setItem(STORAGE_KEYS.clientSelect, document.getElementById('client-select').value);
+  localStorage.setItem(STORAGE_KEYS.contentType, document.getElementById('content-type').value);
+  localStorage.setItem(STORAGE_KEYS.currency, document.getElementById('currency-select').value);
+  localStorage.setItem(STORAGE_KEYS.toggleSow, document.getElementById('toggle-sow').checked);
+  localStorage.setItem(STORAGE_KEYS.saveToCloud, document.getElementById('save-to-cloud').checked);
+  localStorage.setItem(STORAGE_KEYS.poNumber, document.getElementById('po-number').value);
+
+  const items = [];
+  document.querySelectorAll('#items-body tr').forEach(row => {
+    const textareas = row.querySelectorAll('textarea');
+    const item = textareas[0].value;
+    const service = textareas[1].value;
+    const rate = row.querySelector('input').value;
+    items.push({ item, service, rate });
+  });
+  localStorage.setItem(STORAGE_KEYS.items, JSON.stringify(items));
+
+  const sow = Array.from(document.querySelectorAll('#sow-list li')).map(li => li.innerText.trim());
+  localStorage.setItem(STORAGE_KEYS.sow, JSON.stringify(sow));
+}
+
+function loadFromStorage() {
+  const clientName = localStorage.getItem(STORAGE_KEYS.clientName);
+  if (clientName) document.getElementById('client-name').innerText = clientName;
+
+  const clientAddress = localStorage.getItem(STORAGE_KEYS.clientAddress);
+  if (clientAddress) document.getElementById('client-address').innerText = clientAddress;
+
+  const invoiceType = localStorage.getItem(STORAGE_KEYS.invoiceType);
+  if (invoiceType) document.getElementById('invoice-type').value = invoiceType;
+
+  const clientSelect = localStorage.getItem(STORAGE_KEYS.clientSelect);
+  if (clientSelect) document.getElementById('client-select').value = clientSelect;
+
+  const contentType = localStorage.getItem(STORAGE_KEYS.contentType);
+  if (contentType) document.getElementById('content-type').value = contentType;
+
+  const currency = localStorage.getItem(STORAGE_KEYS.currency);
+  if (currency) document.getElementById('currency-select').value = currency;
+
+  const toggleSow = localStorage.getItem(STORAGE_KEYS.toggleSow);
+  if (toggleSow !== null) document.getElementById('toggle-sow').checked = toggleSow === 'true';
+
+  const saveToCloud = localStorage.getItem(STORAGE_KEYS.saveToCloud);
+  if (saveToCloud !== null) document.getElementById('save-to-cloud').checked = saveToCloud === 'true';
+
+  const poNumber = localStorage.getItem(STORAGE_KEYS.poNumber);
+  if (poNumber) document.getElementById('po-number').value = poNumber;
+
+  const items = JSON.parse(localStorage.getItem(STORAGE_KEYS.items) || '[]');
+  items.forEach(itemData => {
+    addRow(itemData);
+  });
+
+  const sow = JSON.parse(localStorage.getItem(STORAGE_KEYS.sow) || '[]');
+  if (sow.length > 0) {
+    const sowList = document.getElementById('sow-list');
+    sowList.innerHTML = '';
+    sow.forEach(text => {
+      const li = document.createElement('li');
+      li.innerText = text;
+      sowList.appendChild(li);
+    });
+    hasLoadedSow = true;
+  }
+}
+
 // === DATE SETUP ===
 const today = new Date();
 document.getElementById("invoice-date").innerText = formatFancyDate(today);
@@ -70,28 +159,72 @@ function calculateSubtotal() {
 }
 
 // === ADD ROW ===
-document.getElementById("add-row").addEventListener("click", () => {
+function addRow(itemData = {}) {
   const row = document.createElement("tr");
 
   row.innerHTML = `
-    <td><textarea placeholder="Item name" oninput="generateInvoiceNo()"></textarea></td>
-    <td><textarea placeholder="Service description"></textarea></td>
-    <td><input type="number" value="0" class="rate"></td>
+    <td><textarea placeholder="Item name">${itemData.item || ''}</textarea></td>
+    <td><textarea placeholder="Service description">${itemData.service || ''}</textarea></td>
+    <td><input type="number" value="${itemData.rate || 0}" class="rate"></td>
     <td class="amount">0.00</td>
     <td><button class="delete-row">🗑</button></td>
   `;
 
   document.getElementById("items-body").appendChild(row);
 
-  row.querySelector(".rate").addEventListener("input", calculateSubtotal);
+  row.querySelector(".rate").addEventListener("input", () => {
+    calculateSubtotal();
+    saveToStorage();
+  });
+  row.querySelectorAll('textarea').forEach(ta => ta.addEventListener('input', saveToStorage));
   row.querySelector(".delete-row").addEventListener("click", () => {
     row.remove();
     calculateSubtotal();
     generateInvoiceNo();
+    saveToStorage();
   });
 
   generateInvoiceNo();
   calculateSubtotal();
+}
+
+document.getElementById("add-row").addEventListener("click", () => {
+  addRow();
+  saveToStorage();
+});
+
+// === EVENT LISTENERS FOR STORAGE ===
+document.getElementById('client-name').addEventListener('input', saveToStorage);
+document.getElementById('client-address').addEventListener('input', saveToStorage);
+document.getElementById('invoice-type').addEventListener('change', () => {
+  updateConditionalSections();
+  saveToStorage();
+});
+document.getElementById('client-select').addEventListener('change', () => {
+  updateConditionalSections();
+  saveToStorage();
+});
+document.getElementById('content-type').addEventListener('change', () => {
+  updateSOWContent();
+  saveToStorage();
+});
+document.getElementById('currency-select').addEventListener('change', () => {
+  updateCurrencyDisplay();
+  calculateSubtotal();
+  saveToStorage();
+});
+document.getElementById('toggle-sow').addEventListener('change', () => {
+  updateSOWVisibility();
+  saveToStorage();
+});
+document.getElementById('save-to-cloud').addEventListener('change', saveToStorage);
+document.getElementById('po-number').addEventListener('input', saveToStorage);
+document.getElementById('sow-list').addEventListener('input', saveToStorage);
+
+// === RESET BUTTON ===
+document.getElementById('reset-default').addEventListener('click', () => {
+  localStorage.clear();
+  location.reload();
 });
 
 // === FETCH DRIVE TOKEN (with caching) ===
@@ -114,7 +247,7 @@ async function getGoogleDriveToken() {
 document.getElementById("download").addEventListener("click", async () => {
   const saveToCloud = document.getElementById("save-to-cloud").checked;
   const invoiceNo = generateInvoiceNo();
-  const fileName = `${invoiceNo}.pdf`;
+  const fileName = `Invoice_${invoiceNo}.pdf`;
 
   // ===== STEP 1: Google Drive upload (html2pdf only for this) =====
   if (saveToCloud) {
@@ -197,7 +330,7 @@ document.getElementById("download").addEventListener("click", async () => {
 
   // ===== STEP 2: Local Print (old sharp & selectable style) =====
   const uiElements = document.querySelectorAll(
-    ".config, #add-row, #download, #save-to-cloud, select, input, textarea, button.delete-row"
+    ".config, #add-row, #download, #save-to-cloud, button.delete-row"
   );
   uiElements.forEach(el => el.style.display = "none");
 
@@ -220,7 +353,7 @@ document.getElementById("download").addEventListener("click", async () => {
   invoiceElement.style.maxWidth = "100%";
   invoiceElement.style.padding = "20px";
 
-  document.title = invoiceNo;
+  document.title = `Invoice_${invoiceNo}`;
   window.print();
 
   // Restore styles after print
@@ -310,7 +443,8 @@ currencySelect.addEventListener("change", () => {
 });
 
 // === INIT ===
-updateSOWContent();
+loadFromStorage();
+if (!hasLoadedSow) updateSOWContent();
 generateInvoiceNo();
 updateConditionalSections();
 updateSOWVisibility();

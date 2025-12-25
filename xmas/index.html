@@ -1,0 +1,1264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Christmas Tree Decorator</title>
+  <style>
+    :root{
+      --bg1:#070a12;
+      --bg2:#0b1530;
+      --gold:#ffd36a;
+      --ice:#d8f3ff;
+      --panel: rgba(255,255,255,.08);
+      --panel2: rgba(255,255,255,.12);
+      --border: rgba(255,255,255,.18);
+      --shadow: rgba(0,0,0,.35);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --accent:#7cffc8;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      overflow:hidden;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 900px at 70% 20%, rgba(255,211,106,.12), transparent 60%),
+        radial-gradient(900px 700px at 15% 30%, rgba(124,255,200,.10), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+    }
+
+    /* soft falling snow */
+    .snow{
+      position:fixed; inset:0; pointer-events:none;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.55) 50%, transparent 55%),
+        radial-gradient(1.5px 1.5px at 90px 80px, rgba(255,255,255,.35) 50%, transparent 55%),
+        radial-gradient(1px 1px at 140px 160px, rgba(255,255,255,.25) 50%, transparent 55%);
+      background-size: 180px 220px;
+      animation: snow 14s linear infinite;
+      opacity:.7;
+      filter: blur(.1px);
+    }
+    @keyframes snow{
+      from{ transform:translateY(-10%); }
+      to{ transform:translateY(10%); }
+    }
+
+    /* layout */
+    .app{
+      position:relative;
+      height:100%;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:16px;
+      padding:18px;
+    }
+    @media (max-width: 920px){
+      .app{ grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .panel{ order:2; }
+      .stageWrap{ order:1; }
+    }
+
+    .panel{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, var(--panel), rgba(255,255,255,.04));
+      border-radius:18px;
+      box-shadow: 0 18px 60px var(--shadow);
+      backdrop-filter: blur(12px);
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height: 200px;
+    }
+
+    .brand{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 10px 6px;
+    }
+    .brand h1{
+      font-size:16px; margin:0; letter-spacing:.4px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .badge{
+      font-size:12px;
+      color:rgba(255,255,255,.82);
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+
+    .section{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius:14px;
+      padding:10px;
+    }
+    .sectionTitle{
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 10px 0;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    .tool{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      border-radius:14px;
+      height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:24px;
+      cursor:grab;
+      position:relative;
+      user-select:none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .tool:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.24);
+    }
+    .tool:active{ cursor:grabbing; transform: translateY(0px) scale(.98); }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      letter-spacing:.2px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      flex:1;
+      min-width: 120px;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.28);
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      margin:0;
+    }
+    .kbd{
+      display:inline-block;
+      padding:.15rem .45rem;
+      border:1px solid rgba(255,255,255,.18);
+      border-bottom-color: rgba(255,255,255,.08);
+      border-radius:8px;
+      background: rgba(0,0,0,.18);
+      font-weight:700;
+      color:rgba(255,255,255,.85);
+      font-size:11px;
+      transform: translateY(-1px);
+    }
+
+    /* stage */
+    .stageWrap{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius:22px;
+      box-shadow: 0 18px 60px var(--shadow);
+      backdrop-filter: blur(10px);
+      position:relative;
+      overflow:hidden;
+      min-height: 520px;
+    }
+
+    .stageHeader{
+      position:absolute;
+      left:14px; right:14px; top:12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      z-index:5;
+      pointer-events:none;
+    }
+    .stageHeader .title{
+      pointer-events:none;
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .stageHeader .title strong{ font-size:14px; letter-spacing:.2px; }
+    .stageHeader .title span{ font-size:12px; color:var(--muted); }
+
+    .toast{
+      pointer-events:none;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.88);
+      font-size:12px;
+      opacity:0;
+      transform: translateY(-6px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    #stage{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:64px 18px 18px;
+    }
+
+    .treeScene{
+  position:relative;
+  width:min(560px, 92%);
+  aspect-ratio: 3/4;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding-bottom: 18px;
+  filter: drop-shadow(0 22px 40px rgba(0,0,0,.45));
+}
+
+.treeSvg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  pointer-events:none;
+}
+
+.garland{
+  position:absolute;
+  left:50%;
+  transform: translateX(-50%);
+  width: 92%;
+  height: 80%;
+  bottom: 6%;
+  pointer-events:none;
+  z-index:2;
+  opacity:.9;
+  background:
+    radial-gradient(280px 150px at 50% 28%, rgba(255,211,106,.35), transparent 60%),
+    radial-gradient(320px 170px at 45% 52%, rgba(124,255,200,.20), transparent 62%),
+    radial-gradient(360px 190px at 55% 70%, rgba(255,120,170,.14), transparent 65%);
+  filter: blur(12px);
+  mix-blend-mode: screen;
+}
+
+/* Keep your existing lights/dropArea z-index above tree */
+.lights{ z-index: 3; }
+#dropArea{ z-index: 10; }
+
+/* Optional: ornaments feel slightly “embedded” on the tree */
+.piece{
+  filter: drop-shadow(0 10px 14px rgba(0,0,0,.35));
+}
+
+
+    /* tree trunk */
+    .trunk{
+      position:absolute;
+      bottom:26px;
+      width:18%;
+      height:16%;
+      background: linear-gradient(180deg, #6a3f23, #3a1f0f);
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.08);
+      z-index:1;
+    }
+
+    /* tree layers */
+    .layer{
+      position:absolute;
+      left:50%;
+      transform: translateX(-50%);
+      width: 82%;
+      height: 28%;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #1f7a4a, #0f4d2e);
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.08),
+        inset 0 18px 40px rgba(0,0,0,.18);
+      z-index:2;
+    }
+    .layer.l1{ bottom:24%; width: 56%; height: 26%; background: linear-gradient(180deg, #2aa767, #0f5a35); }
+    .layer.l2{ bottom:12%; width: 72%; height: 28%; background: linear-gradient(180deg, #24985d, #0f4f30); }
+    .layer.l3{ bottom:0%;  width: 88%; height: 32%; background: linear-gradient(180deg, #1f7a4a, #0d4027); }
+
+    /* subtle garland glow */
+    .garland{
+      position:absolute;
+      left:50%;
+      transform: translateX(-50%);
+      width: 86%;
+      height: 72%;
+      bottom:6%;
+      pointer-events:none;
+      z-index:3;
+      opacity:.85;
+      background:
+        radial-gradient(260px 130px at 50% 30%, rgba(255,211,106,.35), transparent 60%),
+        radial-gradient(300px 160px at 45% 52%, rgba(124,255,200,.20), transparent 62%),
+        radial-gradient(340px 180px at 55% 68%, rgba(255,120,170,.14), transparent 65%);
+      filter: blur(10px);
+      mix-blend-mode: screen;
+    }
+
+    /* string lights */
+    .lights{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:4;
+    }
+    
+
+    /* ornament layer */
+    #dropArea{
+      position:absolute;
+      inset:0;
+      z-index:10;
+      user-select:none;
+      touch-action:none;
+    }
+
+    .piece{
+      position:absolute;
+      transform: translate(-50%, -50%) rotate(var(--r,0deg)) scale(var(--s,1));
+      font-size: 34px;
+      cursor: grab;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.35));
+      will-change: transform;
+    }
+    .piece:active{ cursor: grabbing; }
+    .piece.selected{
+      outline: 2px solid rgba(255,255,255,.28);
+      outline-offset: 8px;
+      border-radius: 14px;
+    }
+
+    /* footer watermark-y but classy */
+    .footerNote{
+      position:absolute;
+      right:14px; bottom:12px;
+      font-size:12px;
+      color: rgba(255,255,255,.55);
+      z-index:5;
+      user-select:none;
+      pointer-events:none;
+    }
+
+    /* export canvas hidden */
+    canvas{ display:none; }
+
+
+    /* ===== Portrait / vertical screens: make tree fill height ===== */
+@media (orientation: portrait), (max-aspect-ratio: 4/5) {
+
+  /* Optional: switch to vertical layout (stage top, panel bottom) */
+  .app{
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    gap: 12px;
+    padding: 12px;
+  }
+  .stageWrap{ order: 1; }
+  .panel{
+    order: 2;
+    max-height: 38dvh;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Let stage content take full height */
+  #stage{
+    align-items: stretch;      /* key: no more bottom anchoring */
+    justify-content: center;
+    padding: 52px 12px 12px;   /* smaller top padding */
+  }
+
+  /* Make the tree container fill height */
+  .treeScene{
+    height: 100%;
+    width: auto;               /* width derived from aspect-ratio */
+    max-width: 96vw;
+    max-height: 100%;
+    aspect-ratio: 3 / 4;
+    padding-bottom: 0;         /* remove extra bottom padding */
+    margin: 0 auto;
+  }
+
+  /* Ensure the SVG stretches with treeScene height */
+  .treeSvg{
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Nudge footer so it doesn't clash */
+  .footerNote{
+    right: 10px;
+    bottom: 10px;
+    opacity: .7;
+  }
+}
+/* ===== Focus / Tree-only mode ===== */
+body.focus-mode .panel{
+  display: none;
+}
+
+body.focus-mode .stageHeader{
+  display: none;
+}
+
+body.focus-mode .footerNote{
+  display: none;
+}
+
+/* Stage truly fullscreen */
+body.focus-mode .app{
+  grid-template-columns: 1fr !important;
+  grid-template-rows: 1fr !important;
+  padding: 0 !important;
+}
+
+body.focus-mode .stageWrap{
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+body.focus-mode #stage{
+  padding: 0;
+}
+
+body.focus-mode .treeScene{
+  width: auto;
+  height: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="snow" aria-hidden="true"></div>
+
+  <div class="app">
+    <aside class="panel">
+      <div class="brand">
+        <h1>🎄 Tree Decorator <span class="badge">Elegant Xmas</span></h1>
+        <div style="font-size:18px;opacity:.9">✨</div>
+      </div>
+
+      <div class="section">
+        <p class="sectionTitle">Ornaments (drag onto tree)</p>
+        <div class="grid" id="toolbox">
+          <div class="tool" data-emoji="⭐" title="Star">⭐</div>
+          <div class="tool" data-emoji="🌟" title="Glow star">🌟</div>
+          <div class="tool" data-emoji="🎀" title="Bow">🎀</div>
+          <div class="tool" data-emoji="🔔" title="Bell">🔔</div>
+          <div class="tool" data-emoji="🎁" title="Gift">🎁</div>
+          <div class="tool" data-emoji="🍬" title="Candy">🍬</div>
+          <div class="tool" data-emoji="🍭" title="Lollipop">🍭</div>
+          <div class="tool" data-emoji="🧸" title="Teddy">🧸</div>
+          <div class="tool" data-emoji="🕯️" title="Candle">🕯️</div>
+          <div class="tool" data-emoji="❄️" title="Snowflake">❄️</div>
+          <div class="tool" data-emoji="🍪" title="Cookie">🍪</div>
+          <div class="tool" data-emoji="🧦" title="Sock">🧦</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="sectionTitle">Actions</p>
+        <div class="controls">
+          <button class="btn" id="btnClear">Clear Tree</button>
+          <button class="btn" id="btnExport">Export PNG</button>
+        <button class="btn" id="btnFocus">Hide Tools</button>
+        </div>
+        <p class="hint" style="margin-top:10px">
+          Click an ornament to select.<br/>
+          <span class="kbd">Drag</span> move &nbsp;·&nbsp;
+          <span class="kbd">Wheel</span> resize &nbsp;·&nbsp;
+          <span class="kbd">Q</span>/<span class="kbd">E</span> rotate &nbsp;·&nbsp;
+          <span class="kbd">D</span> duplicate &nbsp;·&nbsp;
+          <span class="kbd">Del</span> delete
+        </p>
+      </div>
+
+      <div class="section">
+        <p class="sectionTitle">Pro tip</p>
+        <p class="hint">
+          Place the ⭐ on top: drag it near the tree tip and it will gently “snap” into position.
+        </p>
+      </div>
+    </aside>
+
+    <main class="stageWrap">
+      <div class="stageHeader">
+        <div class="title">
+          <strong>Decorate your tree</strong>
+          <span>Drag ornaments in. Make it sparkle.</span>
+        </div>
+        <div class="toast" id="toast">Saved!</div>
+      </div>
+
+      <div id="stage">
+       <div class="treeScene" id="treeScene">
+  <!-- Realistic-ish SVG tree -->
+  <svg class="treeSvg" viewBox="0 0 600 800" aria-hidden="true">
+    <defs>
+      <!-- tree shading -->
+      <linearGradient id="gTree" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2fd07d"/>
+        <stop offset="0.45" stop-color="#177a49"/>
+        <stop offset="1" stop-color="#0c3a26"/>
+      </linearGradient>
+
+      <linearGradient id="gTreeShadow" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="rgba(0,0,0,.20)"/>
+        <stop offset="1" stop-color="rgba(0,0,0,.00)"/>
+      </linearGradient>
+
+      <linearGradient id="gTrunk" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7a4a2b"/>
+        <stop offset="1" stop-color="#3a1f10"/>
+      </linearGradient>
+
+      <!-- subtle branch texture -->
+      <filter id="fNeedle" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+        <feColorMatrix in="n" type="matrix"
+          values="
+            0 0 0 0 0
+            0 0 0 0 0
+            0 0 0 0 0
+            0 0 0 .08 0" result="a"/>
+        <feComposite in="a" in2="SourceGraphic" operator="in"/>
+        <feBlend in="SourceGraphic" mode="overlay"/>
+      </filter>
+
+      <!-- soft outer shadow -->
+      <filter id="fDrop" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="b"/>
+        <feOffset in="b" dx="0" dy="18" result="o"/>
+        <feColorMatrix in="o" type="matrix"
+          values="0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 .35 0"/>
+        <feMerge>
+          <feMergeNode/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+
+    <!-- tree silhouette -->
+    <g filter="url(#fDrop)">
+      <!-- main body -->
+      <path class="treeBody" d="
+        M300 70
+        C260 118 242 140 214 165
+        C178 198 138 236 112 280
+        C90 318 88 356 114 390
+        C82 430 82 470 120 510
+        C92 555 110 610 160 650
+        C190 675 230 700 300 720
+        C370 700 410 675 440 650
+        C490 610 508 555 480 510
+        C518 470 518 430 486 390
+        C512 356 510 318 488 280
+        C462 236 422 198 386 165
+        C358 140 340 118 300 70
+        Z
+      " fill="url(#gTree)" filter="url(#fNeedle)"/>
+
+      <!-- inner depth (darker wedge) -->
+      <path d="
+        M300 105
+        C330 145 360 170 395 205
+        C430 240 460 285 450 330
+        C440 375 410 420 430 455
+        C452 492 455 540 420 585
+        C390 624 350 660 300 690
+        C300 560 300 250 300 105
+        Z
+      " fill="rgba(0,0,0,.14)"/>
+
+      <!-- highlight sweep -->
+      <path d="
+        M265 120
+        C230 170 180 230 165 285
+        C150 340 185 380 170 420
+        C155 460 160 520 200 575
+        C230 615 265 645 290 660
+        C240 600 235 520 250 460
+        C265 400 235 350 250 295
+        C265 240 295 190 320 150
+        C300 150 285 140 265 120
+        Z
+      " fill="rgba(255,255,255,.08)"/>
+    </g>
+
+    <!-- trunk -->
+    <g>
+      <path d="M260 640
+               C260 610 270 590 300 590
+               C330 590 340 610 340 640
+               L340 735
+               C340 755 330 770 300 770
+               C270 770 260 755 260 735
+               Z"
+            fill="url(#gTrunk)"/>
+      <path d="M280 600 C290 620 295 640 292 770"
+            stroke="rgba(255,255,255,.12)" stroke-width="6" stroke-linecap="round" opacity=".35"/>
+    </g>
+
+    <!-- snow base -->
+  </svg>
+
+  <!-- subtle garland glow (kept) -->
+  <div class="garland" aria-hidden="true"></div>
+
+  <!-- lights + ornaments on top -->
+  <div class="lights" id="lights" aria-hidden="true"></div>
+  <div id="dropArea" aria-label="Drop ornaments here"></div>
+</div>
+
+
+      <div class="footerNote">Tip: Export to share 🎁</div>
+    </main>
+  </div>
+
+  <canvas id="exportCanvas"></canvas>
+
+  <script>
+    // ---------- helpers ----------
+    const qs = (s, el=document) => el.querySelector(s);
+    const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+    // ---------- stage refs ----------
+    const dropArea = qs("#dropArea");
+    const treeScene = qs("#treeScene");
+    const toast = qs("#toast");
+
+    // ---------- state ----------
+    let selected = null;
+    let dragging = null; // { el, offsetX, offsetY }
+    let zCounter = 20;
+
+    // ---------- pretty lights ----------
+    function seedLights() {
+      const lights = qs("#lights");
+      lights.innerHTML = "";
+      const bulbs = 26;
+      for (let i=0;i<bulbs;i++){
+        const b = document.createElement("div");
+        b.className = "bulb";
+        // roughly follow a spiral down the tree
+        const t = i/(bulbs-1);
+        const y = 10 + t*78;
+        const spread = 8 + t*38; // wider lower
+        const x = 50 + Math.sin(t*7.2)*spread;
+        b.style.left = x + "%";
+        b.style.top  = y + "%";
+        b.style.animationDelay = (-Math.random()*2.2)+"s";
+        b.style.filter = "blur(" + (Math.random()*0.6).toFixed(2) + "px)";
+        lights.appendChild(b);
+      }
+    }
+    seedLights();
+
+    // ---------- selection ----------
+    function selectPiece(el){
+      if (selected && selected !== el) selected.classList.remove("selected");
+      selected = el;
+      if (selected) selected.classList.add("selected");
+    }
+    function clearSelection(){
+      if (selected) selected.classList.remove("selected");
+      selected = null;
+    }
+
+    // ---------- create ornament ----------
+    function createPiece(emoji, clientX, clientY){
+      const rect = dropArea.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      const el = document.createElement("div");
+      el.className = "piece";
+      el.textContent = emoji;
+
+      // defaults
+      el.dataset.x = x;
+      el.dataset.y = y;
+      el.dataset.s = "1";
+      el.dataset.r = "0";
+      el.style.setProperty("--s", 1);
+      el.style.setProperty("--r", "0deg");
+      el.style.left = x + "px";
+      el.style.top  = y + "px";
+      el.style.zIndex = (++zCounter).toString();
+
+      // events
+      el.addEventListener("pointerdown", (e) => {
+        e.stopPropagation();
+        selectPiece(el);
+        startDrag(el, e);
+      });
+
+      dropArea.appendChild(el);
+      selectPiece(el);
+      maybeSnapToTip(el);
+      return el;
+    }
+
+    function startDrag(el, e){
+      el.setPointerCapture(e.pointerId);
+      const rect = dropArea.getBoundingClientRect();
+      const ex = parseFloat(el.dataset.x);
+      const ey = parseFloat(el.dataset.y);
+      dragging = {
+        el,
+        pointerId: e.pointerId,
+        // offset between pointer and element center
+        offsetX: (e.clientX - rect.left) - ex,
+        offsetY: (e.clientY - rect.top) - ey
+      };
+      el.style.zIndex = (++zCounter).toString();
+    }
+
+    function moveDrag(e){
+      if (!dragging) return;
+      const rect = dropArea.getBoundingClientRect();
+      const x = (e.clientX - rect.left) - dragging.offsetX;
+      const y = (e.clientY - rect.top) - dragging.offsetY;
+
+      setPiecePos(dragging.el, x, y);
+      maybeSnapToTip(dragging.el);
+    }
+
+    function endDrag(e){
+      if (!dragging) return;
+      try{ dragging.el.releasePointerCapture(dragging.pointerId); } catch {}
+      dragging = null;
+      saveToLocal();
+      flashToast("Saved");
+    }
+
+    function setPiecePos(el, x, y){
+      const rect = dropArea.getBoundingClientRect();
+      const pad = 6;
+      const cx = clamp(x, pad, rect.width - pad);
+      const cy = clamp(y, pad, rect.height - pad);
+      el.dataset.x = cx;
+      el.dataset.y = cy;
+      el.style.left = cx + "px";
+      el.style.top  = cy + "px";
+    }
+
+    // snap star-ish items to the top tip (gentle UX candy)
+    function maybeSnapToTip(el){
+      const emoji = el.textContent;
+      if (!(emoji.includes("⭐") || emoji.includes("🌟"))) return;
+
+      const area = dropArea.getBoundingClientRect();
+      // approximate tree tip in dropArea coords
+      const tipX = area.width * 0.5;
+      const tipY = area.height * 0.14;
+
+      const x = parseFloat(el.dataset.x);
+      const y = parseFloat(el.dataset.y);
+
+      const dx = x - tipX;
+      const dy = y - tipY;
+      const dist = Math.hypot(dx, dy);
+
+      if (dist < 34){
+        // ease snap
+        const nx = tipX + dx * 0.18;
+        const ny = tipY + dy * 0.18;
+        setPiecePos(el, nx, ny);
+      }
+    }
+
+    // ---------- toolbox drag ----------
+    let ghost = null;
+    let draggingToolEmoji = null;
+
+    function makeGhost(emoji){
+      const g = document.createElement("div");
+      g.className = "piece";
+      g.textContent = emoji;
+      g.style.position = "fixed";
+      g.style.left = "-9999px";
+      g.style.top = "-9999px";
+      g.style.pointerEvents = "none";
+      g.style.opacity = ".9";
+      g.style.zIndex = "9999";
+      g.style.setProperty("--s", 1);
+      g.style.setProperty("--r", "0deg");
+      document.body.appendChild(g);
+      return g;
+    }
+
+    qsa(".tool").forEach(tool => {
+      tool.addEventListener("pointerdown", (e)=>{
+        const emoji = tool.dataset.emoji;
+        draggingToolEmoji = emoji;
+        ghost = makeGhost(emoji);
+        tool.setPointerCapture(e.pointerId);
+        moveGhost(e);
+      });
+      tool.addEventListener("pointermove", (e)=>{
+        if (!ghost) return;
+        moveGhost(e);
+      });
+      tool.addEventListener("pointerup", (e)=>{
+        if (!ghost) return;
+        tool.releasePointerCapture(e.pointerId);
+        const over = isOverDropArea(e.clientX, e.clientY);
+        ghost.remove();
+        ghost = null;
+
+        if (over){
+          createPiece(draggingToolEmoji, e.clientX, e.clientY);
+          saveToLocal();
+          flashToast("Added");
+        }
+        draggingToolEmoji = null;
+      });
+      tool.addEventListener("pointercancel", ()=>{
+        if (ghost){ ghost.remove(); ghost = null; }
+        draggingToolEmoji = null;
+      });
+    });
+
+    function moveGhost(e){
+      ghost.style.left = (e.clientX) + "px";
+      ghost.style.top  = (e.clientY) + "px";
+    }
+
+    function isOverDropArea(clientX, clientY){
+      const r = dropArea.getBoundingClientRect();
+      return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+    }
+
+    // ---------- stage pointer events ----------
+    dropArea.addEventListener("pointermove", moveDrag);
+    dropArea.addEventListener("pointerup", endDrag);
+    dropArea.addEventListener("pointercancel", endDrag);
+
+    // click empty area clears selection
+    dropArea.addEventListener("pointerdown", (e)=>{
+      // if you click empty drop area, clear selection
+      if (e.target === dropArea) clearSelection();
+    });
+
+    // ---------- keyboard controls ----------
+    window.addEventListener("keydown", (e)=>{
+      if (!selected) return;
+
+      if (e.key === "Delete" || e.key === "Backspace"){
+        selected.remove();
+        selected = null;
+        saveToLocal();
+        flashToast("Deleted");
+        return;
+      }
+
+      if (e.key.toLowerCase() === "d"){
+        const dup = duplicateSelected();
+        if (dup){
+          saveToLocal();
+          flashToast("Duplicated");
+        }
+        return;
+      }
+
+      if (e.key.toLowerCase() === "q"){
+        rotateSelected(-8);
+        saveToLocal();
+        return;
+      }
+      if (e.key.toLowerCase() === "e"){
+        rotateSelected(8);
+        saveToLocal();
+        return;
+      }
+    });
+
+    function rotateSelected(deg){
+      if (!selected) return;
+      const r = parseFloat(selected.dataset.r || "0") + deg;
+      selected.dataset.r = r;
+      selected.style.setProperty("--r", r + "deg");
+    }
+
+    function scaleSelected(delta){
+      if (!selected) return;
+      const s = parseFloat(selected.dataset.s || "1");
+      const next = clamp(s + delta, 0.45, 2.2);
+      selected.dataset.s = next;
+      selected.style.setProperty("--s", next);
+    }
+
+    function duplicateSelected(){
+      if (!selected) return null;
+      const emoji = selected.textContent;
+      const x = parseFloat(selected.dataset.x) + 18;
+      const y = parseFloat(selected.dataset.y) + 18;
+      const el = document.createElement("div");
+      el.className = "piece";
+      el.textContent = emoji;
+      el.dataset.x = x; el.dataset.y = y;
+      el.dataset.s = selected.dataset.s || "1";
+      el.dataset.r = selected.dataset.r || "0";
+      el.style.setProperty("--s", el.dataset.s);
+      el.style.setProperty("--r", (el.dataset.r || "0") + "deg");
+      el.style.left = x + "px";
+      el.style.top  = y + "px";
+      el.style.zIndex = (++zCounter).toString();
+
+      el.addEventListener("pointerdown", (e) => {
+        e.stopPropagation();
+        selectPiece(el);
+        startDrag(el, e);
+      });
+
+      dropArea.appendChild(el);
+      selectPiece(el);
+      return el;
+    }
+
+    // wheel to resize selected
+    dropArea.addEventListener("wheel", (e)=>{
+      if (!selected) return;
+      e.preventDefault();
+      const delta = (e.deltaY < 0) ? 0.08 : -0.08;
+      scaleSelected(delta);
+      saveToLocal();
+    }, { passive:false });
+
+    // ---------- buttons ----------
+    qs("#btnClear").addEventListener("click", ()=>{
+      dropArea.innerHTML = "";
+      clearSelection();
+      saveToLocal();
+      flashToast("Cleared");
+    });
+
+    const btnFocus = qs("#btnFocus");
+
+function toggleFocusMode(force){
+  // 1) capture normalized positions BEFORE layout change
+  const snap = captureNormalizedPieces();
+
+  const on = force !== undefined
+    ? force
+    : !document.body.classList.contains("focus-mode");
+
+  document.body.classList.toggle("focus-mode", on);
+  btnFocus.textContent = on ? "Show Tools" : "Hide Tools";
+
+  // 2) wait one frame so layout is applied, then remap
+  requestAnimationFrame(() => {
+    applyNormalizedPieces(snap.items);
+    saveToLocal(); // keep storage consistent
+  });
+
+  flashToast(on ? "Focus mode" : "Tools visible");
+}
+
+
+btnFocus.addEventListener("click", () => {
+  toggleFocusMode();
+});
+
+/* Keyboard shortcut: H */
+window.addEventListener("keydown", (e)=>{
+  if (e.key.toLowerCase() === "h") {
+    toggleFocusMode();
+  }
+});
+
+
+    qs("#btnExport").addEventListener("click", async ()=>{
+      clearSelection();
+      const png = await exportPNG();
+      downloadURI(png, "my-christmas-tree.png");
+      flashToast("Exported");
+    });
+
+    function flashToast(text){
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(flashToast._t);
+      flashToast._t = setTimeout(()=>toast.classList.remove("show"), 1200);
+    }
+
+    // ---------- persistence ----------
+    const KEY = "xmas_tree_decorator_v1";
+
+    function saveToLocal(){
+      const items = qsa(".piece", dropArea).map(el => ({
+        emoji: el.textContent,
+        x: parseFloat(el.dataset.x),
+        y: parseFloat(el.dataset.y),
+        s: parseFloat(el.dataset.s || "1"),
+        r: parseFloat(el.dataset.r || "0"),
+        z: parseInt(el.style.zIndex || "1", 10)
+      }));
+      // keep zCounter stable across loads
+      const maxZ = items.reduce((m, it) => Math.max(m, it.z), 20);
+      zCounter = maxZ;
+      localStorage.setItem(KEY, JSON.stringify(items));
+    }
+function captureNormalizedPieces() {
+  const r = dropArea.getBoundingClientRect();
+  const items = qsa(".piece", dropArea).map(el => ({
+    el,
+    u: (parseFloat(el.dataset.x) || 0) / Math.max(1, r.width),
+    v: (parseFloat(el.dataset.y) || 0) / Math.max(1, r.height)
+  }));
+  return { rect: r, items };
+}
+
+function applyNormalizedPieces(items) {
+  const r = dropArea.getBoundingClientRect();
+  const pad = 6;
+
+  for (const it of items) {
+    const x = it.u * r.width;
+    const y = it.v * r.height;
+
+    // reuse your clamp logic
+    const cx = clamp(x, pad, r.width - pad);
+    const cy = clamp(y, pad, r.height - pad);
+
+    it.el.dataset.x = cx;
+    it.el.dataset.y = cy;
+    it.el.style.left = cx + "px";
+    it.el.style.top  = cy + "px";
+  }
+}
+
+    function loadFromLocal(){
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return;
+      try{
+        const items = JSON.parse(raw);
+        dropArea.innerHTML = "";
+        items.forEach(it=>{
+          const el = document.createElement("div");
+          el.className = "piece";
+          el.textContent = it.emoji;
+          el.dataset.x = it.x; el.dataset.y = it.y;
+          el.dataset.s = it.s; el.dataset.r = it.r;
+          el.style.setProperty("--s", it.s);
+          el.style.setProperty("--r", it.r + "deg");
+          el.style.left = it.x + "px";
+          el.style.top  = it.y + "px";
+          el.style.zIndex = it.z;
+          el.addEventListener("pointerdown", (e) => {
+            e.stopPropagation();
+            selectPiece(el);
+            startDrag(el, e);
+          });
+          dropArea.appendChild(el);
+        });
+        const maxZ = items.reduce((m, it) => Math.max(m, it.z), 20);
+        zCounter = maxZ;
+      } catch {}
+    }
+    loadFromLocal();
+
+    // ---------- export PNG (no external libs) ----------
+    async function exportPNG(){
+      // draw a simplified version of the stage into canvas
+      const stage = qs(".stageWrap");
+      const rect = stage.getBoundingClientRect();
+
+      const scale = Math.min(2, window.devicePixelRatio || 1); // crisp but not huge
+      const canvas = qs("#exportCanvas");
+      canvas.width = Math.floor(rect.width * scale);
+      canvas.height = Math.floor(rect.height * scale);
+
+      const ctx = canvas.getContext("2d");
+      ctx.scale(scale, scale);
+
+      // background gradient
+      const g = ctx.createLinearGradient(0,0, rect.width, rect.height);
+      g.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue("--bg1").trim() || "#070a12");
+      g.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue("--bg2").trim() || "#0b1530");
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0, rect.width, rect.height);
+
+      // subtle glow
+      ctx.globalAlpha = 0.18;
+      drawRadial(ctx, rect.width*0.72, rect.height*0.18, 0, rect.width*0.62, "rgba(255,211,106,0.9)");
+      drawRadial(ctx, rect.width*0.20, rect.height*0.28, 0, rect.width*0.50, "rgba(124,255,200,0.8)");
+      ctx.globalAlpha = 1;
+
+      // draw the treeScene (simplified)
+      const sceneRect = treeScene.getBoundingClientRect();
+      const sx = sceneRect.left - rect.left;
+      const sy = sceneRect.top - rect.top;
+      const sw = sceneRect.width;
+      const sh = sceneRect.height;
+
+      // layers (triangles)
+      // helper: triangle layer
+      function tri(cx, topY, w, h, c1, c2){
+        const grd = ctx.createLinearGradient(0, topY, 0, topY+h);
+        grd.addColorStop(0,c1); grd.addColorStop(1,c2);
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.moveTo(cx, topY);
+        ctx.lineTo(cx - w/2, topY + h);
+        ctx.lineTo(cx + w/2, topY + h);
+        ctx.closePath();
+        roundShadow(ctx, 0,0,0); // noop; keep classy
+        ctx.fill();
+      }
+
+      const cx = sx + sw/2;
+      const baseY = sy + sh - 18;
+
+      tri(cx, sy + sh*0.20, sw*0.56, sh*0.26, "#2aa767", "#0f5a35"); // l1
+      tri(cx, sy + sh*0.36, sw*0.72, sh*0.28, "#24985d", "#0f4f30"); // l2
+      tri(cx, sy + sh*0.52, sw*0.88, sh*0.32, "#1f7a4a", "#0d4027"); // l3
+
+      // trunk
+      ctx.fillStyle = "#4b2714";
+      const tw = sw*0.18, th = sh*0.16;
+      ctx.roundRect(cx - tw/2, baseY - th, tw, th, 14);
+      ctx.fill();
+
+      // lights
+      ctx.globalAlpha = 0.9;
+      for (let i=0;i<26;i++){
+        const t = i/25;
+        const y = sy + sh*(0.10 + t*0.78);
+        const spread = sw*(0.08 + t*0.38);
+        const x = cx + Math.sin(t*7.2)*spread;
+        drawGlowDot(ctx, x, y, 3.5, "rgba(255,255,255,0.9)");
+      }
+      ctx.globalAlpha = 1;
+
+      // ornaments from DOM
+      const areaRect = dropArea.getBoundingClientRect();
+      const ox = areaRect.left - rect.left;
+      const oy = areaRect.top  - rect.top;
+
+      // match CSS font sizing roughly
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      const pieces = qsa(".piece", dropArea)
+        .map(el => ({
+          emoji: el.textContent,
+          x: ox + parseFloat(el.dataset.x),
+          y: oy + parseFloat(el.dataset.y),
+          s: parseFloat(el.dataset.s || "1"),
+          r: (parseFloat(el.dataset.r || "0") * Math.PI) / 180,
+          z: parseInt(el.style.zIndex || "1", 10)
+        }))
+        .sort((a,b)=>a.z-b.z);
+
+      for (const p of pieces){
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.scale(p.s, p.s);
+        ctx.font = "34px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif";
+        // shadow-like glow
+        ctx.globalAlpha = 0.35;
+        ctx.fillText(p.emoji, 2, 4);
+        ctx.globalAlpha = 1;
+        ctx.fillText(p.emoji, 0, 0);
+        ctx.restore();
+      }
+
+      return canvas.toDataURL("image/png");
+    }
+
+    function drawGlowDot(ctx, x, y, r, color){
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawRadial(ctx, x,y, r0, r1, color){
+      const g = ctx.createRadialGradient(x,y,r0,x,y,r1);
+      g.addColorStop(0, color);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x,y,r1,0,Math.PI*2);
+      ctx.fill();
+    }
+
+    function downloadURI(uri, name){
+      const a = document.createElement("a");
+      a.download = name;
+      a.href = uri;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // ---------- small polyfill for roundRect on older browsers ----------
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        r = Math.min(r, w/2, h/2);
+        this.beginPath();
+        this.moveTo(x+r, y);
+        this.arcTo(x+w, y, x+w, y+h, r);
+        this.arcTo(x+w, y+h, x, y+h, r);
+        this.arcTo(x, y+h, x, y, r);
+        this.arcTo(x, y, x+w, y, r);
+        this.closePath();
+        return this;
+      }
+    }
+
+    function roundShadow(){ /* placeholder to keep the vibe */ }
+  </script>
+</body>
+</html>
