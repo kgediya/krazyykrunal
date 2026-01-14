@@ -95,6 +95,9 @@
     #video { z-index: 0; }
     #canvas { z-index: 1; }      /* camera + landmarks */
     #trailCanvas { z-index: 2; } /* laser on top */
+#video, #canvas, #trailCanvas {
+  transform: scaleX(-1);
+}
 
     .hud {
       position:absolute;
