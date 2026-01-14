@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AirMusic v0.6 (Pastel Laser)</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.12);
+      --txt: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.66);
+      --accent: #7c5cff;
+      --good: #2ee59d;
+      --bad: #ff4d6d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(124,92,255,0.25), transparent 55%),
+                  radial-gradient(900px 700px at 80% 10%, rgba(46,229,157,0.18), transparent 55%),
+                  var(--bg);
+      color: var(--txt);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+    .wrap {
+      width: min(1100px, 100%);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 920px) { .wrap { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+
+    .topbar {
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--stroke);
+      gap: 10px;
+    }
+    .title { display:flex; flex-direction:column; gap: 2px; }
+    .title h1 {
+      font-size: 14px;
+      margin: 0;
+      letter-spacing: 0.3px;
+      font-weight: 650;
+    }
+    .title p { margin: 0; font-size: 12px; color: var(--muted); }
+
+    .btns { display:flex; gap: 10px; flex-wrap: wrap; justify-content:flex-end; }
+    button, select {
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.06);
+      color: var(--txt);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      outline: none;
+    }
+    button:hover { border-color: rgba(255,255,255,0.22); }
+    button.primary { background: rgba(124,92,255,0.20); border-color: rgba(124,92,255,0.45); }
+    button.primary.on { background: rgba(46,229,157,0.16); border-color: rgba(46,229,157,0.55); }
+    button.danger { background: rgba(255,77,109,0.12); border-color: rgba(255,77,109,0.45); }
+
+    .stage {
+      position: relative;
+      aspect-ratio: 16/10;
+      background: #05070c;
+      overflow: hidden;
+    }
+
+    video, canvas {
+      position:absolute; inset: 0;
+      width:100%; height:100%;
+      object-fit: cover;
+    }
+    #trailCanvas, #canvas { pointer-events: none; }
+
+    /* stacking order */
+    #video { z-index: 0; }
+    #canvas { z-index: 1; }      /* camera + landmarks */
+    #trailCanvas { z-index: 2; } /* laser on top */
+
+    .hud {
+      position:absolute;
+      left: 12px; bottom: 12px;
+      display:flex; gap: 10px; flex-wrap: wrap;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 10px 12px;
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      color: var(--muted);
+      z-index: 3;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--bad);
+      display:inline-block; margin-right: 6px;
+    }
+    .dot.good { background: var(--good); }
+
+    .side {
+      padding: 14px;
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.04);
+    }
+    .row { display:flex; justify-content: space-between; align-items:center; gap: 10px; }
+    .label { font-size: 12px; color: var(--muted); }
+    .val { font-size: 12px; color: var(--txt); font-weight: 600; }
+
+    .meter {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(124,92,255,0.85), rgba(46,229,157,0.85));
+    }
+
+    .help ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .kbd {
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      font-size: 11px;
+      color: var(--txt);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="topbar">
+        <div class="title">
+          <h1>AirMusic v0.6</h1>
+          <p>Pastel laser trails 🎨 Pinch to turn sound ON.</p>
+        </div>
+        <div class="btns">
+          <select id="scaleSel" title="Scale">
+            <option value="pentatonic" selected>Pentatonic (safe)</option>
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+            <option value="chromatic">Chromatic</option>
+          </select>
+          <button id="startBtn" class="primary">Enable Audio + Camera</button>
+          <button id="muteBtn" class="danger" disabled>Mute</button>
+        </div>
+      </div>
+
+      <div class="stage">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <canvas id="trailCanvas"></canvas>
+
+        <div class="hud">
+          <span><span id="trackDot" class="dot"></span><span id="trackText">No hand</span></span>
+          <span>Pitch: <b id="pitchText">—</b></span>
+          <span>Speed: <b id="speedText">—</b></span>
+          <span>Gate: <b id="gateText">OFF</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel side">
+      <div class="card">
+        <div class="row"><span class="label">Volume (from speed)</span><span class="val" id="volVal">0%</span></div>
+        <div class="meter"><div class="fill" id="volFill"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="row"><span class="label">Brightness (from Y)</span><span class="val" id="brightVal">0%</span></div>
+        <div class="meter"><div class="fill" id="brightFill"></div></div>
+      </div>
+
+      <div class="card help">
+        <div class="row"><span class="val">How to play</span><span class="kbd">Tip</span></div>
+        <ul>
+          <li>Hold your hand in view.</li>
+          <li>Move left/right for notes (quantized).</li>
+          <li>Move up/down for tone brightness.</li>
+          <li>Move faster to add energy (volume + vibrato).</li>
+          <li><b>Pinch</b> (thumb + index) to gate sound ON. Release to OFF.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="row"><span class="label">Latency tip</span><span class="val">Use good light</span></div>
+        <div class="label" style="margin-top:8px;">
+          Bright lighting + plain background = smoother tracking.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MediaPipe Hands (classic) via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+  <script>
+    // ---------- DOM ----------
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx2d = canvas.getContext('2d');
+
+    const trailCanvas = document.getElementById('trailCanvas');
+    const tctx = trailCanvas.getContext('2d');
+
+    const startBtn = document.getElementById('startBtn');
+    const muteBtn  = document.getElementById('muteBtn');
+    const scaleSel = document.getElementById('scaleSel');
+
+    const trackDot = document.getElementById('trackDot');
+    const trackText = document.getElementById('trackText');
+    const pitchText = document.getElementById('pitchText');
+    const speedText = document.getElementById('speedText');
+    const gateText  = document.getElementById('gateText');
+
+    const volVal = document.getElementById('volVal');
+    const volFill = document.getElementById('volFill');
+    const brightVal = document.getElementById('brightVal');
+    const brightFill = document.getElementById('brightFill');
+
+    // ---------- Helpers ----------
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const lerp = (a,b,t) => a + (b-a)*t;
+
+    // ---------- LASER TRAILS (PASTEL) ----------
+    const trail = [];
+    const TRAIL_MAX = 19;
+    const ERASE_ALPHA = 0.10;          // fades trails without darkening video
+    const MIN_MOVE_PX2 = 4;
+    const DRAW_ONLY_WHEN_GATE = true;
+
+    const BASE_BEAM_W = 3.0;
+    const EXTRA_BEAM_W = 18.0;
+
+    let lastTrailX = null, lastTrailY = null;
+
+    // Pastel color driven by pitch (Hz -> Hue)
+    function colorFromHz(hz, speed01) {
+      // Map freq range (approx 130..2000) to hue (0..330)
+      const f01 = clamp((hz - 130) / (2000 - 130), 0, 1);
+      const hue = (f01 * 330);
+
+      // Pastel: high lightness, medium sat
+      const sat = 70;
+      const light = 76;
+
+      // Tiny boost with speed (makes fast motion pop more)
+      const a = 0.35 + speed01 * 0.45;
+      return `hsla(${hue.toFixed(1)}, ${sat}%, ${light}%, ${a.toFixed(3)})`;
+    }
+
+    function pushTrailPoint(x, y, speed01, hz, gate01) {
+      if (lastTrailX !== null) {
+        const dx = x - lastTrailX, dy = y - lastTrailY;
+        if ((dx*dx + dy*dy) < MIN_MOVE_PX2) return;
+      }
+      lastTrailX = x; lastTrailY = y;
+
+      trail.push({ x, y, s: speed01, hz, g: gate01, t: performance.now() });
+      if (trail.length > TRAIL_MAX) trail.shift();
+    }
+
+    // ✅ Fade by erasing previous pixels (does NOT darken the layer)
+    function fadeTrailCanvas() {
+      tctx.save();
+      tctx.globalCompositeOperation = "destination-out";
+      tctx.fillStyle = `rgba(0,0,0,${ERASE_ALPHA})`;
+      tctx.fillRect(0, 0, trailCanvas.width, trailCanvas.height);
+      tctx.restore();
+    }
+
+    function drawLaserSegment(ax, ay, bx, by, width, color, alphaMul) {
+      tctx.globalCompositeOperation = "lighter";
+
+      // outer haze
+      tctx.save();
+      tctx.strokeStyle = color;
+      tctx.globalAlpha = 0.20 * alphaMul;
+      tctx.lineWidth = width * 1.7;
+      tctx.lineCap = "round";
+      tctx.lineJoin = "round";
+      tctx.beginPath();
+      tctx.moveTo(ax, ay);
+      tctx.lineTo(bx, by);
+      tctx.stroke();
+      tctx.restore();
+
+      // mid glow
+      tctx.save();
+      tctx.strokeStyle = color;
+      tctx.globalAlpha = 0.45 * alphaMul;
+      tctx.lineWidth = width * 0.95;
+      tctx.lineCap = "round";
+      tctx.lineJoin = "round";
+      tctx.beginPath();
+      tctx.moveTo(ax, ay);
+      tctx.lineTo(bx, by);
+      tctx.stroke();
+      tctx.restore();
+
+      // hot core (almost white but tinted)
+      tctx.save();
+      tctx.strokeStyle = color;
+      tctx.globalAlpha = 0.95 * alphaMul;
+      tctx.lineWidth = Math.max(1, width * 0.26);
+      tctx.lineCap = "round";
+      tctx.lineJoin = "round";
+      tctx.beginPath();
+      tctx.moveTo(ax, ay);
+      tctx.lineTo(bx, by);
+      tctx.stroke();
+      tctx.restore();
+    }
+
+    function drawLaserHead(x, y, width, color, alphaMul) {
+      tctx.save();
+      tctx.globalCompositeOperation = "lighter";
+
+      tctx.fillStyle = color;
+
+      // big soft bloom
+      tctx.globalAlpha = 0.10 * alphaMul;
+      tctx.beginPath(); tctx.arc(x, y, width * 1.5, 0, Math.PI * 2); tctx.fill();
+
+      // medium glow
+      tctx.globalAlpha = 0.28 * alphaMul;
+      tctx.beginPath(); tctx.arc(x, y, width * 0.75, 0, Math.PI * 2); tctx.fill();
+
+      // core dot
+      tctx.globalAlpha = 0.90 * alphaMul;
+      tctx.beginPath(); tctx.arc(x, y, Math.max(2, width * 0.22), 0, Math.PI * 2); tctx.fill();
+
+      tctx.restore();
+    }
+
+    function drawTrailsLaser() {
+      if (trail.length < 2) return;
+
+      const now = performance.now();
+      for (let i = 1; i < trail.length; i++) {
+        const a = trail[i - 1];
+        const b = trail[i];
+
+        const age = (now - b.t) / 1000;
+        const life = 1.6;
+        const fade = clamp(1 - age / life, 0, 1);
+
+        const pitchEnergy = clamp((b.hz - 180) / 1200, 0, 1);
+        const power = clamp((b.s * 0.75) + (pitchEnergy * 0.25), 0, 1) * b.g;
+        const w = BASE_BEAM_W + power * EXTRA_BEAM_W;
+
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len, ny = dx / len;
+        const shimmer = (Math.sin((now / 65) + i) * 0.7) * (0.6 + power * 2.0);
+
+        const color = colorFromHz(b.hz, b.s);
+
+        drawLaserSegment(
+          a.x + nx * shimmer, a.y + ny * shimmer,
+          b.x - nx * shimmer, b.y - ny * shimmer,
+          w,
+          color,
+          (0.20 + fade * 0.95)
+        );
+      }
+
+      const head = trail[trail.length - 1];
+      const headPitchEnergy = clamp((head.hz - 180) / 1200, 0, 1);
+      const headPower = clamp((head.s * 0.75) + (headPitchEnergy * 0.25), 0, 1) * head.g;
+      const headW = BASE_BEAM_W + headPower * EXTRA_BEAM_W;
+      const headColor = colorFromHz(head.hz, head.s);
+
+      drawLaserHead(head.x, head.y, headW * 1.8, headColor, 0.45 + head.g * 0.85);
+    }
+
+    // ---------- Music mapping ----------
+    const SCALES = {
+      pentatonic: [0, 2, 4, 7, 9],
+      major:      [0, 2, 4, 5, 7, 9, 11],
+      minor:      [0, 2, 3, 5, 7, 8, 10],
+      chromatic:  [0,1,2,3,4,5,6,7,8,9,10,11]
+    };
+
+    function quantizeToScale(midiFloat, rootMidi, scaleName) {
+      const scale = SCALES[scaleName] || SCALES.pentatonic;
+      const rel = midiFloat - rootMidi;
+      const oct = Math.floor(rel / 12);
+      const within = rel - oct * 12;
+
+      let best = scale[0], bestDist = 999;
+      for (const d of scale) {
+        const dist = Math.abs(within - d);
+        if (dist < bestDist) { bestDist = dist; best = d; }
+      }
+      return rootMidi + oct * 12 + best;
+    }
+
+    function midiToFreq(midi) {
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    // ---------- Audio ----------
+    let audioCtx, master, osc, filter, vibratoOsc, vibratoGain;
+    let audioEnabled = false;
+    let isMuted = false;
+
+    let smoothedX = 0.5;
+    let smoothedY = 0.5;
+    let smoothedSpeed = 0;
+
+    let lastT = 0;
+    let lastX = 0.5, lastY = 0.5;
+
+    let gate = 0;
+    const GATE_SMOOTH = 0.18;
+
+    function setupAudio() {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      master = audioCtx.createGain();
+      master.gain.value = 0.0;
+      master.connect(audioCtx.destination);
+
+      filter = audioCtx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 1200;
+      filter.Q.value = 0.8;
+      filter.connect(master);
+
+      osc = audioCtx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.value = 220;
+      osc.connect(filter);
+
+      vibratoOsc = audioCtx.createOscillator();
+      vibratoOsc.type = "sine";
+      vibratoOsc.frequency.value = 5.0;
+
+      vibratoGain = audioCtx.createGain();
+      vibratoGain.gain.value = 0.0;
+      vibratoOsc.connect(vibratoGain);
+      vibratoGain.connect(osc.frequency);
+
+      osc.start();
+      vibratoOsc.start();
+
+      audioEnabled = true;
+      muteBtn.disabled = false;
+      startBtn.classList.add('on');
+      startBtn.textContent = "Running";
+    }
+
+    function setMasterGain(target) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setTargetAtTime(target, now, 0.02);
+    }
+
+    function setFrequency(targetHz) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      osc.frequency.cancelScheduledValues(now);
+      osc.frequency.setTargetAtTime(targetHz, now, 0.03);
+    }
+
+    function setBrightness(y01) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const bright = 1 - y01;
+      const freq = lerp(600, 5000, bright);
+      filter.frequency.cancelScheduledValues(now);
+      filter.frequency.setTargetAtTime(freq, now, 0.04);
+
+      const bPct = Math.round(bright * 100);
+      brightVal.textContent = `${bPct}%`;
+      brightFill.style.width = `${bPct}%`;
+    }
+
+    function setVibrato(speed01) {
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      const rate = lerp(4.0, 9.0, speed01);
+      const depth = lerp(0.0, 18.0, speed01);
+
+      vibratoOsc.frequency.cancelScheduledValues(now);
+      vibratoOsc.frequency.setTargetAtTime(rate, now, 0.05);
+
+      vibratoGain.gain.cancelScheduledValues(now);
+      vibratoGain.gain.setTargetAtTime(depth, now, 0.05);
+    }
+
+    // ---------- MediaPipe ----------
+    let hands, camera;
+
+    function resizeCanvasToVideo() {
+      const w = video.videoWidth || 1280;
+      const h = video.videoHeight || 720;
+
+      canvas.width = w; canvas.height = h;
+      trailCanvas.width = w; trailCanvas.height = h;
+
+      // keep transparent (no dark fill)
+      tctx.clearRect(0, 0, w, h);
+    }
+
+    function draw(results) {
+      ctx2d.save();
+      ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+      ctx2d.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length) {
+        for (const landmarks of results.multiHandLandmarks) {
+          drawConnectors(ctx2d, landmarks, HAND_CONNECTIONS, {lineWidth: 2});
+          drawLandmarks(ctx2d, landmarks, {lineWidth: 1, radius: 3});
+        }
+      }
+      ctx2d.restore();
+    }
+
+    function computePinch(landmarks) {
+      const a = landmarks[4];
+      const b = landmarks[8];
+      const dx = a.x - b.x, dy = a.y - b.y;
+      return Math.hypot(dx, dy) < 0.05;
+    }
+
+    function updateSoundFromHand(landmarks, tsMs) {
+      const p = landmarks[9];
+      const x = clamp(p.x, 0, 1);
+      const y = clamp(p.y, 0, 1);
+
+      const t = tsMs / 1000;
+      const dt = (lastT > 0) ? (t - lastT) : 0.016;
+      const vx = (x - lastX) / Math.max(dt, 1e-3);
+      const vy = (y - lastY) / Math.max(dt, 1e-3);
+      const speed01 = clamp(Math.hypot(vx, vy) / 2.2, 0, 1);
+
+      smoothedX = lerp(smoothedX, x, 0.22);
+      smoothedY = lerp(smoothedY, y, 0.22);
+      smoothedSpeed = lerp(smoothedSpeed, speed01, 0.18);
+
+      const pinching = computePinch(landmarks);
+      gate = lerp(gate, pinching ? 1 : 0, GATE_SMOOTH);
+
+      const midiFloat = lerp(48, 84, smoothedX);
+      const midiQ = quantizeToScale(midiFloat, 60, scaleSel.value);
+      const hz = midiToFreq(midiQ);
+
+      const vol = (0.05 + lerp(0.0, 0.25, smoothedSpeed)) * gate * (isMuted ? 0 : 1);
+
+      pitchText.textContent = `${Math.round(midiQ)} (${hz.toFixed(1)} Hz)`;
+      speedText.textContent = smoothedSpeed.toFixed(2);
+      gateText.textContent = gate > 0.5 ? "ON" : "OFF";
+      trackDot.classList.add('good');
+      trackText.textContent = pinching ? "Hand (pinch)" : "Hand";
+
+      const volPct = Math.round(clamp(vol / 0.30, 0, 1) * 100);
+      volVal.textContent = `${volPct}%`;
+      volFill.style.width = `${volPct}%`;
+
+      setFrequency(hz);
+      setBrightness(smoothedY);
+      setVibrato(smoothedSpeed);
+      setMasterGain(vol);
+
+      lastT = t;
+      lastX = x;
+      lastY = y;
+
+      const px = smoothedX * trailCanvas.width;
+      const py = smoothedY * trailCanvas.height;
+
+      if (!DRAW_ONLY_WHEN_GATE || gate > 0.12) {
+        pushTrailPoint(px, py, smoothedSpeed, hz, gate);
+      }
+    }
+
+    function noHand() {
+      trackDot.classList.remove('good');
+      trackText.textContent = "No hand";
+      pitchText.textContent = "—";
+      speedText.textContent = "—";
+      gateText.textContent = "OFF";
+      gate = lerp(gate, 0, 0.25);
+      setMasterGain(0);
+      volVal.textContent = `0%`;
+      volFill.style.width = `0%`;
+      lastTrailX = lastTrailY = null;
+    }
+
+    async function setupCameraAndHands() {
+      hands = new Hands({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+      });
+
+      hands.setOptions({
+        maxNumHands: 1,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.6,
+        minTrackingConfidence: 0.6
+      });
+
+      hands.onResults((results) => {
+        if (video.videoWidth && canvas.width !== video.videoWidth) {
+          resizeCanvasToVideo();
+        }
+
+        // camera + landmarks
+        draw(results);
+
+        // laser (transparent, no dark overlay)
+        fadeTrailCanvas();
+        drawTrailsLaser();
+
+        const ts = performance.now();
+        if (results.multiHandLandmarks && results.multiHandLandmarks.length) {
+          updateSoundFromHand(results.multiHandLandmarks[0], ts);
+        } else {
+          noHand();
+        }
+      });
+
+      camera = new Camera(video, {
+        onFrame: async () => {
+          await hands.send({ image: video });
+        },
+        width: 1280,
+        height: 720
+      });
+
+      await camera.start();
+      resizeCanvasToVideo();
+    }
+
+    // ---------- UI ----------
+    startBtn.addEventListener('click', async () => {
+      try {
+        startBtn.disabled = true;
+        startBtn.textContent = "Starting…";
+
+        if (!audioEnabled) setupAudio();
+        if (audioCtx.state !== "running") await audioCtx.resume();
+
+        await setupCameraAndHands();
+
+        startBtn.disabled = false;
+      } catch (e) {
+        console.error(e);
+        startBtn.disabled = false;
+        startBtn.textContent = "Enable Audio + Camera";
+        alert("Could not start. Make sure camera permission is allowed, and use localhost/https.");
+      }
+    });
+
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      muteBtn.textContent = isMuted ? "Unmute" : "Mute";
+      muteBtn.classList.toggle('danger', !isMuted);
+      if (isMuted) setMasterGain(0);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'm') muteBtn.click();
+    });
+  </script>
+</body>
+</html>
