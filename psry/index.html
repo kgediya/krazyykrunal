@@ -183,11 +183,23 @@
     }
 
     .drama-note{
-      font-size: 11px;
-      color:#999;
-      font-style: italic;
-      margin-top: -6px;
-    }
+  font-size: 11px;
+  color:#999;
+  font-style: italic;
+  margin-top: -6px;
+
+  /* NEW: hidden by default */
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 280ms ease, transform 280ms ease;
+  pointer-events: none;
+}
+
+/* NEW: show when card is forgiven */
+.drama-note.show{
+  opacity: 1;
+  transform: translateY(0);
+}
 
     hr{
       border:0;
@@ -293,7 +305,7 @@
       </div>
 
       <div class="card-face back">
-        <div class="drama-note">(Admit it, you love the drama 👅)</div>
+       <div class="drama-note" id="dramaNote">(Admit it, you love the drama 👅)</div>
 
         <div class="inside-content">
           <p>I'm so so so sorryyyy</p>
@@ -328,6 +340,7 @@
     const hint = document.getElementById("hintText");
     const forgiveBtn = document.getElementById("forgiveBtn");
     const confettiLayer = document.getElementById("confettiLayer");
+const dramaNote = document.getElementById("dramaNote");
 
     let isOpen = false;
     let confettiCooldown = false;
@@ -390,6 +403,7 @@
 
     forgiveBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+        dramaNote.classList.add("show");
       forgiveBtn.textContent = "See you on THIS side ❤️";
       forgiveBtn.style.backgroundColor = "#2e9e55";
       launchConfetti(50);
