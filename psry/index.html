@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>For Pixieji</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary-pink:#ffb7c5;
+      --deep-pink:#e75480;
+      --elegant-gold:#d4af37;
+      --text-dark:#2c2c2c;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body{
+      margin:0;
+      display:grid;
+      place-items:center;
+      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+               max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      background-color:#fce4ec;
+      background-image: radial-gradient(circle at center, #fff0f5 0%, #f8bbd0 100%);
+      font-family:'Montserrat',sans-serif;
+      overflow:hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Confetti layer (kept separate for performance) */
+    .confetti-layer{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 999;
+    }
+
+    /* Scene */
+    .scene{
+      width: clamp(240px, 80vw, 320px);
+      height: clamp(340px, 78vh, 460px);
+      perspective: 1200px;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    .card{
+      width:100%;
+      height:100%;
+      position:relative;
+      transform-style: preserve-3d;
+      transition: transform 700ms cubic-bezier(0.4,0.2,0.2,1);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+      will-change: transform;
+      border-radius: 12px;
+    }
+
+    .card.open{
+      transform: rotateY(-180deg);
+    }
+
+    /* Faces */
+    .card-face{
+      position:absolute;
+      inset:0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      overflow:hidden;
+    }
+
+    /* Front */
+    .front{
+      background:#1a1a1a;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      padding: 0 18px 26px;
+      color:#fff;
+      z-index:2;
+    }
+
+    .spotlight{
+      position:absolute;
+      top:-60px;
+      left:50%;
+      transform: translateX(-50%);
+      width:0;height:0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-bottom: 380px solid rgba(255,255,200,0.18);
+      filter: blur(10px);
+    }
+
+    .spotlight-ground{
+      position:absolute;
+      bottom: 86px;
+      left:50%;
+      transform: translateX(-50%);
+      width: 190px;
+      height: 42px;
+      background: rgba(255,255,200,0.55);
+      border-radius: 50%;
+      filter: blur(6px);
+      box-shadow: 0 0 20px 10px rgba(255,255,200,0.35);
+    }
+
+    .unicorn-icon{
+      font-size: 96px;
+      z-index:5;
+      position:absolute;
+      bottom: 108px;
+      filter: drop-shadow(0 0 10px rgba(212,175,55,0.9));
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .front-text{
+      z-index:5;
+      font-family:'Great Vibes',cursive;
+      font-size: 26px;
+      text-align:center;
+      width: 92%;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.55);
+      line-height: 1.2;
+      padding-bottom: 4px;
+    }
+
+    /* Back */
+    .back{
+      background:#fff;
+      transform: rotateY(180deg);
+      display:flex;
+      flex-direction:column;
+      padding: 18px;
+      border: 2px solid var(--primary-pink);
+      text-align:center;
+      justify-content:center;
+      gap: 14px;
+    }
+
+    .inside-content{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+
+    h2{
+      font-family:'Great Vibes',cursive;
+      color: var(--deep-pink);
+      font-size: 34px;
+      margin: 4px 0 0;
+    }
+
+    p{
+      font-size: 14px;
+      color: var(--text-dark);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .highlight{ font-weight: 700; color: var(--deep-pink); }
+
+    .big-text{
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 6px 0;
+    }
+
+    .sunidhi{
+      font-size: 22px;
+      color: var(--elegant-gold);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.18);
+      display:inline-block;
+      margin-left: 4px;
+    }
+
+    .drama-note{
+      font-size: 11px;
+      color:#999;
+      font-style: italic;
+      margin-top: -6px;
+    }
+
+    hr{
+      border:0;
+      border-top: 1px solid #ffdde6;
+      margin: 8px 0;
+    }
+
+    .btn-group{
+      display:flex;
+      justify-content:center;
+      margin-top: 2px;
+    }
+
+    button{
+      background: var(--deep-pink);
+      color:#fff;
+      border:none;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-family:'Montserrat',sans-serif;
+      font-weight: 800;
+      cursor:pointer;
+      box-shadow: 0 6px 18px rgba(231,84,128,0.35);
+      transition: transform 120ms ease, filter 120ms ease;
+      touch-action: manipulation;
+    }
+
+    /* Only apply hover effects on devices that actually hover */
+    @media (hover:hover) and (pointer:fine){
+      button:hover{ transform: scale(1.04); filter: brightness(1.05); }
+    }
+
+    button:active{ transform: scale(0.98); }
+    button:focus-visible{
+      outline: 3px solid rgba(212,175,55,0.65);
+      outline-offset: 3px;
+    }
+
+    /* Hint */
+    .hint{
+      position: fixed;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      color:#7a6f74;
+      font-size: 12px;
+      animation: pulse 2s infinite;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,183,197,0.7);
+      padding: 8px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    /* Confetti */
+    .confetti{
+      position:absolute;
+      width: 9px;
+      height: 14px;
+      border-radius: 2px;
+      transform: translate3d(0,0,0);
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+      will-change: transform;
+    }
+
+    @keyframes fall{
+      to { transform: translate3d(0, 110vh, 0) rotate(720deg); }
+    }
+
+    @keyframes float{
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes pulse{
+      0%{ opacity: .55; }
+      50%{ opacity: 1; }
+      100%{ opacity: .55; }
+    }
+
+    /* Accessibility: reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .card{ transition: none; }
+      .unicorn-icon{ animation: none; }
+      .hint{ animation: none; }
+      .confetti{ animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene" id="cardScene" role="button" tabindex="0" aria-label="Open greeting card">
+    <div class="card" id="card" aria-expanded="false">
+      <div class="card-face front">
+        <div class="spotlight"></div>
+        <div class="spotlight-ground"></div>
+        <div class="unicorn-icon" aria-hidden="true">🦄</div>
+        <div class="front-text">To my Deerest<br> Pixieji...</div>
+      </div>
+
+      <div class="card-face back">
+        <div class="drama-note">(Admit it, you love the drama 👅)</div>
+
+        <div class="inside-content">
+          <p>I'm so so so sorryyyy</p>
+          <p>She is just a <span class="highlight">background dancer</span>.</p>
+
+          <div class="big-text">
+            You are the <span class="sunidhi">Sunidhi</span>.
+          </div>
+
+          <p>The Headliner. The Icon.<br>The Main Event Of My Life 💗.</p>
+
+          <hr>
+
+          <p>I'm not ready to "die peacefully" yet.</p>
+          <p>Not without living with you fully</p>
+          <h2>lysm 🦵❣️</h2>
+        </div>
+
+        <div class="btn-group">
+          <button id="forgiveBtn" type="button">Forgive Me? 🥺</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint" id="hintText">Tap the card to open</div>
+  <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+
+  <script>
+    const scene = document.getElementById("cardScene");
+    const card = document.getElementById("card");
+    const hint = document.getElementById("hintText");
+    const forgiveBtn = document.getElementById("forgiveBtn");
+    const confettiLayer = document.getElementById("confettiLayer");
+
+    let isOpen = false;
+    let confettiCooldown = false;
+
+    function setOpen(next) {
+      isOpen = next;
+      card.classList.toggle("open", isOpen);
+      card.setAttribute("aria-expanded", String(isOpen));
+      hint.style.display = isOpen ? "none" : "block";
+    }
+
+    function toggleCard(e) {
+      // Don’t flip when button is pressed
+      if (e && e.target && e.target.closest("button")) return;
+      setOpen(!isOpen);
+    }
+
+    // Pointer-friendly (mobile + desktop)
+    scene.addEventListener("pointerup", toggleCard);
+
+    // Keyboard support
+    scene.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleCard(e);
+      }
+    });
+
+    function launchConfetti(count = 40) {
+      if (confettiCooldown) return;
+      confettiCooldown = true;
+      setTimeout(() => (confettiCooldown = false), 800);
+
+      const colors = ["#ffb7c5", "#e75480", "#d4af37", "#ffffff"];
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+      for (let i = 0; i < count; i++) {
+        const conf = document.createElement("div");
+        conf.className = "confetti";
+
+        const x = Math.random() * vw;
+        const dur = (Math.random() * 1.6 + 1.8).toFixed(2); // 1.8s - 3.4s
+        const delay = (Math.random() * 0.15).toFixed(2);
+        const rot = Math.floor(Math.random() * 360);
+
+        conf.style.left = x + "px";
+        conf.style.top = "-20px";
+        conf.style.backgroundColor = colors[(Math.random() * colors.length) | 0];
+        conf.style.animationDuration = dur + "s";
+        conf.style.animationDelay = delay + "s";
+        conf.style.transform = `translate3d(0,0,0) rotate(${rot}deg)`;
+
+        confettiLayer.appendChild(conf);
+
+        // Cleanup
+        const totalMs = (parseFloat(dur) + parseFloat(delay)) * 1000 + 250;
+        setTimeout(() => conf.remove(), totalMs);
+      }
+    }
+
+    forgiveBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      forgiveBtn.textContent = "See you on THIS side ❤️";
+      forgiveBtn.style.backgroundColor = "#2e9e55";
+      launchConfetti(50);
+    });
+  </script>
+</body>
+</html>
