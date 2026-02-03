@@ -562,7 +562,9 @@
     }
 
     function updateSoundFromHand(landmarks, tsMs) {
-      const p = landmarks[9];
+     
+   
+        const p = landmarks[9];
       const x = clamp(p.x, 0, 1);
       const y = clamp(p.y, 0, 1);
 
@@ -578,7 +580,11 @@
 
       const pinching = computePinch(landmarks);
       gate = lerp(gate, pinching ? 1 : 0, GATE_SMOOTH);
-
+   if (!pinching && gate > 0.6) {
+  // hard stop laser when pinch released
+  trail.length = 0;
+  tctx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+}
       const midiFloat = lerp(48, 84, smoothedX);
       const midiQ = quantizeToScale(midiFloat, 60, scaleSel.value);
       const hz = midiToFreq(midiQ);

@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Meri Valentine Priye? 💘</title>
+  <meta name="theme-color" content="#ff4fa1" />
+  <style>
+    :root{
+      --bgA:#ffe3f1;
+      --bgB:#ff78bb;
+      --card: rgba(255,255,255,.78);
+      --text:#6b1840;
+      --muted: rgba(107,24,64,.72);
+      --yesA:#ff2a8e;
+      --yesB:#ff74bf;
+      --noA:#ffd1e7;
+      --noB:#fff1f8;
+      --stroke: rgba(107,24,64,.12);
+      --shadow: 0 18px 55px rgba(107,24,64,.22);
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      overflow:hidden;
+      background:
+        radial-gradient(900px 500px at 15% 15%, rgba(255,255,255,.75), transparent 55%),
+        radial-gradient(800px 520px at 85% 25%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(135deg, var(--bgA), var(--bgB));
+    }
+
+    /* Subtle floaties */
+    .floaties{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      opacity:.9;
+    }
+    .floater{
+      position:absolute;
+      filter: drop-shadow(0 8px 10px rgba(107,24,64,.18));
+      animation: rise linear forwards;
+      user-select:none;
+      will-change: transform, opacity;
+    }
+    @keyframes rise{
+      from { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+      12%  { opacity: .9; }
+      to   { transform: translate3d(0, -120vh, 0) rotate(18deg); opacity: 0; }
+    }
+
+    .wrap{
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding: 18px;
+    }
+
+    .card{
+      width:min(92vw, 420px);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.55);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+      padding: 20px 18px 16px;
+      backdrop-filter: blur(10px);
+      position:relative;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 42, 142, .18);
+      background: rgba(255, 42, 142, .10);
+      font-weight: 800;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .top{
+      display:flex;
+      justify-content:center;
+      margin-bottom: 12px;
+    }
+
+    h1{
+      margin: 6px 0 8px;
+      text-align:center;
+      font-size: clamp(22px, 6vw, 30px);
+      line-height:1.12;
+      letter-spacing: .1px;
+    }
+
+    .sub{
+      margin: 0 0 14px;
+      text-align:center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.35;
+    }
+
+    .stage{
+      position:relative;
+      height: 210px;
+      border-radius: 20px;
+      background:
+        radial-gradient(320px 180px at 50% 40%, rgba(255,255,255,.82), rgba(255,255,255,.25));
+      border: 1px solid var(--stroke);
+      overflow:hidden;
+    }
+
+    .hint{
+      position:absolute;
+      left:50%;
+      top: 14px;
+      transform: translateX(-50%);
+      width: 92%;
+      text-align:center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.25;
+      user-select:none;
+    }
+
+    .btn{
+      position:absolute;
+      border:0;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      user-select:none;
+      touch-action: manipulation;
+      min-width: 140px;
+      box-shadow: 0 14px 26px rgba(107,24,64,.18);
+      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btn:focus-visible{ outline: 3px solid rgba(255,42,142,.30); outline-offset: 3px; }
+
+    .yes{
+      left: 16px;
+      bottom: 16px;
+      color:#fff;
+      background: linear-gradient(135deg, var(--yesA), var(--yesB));
+    }
+    .yesGlow{
+      animation: pulse .75s ease-in-out infinite alternate;
+    }
+    @keyframes pulse{
+      from { transform: scale(var(--s,1)); }
+      to   { transform: scale(calc(var(--s,1) + .06)); }
+    }
+
+    .no{
+      right: 16px;
+      bottom: 16px;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--noA), var(--noB));
+      border: 1px solid rgba(107,24,64,.08);
+    }
+
+    .footer{
+      margin-top: 12px;
+      text-align:center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      place-items:center;
+      padding: 18px;
+      background: rgba(107,24,64,.28);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+    }
+    .modal.show{ display:grid; }
+    .modalCard{
+      width:min(92vw, 420px);
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 18px 16px 14px;
+      text-align:center;
+    }
+    .big{
+      font-size: 44px;
+      margin: 6px 0 8px;
+    }
+    .title{
+      font-weight: 1000;
+      font-size: 16px;
+      margin: 0 0 8px;
+      letter-spacing:.2px;
+    }
+    .text{
+      margin: 0 0 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height:1.35;
+    }
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      margin-bottom: 10px;
+    }
+    .chip{
+      font-size: 12px;
+      font-weight: 900;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,42,142,.18);
+      background: rgba(255,42,142,.10);
+    }
+    .close{
+      width:100%;
+      border:0;
+      border-radius: 999px;
+      padding: 14px 16px;
+      font-weight: 1000;
+      font-size: 15px;
+      color:#fff;
+      cursor:pointer;
+      background: linear-gradient(135deg, var(--yesA), var(--yesB));
+      box-shadow: 0 14px 26px rgba(107,24,64,.18);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .floater{ animation:none !important; }
+      .yesGlow{ animation:none !important; }
+      .btn{ transition:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="floaties" id="floaties"></div>
+
+  <main class="wrap">
+    <section class="card" aria-label="Valentine card">
+      <div class="top">
+        <div class="pill">🦄 Haaye Meri Meghna</div>
+      </div>
+
+      <h1>Will You be Meri Valentine Priye? 💘</h1>
+      <p class="sub">
+        Pixieji, ek simple game hai 😌<br/>
+        Tum jeetna pasand karti ho na… toh bas wahi karna.
+      </p>
+
+      <div class="stage" id="stage" aria-label="button play area">
+        <div class="hint" id="hint">
+          Hint: “No” button thoda drama karta hai… kyutie pie style 🙃
+        </div>
+
+        <button class="btn yes" id="yesBtn">Haan 💖</button>
+        <button class="btn no" id="noBtn">Nahi 🙃</button>
+      </div>
+
+      <div class="footer">
+        P.S. Stress ko side me rakho… yaha sirf love + chocolates allowed 🍫💗
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modalCard">
+      <div class="big">🏆💞</div>
+      <div class="title" id="modalTitle">Pixieji wins again 😌✨</div>
+      <p class="text" id="modalText">
+        Ab official: you’re my Valentine 💖<br/>
+       Rewards: Tum dekhte jao bass <br>
+        #MeghNaalKrunal 💗🦵
+      </p>
+
+      <div class="chips">
+        <div class="chip">Kyutie Pie</div>
+        <div class="chip">Unicorn Blessing 🦄</div>
+        <div class="chip">Stress: 0%</div>
+      </div>
+
+      <button class="close" id="closeBtn">Ok done… Haan hi Haan 💖</button>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+    const stage = $("stage");
+    const yesBtn = $("yesBtn");
+    const noBtn  = $("noBtn");
+    const hint   = $("hint");
+    const modal  = $("modal");
+    const closeBtn = $("closeBtn");
+    const floaties = $("floaties");
+
+    let tries = 0;
+
+    // floaties
+    function spawnFloater(){
+      const el = document.createElement("div");
+      el.className = "floater";
+      const pool = ["💖","💘","💕","💗","🦄","✨","🍫"];
+      el.textContent = pool[Math.floor(Math.random()*pool.length)];
+
+      const size = Math.random()*16 + 14;
+      el.style.fontSize = `${size}px`;
+      el.style.left = `${Math.random()*100}vw`;
+      el.style.top  = `${Math.random()*12 + 92}vh`;
+      const duration = Math.random()*4 + 4;
+      el.style.animationDuration = `${duration}s`;
+
+      floaties.appendChild(el);
+      setTimeout(() => el.remove(), duration*1000 + 200);
+    }
+    setInterval(spawnFloater, 950);
+
+    function pop(n){ for(let i=0;i<n;i++) setTimeout(spawnFloater, i*35); }
+
+    // positioning
+    function placeInitial(){
+      yesBtn.style.left = "16px";
+      yesBtn.style.bottom = "16px";
+      yesBtn.style.top = "auto";
+      yesBtn.style.right = "auto";
+
+      noBtn.style.right = "16px";
+      noBtn.style.bottom = "16px";
+      noBtn.style.left = "auto";
+      noBtn.style.top = "auto";
+    }
+
+    function randomNoPos(){
+      const sr = stage.getBoundingClientRect();
+      const br = noBtn.getBoundingClientRect();
+
+      const padding = 10;
+      const topMin = 56; // avoid hint
+      const xMin = padding;
+      const xMax = sr.width - br.width - padding;
+      const yMin = topMin;
+      const yMax = sr.height - br.height - padding;
+
+      const x = Math.random() * (xMax - xMin) + xMin;
+      const y = Math.random() * (yMax - yMin) + yMin;
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top  = `${y}px`;
+      noBtn.style.right = "auto";
+      noBtn.style.bottom = "auto";
+    }
+
+    // distance helper
+    function distToRect(x, y, rect){
+      const dx = Math.max(rect.left - x, 0, x - rect.right);
+      const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+      return Math.hypot(dx, dy);
+    }
+    function getPointerXY(e){
+      if(e.touches && e.touches[0]) return { x:e.touches[0].clientX, y:e.touches[0].clientY };
+      if(typeof e.clientX === "number") return { x:e.clientX, y:e.clientY };
+      return null;
+    }
+
+    // make NO more fun + unclickable
+    const hints = [
+      "Hint: “No” button thoda drama karta hai… kyutie pie style 🙃",
+      "Arre Pixieji, tum winner ho… “Haan” hi correct hai 😌🏆",
+      "No button sports-car mode me hai: zoom zoom 🏎️",
+      "Stress ko bye bolo… “Haan” pe aao 😌",
+      "Woh galat jawab hai.",
+      "Unicorn says: Haan karo 🦄✨"
+    ];
+    const noLabels = ["Nahi 🙃","Nope 😌","Wrong lane 🏎️","Try again 🏁","Baigan? 🤢","Stress? 😭"];
+
+    function growYes(){
+      const s = clamp(1 + tries * 0.07, 1, 1.9);
+      yesBtn.style.setProperty("--s", s);
+      yesBtn.classList.add("yesGlow");
+    }
+
+    function dodge(){
+      tries++;
+      growYes();
+
+      hint.textContent = hints[Math.min(tries, hints.length - 1)];
+      noBtn.textContent = noLabels[tries % noLabels.length];
+
+      randomNoPos();
+      if(tries >= 3 && tries % 2 === 1) setTimeout(randomNoPos, 120);
+
+      noBtn.animate([
+        { transform: "translate3d(0,0,0)" },
+        { transform: "translate3d(6px,-4px,0)" },
+        { transform: "translate3d(-5px,5px,0)" },
+        { transform: "translate3d(0,0,0)" }
+      ], { duration: 220, easing: "ease-out" });
+
+      pop(10);
+    }
+
+    function onMove(e){
+      const p = getPointerXY(e);
+      if(!p) return;
+      const r = noBtn.getBoundingClientRect();
+      if(distToRect(p.x, p.y, r) < 62) dodge();
+    }
+
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); dodge(); });
+    noBtn.addEventListener("mouseenter", () => dodge());
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); dodge(); }, { passive:false });
+
+    stage.addEventListener("mousemove", onMove);
+    stage.addEventListener("touchmove", onMove, { passive:true });
+
+    yesBtn.addEventListener("click", () => {
+      pop(24);
+      burst(yesBtn);
+      modal.classList.add("show");
+    });
+
+    function burst(anchor){
+      const rect = anchor.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+
+      for(let i=0;i<18;i++){
+        const el = document.createElement("div");
+        el.className = "floater";
+        el.textContent = ["💖","💗","💘","💕","🦄","✨","🍫"][Math.floor(Math.random()*7)];
+        el.style.left = `${cx}px`;
+        el.style.top  = `${cy}px`;
+        el.style.fontSize = `${Math.random()*14 + 16}px`;
+
+        const a = Math.random() * Math.PI * 2;
+        const d = Math.random() * 160 + 60;
+        const tx = Math.cos(a) * d;
+        const ty = Math.sin(a) * d;
+
+        el.animate([
+          { transform:`translate3d(0,0,0) scale(1)`, opacity:1 },
+          { transform:`translate3d(${tx}px, ${ty}px, 0) scale(.8)`, opacity:0 }
+        ], { duration: 900 + Math.random()*500, easing: "cubic-bezier(.2,.8,.2,1)", fill:"forwards" });
+
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1600);
+      }
+    }
+
+    closeBtn.addEventListener("click", () => modal.classList.remove("show"));
+    modal.addEventListener("click", (e) => { if(e.target === modal) modal.classList.remove("show"); });
+
+    window.addEventListener("resize", placeInitial);
+    window.addEventListener("orientationchange", () => setTimeout(placeInitial, 150));
+    placeInitial();
+  </script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Pixieji Uber Dash</title>
+  <style>
+    :root{
+      --pink:#ff4fb6;
+      --hot:#ff2d95;
+      --bg:#0b0b14;
+      --stroke:rgba(255,255,255,.16);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.7);
+    }
+    *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+    html,body{
+      height:100%; margin:0; overflow:hidden;
+      background:
+        radial-gradient(1000px 700px at 50% -10%, rgba(255,79,182,.25), transparent 60%),
+        radial-gradient(900px 700px at 10% 110%, rgba(255,45,149,.18), transparent 60%),
+        var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    canvas{display:block; width:100%; height:100%;}
+
+    /* UI LAYOUT: all HUD stays at TOP only */
+    .ui{position:fixed; inset:0; pointer-events:none; display:flex; flex-direction:column;}
+    .top{
+      padding: calc(env(safe-area-inset-top) + 8px) 10px 8px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .toprow{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .chip{
+      background:rgba(0,0,0,.42);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:8px 10px;
+      color:var(--text);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+      font-weight:900;
+      max-width:62vw;
+    }
+    .chip small{
+      display:block; margin-top:2px;
+      font-weight:700; font-size:12px; color:var(--muted);
+      line-height:1.2;
+    }
+    .rightstack{display:flex; flex-direction:column; gap:8px; align-items:flex-end;}
+    .hudToggle{
+      pointer-events:auto;
+      border:none; border-radius:12px;
+      padding:10px 10px; font-weight:900;
+      color:var(--text);
+      background:rgba(0,0,0,.42);
+      border:1px solid var(--stroke);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      cursor:pointer;
+      line-height:1;
+    }
+    .stat{
+      background:rgba(0,0,0,.42);
+      border:1px solid var(--stroke);
+      border-radius:14px;
+      padding:8px 10px;
+      color:var(--text);
+      text-align:right;
+      min-width:96px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .stat .v{font-size:15px; font-weight:950;}
+    .stat .k{font-size:11px; color:var(--muted); margin-top:2px; font-weight:800;}
+
+    /* Thin checkpoint strip (TOP, non-blocking) */
+    .strip{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:9px 10px;
+      background:rgba(0,0,0,.34);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 26px rgba(0,0,0,.24);
+      color:var(--text);
+      font-weight:900;
+    }
+    .strip .left{
+      min-width:0;
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .strip .left .label{
+      font-size:12px; color:var(--muted); font-weight:800;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:64vw;
+    }
+    .strip .left .next{
+      font-size:13px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:64vw;
+    }
+    .strip .right{
+      display:flex; flex-direction:column; align-items:flex-end; gap:2px;
+      font-size:12px; color:var(--muted); font-weight:850;
+    }
+    .bar{
+      width:100%;
+      height:8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      margin-top:6px;
+    }
+    .fill{
+      height:100%; width:0%;
+      background:linear-gradient(90deg, rgba(72,255,154,.95), rgba(255,79,182,.95));
+      border-radius:999px;
+      transition: width .12s linear;
+    }
+
+    /* Menu */
+    .center{flex:1; display:flex; align-items:center; justify-content:center; padding:16px;}
+    .panel{
+      pointer-events:auto;
+      width:min(520px, 92vw);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:24px;
+      padding:16px 16px 14px;
+      color:var(--text);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 24px 60px rgba(0,0,0,.45);
+    }
+    .title{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .title h1{margin:0; font-size:20px;}
+    .badge{
+      font-weight:900; padding:6px 10px; border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,79,182,.95), rgba(255,45,149,.85));
+      box-shadow:0 10px 25px rgba(255,45,149,.25);
+    }
+    .desc{margin:10px 0 12px; color:var(--muted); line-height:1.35;}
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap;}
+    button.primary{
+      pointer-events:auto; border:none; border-radius:16px; padding:12px 14px;
+      font-weight:950; color:#100813;
+      background:linear-gradient(90deg, rgba(255,79,182,1), rgba(255,45,149,1));
+      box-shadow:0 16px 40px rgba(255,45,149,.28);
+      cursor:pointer; flex:1; min-width:150px;
+    }
+    button.ghost{
+      pointer-events:auto; border-radius:16px; padding:12px 14px;
+      background:rgba(255,255,255,.10); color:var(--text);
+      border:1px solid rgba(255,255,255,.18);
+      cursor:pointer; flex:1; min-width:150px;
+      font-weight:900;
+    }
+    .hint{margin-top:10px; font-size:12px; color:var(--muted); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+
+    /* Toast + status */
+    .toast{
+      position:fixed; left:50%;
+      top: calc(env(safe-area-inset-top) + 110px);
+      transform:translateX(-50%);
+      padding:10px 12px; border-radius:14px;
+      background:rgba(0,0,0,.60);
+      border:1px solid rgba(255,255,255,.16);
+      color:var(--text);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 18px 40px rgba(0,0,0,.45);
+      opacity:0; transition:opacity .2s ease, transform .2s ease;
+      pointer-events:none; max-width:92vw; text-align:center; font-weight:950;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+    .toast.hide{opacity:0; transform:translateX(-50%) translateY(-8px);}
+
+    .status{
+      position:fixed;
+      right: 12px;
+      bottom: calc(env(safe-area-inset-bottom) + 10px);
+      padding:8px 10px;
+      border-radius:14px;
+      background:rgba(0,0,0,.30);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--muted);
+      font-weight:900;
+      pointer-events:none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* HUD toggle */
+    body.hudOff .chip,
+    body.hudOff .rightstack,
+    body.hudOff .strip{display:none !important;}
+
+    .hidden{display:none !important;}
+  </style>
+</head>
+<body>
+  <div class="ui">
+    <div class="top">
+      <div class="toprow">
+        <div class="chip">
+          <span id="routeTitle">Park Royal Dash</span>
+          <small id="hudRoute">Route: Acton → Park Royal → Drop-off</small>
+        </div>
+
+        <div class="rightstack">
+          <button class="hudToggle" id="hudBtn" title="Toggle HUD">HUD</button>
+          <div class="stat"><div class="v" id="score">0</div><div class="k">Score</div></div>
+          <div class="stat"><div class="v" id="coins">0</div><div class="k">Tips 💰</div></div>
+        </div>
+      </div>
+
+      <!-- ✅ Thin strip: no more big center-blocking card -->
+      <div class="strip">
+        <div class="left">
+          <div class="label">Next checkpoint</div>
+          <div class="next" id="cpText">Oxygen Acton</div>
+          <div class="bar"><div class="fill" id="cpFill"></div></div>
+        </div>
+        <div class="right">
+          <div id="speedLabel">Speed: 1.0x</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="center" id="menuWrap">
+      <div class="panel">
+        <div class="title">
+          <h1>Pixieji Uber Dash</h1>
+          <div class="badge">GO GO 🚗💨</div>
+        </div>
+        <div class="desc">
+          Dash from <b>Acton</b> to <b>Park Royal</b>. Collect tips, dodge traffic, hit checkpoints.
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="startBtn">Start Ride</button>
+          <button class="ghost" id="howBtn">How to play</button>
+        </div>
+        <div class="hint" id="howText" style="display:none;">
+          <div>📱 Swipe: ← → lane • ↑ jump • ↓ slide</div>
+          <div>💻 Keys: ← → • ↑ jump • ↓ slide • Space boost</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="status" id="statusText">Ready.</div>
+
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+
+    // ----------------------------
+    // Route strings / checkpoints
+    // ----------------------------
+    const ROUTE_TITLE = "Park Royal Dash";
+    const ROUTE_HUD = "Route: Acton → Park Royal → Drop-off";
+    const ROUTE_TOAST_START = "Route started: Acton → Park Royal → Drop-off";
+    const checkpoints = [
+      "Oxygen Acton",
+      "Western Ave",
+      "Asda Park Royal Superstore",
+      "Abbey Rd",
+      "Central Middlesex Hospital",
+      "Premier Park",
+      "Drop-off",
+    ];
+
+    // ----------------------------
+    // UI
+    // ----------------------------
+    const elScore = document.getElementById("score");
+    const elCoins = document.getElementById("coins");
+    const elRouteTitle = document.getElementById("routeTitle");
+    const elHudRoute = document.getElementById("hudRoute");
+    const elCpText = document.getElementById("cpText");
+    const elCpFill = document.getElementById("cpFill");
+    const elSpeed = document.getElementById("speedLabel");
+    const elStatus = document.getElementById("statusText");
+    const elMenu = document.getElementById("menuWrap");
+    const elToast = document.getElementById("toast");
+    const startBtn = document.getElementById("startBtn");
+    const howBtn = document.getElementById("howBtn");
+    const howText = document.getElementById("howText");
+    const hudBtn = document.getElementById("hudBtn");
+
+    elRouteTitle.textContent = ROUTE_TITLE;
+    elHudRoute.textContent = ROUTE_HUD;
+    elCpText.textContent = checkpoints[0];
+
+    howBtn.addEventListener("click", () => {
+      howText.style.display = howText.style.display === "none" ? "flex" : "none";
+    });
+
+    hudBtn.addEventListener("click", () => {
+      document.body.classList.toggle("hudOff");
+      toast(document.body.classList.contains("hudOff") ? "HUD hidden 👀" : "HUD shown ✨", 900);
+    });
+
+    function toast(msg, ms=1600){
+      elToast.textContent = msg;
+      elToast.classList.remove("hide");
+      elToast.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => {
+        elToast.classList.remove("show");
+        elToast.classList.add("hide");
+      }, ms);
+    }
+
+    // ----------------------------
+    // Three.js setup
+    // ----------------------------
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x0b0b14, 10, 70);
+
+    const camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 200);
+    camera.position.set(0, 5.5, 10.5);
+    camera.lookAt(0, 1.2, 0);
+
+    scene.add(new THREE.HemisphereLight(0xffa6d7, 0x2a2a50, 0.95));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.85);
+    dir.position.set(4,10,6);
+    scene.add(dir);
+
+    // Skyline
+    const skyline = new THREE.Group();
+    scene.add(skyline);
+    function makeBuilding(x, z, w, h, d){
+      const g = new THREE.BoxGeometry(w, h, d);
+      const m = new THREE.MeshStandardMaterial({
+        color: 0x131326,
+        emissive: 0x240b2a,
+        emissiveIntensity: 0.35,
+        roughness: 0.9,
+        metalness: 0.1
+      });
+      const mesh = new THREE.Mesh(g, m);
+      mesh.position.set(x, h/2 - 0.2, z);
+      return mesh;
+    }
+    for(let side of [-1, 1]){
+      for(let i=0;i<18;i++){
+        const z = -i*10 - 10;
+        const w = 1.5 + Math.random()*2.5;
+        const h = 2 + Math.random()*9;
+        const d = 1.2 + Math.random()*3;
+        const x = side*(5.8 + Math.random()*3.5);
+        skyline.add(makeBuilding(x, z, w, h, d));
+      }
+    }
+
+    // Road
+    const road = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 220),
+      new THREE.MeshStandardMaterial({ color: 0x0f0f1f, roughness: 1 })
+    );
+    road.rotation.x = -Math.PI/2;
+    road.position.z = -90;
+    scene.add(road);
+
+    // Lane markers
+    const laneMarkers = new THREE.Group();
+    scene.add(laneMarkers);
+    const markerMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0xff4fb6,
+      emissiveIntensity: 0.65,
+      roughness: 0.6
+    });
+    function marker(z,x){
+      const m = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 2.0), markerMat);
+      m.position.set(x, 0.01, z);
+      return m;
+    }
+    for(let i=0;i<66;i++){
+      const z = -i*3.5 - 2;
+      laneMarkers.add(marker(z,-2.0), marker(z,2.0));
+    }
+
+    // ----------------------------
+    // Player: WHITE "Uber car" made of basic shapes
+    // ----------------------------
+    const lanes = [-2.2, 0, 2.2];
+    let laneIndex = 1;
+
+    const player = new THREE.Group();
+    scene.add(player);
+    player.position.set(lanes[laneIndex], 0, 2.5);
+
+    const car = new THREE.Group();
+    player.add(car);
+
+    const whitePaint = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0.15 });
+    const glass = new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.05, metalness: 0.9, emissive: 0x120018, emissiveIntensity: 0.15 });
+    const rubber = new THREE.MeshStandardMaterial({ color: 0x0b0b10, roughness: 0.9, metalness: 0.1 });
+
+    // Body
+    const body = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.35, 1.95), whitePaint);
+    body.position.set(0, 0.42, 0);
+    car.add(body);
+
+    // Cabin
+    const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.32, 0.9), glass);
+    cabin.position.set(0, 0.68, -0.05);
+    car.add(cabin);
+
+    // Uber sign
+    const signBase = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.08, 0.22), new THREE.MeshStandardMaterial({
+      color: 0x101018, roughness: 0.4, metalness: 0.6, emissive: 0x050507, emissiveIntensity: 0.25
+    }));
+    signBase.position.set(0, 0.88, 0.10);
+    car.add(signBase);
+
+    const signGlow = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.04, 0.14), new THREE.MeshStandardMaterial({
+      color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.6, transparent:true, opacity:0.9
+    }));
+    signGlow.position.set(0, 0.89, 0.10);
+    car.add(signGlow);
+
+    // Wheels
+    function wheel(x,z){
+      const w = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.18,0.10,16), rubber);
+      w.rotation.z = Math.PI/2;
+      w.position.set(x, 0.22, z);
+      return w;
+    }
+    car.add(wheel(-0.52, 0.75), wheel(0.52, 0.75), wheel(-0.52, -0.75), wheel(0.52, -0.75));
+
+    // Underglow
+    const glow = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.9, 1.15, 0.08, 24),
+      new THREE.MeshStandardMaterial({
+        color: 0x000000,
+        emissive: 0xff4fb6,
+        emissiveIntensity: 0.9,
+        transparent: true,
+        opacity: 0.22,
+        roughness: 1
+      })
+    );
+    glow.rotation.x = Math.PI/2;
+    glow.position.y = 0.03;
+    player.add(glow);
+
+    // Player movement states
+    let vy = 0;
+    let isJumping = false;
+    let isSliding = false;
+    let slideT = 0;
+
+    function jump(){
+      if (isJumping || isSliding || !running) return;
+      isJumping = true;
+      vy = 7.2;
+    }
+    function slide(){
+      if (isSliding || isJumping || !running) return;
+      isSliding = true;
+      slideT = 0.42;
+      car.scale.y = 0.72;
+      car.position.y -= 0.10;
+    }
+    function endSlide(){
+      isSliding = false;
+      car.scale.y = 1;
+      car.position.y = 0;
+    }
+    function moveLane(dir){
+      if (!running) return;
+      laneIndex = THREE.MathUtils.clamp(laneIndex + dir, 0, lanes.length-1);
+    }
+
+    // ----------------------------
+    // Obstacles & Tips
+    // ----------------------------
+    const obstacles = [];
+    const tips = [];
+
+    const trafficMat = new THREE.MeshStandardMaterial({
+      color: 0x1b1b28,
+      roughness: 0.65,
+      metalness: 0.2,
+      emissive: 0x2a1130,
+      emissiveIntensity: 0.18
+    });
+
+    const coneMat = new THREE.MeshStandardMaterial({
+      color: 0xff4fb6,
+      roughness: 0.6,
+      metalness: 0.1,
+      emissive: 0xff2d95,
+      emissiveIntensity: 0.2
+    });
+
+    const tipMat = new THREE.MeshStandardMaterial({
+      color: 0xffd56b,
+      roughness: 0.25,
+      metalness: 0.9,
+      emissive: 0xffd56b,
+      emissiveIntensity: 0.25
+    });
+
+    function spawnObstacle(){
+      const lane = lanes[(Math.random()*3)|0];
+      const z = -60 - Math.random()*30;
+      const typeRoll = Math.random();
+
+      let obj;
+      if (typeRoll < 0.58){
+        // traffic car block
+        obj = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.7, 2.2), trafficMat);
+        obj.position.set(lane, 0.35, z);
+        obj.userData.kind = "traffic";
+        obj.userData.h = 0.8;
+      } else {
+        // cone
+        obj = new THREE.Mesh(new THREE.ConeGeometry(0.55, 1.05, 16), coneMat);
+        obj.position.set(lane, 0.52, z);
+        obj.userData.kind = "cone";
+        obj.userData.h = 0.9;
+      }
+      scene.add(obj);
+      obstacles.push(obj);
+    }
+
+    function spawnTips(){
+      const lane = lanes[(Math.random()*3)|0];
+      const baseZ = -55 - Math.random()*35;
+      const count = 3 + ((Math.random()*4)|0);
+      for(let i=0;i<count;i++){
+        const c = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.12, 12, 24), tipMat);
+        c.rotation.x = Math.PI/2;
+        c.position.set(lane, 1.0, baseZ - i*2.2);
+        scene.add(c);
+        tips.push(c);
+      }
+    }
+
+    // ----------------------------
+    // Game state
+    // ----------------------------
+    let running = false;
+    let gameOver = false;
+    let score = 0;
+    let tipCoins = 0;
+
+    let speed = 14.0;
+    let speedMul = 1.0;
+    let spawnTimer = 0;
+    let tipTimer = 0;
+
+    let cpIndex = 0;
+    let distanceToNext = 220;
+    let distanceLeft = distanceToNext;
+
+    function updateUI(){
+      elScore.textContent = String(Math.floor(score));
+      elCoins.textContent = String(tipCoins);
+      elSpeed.textContent = "Speed: " + speedMul.toFixed(1) + "x";
+      const pct = THREE.MathUtils.clamp(1 - (distanceLeft / distanceToNext), 0, 1);
+      elCpFill.style.width = (pct*100).toFixed(0) + "%";
+    }
+
+    function resetGame(){
+      for (const o of obstacles) scene.remove(o);
+      for (const t of tips) scene.remove(t);
+      obstacles.length = 0; tips.length = 0;
+
+      laneIndex = 1;
+      player.position.set(lanes[laneIndex], 0, 2.5);
+      vy = 0; isJumping = false; isSliding = false; slideT = 0;
+      car.scale.set(1,1,1); car.position.y = 0;
+
+      score = 0; tipCoins = 0;
+      speedMul = 1.0;
+      spawnTimer = 0; tipTimer = 0;
+
+      cpIndex = 0;
+      distanceToNext = 220;
+      distanceLeft = distanceToNext;
+
+      elCpText.textContent = checkpoints[0];
+      elStatus.textContent = "Cruising.";
+      updateUI();
+
+      gameOver = false;
+    }
+
+    function setGameOver(){
+      if (gameOver) return;
+      gameOver = true;
+      running = false;
+      elStatus.textContent = "Crashed. Restart?";
+      toast("Ride ended 💥  Score: " + Math.floor(score) + "  Tips: " + tipCoins, 2200);
+      elMenu.classList.remove("hidden");
+      startBtn.textContent = "Restart Ride";
+    }
+
+    function checkpointHit(){
+      toast("Checkpoint ✅ " + checkpoints[cpIndex], 1400);
+      cpIndex++;
+      if (cpIndex >= checkpoints.length){
+        toast("Drop-off reached 🏁  Pixieji wins!", 2200);
+        cpIndex = 0;
+      }
+      elCpText.textContent = checkpoints[cpIndex];
+
+      speedMul = Math.min(2.6, speedMul + 0.12);
+      distanceToNext = Math.min(320, distanceToNext + 12);
+      distanceLeft = distanceToNext;
+    }
+
+    // ----------------------------
+    // Input
+    // ----------------------------
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "ArrowLeft") moveLane(-1);
+      if (e.code === "ArrowRight") moveLane(1);
+      if (e.code === "ArrowUp") jump();
+      if (e.code === "ArrowDown") slide();
+      if (e.code === "Space" && running) speedMul = Math.min(3.0, speedMul + 0.06);
+    });
+
+    let sx=0, sy=0, st=0;
+    window.addEventListener("touchstart", (e) => {
+      if (!e.touches?.[0]) return;
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+      st = performance.now();
+    }, { passive:true });
+
+    window.addEventListener("touchend", (e) => {
+      const dt = performance.now() - st;
+      const ex = e.changedTouches?.[0]?.clientX ?? sx;
+      const ey = e.changedTouches?.[0]?.clientY ?? sy;
+      const dx = ex - sx, dy = ey - sy;
+      const ax = Math.abs(dx), ay = Math.abs(dy);
+
+      if (ax < 18 && ay < 18 && dt < 260){ jump(); return; }
+
+      if (ax > ay){
+        if (dx > 25) moveLane(1);
+        else if (dx < -25) moveLane(-1);
+      } else {
+        if (dy < -25) jump();
+        else if (dy > 25) slide();
+      }
+    }, { passive:true });
+
+    // ----------------------------
+    // Start / restart
+    // ----------------------------
+    startBtn.addEventListener("click", () => {
+      elMenu.classList.add("hidden");
+      resetGame();
+      running = true;
+      toast(ROUTE_TOAST_START, 1700);
+    });
+
+    // ----------------------------
+    // Collisions
+    // ----------------------------
+    function intersectsPlayer(obj){
+      const px = player.position.x;
+      const py = player.position.y;
+      const pz = player.position.z;
+
+      const pH = isSliding ? 0.55 : 1.05;
+      const pW = 0.95;
+      const pD = 1.55;
+
+      const ox = obj.position.x;
+      const oy = obj.position.y;
+      const oz = obj.position.z;
+
+      const oH = obj.userData.h ?? 1.0;
+      const oW = obj.userData.kind === "traffic" ? 1.2 : 1.0;
+      const oD = obj.userData.kind === "traffic" ? 2.2 : 1.0;
+
+      const dx = Math.abs(px - ox);
+      const dy = Math.abs((py + 0.6) - oy);
+      const dz = Math.abs(pz - oz);
+
+      return (dx < (pW/2 + oW/2)) && (dy < (pH/2 + oH/2)) && (dz < (pD/2 + oD/2));
+    }
+
+    function intersectsTip(c){
+      const dx = Math.abs(player.position.x - c.position.x);
+      const dy = Math.abs((player.position.y + 0.7) - c.position.y);
+      const dz = Math.abs(player.position.z - c.position.z);
+      return dx < 0.85 && dy < 0.9 && dz < 1.05;
+    }
+
+    // ----------------------------
+    // Resize
+    // ----------------------------
+    window.addEventListener("resize", () => {
+      camera.aspect = innerWidth/innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    });
+
+    // ----------------------------
+    // Loop
+    // ----------------------------
+    let last = performance.now();
+    function tick(now){
+      const dt = Math.min(0.033, (now - last)/1000);
+      last = now;
+
+      // camera follow
+      camera.position.x += (player.position.x * 0.45 - camera.position.x) * (dt * 3.2);
+
+      // lane lerp
+      const tx = lanes[laneIndex];
+      player.position.x += (tx - player.position.x) * (dt * 16);
+
+      glow.material.opacity = 0.18 + 0.05*Math.sin(now*0.006);
+
+      if (running && !gameOver){
+        speedMul = Math.min(3.0, speedMul + dt*0.012);
+        const v = speed * speedMul;
+
+        score += v * dt * 1.15;
+        distanceLeft -= v * dt;
+        if (distanceLeft <= 0) checkpointHit();
+
+        // jump
+        if (isJumping){
+          vy -= 18.5 * dt;
+          player.position.y += vy * dt;
+          if (player.position.y <= 0){
+            player.position.y = 0;
+            isJumping = false;
+            vy = 0;
+          }
+        }
+
+        // slide
+        if (isSliding){
+          slideT -= dt;
+          if (slideT <= 0) endSlide();
+        }
+
+        // spawns
+        spawnTimer -= dt;
+        if (spawnTimer <= 0){
+          spawnObstacle();
+          const base = 0.78;
+          spawnTimer = Math.max(0.32, base - (speedMul*0.12)) + Math.random()*0.22;
+        }
+
+        tipTimer -= dt;
+        if (tipTimer <= 0){
+          spawnTips();
+          tipTimer = 1.2 + Math.random()*0.8;
+        }
+
+        // obstacles move
+        for (let i=obstacles.length-1;i>=0;i--){
+          const o = obstacles[i];
+          o.position.z += v * dt;
+
+          if (o.position.z > 0.5 && o.position.z < 3.6){
+            if (intersectsPlayer(o)){
+              setGameOver();
+              break;
+            }
+          }
+          if (o.position.z > 18){
+            scene.remove(o);
+            obstacles.splice(i,1);
+          }
+        }
+
+        // tips move
+        for (let i=tips.length-1;i>=0;i--){
+          const c = tips[i];
+          c.position.z += v * dt;
+          c.rotation.z += dt * 4.2;
+
+          if (intersectsTip(c)){
+            tipCoins += 1;
+            score += 18;
+            toast("Tip +1 💰", 420);
+            scene.remove(c);
+            tips.splice(i,1);
+            continue;
+          }
+          if (c.position.z > 18){
+            scene.remove(c);
+            tips.splice(i,1);
+          }
+        }
+
+        // lane markers loop
+        for (const m of laneMarkers.children){
+          m.position.z += v * dt;
+          if (m.position.z > 10) m.position.z -= 240;
+        }
+
+        // skyline loop
+        for (const b of skyline.children){
+          b.position.z += v * dt * 0.65;
+          if (b.position.z > 15) b.position.z -= 220;
+        }
+
+        elStatus.textContent = isSliding ? "Sliding…" : (isJumping ? "Jumping…" : "Cruising.");
+        updateUI();
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // boot
+    updateUI();
+  </script>
+</body>
+</html>
