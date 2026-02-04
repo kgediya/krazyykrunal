@@ -6,119 +6,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    :root {
-      --bg: #0e0e0e;
-      --card: #1a1a1a;
-      --text: #ffffff;
-      --muted: #b5b5b5;
-      --accent: #f5c518;
-      --tag: #2d2d2d;
+    :root{
+      --bg:#0e0e0e; --card:#1a1a1a; --text:#fff; --muted:#b5b5b5;
+      --accent:#f5c518; --tag:#2d2d2d; --snap:#fffc00;
+      --border:#2a2a2a;
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text)}
+    header{text-align:center;padding:48px 20px 18px}
+    header h1{font-size:2.2rem;margin:0 0 10px}
+    header p{color:var(--muted);max-width:860px;margin:0 auto;line-height:1.5}
+    .bar{
+      display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+      padding:0 20px 22px;
     }
-
-    header {
-      text-align: center;
-      padding: 48px 20px 24px;
+    .pill{
+      border:1px solid var(--border); background:#121212; color:var(--muted);
+      padding:8px 12px;border-radius:999px;font-size:.85rem;cursor:pointer;user-select:none;
     }
-
-    header h1 {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
+    .pill.active{border-color:#444;color:#fff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;padding:26px 32px 40px}
+    .card{
+      background:var(--card);border-radius:18px;padding:16px;position:relative;
+      display:flex;flex-direction:column;gap:12px;border:1px solid rgba(255,255,255,.04)
     }
-
-    header p {
-      color: var(--muted);
-      max-width: 720px;
-      margin: 0 auto;
+    iframe{width:100%;height:200px;border-radius:14px;border:none;background:#000}
+    .snap-preview{
+      height:200px;border-radius:14px;
+      background:linear-gradient(135deg,#2d2d2d,#1a1a1a);
+      display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;
+      border:1px solid rgba(255,255,255,.06)
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-      padding: 32px;
+    .snap-preview .thumb{
+      width:72px;height:72px;border-radius:18px;background:#0b0b0b;
+      display:grid;place-items:center;border:1px solid rgba(255,255,255,.08)
     }
-
-    .card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 16px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .snap-preview .thumb svg{width:38px;height:38px}
+    .snap-preview .label{font-size:.9rem;color:var(--muted)}
+    .snap-btn{
+      background:var(--snap);color:#000;font-weight:800;padding:9px 14px;border-radius:999px;
+      font-size:.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:8px
     }
-
-    iframe {
-      width: 100%;
-      height: 200px;
-      border-radius: 14px;
-      border: none;
-      background: #000;
+    .winner{
+      position:absolute;top:12px;left:12px;background:var(--accent);color:#000;font-weight:800;
+      font-size:.75rem;padding:6px 10px;border-radius:999px
     }
-
-    .winner {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: var(--accent);
-      color: #000;
-      font-weight: 700;
-      font-size: 0.75rem;
-      padding: 6px 10px;
-      border-radius: 999px;
+    h3{margin:4px 0 0;font-size:1.1rem;line-height:1.25}
+    .meta{font-size:.85rem;color:var(--muted)}
+    .desc{font-size:.9rem;line-height:1.45;color:#e0e0e0}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+    .tags span{background:var(--tag);padding:4px 10px;border-radius:999px;font-size:.7rem;color:#ddd}
+    .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
+    .link{
+      font-size:.78rem;color:#cfcfcf;text-decoration:none;border:1px solid var(--border);
+      padding:6px 10px;border-radius:999px;background:#121212
     }
-
-    h3 {
-      margin: 4px 0 0;
-      font-size: 1.1rem;
-    }
-
-    .meta {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .desc {
-      font-size: 0.9rem;
-      line-height: 1.45;
-      color: #e0e0e0;
-    }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: auto;
-    }
-
-    .tags span {
-      background: var(--tag);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      color: #ddd;
-    }
-
-    footer {
-      text-align: center;
-      padding: 24px;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
+    .hidden{display:none !important}
+    footer{text-align:center;padding:18px 24px 32px;color:var(--muted);font-size:.8rem}
   </style>
 </head>
 
 <body>
-
 <header>
   <h1>XDG Community Awards 2025 – Project Gallery</h1>
   <p>
@@ -127,13 +75,13 @@
   </p>
 </header>
 
+<div class="bar" id="filters"></div>
 <section id="projects" class="grid"></section>
 
-<footer>
-  Built with ❤️ by the XDG Community · 2025
-</footer>
+<footer>Built with ❤️ by the XDG Community · 2025</footer>
 
 <script>
+  // Winners you already finalized (and we used earlier)
   const WINNERS = {
     "Tiny Intruder": "Most Playful Build",
     "Order or Chaos": "Technical Excellence",
@@ -142,110 +90,290 @@
     "Escape Room": "Best New Builder"
   };
 
+  // Helper: turn various links into embeddable preview URLs
+  function toEmbedUrl(url) {
+    if (!url) return "";
+    const u = url.trim();
+
+    // Snapchat try links -> not reliably embeddable; handled via "snapchat" field
+    if (u.includes("snapchat.com/t/")) return u;
+
+    // YouTube standard watch
+    // https://www.youtube.com/watch?v=VIDEO_ID&list=LIST_ID
+    // -> https://www.youtube.com/embed/VIDEO_ID?list=LIST_ID
+    const ytWatch = u.match(/youtube\.com\/watch\?v=([^&]+)/i);
+    if (ytWatch) {
+      const vid = ytWatch[1];
+      const listMatch = u.match(/[?&]list=([^&]+)/i);
+      const listParam = listMatch ? `?list=${listMatch[1]}` : "";
+      return `https://www.youtube.com/embed/${vid}${listParam}`;
+    }
+
+    // YouTube shorts
+    const ytShorts = u.match(/youtube\.com\/shorts\/([^?&]+)/i);
+    if (ytShorts) return `https://www.youtube.com/embed/${ytShorts[1]}`;
+
+    // youtu.be short
+    const youtuBe = u.match(/youtu\.be\/([^?&]+)/i);
+    if (youtuBe) return `https://www.youtube.com/embed/${youtuBe[1]}`;
+
+    // Already an embed URL
+    if (u.includes("youtube.com/embed/")) return u;
+
+    // Google Drive file view -> preview
+    // https://drive.google.com/file/d/FILE_ID/view?... -> /preview
+    const driveFile = u.match(/drive\.google\.com\/file\/d\/([^\/]+)\//i);
+    if (driveFile) return `https://drive.google.com/file/d/${driveFile[1]}/preview`;
+
+    // Google Drive folder isn't embeddable as a video preview reliably.
+    // If someone passes a folder, we just return it as-is (will likely not preview).
+    // Better: user provides a file. (Tiny Intruder is now a file; good.)
+    return u;
+  }
+
+  // FULL SUBMISSIONS LIST (from your data)
   const projects = [
     {
       title: "Brain Boxer",
       creator: "VyuXR Immersive Studios",
       location: "Mumbai, India",
-      description: "A fast-paced Spectacles game mixing brain puzzles with quick punches to keep players mentally sharp and physically active.",
-      video: "https://drive.google.com/file/d/1Fyjn-FEFDMB_BCQs7FI8Lv98veufz4VK/preview",
-      categories: ["Most Playful Build"]
+      description: "Brain Boxer is a fast-paced game made for Snap's Spectacles combining brain puzzles and quick punches. The objective is to solve word gaps and math problems before timer runs out. Play to stay sharp and active!",
+      categories: ["Most Playful Build"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1Fyjn-FEFDMB_BCQs7FI8Lv98veufz4VK/view?usp=sharing"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1lOa_rFY5YIm0EqAq9tl67-wDoO9tShpa" }]
     },
     {
       title: "AirDrive - VR",
       creator: "Aayushi Panchal",
       location: "Mumbai, India",
-      description: "A controller-free VR racing experience where hand gestures control steering, acceleration, and braking.",
-      video: "https://www.youtube.com/embed/89qqOw5tCEo",
-      categories: ["Technical Excellence", "Most Playful Build"]
+      description: "AirDrive is a controller-free VR racing game where your hands are the controls. Built in Unity 6 with the Meta SDK, it uses real-time hand gestures to drive, steer, accelerate, and brake—no buttons, no hardware.",
+      categories: ["Technical Excellence", "Most Playful Build"],
+      video: toEmbedUrl("https://youtu.be/89qqOw5tCEo?si=GwjVZZ4nUx6tJkU5"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1V9cW36cusAX2dKPjLwNuPTDFBVaUtnz5" }]
     },
     {
       title: "Tiny Intruder",
       creator: "Aayushi Panchal",
       location: "Mumbai, India",
-      description: "Play as a tiny mouse navigating a giant house using stealth, puzzles, and special abilities like UV vision.",
-      video: "https://drive.google.com/file/d/1xb7fUIkoMXyWbrJvrBbRtfrVTRhJwoeG/preview",
-      categories: ["Best XR Storytelling", "Technical Excellence", "Most Playful Build"]
+      description: "Become a Mouse is an immersive VR experience where you explore a giant house after dark. Use abilities like UV Vision to uncover clues, climb towering furniture, disable traps, and sneak past a lurking cat.",
+      categories: ["Best XR Storytelling", "Technical Excellence", "Most Playful Build"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1xb7fUIkoMXyWbrJvrBbRtfrVTRhJwoeG/view?usp=drive_link"),
+      moreLinks: [{ label: "Drive (Submission)", url: "https://drive.google.com/open?id=1IZ9eij8HOJLVBoabXomgBdzxNxKr27Ts" }]
     },
     {
       title: "Order or Chaos",
       creator: "Aayushi Panchal",
       location: "Mumbai, India",
-      description: "A VR therapy experience for OCD and anxiety, transforming intrusive thoughts into interactive CBT-inspired actions.",
-      video: "https://www.youtube.com/embed/tMwj5z9xpfY",
-      categories: ["Technical Excellence", "Best Utility XR", "Most Playful Build"]
+      description: "Order or Chaos is a VR therapy app to help manage OCD and anxiety. Users speak anxious thoughts, see them visualized, and respond with CBT-inspired actions like rejecting, reshaping, or accepting the thought.",
+      categories: ["Technical Excellence", "Most Playful Build", "Best Utility XR"],
+      video: toEmbedUrl("https://youtu.be/tMwj5z9xpfY?si=tWlyajis-mYT9E-f"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1lD7YGcoROa3XrflSchCQQfDgsw2NPO4A" }]
     },
     {
       title: "MEDXR",
       creator: "Tejas Pawar",
-      location: "Mumbai, India",
-      description: "A VR medical collaboration platform converting MRI scans into interactive 3D visualizations with AI guidance.",
-      video: "https://drive.google.com/file/d/1bn4uV4FTqXBp3qjL6AzBCtfxdta9dj3H/preview",
-      categories: ["Technical Excellence", "Best Utility XR"]
+      location: "Mumbai, Maharashtra, India",
+      description: "MEDXR is a VR platform for real-time remote collaboration and medical visualization. It transforms 2D MRI scans into interactive 3D models and includes AI-driven avatars for guidance and insights.",
+      categories: ["Technical Excellence", "Best Utility XR"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1bn4uV4FTqXBp3qjL6AzBCtfxdta9dj3H/view?usp=drive_link"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1eqhkAxHopvGfxxlH3LXEmC6mmINY22qT" }]
     },
     {
       title: "Geo Quest",
       creator: "Anurag Ranjan",
       location: "New Delhi, India",
-      description: "An interactive geography guessing game where players identify global landmarks by rotating a 3D globe.",
-      video: "https://drive.google.com/file/d/1W0frWQCKxXL76Y2-jj82aknQ-523449i/preview",
-      categories: ["Most Playful Build"]
+      description: "An interactive geography guessing game where users identify famous landmarks. Players rotate a 3D Earth globe, tap pins to guess, and race against the timer across rounds.",
+      categories: ["Most Playful Build"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1W0frWQCKxXL76Y2-jj82aknQ-523449i/view?usp=sharing"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1cBG1V0XysZbKwubeXmaR7EADT6G5x69x" }]
     },
     {
       title: "Patang Baaz",
       creator: "Anurag Ranjan",
       location: "New Delhi, India",
-      description: "A fast-paced kite-fighting game on Snapchat with physics-based thread cutting and dynamic enemies.",
-      video: "https://drive.google.com/file/d/1bg_UEoFwFrUgRb1HpB9VodQvTt5nZIHl/preview",
-      categories: ["Most Playful Build", "Technical Excellence"]
+      description: "A fast-paced kite fighting game on Snapchat. Players orbit and dash to cut enemy kite threads while avoiding being cut. Includes enemy spawning, thread physics, and high-score system.",
+      categories: ["Technical Excellence", "Most Playful Build"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1bg_UEoFwFrUgRb1HpB9VodQvTt5nZIHl/view?usp=sharing"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1xMK-CWLkgvfraSJs94TedDfXFaccGFOC" }]
     },
     {
       title: "The Holiday Edit",
       creator: "Unnati Israni",
       location: "Mumbai, India",
-      description: "A festive Snapchat beauty lens featuring 12 unlockable holiday makeup looks.",
-      video: "https://drive.google.com/file/d/19y1riA8B8hNWCl4KZyZj-7IGPVL5fFT5/preview",
-      categories: ["Best XR Storytelling", "Technical Excellence"]
+      description: "The Holiday Edit is a digital beauty advent calendar featuring 12 festive makeup looks. A Snapchat lens where users unlock a new look every day till Christmas.",
+      categories: ["Best XR Storytelling", "Technical Excellence", "Most Playful Build"],
+      video: toEmbedUrl("https://drive.google.com/file/d/19y1riA8B8hNWCl4KZyZj-7IGPVL5fFT5/view?usp=sharing"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1B_p42XEMZpOr334ewtFwAknpv_fbWGUe" }]
     },
     {
       title: "HomeStyler XR",
       creator: "Vibhor Singh",
       location: "Jodhpur, India",
-      description: "A photorealistic VR interior design experience with AI-powered texture generation and live environment interactions.",
-      video: "https://drive.google.com/file/d/1sIOrpfVQizhzFZ-bU4jkttobjpP2H5xJ/preview",
-      categories: ["Best Utility XR", "Best XR Storytelling"]
+      description: "A photorealistic VR home styling experience for Meta Quest with realistic lighting and micro-interactions. Includes AI-powered wall texture generation from natural language prompts.",
+      categories: ["Best XR Storytelling", "Best Utility XR"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1sIOrpfVQizhzFZ-bU4jkttobjpP2H5xJ/view?usp=sharing"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=13MCO_DyW30r3dHclXkCu6FQK3h_-d-Ap" }]
     },
     {
       title: "Escape Room",
       creator: "Aniket Apraj",
-      location: "Thane, India",
-      description: "An AR escape room challenge where players navigate blind grids, collect coins, and avoid deadly traps.",
-      video: "https://www.youtube.com/embed/8vyA3CPsD4s?list=PLWr6c6PINC-HMw1CJtiEnCijsPcU_Iuks",
-      categories: ["Best New Builder", "Most Playful Build", "Technical Excellence", "Best Utility XR"]
+      location: "Thane, Maharashtra, India",
+      description: "AR Escape Room Challenge: navigate a blind-room grid, collect 10 coins, dodge spike traps, and escape before time runs out.",
+      categories: ["Best XR Storytelling", "Technical Excellence", "Best New Builder", "Most Playful Build", "Best Utility XR"],
+      video: toEmbedUrl("https://www.youtube.com/watch?v=8vyA3CPsD4s&list=PLWr6c6PINC-HMw1CJtiEnCijsPcU_Iuks"),
+      moreLinks: [
+        { label: "YouTube (Alt)", url: "https://youtube.com/shorts/8vyA3CPsD4s?feature=share" },
+        { label: "Instagram", url: "https://www.instagram.com/reel/DH2rYiAxQx8/?igsh=MTc3MWtwcHI3bzJwdw==" },
+        { label: "Drive (Assets)", url: "https://drive.google.com/open?id=1fkhZR4K6gm3V-E8LKriuU9MSuaZL9z3S" },
+        { label: "Drive (Alt)", url: "https://drive.google.com/open?id=15mzGCNqOaukwkBL8ZXYHGHsgkCYvylMG" }
+      ]
+    },
+    {
+      title: "PocketShowroom AR-Navigation",
+      creator: "JISHANAHMED AR SHAIKH & Team grACE",
+      location: "Mumbai, India",
+      description: "A Unity XR project: markerless AR car showroom with Vuforia, allowing users to interact & navigate real-world cars with an addition of realtime LIVE AR GPS system.",
+      categories: ["Technical Excellence", "Best Utility XR"],
+      video: toEmbedUrl("https://youtu.be/fmIvEdaGA78"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1O8pMZ-QciUGrCRpEw-NdaQRAfTtyKS9d" }]
+    },
+    {
+      title: "Solvelt",
+      creator: "Himalaya Bharti",
+      location: "New Delhi, India",
+      description: "Basic arithmetic calculation experience.",
+      categories: ["Most Playful Build", "Best Utility XR"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1EVSyxbZQ4yPiqd83ES71NjicSaeWMDLF/view?usp=drive_link"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1T39Hv7YAW3blOkkIip_yg0hr9yIpw3-A" }]
+    },
+    {
+      title: "Balloon Pop",
+      creator: "Himalaya Bharti",
+      location: "New Delhi, India",
+      description: "Tap the correct color/pattern of the balloon from balloon icons.",
+      categories: ["Most Playful Build", "Best Utility XR"],
+      video: toEmbedUrl("https://drive.google.com/file/d/1KXDV0gGVzQpkOdFQYdZ4xIdhO-7sAVhS/view?usp=drive_link"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=11Wih3Fg8UFwqLxDZdySogvT5yAKFWg1v" }]
+    },
+    {
+      title: "GeoAR Guest",
+      creator: "Anurag Ranjan",
+      location: "New Delhi, India",
+      description: "GeoQuest for Spectacles is an AR location-guessing game on Snap Spectacles where players identify real-world landmarks using hand-pinch controls.",
+      categories: ["Most Playful Build", "Best Utility XR"],
+      video: toEmbedUrl("https://drive.google.com/file/d/18nOgbD5IMT983p0mJqi9GKVqej0yOLjR/view?usp=sharing"),
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1Rr89HkvkjEqoUCFeS3Yikz23-dF2x-3t" }]
+    },
+
+    // Mrical Singhal submissions: Snapchat Try links -> show generic thumbnail + button
+    {
+      title: "Build Habits",
+      creator: "Mrical Singhal",
+      location: "Indore, India",
+      description: "Build Habits logs to develop habits with full customization and tracks logs using calendar strikes to build habits and boost productivity.",
+      categories: ["Best Utility XR"],
+      snapchat: "https://snapchat.com/t/xwtnEeu9",
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1BbV09TZlYdzrFIiV3cVUZYwKGs86IciH" }]
+    },
+    {
+      title: "Train Of Hope",
+      creator: "Mrical Singhal",
+      location: "Indore, India",
+      description: "A cursed train speeds through the night, draining the life from its passengers/friends. Fly through the carriage as a young witch, destroy dark magic, and save your friends before hope fades away.",
+      categories: ["Best XR Storytelling", "Most Playful Build"],
+      snapchat: "https://snapchat.com/t/TwYGcfwg",
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1xOi6__5qBW-n5jNBEs4oARTDsEqO2W8o" }]
+    },
+    {
+      title: "Tiger In Jungle",
+      creator: "Mrical Singhal",
+      location: "Indore, India",
+      description: "A fun and enjoyable run of Bitmoji friends, because Tiger is following them. It’s a run for life.",
+      categories: ["Best XR Storytelling", "Most Playful Build"],
+      snapchat: "https://snapchat.com/t/iP4z9XJV",
+      moreLinks: [{ label: "Drive (Assets)", url: "https://drive.google.com/open?id=1y9gsYOUgHchmizDOtoeuINSQtTZ7FvcM" }]
     }
   ];
 
+  // Build category filters
+  const allCategories = Array.from(new Set(projects.flatMap(p => p.categories))).sort();
+  const filtersEl = document.getElementById("filters");
+
+  const filterState = { category: "All" };
+
+  function makePill(label) {
+    const el = document.createElement("div");
+    el.className = "pill" + (label === "All" ? " active" : "");
+    el.textContent = label;
+    el.addEventListener("click", () => {
+      filterState.category = label;
+      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
+      render();
+    });
+    return el;
+  }
+
+  filtersEl.appendChild(makePill("All"));
+  allCategories.forEach(c => filtersEl.appendChild(makePill(c)));
+
+  // Render
   const container = document.getElementById("projects");
 
-  projects.forEach(p => {
-    const win = WINNERS[p.title];
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      ${win ? `<div class="winner">🏆 ${win}</div>` : ""}
-      <iframe src="${p.video}" allowfullscreen></iframe>
-      <h3>${p.title}</h3>
-      <div class="meta">${p.creator} · ${p.location}</div>
-      <div class="desc">${p.description}</div>
-      <div class="tags">
-        ${p.categories.map(c => `<span>${c}</span>`).join("")}
+  function snapMedia(url) {
+    return `
+      <div class="snap-preview">
+        <div class="thumb" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2c2.7 0 4.7 2.1 4.7 4.8v1.7c0 1.4.9 2.2 1.6 2.6.5.3.8.9.7 1.5-.1.6-.5 1.1-1.1 1.2-.7.2-1.3.3-1.9.4-.2 0-.3.2-.3.4 0 2.4-1.7 4-4.7 4s-4.7-1.6-4.7-4c0-.2-.1-.4-.3-.4-.6-.1-1.2-.2-1.9-.4-.6-.1-1-.6-1.1-1.2-.1-.6.2-1.2.7-1.5.7-.4 1.6-1.2 1.6-2.6V6.8C7.3 4.1 9.3 2 12 2Z" stroke="#ffffff" stroke-opacity=".75" stroke-width="1.2"/>
+            <path d="M7.5 16.1c.8 1.6 2.3 2.6 4.5 2.6s3.7-1 4.5-2.6" stroke="#ffffff" stroke-opacity=".55" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="label">Snapchat Lens</div>
+        <a class="snap-btn" href="${url}" target="_blank" rel="noopener noreferrer">
+          Try on Snapchat
+        </a>
       </div>
     `;
+  }
 
-    container.appendChild(card);
-  });
+  function render() {
+    container.innerHTML = "";
+    const active = filterState.category;
+
+    projects
+      .filter(p => active === "All" || p.categories.includes(active))
+      .forEach(p => {
+        const win = WINNERS[p.title];
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const media = p.snapchat
+          ? snapMedia(p.snapchat)
+          : `<iframe src="${p.video}" allowfullscreen loading="lazy"></iframe>`;
+
+        const moreLinks = (p.moreLinks && p.moreLinks.length)
+          ? `<div class="links">${p.moreLinks.map(l => `<a class="link" href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label}</a>`).join("")}</div>`
+          : "";
+
+        card.innerHTML = `
+          ${win ? `<div class="winner">🏆 ${win}</div>` : ""}
+          ${media}
+          <h3>${p.title}</h3>
+          <div class="meta">${p.creator} · ${p.location}</div>
+          <div class="desc">${p.description}</div>
+          ${moreLinks}
+          <div class="tags">
+            ${p.categories.map(c => `<span>${c}</span>`).join("")}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+  }
+
+  render();
 </script>
-
 </body>
 </html>
