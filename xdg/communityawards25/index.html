@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>XDG Community Awards 2025 – Project Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --card: #1a1a1a;
+      --text: #ffffff;
+      --muted: #b5b5b5;
+      --accent: #f5c518;
+      --tag: #2d2d2d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      text-align: center;
+      padding: 48px 20px 24px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      padding: 32px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 16px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 200px;
+      border-radius: 14px;
+      border: none;
+      background: #000;
+    }
+
+    .winner {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    h3 {
+      margin: 4px 0 0;
+      font-size: 1.1rem;
+    }
+
+    .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .desc {
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: #e0e0e0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .tags span {
+      background: var(--tag);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      color: #ddd;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>XDG Community Awards 2025 – Project Gallery</h1>
+  <p>
+    A curated showcase of playful, technical, and impactful XR projects built by the XDG community.
+    Winning submissions are highlighted with their award categories.
+  </p>
+</header>
+
+<section id="projects" class="grid"></section>
+
+<footer>
+  Built with ❤️ by the XDG Community · 2025
+</footer>
+
+<script>
+  const WINNERS = {
+    "Tiny Intruder": "Most Playful Build",
+    "Order or Chaos": "Technical Excellence",
+    "HomeStyler XR": "Best Utility XR",
+    "The Holiday Edit": "Best XR Storytelling",
+    "Escape Room": "Best New Builder"
+  };
+
+  const projects = [
+    {
+      title: "Brain Boxer",
+      creator: "VyuXR Immersive Studios",
+      location: "Mumbai, India",
+      description: "A fast-paced Spectacles game mixing brain puzzles with quick punches to keep players mentally sharp and physically active.",
+      video: "https://drive.google.com/file/d/1Fyjn-FEFDMB_BCQs7FI8Lv98veufz4VK/preview",
+      categories: ["Most Playful Build"]
+    },
+    {
+      title: "AirDrive - VR",
+      creator: "Aayushi Panchal",
+      location: "Mumbai, India",
+      description: "A controller-free VR racing experience where hand gestures control steering, acceleration, and braking.",
+      video: "https://www.youtube.com/embed/89qqOw5tCEo",
+      categories: ["Technical Excellence", "Most Playful Build"]
+    },
+    {
+      title: "Tiny Intruder",
+      creator: "Aayushi Panchal",
+      location: "Mumbai, India",
+      description: "Play as a tiny mouse navigating a giant house using stealth, puzzles, and special abilities like UV vision.",
+      video: "https://drive.google.com/file/d/1xb7fUIkoMXyWbrJvrBbRtfrVTRhJwoeG/preview",
+      categories: ["Best XR Storytelling", "Technical Excellence", "Most Playful Build"]
+    },
+    {
+      title: "Order or Chaos",
+      creator: "Aayushi Panchal",
+      location: "Mumbai, India",
+      description: "A VR therapy experience for OCD and anxiety, transforming intrusive thoughts into interactive CBT-inspired actions.",
+      video: "https://www.youtube.com/embed/tMwj5z9xpfY",
+      categories: ["Technical Excellence", "Best Utility XR", "Most Playful Build"]
+    },
+    {
+      title: "MEDXR",
+      creator: "Tejas Pawar",
+      location: "Mumbai, India",
+      description: "A VR medical collaboration platform converting MRI scans into interactive 3D visualizations with AI guidance.",
+      video: "https://drive.google.com/file/d/1bn4uV4FTqXBp3qjL6AzBCtfxdta9dj3H/preview",
+      categories: ["Technical Excellence", "Best Utility XR"]
+    },
+    {
+      title: "Geo Quest",
+      creator: "Anurag Ranjan",
+      location: "New Delhi, India",
+      description: "An interactive geography guessing game where players identify global landmarks by rotating a 3D globe.",
+      video: "https://drive.google.com/file/d/1W0frWQCKxXL76Y2-jj82aknQ-523449i/preview",
+      categories: ["Most Playful Build"]
+    },
+    {
+      title: "Patang Baaz",
+      creator: "Anurag Ranjan",
+      location: "New Delhi, India",
+      description: "A fast-paced kite-fighting game on Snapchat with physics-based thread cutting and dynamic enemies.",
+      video: "https://drive.google.com/file/d/1bg_UEoFwFrUgRb1HpB9VodQvTt5nZIHl/preview",
+      categories: ["Most Playful Build", "Technical Excellence"]
+    },
+    {
+      title: "The Holiday Edit",
+      creator: "Unnati Israni",
+      location: "Mumbai, India",
+      description: "A festive Snapchat beauty lens featuring 12 unlockable holiday makeup looks.",
+      video: "https://drive.google.com/file/d/19y1riA8B8hNWCl4KZyZj-7IGPVL5fFT5/preview",
+      categories: ["Best XR Storytelling", "Technical Excellence"]
+    },
+    {
+      title: "HomeStyler XR",
+      creator: "Vibhor Singh",
+      location: "Jodhpur, India",
+      description: "A photorealistic VR interior design experience with AI-powered texture generation and live environment interactions.",
+      video: "https://drive.google.com/file/d/1sIOrpfVQizhzFZ-bU4jkttobjpP2H5xJ/preview",
+      categories: ["Best Utility XR", "Best XR Storytelling"]
+    },
+    {
+      title: "Escape Room",
+      creator: "Aniket Apraj",
+      location: "Thane, India",
+      description: "An AR escape room challenge where players navigate blind grids, collect coins, and avoid deadly traps.",
+      video: "https://www.youtube.com/embed/8vyA3CPsD4s?list=PLWr6c6PINC-HMw1CJtiEnCijsPcU_Iuks",
+      categories: ["Best New Builder", "Most Playful Build", "Technical Excellence", "Best Utility XR"]
+    }
+  ];
+
+  const container = document.getElementById("projects");
+
+  projects.forEach(p => {
+    const win = WINNERS[p.title];
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      ${win ? `<div class="winner">🏆 ${win}</div>` : ""}
+      <iframe src="${p.video}" allowfullscreen></iframe>
+      <h3>${p.title}</h3>
+      <div class="meta">${p.creator} · ${p.location}</div>
+      <div class="desc">${p.description}</div>
+      <div class="tags">
+        ${p.categories.map(c => `<span>${c}</span>`).join("")}
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+</script>
+
+</body>
+</html>
