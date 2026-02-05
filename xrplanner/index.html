@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XR Planner - On The Go</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <p class="kicker">Commute companion</p>
+      <h1>XR Planner</h1>
+      <p class="subtitle">Capture fresh XR ideas in minutes, track active builds, and keep momentum while riding to work.</p>
+    </header>
+
+    <section class="panel quick-capture" aria-labelledby="capture-heading">
+      <div class="panel-head">
+        <h2 id="capture-heading">Quick Capture</h2>
+        <p>Fast enough for an Uber ride.</p>
+      </div>
+
+      <form id="idea-form" class="idea-form">
+        <label>
+          Project name
+          <div class="field-with-voice">
+            <input id="name" name="name" type="text" maxlength="70" required placeholder="Gesture Gym" />
+            <button type="button" class="voice-btn" data-target="name" aria-label="Voice input for project name">Mic</button>
+          </div>
+        </label>
+
+        <label>
+          One-line concept
+          <div class="field-with-voice">
+            <textarea id="concept" name="concept" maxlength="220" required placeholder="AR warmup experience that teaches hand tracking basics."></textarea>
+            <button type="button" class="voice-btn" data-target="concept" aria-label="Voice input for concept">Mic</button>
+          </div>
+        </label>
+
+        <div class="grid-2">
+          <label>
+            XR mode
+            <select id="mode" name="mode">
+              <option value="AR">AR</option>
+              <option value="VR">VR</option>
+              <option value="MR">MR</option>
+              <option value="WebXR">WebXR</option>
+            </select>
+          </label>
+
+          <label>
+            Stage
+            <select id="stage" name="stage">
+              <option value="Idea">Idea</option>
+              <option value="Prototype">Prototype</option>
+              <option value="Testing">Testing</option>
+              <option value="Live">Live</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label>
+            Impact (1-5)
+            <input id="impact" name="impact" type="range" min="1" max="5" value="3" />
+          </label>
+
+          <label>
+            Effort (1-5)
+            <input id="effort" name="effort" type="range" min="1" max="5" value="3" />
+          </label>
+        </div>
+
+        <label>
+          Next action
+          <input id="nextAction" name="nextAction" type="text" maxlength="90" placeholder="Create quick flow in Lens Studio" />
+        </label>
+
+        <div class="grid-2">
+          <label>
+            Deadline
+            <input id="deadline" name="deadline" type="date" />
+          </label>
+
+          <label>
+            Reminder
+            <input id="reminderAt" name="reminderAt" type="datetime-local" />
+          </label>
+        </div>
+
+        <p class="hint">Reminder uses browser notifications when supported and permission is granted.</p>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Save to Planner</button>
+          <button type="button" id="clear-all" class="btn btn-ghost">Clear all</button>
+          <button type="button" id="export-json" class="btn btn-ghost">Export JSON</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel templates" aria-labelledby="template-heading">
+      <div class="panel-head">
+        <h2 id="template-heading">Idea Starters</h2>
+        <p>Tap once to pre-fill the form.</p>
+      </div>
+      <div class="template-wrap" id="template-wrap"></div>
+    </section>
+
+    <section class="panel backlog" aria-labelledby="backlog-heading">
+      <div class="panel-head">
+        <h2 id="backlog-heading">Planner Board</h2>
+        <div class="filters">
+          <select id="filter-stage" aria-label="Filter by stage">
+            <option value="All">All stages</option>
+            <option value="Idea">Idea</option>
+            <option value="Prototype">Prototype</option>
+            <option value="Testing">Testing</option>
+            <option value="Live">Live</option>
+          </select>
+          <select id="sort-by" aria-label="Sort projects">
+            <option value="newest">Newest first</option>
+            <option value="impact">Highest impact</option>
+            <option value="quick-win">Quick wins</option>
+            <option value="deadline">Earliest deadline</option>
+          </select>
+        </div>
+      </div>
+      <div id="board" class="board" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
