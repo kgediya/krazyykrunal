@@ -256,6 +256,73 @@
             text-wrap: balance;
         }
 
+        .memory-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 25;
+            display: grid;
+            place-items: center;
+            padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+            background: rgba(45, 16, 26, 0.62);
+            backdrop-filter: blur(9px) saturate(1.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease;
+        }
+
+        .memory-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .memory-card {
+            width: min(92vw, 370px);
+            background: linear-gradient(150deg, rgba(255, 255, 255, 0.92), rgba(255, 244, 245, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.68);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(19, 8, 14, 0.35);
+            padding: 0.8rem 0.8rem 1rem;
+            text-align: center;
+            transform: translateY(10px) scale(0.97);
+            opacity: 0;
+        }
+
+        .memory-overlay.visible .memory-card {
+            animation: memoryPop 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .memory-photo-wrap {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 108, 137, 0.2);
+        }
+
+        .memory-photo {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            transform: scale(1.02);
+        }
+
+        .memory-caption {
+            margin: 0.75rem 0 0;
+            color: #5b2132;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .memory-kiss {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 1.25rem;
+            filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.24));
+            animation: kissFloat 1.8s ease-in-out infinite alternate;
+        }
+
         .particle {
             position: absolute;
             pointer-events: none;
@@ -385,6 +452,26 @@
             }
         }
 
+        @keyframes memoryPop {
+            0% {
+                opacity: 0;
+                transform: translateY(18px) scale(0.93);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes kissFloat {
+            from {
+                transform: translateY(0) rotate(-4deg);
+            }
+            to {
+                transform: translateY(-5px) rotate(5deg);
+            }
+        }
+
         @media (max-width: 360px) {
             .container {
                 padding-left: 0.9rem;
@@ -446,7 +533,17 @@
     </div>
     <div class="ios-screen-pulse" id="iosScreenPulse" aria-hidden="true"></div>
     <div class="ios-hug-stage" id="iosHugStage" aria-hidden="true"></div>
+    <div class="memory-overlay" id="memoryOverlay" aria-hidden="true">
+        <div class="memory-card">
+            <div class="memory-photo-wrap">
+                <img class="memory-photo" src="./hug.png" alt="Our hug moment">
+                <span class="memory-kiss">&#10084;</span>
+            </div>
+            <p class="memory-caption" id="memoryCaption">That was a big one. Felt it.</p>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.js"></script>
     <script>
         const btn = document.getElementById('hugBtn');
         const ring = document.getElementById('ring');
@@ -457,6 +554,8 @@
         const container = document.querySelector('.container');
         const iosHugStage = document.getElementById('iosHugStage');
         const iosScreenPulse = document.getElementById('iosScreenPulse');
+        const memoryOverlay = document.getElementById('memoryOverlay');
+        const memoryCaption = document.getElementById('memoryCaption');
 
         let pressTimer;
         let isPressing = false;
@@ -467,8 +566,16 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         const iosVisualMode = isIOS;
+        const toneAvailable = typeof window.Tone !== 'undefined';
         let audioContext;
         let audioUnlocked = false;
+        let toneStarted = false;
+        let toneChargeTimer;
+        let toneStep = 0;
+        let chargeSynth;
+        let releaseSynth;
+        let sparkleSynth;
+        let memoryOverlayTimer;
 
         hugCountDisplay.textContent = hugCount;
         if (iosVisualMode) {
@@ -477,6 +584,99 @@
         systemNote.textContent = isIOS
             ? 'iPhone mode: this app now uses visual hug pulses, glow waves, and heart bursts instead of hardware haptics.'
             : 'Tip: Keep your phone on Vibrate or Sound mode. If Silent or Do Not Disturb is enabled, feedback can be reduced.';
+
+        function initToneIfReady() {
+            if (!toneAvailable || toneStarted) {
+                return;
+            }
+            const Tone = window.Tone;
+            chargeSynth = new Tone.Synth({
+                oscillator: { type: 'triangle8' },
+                envelope: { attack: 0.01, decay: 0.14, sustain: 0.08, release: 0.2 }
+            }).toDestination();
+            releaseSynth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: 'sine' },
+                envelope: { attack: 0.02, decay: 0.2, sustain: 0.2, release: 0.8 }
+            }).toDestination();
+            sparkleSynth = new Tone.FMSynth({
+                harmonicity: 2.8,
+                modulationIndex: 8,
+                envelope: { attack: 0.005, decay: 0.12, sustain: 0.04, release: 0.35 }
+            }).toDestination();
+            toneStarted = true;
+        }
+
+        async function unlockTone() {
+            if (!toneAvailable) {
+                return;
+            }
+            try {
+                await window.Tone.start();
+                initToneIfReady();
+            } catch (err) {
+                // Keep fallback behavior; visual mode still works.
+            }
+        }
+
+        function playChargeMelody() {
+            if (!toneStarted || !chargeSynth) {
+                return;
+            }
+            clearInterval(toneChargeTimer);
+            toneStep = 0;
+            toneChargeTimer = setInterval(() => {
+                if (!isPressing) {
+                    clearInterval(toneChargeTimer);
+                    return;
+                }
+                const phase = Math.min(2, Math.floor(intensity / 14));
+                const notes = phase === 0
+                    ? ['C4', 'E4', 'G4', 'B4']
+                    : phase === 1
+                        ? ['E4', 'G4', 'B4', 'D5']
+                        : ['G4', 'B4', 'D5', 'E5'];
+                const note = notes[toneStep % notes.length];
+                const velocity = Math.min(1, 0.45 + (intensity / maxIntensity) * 0.45);
+                chargeSynth.triggerAttackRelease(note, '8n', undefined, velocity);
+                toneStep += 1;
+            }, 220);
+        }
+
+        function stopChargeMelody() {
+            clearInterval(toneChargeTimer);
+        }
+
+        function playReleaseMelody(isBig) {
+            if (!toneStarted || !releaseSynth || !sparkleSynth) {
+                return;
+            }
+            const now = window.Tone.now();
+            if (isBig) {
+                releaseSynth.triggerAttackRelease(['C4', 'E4', 'G4', 'B4'], '1n', now, 0.8);
+                releaseSynth.triggerAttackRelease(['D4', 'F4', 'A4', 'C5'], '2n', now + 0.35, 0.7);
+                sparkleSynth.triggerAttackRelease('E5', '8n', now + 0.15, 0.9);
+                sparkleSynth.triggerAttackRelease('G5', '8n', now + 0.32, 0.9);
+            } else {
+                releaseSynth.triggerAttackRelease(['C4', 'E4', 'G4'], '4n', now, 0.62);
+                sparkleSynth.triggerAttackRelease('D5', '16n', now + 0.12, 0.6);
+            }
+        }
+
+        function showBigHugMemory(hugPower) {
+            const lines = [
+                'That was a big one. Felt it.',
+                'Warm squeeze delivered straight to us.',
+                'Sending this memory right back to you.',
+                'Big hug received. Heart = full.'
+            ];
+            const idx = Math.min(lines.length - 1, Math.floor(hugPower * lines.length));
+            memoryCaption.textContent = lines[idx];
+            memoryOverlay.classList.add('visible');
+            clearTimeout(memoryOverlayTimer);
+            memoryOverlayTimer = setTimeout(() => {
+                memoryOverlay.classList.remove('visible');
+            }, 3200);
+        }
 
         function triggerScreenPulse(power = 0.5) {
             if (!iosVisualMode) {
@@ -631,6 +831,8 @@
             }
             updateVisualIntensity();
             unlockAudio();
+            unlockTone();
+            playChargeMelody();
 
             triggerFeedback(40, 45, 190);
 
@@ -655,6 +857,7 @@
 
             isPressing = false;
             clearInterval(pressTimer);
+            stopChargeMelody();
             btn.classList.remove('charging');
             ring.style.animation = 'none';
             container.style.setProperty('--hug-energy', '0');
@@ -683,7 +886,12 @@
 
             btn.innerHTML = '&#129303;';
             progressFill.style.width = '0';
-            statusText.textContent = intensity > 24 ? 'Big hug sent!' : 'Hug sent!';
+            const isBigHug = intensity > 24;
+            statusText.textContent = isBigHug ? 'Big hug sent!' : 'Hug sent!';
+            playReleaseMelody(isBigHug);
+            if (isBigHug) {
+                showBigHugMemory(Math.min(1, intensity / maxIntensity));
+            }
 
             hugCount += 1;
             localStorage.setItem('hugsSent', String(hugCount));
@@ -732,6 +940,11 @@
         window.addEventListener('mouseleave', releaseHug);
         window.addEventListener('touchstart', unlockAudio, { passive: true, once: true });
         window.addEventListener('mousedown', unlockAudio, { passive: true, once: true });
+        window.addEventListener('touchstart', unlockTone, { passive: true, once: true });
+        window.addEventListener('mousedown', unlockTone, { passive: true, once: true });
+        memoryOverlay.addEventListener('click', () => {
+            memoryOverlay.classList.remove('visible');
+        });
     </script>
 </body>
 </html>
