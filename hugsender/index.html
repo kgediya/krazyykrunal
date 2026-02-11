@@ -387,41 +387,54 @@
             if (!window.AudioContext && !window.webkitAudioContext) {
                 return;
             }
-            if (!audioContext) {
-                const Ctx = window.AudioContext || window.webkitAudioContext;
-                audioContext = new Ctx();
+            try {
+                if (!audioContext) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    audioContext = new Ctx();
+                }
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                audioUnlocked = audioContext.state === 'running';
+            } catch (err) {
+                audioUnlocked = false;
             }
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            audioUnlocked = audioContext.state === 'running';
         }
 
-        function playPulse(durationMs, freq = 180, gain = 0.035) {
+        function playPulse(durationMs, freq = 180, gain = 0.08) {
             if (!audioUnlocked || !audioContext) {
                 return;
             }
             const osc = audioContext.createOscillator();
             const vol = audioContext.createGain();
-            osc.type = 'sine';
+            osc.type = 'triangle';
             osc.frequency.value = freq;
             vol.gain.value = gain;
             osc.connect(vol);
             vol.connect(audioContext.destination);
             const now = audioContext.currentTime;
             const dur = Math.max(0.03, durationMs / 1000);
-            vol.gain.setValueAtTime(gain, now);
+            vol.gain.setValueAtTime(0.0001, now);
+            vol.gain.exponentialRampToValueAtTime(gain, now + 0.012);
             vol.gain.exponentialRampToValueAtTime(0.001, now + dur);
             osc.start(now);
             osc.stop(now + dur);
         }
 
         function triggerFeedback(pattern, fallbackDuration = 40, fallbackFreq = 180) {
+            let vibrateWorked = false;
             if (canVibrate) {
-                navigator.vibrate(pattern);
-                return;
+                try {
+                    vibrateWorked = Boolean(navigator.vibrate(pattern));
+                } catch (err) {
+                    vibrateWorked = false;
+                }
             }
-            playPulse(fallbackDuration, fallbackFreq);
+
+            // On iOS, vibration is usually unavailable in browsers. Force audible fallback.
+            if (!vibrateWorked || isIOS) {
+                playPulse(fallbackDuration, fallbackFreq);
+            }
         }
 
         function updateVisualIntensity() {
@@ -546,6 +559,8 @@
             window.addEventListener('touchcancel', releaseHug);
         }
         window.addEventListener('mouseleave', releaseHug);
+        window.addEventListener('touchstart', unlockAudio, { passive: true, once: true });
+        window.addEventListener('mousedown', unlockAudio, { passive: true, once: true });
     </script>
 </body>
 </html>
