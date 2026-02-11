@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Long Distance Hug Sender</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        :root {
+            --rose-1: #ff5378;
+            --rose-2: #ff8b84;
+            --rose-3: #ffd8cf;
+            --berry: #6c1f35;
+            --ink: #2f1824;
+            --paper: #fff8f6;
+            --card: rgba(255, 255, 255, 0.72);
+            --ring: rgba(255, 83, 120, 0.5);
+            --shadow: 0 20px 50px rgba(145, 45, 79, 0.26);
+            --soft-shadow: 0 10px 25px rgba(145, 45, 79, 0.16);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100dvh;
+        }
+
+        body {
+            margin: 0;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            font-family: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 15% 18%, rgba(255, 216, 207, 0.95), transparent 42%),
+                radial-gradient(circle at 85% 12%, rgba(255, 171, 162, 0.75), transparent 36%),
+                radial-gradient(circle at 50% 88%, rgba(255, 125, 142, 0.24), transparent 45%),
+                linear-gradient(140deg, #fff4f0 5%, #ffe6e7 60%, #ffd4da 100%);
+            padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+            touch-action: none;
+            overscroll-behavior: none;
+            position: relative;
+            isolation: isolate;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(1px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            width: 46vw;
+            height: 46vw;
+            max-width: 380px;
+            max-height: 380px;
+            left: -8vw;
+            top: -10vw;
+            background: radial-gradient(circle at 35% 35%, rgba(255, 123, 150, 0.25), rgba(255, 123, 150, 0));
+            animation: drift 9s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            width: 36vw;
+            height: 36vw;
+            max-width: 280px;
+            max-height: 280px;
+            right: -6vw;
+            bottom: -8vw;
+            background: radial-gradient(circle at 60% 45%, rgba(255, 173, 147, 0.35), rgba(255, 173, 147, 0));
+            animation: drift 11s ease-in-out infinite alternate-reverse;
+        }
+
+        .container {
+            width: min(92vw, 430px);
+            border-radius: 28px;
+            padding: clamp(1.1rem, 2vw, 1.35rem) clamp(1rem, 5vw, 1.8rem) clamp(1.4rem, 4vw, 1.9rem);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), var(--card));
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            animation: riseIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--berry);
+            background: rgba(255, 255, 255, 0.64);
+            border: 1px solid rgba(255, 87, 123, 0.25);
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
+        }
+
+        h1 {
+            margin: 0.8rem 0 0.35rem;
+            font-size: clamp(1.3rem, 4.5vw, 1.9rem);
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            margin: 0 0 1.45rem;
+            color: rgba(47, 24, 36, 0.78);
+            font-size: 0.95rem;
+        }
+
+        .hug-button-wrapper {
+            position: relative;
+            width: clamp(190px, 52vw, 235px);
+            height: clamp(190px, 52vw, 235px);
+            margin: 0 auto;
+            display: grid;
+            place-items: center;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            border: 2px solid var(--ring);
+            opacity: 0;
+            transform: scale(0.84);
+        }
+
+        .hug-btn {
+            width: clamp(150px, 40vw, 180px);
+            height: clamp(150px, 40vw, 180px);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: clamp(2.3rem, 8vw, 3rem);
+            background: linear-gradient(135deg, var(--rose-1) 0%, var(--rose-2) 92%);
+            box-shadow: var(--soft-shadow);
+            transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+        }
+
+        .hug-btn::after {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border-radius: inherit;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.02));
+            z-index: -1;
+        }
+
+        .hug-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(145, 45, 79, 0.2);
+        }
+
+        .hug-btn:active {
+            transform: scale(0.96);
+        }
+
+        .hug-btn.charging {
+            animation: breathe 0.95s ease-in-out infinite alternate;
+        }
+
+        .intensity-meter {
+            margin-top: 1.35rem;
+            min-height: 1.45rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--berry);
+        }
+
+        .progress-track {
+            width: min(85%, 320px);
+            margin: 0.4rem auto 0;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255, 126, 142, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255, 87, 123, 0.16);
+        }
+
+        .progress-fill {
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #ff6e7e, #ff4873);
+            transition: width 0.08s linear;
+        }
+
+        .counter {
+            margin-top: 1rem;
+            color: rgba(47, 24, 36, 0.6);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+
+        .counter strong {
+            color: var(--berry);
+            font-size: 1rem;
+        }
+
+        .system-note {
+            margin-top: 0.8rem;
+            font-size: 0.82rem;
+            line-height: 1.35;
+            color: rgba(47, 24, 36, 0.74);
+            background: rgba(255, 255, 255, 0.62);
+            border: 1px solid rgba(255, 87, 123, 0.18);
+            border-radius: 10px;
+            padding: 0.55rem 0.65rem;
+            text-wrap: balance;
+        }
+
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.45rem;
+            animation: floatUp 1.45s ease-out forwards;
+            z-index: 1;
+            filter: drop-shadow(0 6px 6px rgba(145, 45, 79, 0.24));
+        }
+
+        @keyframes breathe {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 14px rgba(255, 83, 120, 0.32);
+            }
+            100% {
+                transform: scale(1.06);
+                box-shadow: 0 0 42px rgba(255, 83, 120, 0.48);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.82;
+            }
+            100% {
+                transform: scale(2.6);
+                opacity: 0;
+            }
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-95vh) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes drift {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(18px, -12px);
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding-left: 0.9rem;
+                padding-right: 0.9rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body::before,
+            body::after {
+                filter: blur(0.5px);
+            }
+
+            .container {
+                width: min(96vw, 430px);
+                border-radius: 22px;
+                backdrop-filter: blur(8px);
+            }
+
+            .hug-button-wrapper {
+                width: clamp(184px, 58vw, 225px);
+                height: clamp(184px, 58vw, 225px);
+            }
+
+            .progress-track {
+                width: min(90%, 330px);
+            }
+        }
+
+        @media (hover: none) {
+            .hug-btn:hover {
+                transform: none;
+                box-shadow: var(--soft-shadow);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="badge">&#10084; Happiest Hug Day Priye 🫂</span>
+        <h1>Virtual Hug Station</h1>
+        <p>Press and hold to charge up a warmer hug.</p>
+
+        <div class="hug-button-wrapper">
+            <div class="pulse-ring" id="ring"></div>
+            <button class="hug-btn" id="hugBtn" aria-label="Hold to send a hug">&#129303;</button>
+        </div>
+
+        <div class="intensity-meter" id="statusText">Ready to hug...</div>
+        <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="counter">Total Hugs Sent: <strong id="hugCount">0</strong></div>
+        <div class="system-note" id="systemNote" role="status" aria-live="polite"></div>
+    </div>
+
+    <script>
+        const btn = document.getElementById('hugBtn');
+        const ring = document.getElementById('ring');
+        const statusText = document.getElementById('statusText');
+        const hugCountDisplay = document.getElementById('hugCount');
+        const progressFill = document.getElementById('progressFill');
+        const systemNote = document.getElementById('systemNote');
+
+        let pressTimer;
+        let isPressing = false;
+        let hugCount = Number(localStorage.getItem('hugsSent') || 0);
+        let intensity = 0;
+        const maxIntensity = 40;
+        const canVibrate = typeof navigator.vibrate === 'function';
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        let audioContext;
+        let audioUnlocked = false;
+
+        hugCountDisplay.textContent = hugCount;
+        systemNote.textContent = isIOS
+            ? 'Tip: iOS browsers may block vibration. Keep Ring mode on for sound feedback. If Silent or Do Not Disturb is enabled, feedback can be reduced.'
+            : 'Tip: Keep your phone on Vibrate or Sound mode. If Silent or Do Not Disturb is enabled, feedback can be reduced.';
+
+        function unlockAudio() {
+            if (!window.AudioContext && !window.webkitAudioContext) {
+                return;
+            }
+            if (!audioContext) {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                audioContext = new Ctx();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            audioUnlocked = audioContext.state === 'running';
+        }
+
+        function playPulse(durationMs, freq = 180, gain = 0.035) {
+            if (!audioUnlocked || !audioContext) {
+                return;
+            }
+            const osc = audioContext.createOscillator();
+            const vol = audioContext.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            vol.gain.value = gain;
+            osc.connect(vol);
+            vol.connect(audioContext.destination);
+            const now = audioContext.currentTime;
+            const dur = Math.max(0.03, durationMs / 1000);
+            vol.gain.setValueAtTime(gain, now);
+            vol.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc.start(now);
+            osc.stop(now + dur);
+        }
+
+        function triggerFeedback(pattern, fallbackDuration = 40, fallbackFreq = 180) {
+            if (canVibrate) {
+                navigator.vibrate(pattern);
+                return;
+            }
+            playPulse(fallbackDuration, fallbackFreq);
+        }
+
+        function updateVisualIntensity() {
+            const clamped = Math.min(intensity, maxIntensity);
+            const progress = (clamped / maxIntensity) * 100;
+            const rippleSpeed = Math.max(0.3, 1 - (clamped * 0.018));
+            progressFill.style.width = `${progress}%`;
+
+            ring.style.animation = 'none';
+            ring.offsetHeight;
+            ring.style.animation = `ripple ${rippleSpeed}s infinite linear`;
+
+            if (intensity > 30) {
+                statusText.textContent = 'Mega hug charging...';
+                btn.innerHTML = '&#129392;';
+                return;
+            }
+            if (intensity > 12) {
+                statusText.textContent = 'Warm hug charging...';
+                btn.innerHTML = '&#128524;';
+                return;
+            }
+            statusText.textContent = 'Squeezing...';
+            btn.innerHTML = '&#129303;';
+        }
+
+        const startHug = (e) => {
+            e.preventDefault();
+            if (isPressing) {
+                return;
+            }
+
+            isPressing = true;
+            intensity = 0;
+            btn.classList.add('charging');
+            updateVisualIntensity();
+            unlockAudio();
+
+            triggerFeedback(40, 45, 190);
+
+            pressTimer = setInterval(() => {
+                intensity += 1;
+                updateVisualIntensity();
+
+                if (intensity % 6 === 0) {
+                    triggerFeedback(16 + Math.min(intensity, 30), 35, 160 + Math.min(intensity, 60));
+                }
+            }, 100);
+        };
+
+        const releaseHug = () => {
+            if (!isPressing) {
+                return;
+            }
+
+            isPressing = false;
+            clearInterval(pressTimer);
+            btn.classList.remove('charging');
+            ring.style.animation = 'none';
+
+            let particleCount = 6;
+            if (intensity > 12) {
+                particleCount = 16;
+            }
+            if (intensity > 30) {
+                particleCount = 32;
+            }
+
+            createParticles(particleCount);
+            triggerFeedback([45, 60, 70], 90, 220);
+            if (!canVibrate) {
+                setTimeout(() => playPulse(60, 250), 85);
+                setTimeout(() => playPulse(80, 280), 165);
+            }
+
+            btn.innerHTML = '&#129303;';
+            progressFill.style.width = '0';
+            statusText.textContent = intensity > 24 ? 'Big hug sent!' : 'Hug sent!';
+
+            hugCount += 1;
+            localStorage.setItem('hugsSent', String(hugCount));
+            hugCountDisplay.textContent = hugCount;
+
+            setTimeout(() => {
+                statusText.textContent = 'Ready to hug...';
+            }, 1450);
+        };
+
+        function createParticles(amount) {
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const emojis = ['\u2764\uFE0F', '\u{1F496}', '\u{1F49E}', '\u2728', '\u{1F917}'];
+
+            for (let i = 0; i < amount; i += 1) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+                const randomX = (Math.random() - 0.5) * 64;
+                particle.style.left = `${centerX + randomX}px`;
+                particle.style.top = `${centerY}px`;
+                particle.style.animationDuration = `${1 + Math.random() * 0.7}s`;
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 1700);
+            }
+        }
+
+        if (window.PointerEvent) {
+            btn.addEventListener('pointerdown', startHug);
+            window.addEventListener('pointerup', releaseHug);
+            window.addEventListener('pointercancel', releaseHug);
+        } else {
+            btn.addEventListener('mousedown', startHug);
+            btn.addEventListener('touchstart', startHug, { passive: false });
+            window.addEventListener('mouseup', releaseHug);
+            window.addEventListener('touchend', releaseHug);
+            window.addEventListener('touchcancel', releaseHug);
+        }
+        window.addEventListener('mouseleave', releaseHug);
+    </script>
+</body>
+</html>
