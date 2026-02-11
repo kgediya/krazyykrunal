@@ -18,6 +18,7 @@
             --ring: rgba(255, 83, 120, 0.5);
             --shadow: 0 20px 50px rgba(145, 45, 79, 0.26);
             --soft-shadow: 0 10px 25px rgba(145, 45, 79, 0.16);
+            --hug-energy: 0;
         }
 
         * {
@@ -96,6 +97,24 @@
             z-index: 2;
             border: 1px solid rgba(255, 255, 255, 0.7);
             animation: riseIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+            overflow: hidden;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            border-radius: inherit;
+            background: radial-gradient(circle at 50% 55%, rgba(255, 90, 133, 0.3), rgba(255, 90, 133, 0));
+            opacity: calc(var(--hug-energy) * 0.7);
+            transition: opacity 0.12s linear;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container > * {
+            position: relative;
+            z-index: 1;
         }
 
         .badge {
@@ -246,6 +265,51 @@
             filter: drop-shadow(0 6px 6px rgba(145, 45, 79, 0.24));
         }
 
+        .ios-hug-stage {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 6;
+        }
+
+        .ios-screen-pulse {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+            background: radial-gradient(circle at 50% 58%, rgba(255, 129, 147, 0.5), rgba(255, 129, 147, 0));
+        }
+
+        .ios-wave {
+            position: fixed;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 102, 136, 0.7);
+            border-radius: 999px;
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0.4);
+            animation: iosWave 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .ios-spark {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1rem;
+            transform: translate(-50%, -50%) scale(0.4);
+            animation: iosSpark 1s ease-out forwards;
+            filter: drop-shadow(0 4px 5px rgba(145, 45, 79, 0.22));
+        }
+
+        body.ios-mode .hug-btn {
+            transition: transform 0.08s ease, box-shadow 0.12s ease;
+        }
+
+        body.ios-mode.hug-active .hug-btn {
+            box-shadow: 0 0 0 10px rgba(255, 111, 140, 0.14), 0 12px 32px rgba(145, 45, 79, 0.26);
+        }
+
         @keyframes breathe {
             0% {
                 transform: scale(0.95);
@@ -296,6 +360,28 @@
             }
             to {
                 transform: translate(18px, -12px);
+            }
+        }
+
+        @keyframes iosWave {
+            0% {
+                opacity: 0.95;
+                transform: translate(-50%, -50%) scale(0.4);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(18);
+            }
+        }
+
+        @keyframes iosSpark {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.35);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, calc(-50% - 150px)) scale(1.2);
             }
         }
 
@@ -358,6 +444,8 @@
         <div class="counter">Total Hugs Sent: <strong id="hugCount">0</strong></div>
         <div class="system-note" id="systemNote" role="status" aria-live="polite"></div>
     </div>
+    <div class="ios-screen-pulse" id="iosScreenPulse" aria-hidden="true"></div>
+    <div class="ios-hug-stage" id="iosHugStage" aria-hidden="true"></div>
 
     <script>
         const btn = document.getElementById('hugBtn');
@@ -366,6 +454,9 @@
         const hugCountDisplay = document.getElementById('hugCount');
         const progressFill = document.getElementById('progressFill');
         const systemNote = document.getElementById('systemNote');
+        const container = document.querySelector('.container');
+        const iosHugStage = document.getElementById('iosHugStage');
+        const iosScreenPulse = document.getElementById('iosScreenPulse');
 
         let pressTimer;
         let isPressing = false;
@@ -375,13 +466,69 @@
         const canVibrate = typeof navigator.vibrate === 'function';
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const iosVisualMode = isIOS;
         let audioContext;
         let audioUnlocked = false;
 
         hugCountDisplay.textContent = hugCount;
+        if (iosVisualMode) {
+            document.body.classList.add('ios-mode');
+        }
         systemNote.textContent = isIOS
-            ? 'Tip: iOS browsers may block vibration. Keep Ring mode on for sound feedback. If Silent or Do Not Disturb is enabled, feedback can be reduced.'
+            ? 'iPhone mode: this app now uses visual hug pulses, glow waves, and heart bursts instead of hardware haptics.'
             : 'Tip: Keep your phone on Vibrate or Sound mode. If Silent or Do Not Disturb is enabled, feedback can be reduced.';
+
+        function triggerScreenPulse(power = 0.5) {
+            if (!iosVisualMode) {
+                return;
+            }
+            const opacity = Math.min(0.62, 0.18 + power * 0.45);
+            iosScreenPulse.style.opacity = String(opacity);
+            iosScreenPulse.style.transition = 'opacity 90ms linear';
+            requestAnimationFrame(() => {
+                iosScreenPulse.style.opacity = '0';
+                iosScreenPulse.style.transition = 'opacity 500ms ease-out';
+            });
+        }
+
+        function emitIOSWave(power = 0.5) {
+            if (!iosVisualMode) {
+                return;
+            }
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const wave = document.createElement('div');
+            wave.className = 'ios-wave';
+            wave.style.left = `${centerX}px`;
+            wave.style.top = `${centerY}px`;
+            wave.style.borderWidth = `${1.6 + power * 2}px`;
+            wave.style.borderColor = `rgba(255, ${Math.floor(80 + power * 60)}, ${Math.floor(120 + power * 40)}, ${0.42 + power * 0.35})`;
+            iosHugStage.appendChild(wave);
+            setTimeout(() => wave.remove(), 900);
+        }
+
+        function emitIOSSparks(amount, power = 0.5) {
+            if (!iosVisualMode) {
+                return;
+            }
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const glyphs = ['\u2764\uFE0F', '\u2728', '\u{1F496}', '\u{1FA77}'];
+
+            for (let i = 0; i < amount; i += 1) {
+                const spark = document.createElement('div');
+                spark.className = 'ios-spark';
+                spark.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+                spark.style.left = `${centerX + (Math.random() - 0.5) * 100}px`;
+                spark.style.top = `${centerY + (Math.random() - 0.5) * 34}px`;
+                spark.style.animationDuration = `${0.85 + Math.random() * 0.5}s`;
+                spark.style.fontSize = `${0.85 + power * 0.7}rem`;
+                iosHugStage.appendChild(spark);
+                setTimeout(() => spark.remove(), 1400);
+            }
+        }
 
         function unlockAudio() {
             if (!window.AudioContext && !window.webkitAudioContext) {
@@ -435,6 +582,12 @@
             if (!vibrateWorked || isIOS) {
                 playPulse(fallbackDuration, fallbackFreq);
             }
+            if (iosVisualMode) {
+                const ms = Array.isArray(pattern) ? pattern.reduce((sum, value) => sum + value, 0) : Number(pattern || fallbackDuration);
+                const power = Math.min(1, Math.max(0.2, ms / 120));
+                triggerScreenPulse(power);
+                emitIOSWave(power);
+            }
         }
 
         function updateVisualIntensity() {
@@ -442,6 +595,7 @@
             const progress = (clamped / maxIntensity) * 100;
             const rippleSpeed = Math.max(0.3, 1 - (clamped * 0.018));
             progressFill.style.width = `${progress}%`;
+            container.style.setProperty('--hug-energy', String(clamped / maxIntensity));
 
             ring.style.animation = 'none';
             ring.offsetHeight;
@@ -470,6 +624,11 @@
             isPressing = true;
             intensity = 0;
             btn.classList.add('charging');
+            if (iosVisualMode) {
+                document.body.classList.add('hug-active');
+                triggerScreenPulse(0.35);
+                emitIOSWave(0.35);
+            }
             updateVisualIntensity();
             unlockAudio();
 
@@ -481,6 +640,10 @@
 
                 if (intensity % 6 === 0) {
                     triggerFeedback(16 + Math.min(intensity, 30), 35, 160 + Math.min(intensity, 60));
+                }
+                if (iosVisualMode && intensity % 4 === 0) {
+                    const power = Math.min(1, intensity / maxIntensity);
+                    emitIOSSparks(1 + Math.floor(power * 2), power);
                 }
             }, 100);
         };
@@ -494,6 +657,8 @@
             clearInterval(pressTimer);
             btn.classList.remove('charging');
             ring.style.animation = 'none';
+            container.style.setProperty('--hug-energy', '0');
+            document.body.classList.remove('hug-active');
 
             let particleCount = 6;
             if (intensity > 12) {
@@ -505,6 +670,12 @@
 
             createParticles(particleCount);
             triggerFeedback([45, 60, 70], 90, 220);
+            if (iosVisualMode) {
+                const releasePower = Math.min(1, intensity / maxIntensity);
+                triggerScreenPulse(0.5 + releasePower * 0.4);
+                emitIOSWave(0.65 + releasePower * 0.35);
+                emitIOSSparks(8 + Math.floor(releasePower * 12), 0.7 + releasePower * 0.3);
+            }
             if (!canVibrate) {
                 setTimeout(() => playPulse(60, 250), 85);
                 setTimeout(() => playPulse(80, 280), 165);
