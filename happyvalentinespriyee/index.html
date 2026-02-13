@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Valentine's Day Priyee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="bg-noise"></div>
+  <div id="love-particles" class="love-particles" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="hero">
+      <p class="eyebrow">For My Priyee</p>
+      <h1>A Little Valentine Love Story</h1>
+      <p class="subline">kyutie, romantic, and slightly krazyy <br> Exactly like us🤍</p>
+
+      <div class="progress-wrap" aria-hidden="true">
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="progress-steps">
+          <span id="step-1" class="step-chip active">1</span>
+          <span id="step-2" class="step-chip">2</span>
+          <span id="step-3" class="step-chip">3</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="panel-1" class="panel active" aria-labelledby="countdown-title">
+      <div class="panel-card countdown-romance">
+        <p class="panel-tag">Part 1</p>
+        <h2 id="countdown-title">Counting Down To Be Yours Forever</h2>
+        <p class="panel-copy">Till London midnight, my heart is officially in waiting mode for you.</p>
+
+        <p class="countdown-target-line">Our moment starts on: <strong id="countdown-target-text">14 February, 12:00 AM London time</strong></p>
+
+        <div class="countdown-grid" aria-live="polite">
+          <article class="time-card"><span id="days">00</span><label>Days</label></article>
+          <article class="time-card"><span id="hours">00</span><label>Hours</label></article>
+          <article class="time-card"><span id="minutes">00</span><label>Minutes</label></article>
+          <article class="time-card"><span id="seconds">00</span><label>Seconds</label></article>
+        </div>
+
+        <p id="countdown-note" class="note">Priyee, every second is bringing me closer to your kyutest smile.</p>
+
+        <p class="note auto-open-note">Countdown khatam hone ka wait karo priye</p>
+      </div>
+    </section>
+
+    <section id="panel-2" class="panel immersive-panel" aria-labelledby="gallery-title">
+      <div id="gallery-canvas" class="gallery-canvas full-immersive" role="img" aria-label="Romantic 3D photo gallery"></div>
+      <div id="gallery-toast" class="gallery-toast" aria-live="polite">Tap a heart, my love. They are all kissable 💋</div>
+    </section>
+
+    <section id="panel-3" class="panel" aria-labelledby="invite-title">
+      <div class="panel-card">
+        <p class="panel-tag">Part 3</p>
+        <h2 id="invite-title">You’re Invited</h2>
+        <p class="panel-copy">Envelope kholo, aur pyaar ka notice read karo.</p>
+
+        <div class="invite-shell">
+          <div class="invite-top-note">Love Post - Priority Delivery</div>
+          <div id="invitation-stage" class="invitation-stage" role="button" tabindex="0" aria-label="Open date invitation letter">
+            <div class="envelope">
+              <div class="envelope-back"></div>
+              <div class="envelope-front"></div>
+              <div class="envelope-flap"></div>
+              <div class="envelope-seal">MeghNaalKrunal</div>
+              <div class="letter">
+                <p class="letter-title">Meri Pyaari Priyee,</p>
+                <p>
+                  Tum officially invite ho ek mast Valentine date pe, jahan kyutiee moments share karege
+                </p>
+                <p><strong>When (IST):</strong> <span id="ist-time">14 Feb, 9:00 PM IST</span></p>
+                <p><strong>London time:</strong> <span id="london-time">14 Feb, 3:30 PM London time</span></p>
+                <p><strong>Dress code:</strong> Maroon, pink, red, ya koi bhi shade of love chalega.</p>
+                <p><strong>Venue note:</strong> Isolated room best rahega with my gift in use kal jo ayega woh. Warna residential below area bhi jugaad approved.</p>
+                <p class="letter-sign">Hamesha tumhara,<br />Krupiee</p>
+              </div>
+            </div>
+          </div>
+          <p class="invite-helper">Tap once to open, tap again to close hehe simple</p>
+        </div>
+
+        <p class="note">P.S. Agar tumne blush kiya, toh main jeet gaya.</p>
+
+        <button id="yes-btn" class="cta">Haan ji, date pakki</button>
+        <p id="yes-message" class="yes-message" aria-live="polite"></p>
+
+        <button id="back-to-gallery" class="ghost">Back</button>
+      </div>
+    </section>
+  </main>
+
+  <aside id="memory-lightbox" class="memory-lightbox" aria-hidden="true">
+    <button id="close-memory" class="memory-close" aria-label="Close memory view">x</button>
+    <img id="memory-image" alt="Selected memory photo" />
+  </aside>
+
+  <div id="romantic-launch" class="romantic-launch" aria-hidden="true">
+    <div class="romantic-launch-card">
+      <p id="romantic-launch-line" class="romantic-launch-line">Priyee, love mode booting...</p>
+      <p id="romantic-launch-count" class="romantic-launch-count">3</p>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

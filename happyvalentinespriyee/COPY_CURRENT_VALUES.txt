@@ -1,0 +1,73 @@
+META_TITLE: Happy Valentine's Day Priyee
+HERO_EYEBROW: For My Priyee
+HERO_TITLE: A Little Valentine Love Story
+HERO_SUBLINE: kyute, romantic, and slightly krazyy Exactly like us🤍
+
+P1_TAG: Part 1
+P1_TITLE: Counting Down To Be Yours Forever
+P1_COPY: Till London midnight, my heart is officially in waiting mode for you.
+P1_TARGET_PREFIX: Our moment starts on:
+P1_TARGET_FALLBACK: 14 February, 12:00 AM London time
+P1_LABEL_DAYS: Days
+P1_LABEL_HOURS: Hours
+P1_LABEL_MINUTES: Minutes
+P1_LABEL_SECONDS: Seconds
+P1_NOTE_INITIAL: Priyee, every second is bringing me closer to your cutest smile.
+P1_AUTO_NOTE: Countdown khatam hone ka wait karo priye
+P1_TEST_BTN_FINISH: Test Countdown Finish Flow
+P1_TEST_BTN_321: Test Fullscreen 3 2 1 Flow
+
+P1_TARGET_DYNAMIC_SUFFIX: , 12:00 AM London time
+P1_NOTE_ROTATE_1: Priyee, every second is bringing me closer to your cutest smile.
+P1_NOTE_ROTATE_2: My heart has exactly one destination: you.
+P1_NOTE_ROTATE_3: Timer chal raha hai, pyaar toh already full power pe hai.
+P1_NOTE_ROTATE_4: Your hug countdown is now in progress.
+P1_NOTE_NEAR_END: Bas thoda sa baaki. Mere butterflies already dancing.
+P1_NOTE_DONE: Happy Valentine's Day, Priyee. Aaj full pyaar mode.
+
+P2_ARIA_LABEL: Romantic 3D photo gallery
+P2_TOAST_DEFAULT: Tap a heart, my love. They are all clickable.
+P2_TOAST_ORBIT_DONE: Happiest Valentine's Day Priye
+
+LAUNCH_LINE_INITIAL: Priyee, love mode booting...
+LAUNCH_LINE_2: Dil syncing with your smile...
+LAUNCH_LINE_3: Gallery loading: full pyaar edition...
+LAUNCH_GO_TEXT: Go
+LAUNCH_DONE_TEXT: Happiest Valentine's Day, Priyee
+
+P3_TAG: Part 3
+P3_TITLE: Tumhari Official Date Chitthi
+P3_COPY: Envelope kholo, aur pyaar ka notice read karo.
+P3_TOP_NOTE: Love Post - Priority Delivery
+P3_SEAL_TEXT: MeghNaalKrunal
+P3_LETTER_TITLE: Meri Pyaari Priyee,
+P3_LETTER_BODY_1: Tum officially invite ho ek mast Valentine date pe, jahan cute staring unlimited hogi.
+P3_WHEN_LABEL: When (IST):
+P3_WHEN_VALUE_FALLBACK: 14 Feb, 9:00 PM IST
+P3_LONDON_LABEL: London time:
+P3_LONDON_VALUE_FALLBACK: 14 Feb, 3:30 PM London time
+P3_DRESS_LABEL: Dress code:
+P3_DRESS_VALUE: Maroon, pink, red, ya koi bhi shade of love chalega.
+P3_VENUE_LABEL: Venue note:
+P3_VENUE_VALUE: Isolated room best. Warna residential below area bhi jugaad approved.
+P3_SIGNOFF: Hamesha tumhara, Krupiee
+P3_HELPER: Tap once to open, tap again to close. Drama level: romantic-comedy.
+P3_PS_NOTE: P.S. Agar tum hasi, toh main seedha jeet gaya.
+P3_YES_BTN: Haan ji, date pakki
+P3_BACK_BTN: Back
+P3_YES_MESSAGE_DYNAMIC: Yay. Date confirmed. Cute chaos loading.
+
+P3_IST_SUFFIX:  IST
+P3_LONDON_SUFFIX:  London time
+
+INVITE_ARIA_LABEL: Open date invitation letter
+LIGHTBOX_CLOSE_ARIA: Close memory view
+LIGHTBOX_IMG_ALT: Selected memory photo
+
+GALLERY_PLACEHOLDER_1: Priyee + Krupiee
+GALLERY_PLACEHOLDER_2: Sweet Memories
+GALLERY_PLACEHOLDER_3: Forever Team
+GALLERY_PLACEHOLDER_HINT: Add photos in folder
+CAL_EVENT_TITLE: Remote Valentines Date
+CAL_EVENT_DETAILS: Virtual Valentine date. Dress code: maroon/pink/red or any shade of love. Be ready for full romantic-comedy vibes.
+CAL_EVENT_LOCATION: Remote / Video Call
