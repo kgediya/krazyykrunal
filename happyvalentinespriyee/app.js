@@ -40,6 +40,7 @@ galleryAudio.preload = "auto";
 
 let activePanel = 0;
 const defaultGalleryFolder = "./photos";
+const isGithubPagesHost = /github\.io$/i.test(window.location.hostname);
 let galleryToastTimer = 0;
 let coreTapReminderTimer = 0;
 let audioUnlockAttached = false;
@@ -49,6 +50,8 @@ let preLaunchRunning = false;
 let countdownStartedExpired = false;
 let launchTimer = 0;
 let launchHideTimer = 0;
+let galleryPreloadFolder = "";
+let galleryPreloadPromise = null;
 
 function ensureGalleryAudio() {
   const tryPlay = () => {
@@ -96,6 +99,7 @@ function showPanel(index) {
 }
 
 function openGalleryAutomatically() {
+  if (preLaunchRunning) return;
   if (hasAutoOpenedGallery) return;
   hasAutoOpenedGallery = true;
   showPanel(1);
@@ -107,7 +111,9 @@ function startRomanticLaunchCountdown() {
     return;
   }
 
+  showPanel(0);
   preLaunchRunning = true;
+  document.body.classList.add("is-prelaunch");
   romanticLaunch.classList.add("show");
   romanticLaunch.setAttribute("aria-hidden", "false");
 
@@ -138,6 +144,7 @@ function startRomanticLaunchCountdown() {
       romanticLaunch.classList.remove("show");
       romanticLaunch.setAttribute("aria-hidden", "true");
       preLaunchRunning = false;
+      document.body.classList.remove("is-prelaunch");
       openGalleryAutomatically();
     }, 380);
   }, 1000);
@@ -224,11 +231,7 @@ function updateCountdown() {
     countdownEls.seconds.textContent = "00";
     countdownEls.note.textContent = "Happy Valentine's Day, Priyee. Aaj full pyaar mode.";
     if (!hasAutoOpenedGallery) {
-      if (countdownStartedExpired) {
-        startRomanticLaunchCountdown();
-      } else {
-        openGalleryAutomatically();
-      }
+      startRomanticLaunchCountdown();
     }
     return;
   }
@@ -394,7 +397,7 @@ function toAbsolutePath(pathLike) {
 
 async function fetchManifest(folderPath) {
   const manifestPath = `${folderPath}/manifest.json`;
-  const res = await fetch(manifestPath, { cache: "no-store" });
+  const res = await fetch(manifestPath);
   if (!res.ok) throw new Error("manifest not found");
   const data = await res.json();
   if (!Array.isArray(data)) return [];
@@ -452,6 +455,7 @@ function parseDirectoryEntries(html, folderUrl, rootPrefix) {
 }
 
 async function crawlDirectoryForImages(folderPath, maxDepth = 2) {
+  if (isGithubPagesHost) return [];
   const start = normalizeFolderPath(folderPath);
   const rootPrefix = toAbsolutePath(start);
   const queue = [{ path: start, depth: 0 }];
@@ -465,7 +469,7 @@ async function crawlDirectoryForImages(folderPath, maxDepth = 2) {
 
     let response;
     try {
-      response = await fetch(`${path}/`, { cache: "no-store" });
+      response = await fetch(`${path}/`);
     } catch {
       continue;
     }
@@ -497,9 +501,10 @@ async function crawlDirectoryForImages(folderPath, maxDepth = 2) {
 }
 
 async function probeCommonFileNames(folderPath) {
+  if (isGithubPagesHost) return [];
   const names = [];
   const prefixes = ["IMG_", "DSC_", "PXL_", "MVIMG_", "Photo_", "image_", "pic_"];
-  for (let i = 1; i <= 220; i += 1) {
+  for (let i = 1; i <= 80; i += 1) {
     const p = String(i).padStart(4, "0");
     names.push(`${i}.jpg`, `${i}.jpeg`, `${i}.png`, `${i}.webp`);
     names.push(`${p}.jpg`, `${p}.jpeg`, `${p}.png`, `${p}.webp`);
@@ -511,7 +516,7 @@ async function probeCommonFileNames(folderPath) {
   const checks = names.map(async (name) => {
     const url = `${folderPath}/${name}`;
     try {
-      const res = await fetch(url, { method: "HEAD", cache: "no-store" });
+      const res = await fetch(url, { method: "HEAD" });
       return res.ok ? url : null;
     } catch {
       return null;
@@ -954,19 +959,46 @@ function createParticleLayers() {
 
 async function discoverPhotoUrls(folderPath) {
   const normalized = normalizeFolderPath(folderPath);
+  const cacheKey = `hvp-photo-list:${normalized}`;
+
+  try {
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length) {
+        return parsed;
+      }
+    }
+  } catch {
+    // ignore cache read issues
+  }
 
   try {
     const manifestPhotos = await fetchManifest(normalized);
     if (manifestPhotos.length) {
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(manifestPhotos));
+      } catch {
+        // ignore cache write issues
+      }
       return uniqueStrings(manifestPhotos);
     }
   } catch {
     // fallback
   }
 
+  if (isGithubPagesHost) {
+    return [];
+  }
+
   try {
-    const crawled = await crawlDirectoryForImages(normalized, 2);
+    const crawled = await crawlDirectoryForImages(normalized, 1);
     if (crawled.length) {
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(crawled));
+      } catch {
+        // ignore cache write issues
+      }
       return uniqueStrings(crawled);
     }
   } catch {
@@ -976,6 +1008,11 @@ async function discoverPhotoUrls(folderPath) {
   try {
     const guessed = await probeCommonFileNames(normalized);
     if (guessed.length) {
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(guessed));
+      } catch {
+        // ignore cache write issues
+      }
       return guessed;
     }
   } catch {
@@ -983,6 +1020,35 @@ async function discoverPhotoUrls(folderPath) {
   }
 
   return [];
+}
+
+function preloadTextures(urls) {
+  if (!urls?.length) return Promise.resolve([]);
+  const loader = new THREE.TextureLoader();
+  return Promise.all(urls.map((url) => new Promise((resolve) => {
+    loader.load(
+      url,
+      (texture) => resolve(texture),
+      undefined,
+      () => resolve(null)
+    );
+  }))).then((loaded) => loaded.filter(Boolean));
+}
+
+function preloadGalleryAssets(folderPath) {
+  const normalized = normalizeFolderPath(folderPath);
+  if (galleryPreloadPromise && galleryPreloadFolder === normalized) {
+    return galleryPreloadPromise;
+  }
+
+  galleryPreloadFolder = normalized;
+  galleryPreloadPromise = (async () => {
+    const urls = await discoverPhotoUrls(normalized);
+    const textures = await preloadTextures(urls);
+    return { urls, textures };
+  })();
+
+  return galleryPreloadPromise;
 }
 
 async function initGallery(folderPath) {
@@ -1030,21 +1096,9 @@ async function initGallery(folderPath) {
   galleryGroup = new THREE.Group();
   scene.add(galleryGroup);
 
-  const loader = new THREE.TextureLoader();
-  const urls = await discoverPhotoUrls(folderPath);
-
-  let textures = [];
-  if (urls.length) {
-    const loaded = await Promise.all(urls.map((url) => new Promise((resolve) => {
-      loader.load(
-        url,
-        (texture) => resolve(texture),
-        undefined,
-        () => resolve(null)
-      );
-    })));
-    textures = loaded.filter(Boolean);
-  }
+  const preload = await preloadGalleryAssets(folderPath);
+  const urls = preload?.urls || [];
+  let textures = preload?.textures ? [...preload.textures] : [];
 
   if (!textures.length) {
     textures = [
@@ -1243,3 +1297,4 @@ window.addEventListener("keydown", (evt) => {
 });
 
 showPanel(0);
+preloadGalleryAssets(defaultGalleryFolder).catch(() => {});

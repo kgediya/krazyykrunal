@@ -175,6 +175,10 @@ h1 {
   animation: reveal 0.38s ease;
 }
 
+body.is-prelaunch #panel-2 {
+  display: none !important;
+}
+
 .immersive-panel.active {
   position: fixed;
   inset: 0;
