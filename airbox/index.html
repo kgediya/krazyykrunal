@@ -1,0 +1,1280 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Airbox Web Companion</title>
+    <style>
+        :root {
+            --bg: #060606;
+            --panel: rgba(250, 246, 236, 0.14);
+            --panel-strong: rgba(250, 246, 236, 0.2);
+            --line: rgba(255, 255, 255, 0.18);
+            --text: #f6f2ea;
+            --muted: rgba(246, 242, 234, 0.72);
+            --gold: #f3cf84;
+            --gold-2: #e9b44f;
+            --shadow: rgba(0, 0, 0, 0.42);
+            --input: rgba(255, 255, 255, 0.08);
+            --input-focus: rgba(255, 255, 255, 0.14);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            min-height: 100%;
+        }
+
+        body {
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 50% 12%, rgba(255, 208, 102, 0.14), transparent 40%),
+                radial-gradient(circle at 75% 30%, rgba(227, 165, 52, 0.1), transparent 34%),
+                radial-gradient(circle at 20% 72%, rgba(255, 210, 120, 0.05), transparent 36%),
+                radial-gradient(circle at 50% 120%, rgba(255, 173, 58, 0.06), transparent 42%),
+                linear-gradient(180deg, #0a0a0a 0%, #050505 55%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            background-image:
+                radial-gradient(circle, rgba(255, 219, 130, 0.95) 0 1px, transparent 1.7px),
+                radial-gradient(circle, rgba(247, 190, 75, 0.82) 0 1px, transparent 1.9px),
+                radial-gradient(circle, rgba(255, 236, 186, 0.65) 0 1px, transparent 2px);
+            background-size: 148px 148px, 210px 210px, 278px 278px;
+            background-position: 12% 16%, 84% 20%, 55% 72%;
+            opacity: 0.78;
+            animation: floatDust 16s linear infinite;
+        }
+
+        body::after {
+            background:
+                radial-gradient(circle at 30% 35%, rgba(255, 201, 92, 0.06), transparent 30%),
+                radial-gradient(circle at 75% 60%, rgba(255, 177, 43, 0.06), transparent 34%),
+                linear-gradient(180deg, rgba(255, 214, 124, 0.03), transparent 28%),
+                linear-gradient(0deg, rgba(0, 0, 0, 0.38), transparent 40%);
+            animation: glowPulse 10s ease-in-out infinite alternate;
+        }
+
+        .shell {
+            width: 100%;
+            max-width: 470px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            perspective: 1100px;
+            transform-style: preserve-3d;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 14px 8px 12px;
+            margin-bottom: 12px;
+            position: relative;
+            transform: translateZ(10px);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 26px;
+            width: 170px;
+            height: 170px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 205, 120, 0.25), transparent 68%);
+            filter: blur(4px);
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            width: min(255px, 70vw);
+            height: auto;
+            display: block;
+            margin: 0 auto 4px;
+            filter:
+                drop-shadow(0 10px 26px rgba(0, 0, 0, 0.3))
+                drop-shadow(0 2px 10px rgba(255, 202, 92, 0.08));
+            transform: translateZ(18px);
+        }
+
+        .hero-title {
+            font-size: 13px;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .panel {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255, 235, 196, 0.1), rgba(255, 255, 255, 0.04));
+            border: 1px solid rgba(255, 214, 138, 0.14);
+            border-radius: 26px;
+            padding: 16px;
+            box-shadow:
+                0 16px 34px rgba(0, 0, 0, 0.42),
+                0 4px 12px rgba(255, 180, 60, 0.05),
+                inset 0 1px 0 rgba(255, 235, 196, 0.12),
+                inset 0 -10px 24px rgba(0, 0, 0, 0.16);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transform: translateZ(0);
+            overflow: hidden;
+        }
+
+        .panel + .panel {
+            margin-top: 12px;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background:
+                linear-gradient(145deg, rgba(255, 236, 193, 0.08), transparent 40%),
+                radial-gradient(circle at 15% 0%, rgba(255, 218, 140, 0.11), transparent 48%);
+            pointer-events: none;
+        }
+
+        .panel::after {
+            content: "";
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            bottom: -18px;
+            height: 30px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(255, 168, 46, 0.12), transparent 72%);
+            filter: blur(10px);
+            pointer-events: none;
+        }
+
+        .panel > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 226, 170, 0.9);
+            margin-bottom: 12px;
+        }
+
+        .creds {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.82);
+            line-height: 1.45;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+
+        .creds strong {
+            letter-spacing: 0.1em;
+            font-size: 11px;
+        }
+
+        .small-btn {
+            margin-top: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 214, 138, 0.07);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.15s ease, transform 0.12s ease;
+        }
+
+        .small-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .small-btn:active {
+            transform: scale(0.99);
+        }
+
+        .channels {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .channel-btn {
+            border: 1px solid rgba(255, 214, 138, 0.14);
+            background: rgba(255, 214, 138, 0.06);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 11px 10px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 239, 209, 0.05);
+        }
+
+        .channel-btn:hover {
+            background: rgba(255, 214, 138, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .channel-btn.active {
+            background: linear-gradient(180deg, rgba(255, 218, 140, 0.28), rgba(196, 137, 32, 0.2));
+            border-color: rgba(255, 217, 143, 0.34);
+            box-shadow: inset 0 1px 0 rgba(255, 235, 196, 0.16), 0 8px 18px rgba(94, 58, 11, 0.2);
+        }
+
+        .field-inline {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .field-inline input {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .save-btn {
+            border: 1px solid rgba(255, 214, 138, 0.18);
+            background: rgba(255, 214, 138, 0.08);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 237, 199, 0.08);
+        }
+
+        .save-btn:hover {
+            background: rgba(255, 214, 138, 0.12);
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 237, 199, 0.1);
+        }
+
+        .save-btn:active {
+            transform: scale(0.99);
+        }
+
+        .secondary-btn {
+            border: 1px solid rgba(255, 214, 138, 0.14);
+            background: rgba(255, 214, 138, 0.05);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 237, 199, 0.06);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 214, 138, 0.1);
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 237, 199, 0.08);
+        }
+
+        .secondary-btn:active {
+            transform: scale(0.99);
+        }
+
+        .saved-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .saved-empty {
+            color: rgba(255, 227, 172, 0.66);
+            font-size: 13px;
+            padding: 4px 2px;
+        }
+
+        .saved-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .saved-item .channel-btn {
+            flex: 1;
+            text-align: left;
+        }
+
+        .remove-sky-btn {
+            width: auto;
+            border: 1px solid rgba(255, 214, 138, 0.14);
+            background: rgba(255, 214, 138, 0.05);
+            color: rgba(255, 238, 209, 0.9);
+            border-radius: 999px;
+            padding: 10px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.15s ease, transform 0.12s ease;
+        }
+
+        .remove-sky-btn:hover {
+            background: rgba(255, 120, 90, 0.12);
+            border-color: rgba(255, 120, 90, 0.2);
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .panel-head .panel-title {
+            margin-bottom: 0;
+        }
+
+        .ghost-btn {
+            border: 1px solid rgba(255, 214, 138, 0.12);
+            background: rgba(255, 214, 138, 0.04);
+            color: rgba(255, 235, 196, 0.92);
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .ghost-btn:hover {
+            background: rgba(255, 214, 138, 0.08);
+        }
+
+        .sent-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .sent-empty {
+            color: rgba(255, 227, 172, 0.66);
+            font-size: 13px;
+            padding: 4px 2px;
+        }
+
+        .sent-item {
+            border: 1px solid rgba(255, 214, 138, 0.1);
+            background: rgba(255, 214, 138, 0.04);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: grid;
+            gap: 6px;
+            box-shadow: inset 0 1px 0 rgba(255, 236, 193, 0.03), 0 8px 18px rgba(0, 0, 0, 0.14);
+        }
+
+        .sent-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            color: rgba(255, 235, 196, 0.78);
+            font-size: 12px;
+        }
+
+        .sent-sky-btn {
+            width: auto;
+            border: none;
+            background: transparent;
+            color: rgba(255, 219, 130, 0.95);
+            padding: 0;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .sent-sky-btn:hover {
+            text-decoration: underline;
+        }
+
+        .sent-text {
+            color: rgba(255, 245, 222, 0.95);
+            font-size: 14px;
+            line-height: 1.35;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .sent-submeta {
+            color: rgba(255, 227, 172, 0.62);
+            font-size: 12px;
+        }
+
+        .fields {
+            display: grid;
+            gap: 12px;
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.86);
+            letter-spacing: 0.03em;
+        }
+
+        input, textarea {
+            width: 100%;
+            border: 1px solid rgba(255, 214, 138, 0.13);
+            border-radius: 16px;
+            background: rgba(255, 214, 138, 0.05);
+            color: var(--text);
+            padding: 12px 14px;
+            font-size: 15px;
+            outline: none;
+            transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 236, 193, 0.03);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 235, 196, 0.46);
+        }
+
+        input:focus, textarea:focus {
+            background: rgba(255, 214, 138, 0.1);
+            border-color: rgba(255, 218, 148, 0.34);
+            box-shadow: 0 0 0 3px rgba(243, 207, 132, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            max-height: 220px;
+            resize: vertical;
+        }
+
+        .cta {
+            width: 100%;
+            margin-top: 4px;
+            border: 1px solid rgba(255, 228, 166, 0.2);
+            border-radius: 999px;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255, 244, 219, 0.12), transparent 50%),
+                linear-gradient(180deg, rgba(255, 220, 145, 0.22), rgba(170, 110, 18, 0.18));
+            color: #fff4d8;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            padding: 16px 18px;
+            cursor: pointer;
+            box-shadow:
+                0 14px 28px rgba(0, 0, 0, 0.34),
+                0 4px 12px rgba(196, 124, 18, 0.12),
+                inset 0 1px 0 rgba(255, 235, 196, 0.16),
+                inset 0 -8px 14px rgba(92, 52, 7, 0.12);
+            transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .cta:hover:not(:disabled) {
+            transform: translateY(-2px) translateZ(8px);
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255, 240, 214, 0.16), transparent 50%),
+                linear-gradient(180deg, rgba(255, 224, 154, 0.3), rgba(191, 126, 21, 0.22));
+            box-shadow:
+                0 18px 34px rgba(0, 0, 0, 0.38),
+                0 6px 14px rgba(196, 124, 18, 0.14),
+                inset 0 1px 0 rgba(255, 235, 196, 0.18),
+                inset 0 -8px 16px rgba(92, 52, 7, 0.14);
+        }
+
+        .cta:disabled {
+            opacity: 0.68;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: none;
+            margin-top: 12px;
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.35;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .status.show {
+            display: block;
+            animation: riseIn 180ms ease-out;
+        }
+
+        .status.success {
+            border-color: rgba(171, 233, 180, 0.25);
+            background: rgba(119, 194, 124, 0.12);
+            color: #e7ffeb;
+        }
+
+        .status.error {
+            border-color: rgba(246, 162, 162, 0.26);
+            background: rgba(220, 92, 92, 0.12);
+            color: #ffe9e9;
+        }
+
+        .status.loading {
+            border-color: rgba(252, 219, 153, 0.24);
+            background: rgba(239, 193, 89, 0.1);
+            color: #fff5dd;
+        }
+
+        .note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: rgba(255, 227, 172, 0.72);
+            text-align: center;
+        }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatDust {
+            0% {
+                transform: translate3d(0, 0, 0);
+                background-position: 12% 16%, 84% 20%, 55% 72%;
+                opacity: 0.7;
+            }
+            22% {
+                transform: translate3d(0, -3px, 0);
+                background-position: 16% 12%, 81% 15%, 52% 66%;
+                opacity: 0.82;
+            }
+            47% {
+                transform: translate3d(0, -6px, 0);
+                background-position: 19% 8%, 78% 11%, 49% 60%;
+                opacity: 0.76;
+            }
+            71% {
+                transform: translate3d(0, -9px, 0);
+                background-position: 14% 5%, 83% 7%, 46% 55%;
+                opacity: 0.84;
+            }
+            100% {
+                transform: translate3d(0, -13px, 0);
+                background-position: 18% 2%, 76% 3%, 43% 49%;
+                opacity: 0.72;
+            }
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translateY(0); opacity: 0.92; }
+            35% { transform: translateY(-2px); opacity: 1; }
+            100% { transform: translateY(-8px); opacity: 0.82; }
+        }
+
+        @keyframes glowPulse {
+            0% { opacity: 0.92; }
+            35% { opacity: 1; }
+            100% { opacity: 0.82; }
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 12px 12px calc(16px + env(safe-area-inset-bottom, 0px));
+            }
+            .shell {
+                max-width: 100%;
+            }
+            .hero {
+                padding: 10px 4px 8px;
+                margin-bottom: 8px;
+            }
+            .panel {
+                border-radius: 22px;
+                padding: 14px;
+                box-shadow:
+                    0 14px 28px rgba(0, 0, 0, 0.4),
+                    0 4px 10px rgba(255, 170, 52, 0.04),
+                    inset 0 1px 0 rgba(255, 235, 196, 0.12);
+            }
+            .panel + .panel {
+                margin-top: 10px;
+            }
+            .brand-logo {
+                width: min(232px, 74vw);
+            }
+            .hero-title {
+                font-size: 11px;
+                letter-spacing: 0.12em;
+            }
+            .field-inline {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                align-items: stretch;
+            }
+            .field-inline input {
+                grid-column: 1 / -1;
+                min-width: 0;
+            }
+            .save-btn, .secondary-btn {
+                min-height: 42px;
+            }
+            .cta {
+                min-height: 50px;
+                letter-spacing: 0.05em;
+            }
+            .saved-item {
+                align-items: stretch;
+            }
+            .saved-item .channel-btn,
+            .remove-sky-btn {
+                min-height: 42px;
+            }
+            .panel-head {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .ghost-btn {
+                min-height: 36px;
+            }
+            .sent-meta {
+                flex-wrap: wrap;
+                row-gap: 4px;
+            }
+            .sent-text {
+                font-size: 13px;
+                line-height: 1.42;
+            }
+            .creds {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .brand-logo {
+                width: min(244px, 80vw);
+            }
+            .panel {
+                border-radius: 20px;
+                padding: 12px;
+            }
+            .channels {
+                grid-template-columns: 1fr;
+            }
+            .saved-item {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 6px;
+            }
+            .saved-item .channel-btn {
+                font-size: 12px;
+                padding: 10px 10px;
+            }
+            .remove-sky-btn {
+                padding: 10px 10px;
+            }
+            textarea {
+                min-height: 92px;
+            }
+        }
+
+        @media (min-width: 980px) and (orientation: landscape) {
+            body {
+                padding: 18px 24px calc(24px + env(safe-area-inset-bottom, 0px));
+            }
+
+            .shell {
+                max-width: 1120px;
+                display: grid;
+                grid-template-columns: minmax(520px, 620px) minmax(340px, 430px);
+                grid-template-areas:
+                    "hero hero"
+                    "send saved"
+                    "send sent"
+                    "send conn";
+                gap: 16px 18px;
+                align-items: start;
+                justify-content: center;
+            }
+
+            .hero {
+                grid-area: hero;
+                margin-bottom: 0;
+                padding: 0 8px 6px;
+            }
+
+            .shell > section:nth-of-type(2) {
+                grid-area: send;
+                position: sticky;
+                top: 16px;
+                align-self: start;
+            }
+
+            .shell > section:nth-of-type(3) {
+                grid-area: saved;
+                align-self: start;
+            }
+
+            .shell > section:nth-of-type(4) {
+                grid-area: sent;
+                align-self: start;
+            }
+
+            .shell > section:nth-of-type(5) {
+                grid-area: conn;
+                align-self: start;
+            }
+
+            .panel + .panel {
+                margin-top: 0;
+            }
+
+            .panel {
+                border-radius: 22px;
+                padding: 14px 15px;
+            }
+
+            .brand-logo {
+                width: clamp(190px, 17vw, 235px);
+            }
+
+            .hero-title {
+                font-size: 11px;
+                letter-spacing: 0.15em;
+                margin-top: 0;
+            }
+
+            .field-inline {
+                display: grid;
+                grid-template-columns: 1fr auto auto;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .field-inline input {
+                min-width: 0;
+            }
+
+            .fields {
+                gap: 9px;
+            }
+
+            input, textarea {
+                font-size: 14px;
+                padding: 11px 13px;
+            }
+
+            textarea {
+                min-height: 94px;
+            }
+
+            .cta {
+                min-height: 46px;
+                padding: 12px 16px;
+                font-size: 15px;
+            }
+
+            .shell > section:nth-of-type(3),
+            .shell > section:nth-of-type(4),
+            .shell > section:nth-of-type(5) {
+                min-height: 0;
+            }
+
+            .shell > section:nth-of-type(3) {
+                padding-top: 13px;
+                padding-bottom: 13px;
+            }
+
+            .shell > section:nth-of-type(4),
+            .shell > section:nth-of-type(5) {
+                padding-top: 13px;
+                padding-bottom: 13px;
+            }
+
+            .saved-item .channel-btn {
+                min-height: 42px;
+            }
+
+            .sent-item {
+                gap: 5px;
+                padding: 9px 10px;
+            }
+
+            .sent-list {
+                max-height: min(38vh, 420px);
+                overflow: auto;
+                padding-right: 2px;
+            }
+
+            .sent-text {
+                font-size: 12px;
+                line-height: 1.36;
+            }
+
+            .creds {
+                font-size: 11px;
+                line-height: 1.35;
+            }
+
+            .note {
+                font-size: 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="hero" aria-label="Airbox Web Companion branding">
+            <img class="brand-logo" src="./Logo.png" alt="Airbox logo" onerror="this.style.display='none';document.getElementById('brandText').hidden=false;">
+            <div id="brandText" hidden>
+                <h1 style="font-size: 46px; line-height: 1; font-weight: 700;">Airbox</h1>
+            </div>
+            <p class="hero-title">Airbox Web Companion</p>
+        </section>
+
+        <section class="panel" aria-labelledby="portalHeading">
+            <div class="panel-title" id="portalHeading">Send To Sky</div>
+            <div class="fields">
+                <div class="field">
+                    <label for="ownerName">Your name</label>
+                    <input type="text" id="ownerName" placeholder="John Doe" value="Visitor">
+                </div>
+
+                <div class="field">
+                    <label for="channelId">Sky PIN (3-6 digits)</label>
+                    <div class="field-inline">
+                        <input type="text" id="channelId" value="" inputmode="numeric" pattern="[0-9]{3,6}" maxlength="6" placeholder="Enter Sky PIN">
+                        <button id="saveSkyBtn" class="save-btn" type="button">Save Sky</button>
+                        <button id="generateSkyBtn" class="secondary-btn" type="button">New Sky</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="message">Message</label>
+                    <textarea id="message" placeholder="Send a wish to the sky lanterns..." maxlength="500"></textarea>
+                </div>
+
+                <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
+                <div id="status" class="status" role="status" aria-live="polite"></div>
+                <p class="note">Use the same Sky PIN shown in the Airbox Spectacles Lens.</p>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="savedSkiesHeading">
+            <div class="panel-title" id="savedSkiesHeading">Saved Skies</div>
+            <div id="savedSkiesList" class="saved-list" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="sentMessagesHeading">
+            <div class="panel-head">
+                <div class="panel-title" id="sentMessagesHeading">Sent Messages</div>
+                <button id="clearSentBtn" class="ghost-btn" type="button">Clear History</button>
+            </div>
+            <div id="sentMessagesList" class="sent-list" aria-live="polite"></div>
+        </section>
+
+        <section class="panel creds" aria-labelledby="connHeading">
+            <div class="panel-title" id="connHeading">Connection</div>
+            <strong>SUPABASE</strong><br>
+            <span id="creds-status">Checking SUPABASE_URL and ANON_KEY...</span><br>
+            <button class="small-btn" id="testBtn" type="button">Test connection</button>
+        </section>
+    </main>
+
+    <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline hidden></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://pmsvailryexqutzvzcsd.snapcloud.dev';
+        const SUPABASE_ANON_KEY =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtc3ZhaWxyeWV4cXV0enZ6Y3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzI3MzMsImV4cCI6MjA4MjUwODczM30.WTvkWsgBddhUPvTYhG6NIBR697Csb4mPzrbR5nUDRbs';
+
+        let supabaseClient;
+        try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const cs = document.getElementById('creds-status');
+            cs.textContent = 'Client ready - open web sender mode (RLS policy-based)';
+            cs.style.color = '#dfffe6';
+        } catch (e) {
+            const cs = document.getElementById('creds-status');
+            cs.textContent = 'Failed to create client: ' + e.message;
+            cs.style.color = '#ffe4e4';
+        }
+
+        const sendBtn = document.getElementById('sendBtn');
+        const statusEl = document.getElementById('status');
+        const messageEl = document.getElementById('message');
+        const ownerEl = document.getElementById('ownerName');
+        const channelEl = document.getElementById('channelId');
+        const testBtn = document.getElementById('testBtn');
+        const saveSkyBtn = document.getElementById('saveSkyBtn');
+        const generateSkyBtn = document.getElementById('generateSkyBtn');
+        const savedSkiesListEl = document.getElementById('savedSkiesList');
+        const sentMessagesListEl = document.getElementById('sentMessagesList');
+        const clearSentBtn = document.getElementById('clearSentBtn');
+        const bgMusicEl = document.getElementById('bgMusic');
+
+        const webSenderId = (() => {
+            const key = 'airbox_web_sender_id';
+            let id = localStorage.getItem(key);
+            if (!id) {
+                id = (window.crypto && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : ('web-' + Date.now());
+                localStorage.setItem(key, id);
+            }
+            return id;
+        })();
+
+        const savedSkiesKey = 'airbox_saved_skies';
+        const sentMessagesKey = 'airbox_sent_messages';
+
+        function initBackgroundMusic() {
+            if (!bgMusicEl) return;
+            bgMusicEl.volume = 0.4;
+
+            const tryPlay = () => {
+                const playPromise = bgMusicEl.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(() => {
+                        // Autoplay is blocked on some browsers until a user gesture.
+                    });
+                }
+            };
+
+            tryPlay();
+
+            const resumeOnGesture = () => {
+                if (!bgMusicEl.paused) return;
+                tryPlay();
+            };
+
+            window.addEventListener('pointerdown', resumeOnGesture, { passive: true });
+            window.addEventListener('keydown', resumeOnGesture, { passive: true });
+        }
+
+        function updateAuthStatus(text, color) {
+            const cs = document.getElementById('creds-status');
+            cs.textContent = text;
+            cs.style.color = color || '#dfffe6';
+        }
+
+        function generateSkyPin() {
+            const lengths = [3, 4, 5, 6];
+            const len = lengths[Math.floor(Math.random() * lengths.length)];
+            let pin = String(Math.floor(Math.random() * 9) + 1);
+            while (pin.length < len) {
+                pin += String(Math.floor(Math.random() * 10));
+            }
+            return pin;
+        }
+
+        function ensureSkyPin() {
+            let pin = channelEl.value.trim();
+            if (/^[0-9]{3,6}$/.test(pin)) return pin;
+            pin = generateSkyPin();
+            channelEl.value = pin;
+            syncPresetSelection();
+            return pin;
+        }
+
+        function getSavedSkies() {
+            try {
+                const raw = localStorage.getItem(savedSkiesKey);
+                const parsed = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(parsed)) return [];
+                return parsed.filter(pin => typeof pin === 'string' && /^[0-9]{3,6}$/.test(pin));
+            } catch (_) {
+                return [];
+            }
+        }
+
+        function setSavedSkies(skies) {
+            localStorage.setItem(savedSkiesKey, JSON.stringify(skies));
+        }
+
+        function getSentMessages() {
+            try {
+                const raw = localStorage.getItem(sentMessagesKey);
+                const parsed = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(parsed)) return [];
+                return parsed.filter(item =>
+                    item &&
+                    typeof item.pin === 'string' &&
+                    /^[0-9]{3,6}$/.test(item.pin) &&
+                    typeof item.message === 'string'
+                );
+            } catch (_) {
+                return [];
+            }
+        }
+
+        function setSentMessages(items) {
+            localStorage.setItem(sentMessagesKey, JSON.stringify(items));
+        }
+
+        function formatLocalTime(ts) {
+            const date = new Date(ts);
+            if (Number.isNaN(date.getTime())) return '';
+            return date.toLocaleString([], {
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderSentMessages() {
+            const items = getSentMessages();
+
+            if (!items.length) {
+                sentMessagesListEl.innerHTML = '<div class=\"sent-empty\">No sent messages yet. Your successful sends will appear here.</div>';
+                return;
+            }
+
+            sentMessagesListEl.innerHTML = items.map((item, index) => (
+                '<div class=\"sent-item\">' +
+                    '<div class=\"sent-meta\">' +
+                        '<button class=\"sent-sky-btn\" type=\"button\" data-use-sky=\"' + escapeHtml(item.pin) + '\">SKY ' + escapeHtml(item.pin) + '</button>' +
+                        '<span>' + escapeHtml(formatLocalTime(item.ts || Date.now())) + '</span>' +
+                    '</div>' +
+                    '<div class=\"sent-text\">' + escapeHtml(item.message) + '</div>' +
+                    '<div class=\"sent-submeta\">By ' + escapeHtml(item.name || 'Anonymous') + '</div>' +
+                '</div>'
+            )).join('');
+        }
+
+        function pushSentMessage(entry) {
+            const items = getSentMessages();
+            items.unshift(entry);
+            setSentMessages(items.slice(0, 30));
+            renderSentMessages();
+        }
+
+        function renderSavedSkies() {
+            const skies = getSavedSkies();
+
+            if (!skies.length) {
+                savedSkiesListEl.innerHTML = '<div class=\"saved-empty\">No saved skies yet. Enter a Sky PIN and tap Save Sky.</div>';
+                return;
+            }
+
+            savedSkiesListEl.innerHTML = skies.map(pin => (
+                '<div class=\"saved-item\">' +
+                    '<button class=\"channel-btn saved-sky-btn\" type=\"button\" data-channel=\"' + pin + '\">SKY ' + pin + '</button>' +
+                    '<button class=\"remove-sky-btn\" type=\"button\" data-remove-sky=\"' + pin + '\" aria-label=\"Remove Sky ' + pin + '\">Remove</button>' +
+                '</div>'
+            )).join('');
+
+            syncPresetSelection();
+        }
+
+        function syncPresetSelection() {
+            const pin = channelEl.value.trim();
+            document.querySelectorAll('.saved-sky-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.channel === pin);
+            });
+        }
+
+        function saveCurrentSky() {
+            const pin = channelEl.value.trim();
+            if (!/^[0-9]{3,6}$/.test(pin)) {
+                showStatus('Enter a valid 3-6 digit Sky PIN before saving', 'error');
+                return;
+            }
+
+            const skies = getSavedSkies();
+            if (skies.includes(pin)) {
+                showStatus('Sky ' + pin + ' is already saved', 'loading');
+                return;
+            }
+
+            skies.unshift(pin);
+            setSavedSkies(skies.slice(0, 20));
+            renderSavedSkies();
+            showStatus('Saved Sky ' + pin, 'success');
+        }
+
+        savedSkiesListEl.addEventListener('click', e => {
+            const selectBtn = e.target.closest('.saved-sky-btn');
+            if (selectBtn) {
+                channelEl.value = selectBtn.dataset.channel;
+                syncPresetSelection();
+                channelEl.focus();
+                return;
+            }
+
+            const removeBtn = e.target.closest('.remove-sky-btn');
+            if (removeBtn) {
+                const pin = removeBtn.dataset.removeSky;
+                const next = getSavedSkies().filter(item => item !== pin);
+                setSavedSkies(next);
+                renderSavedSkies();
+                if (channelEl.value.trim() === pin) {
+                    syncPresetSelection();
+                }
+                showStatus('Removed Sky ' + pin, 'loading');
+            }
+        });
+
+        sentMessagesListEl.addEventListener('click', e => {
+            const skyBtn = e.target.closest('[data-use-sky]');
+            if (!skyBtn) return;
+            channelEl.value = skyBtn.dataset.useSky;
+            syncPresetSelection();
+            channelEl.focus();
+            showStatus('Loaded Sky ' + skyBtn.dataset.useSky + ' from sent history', 'loading');
+        });
+
+        channelEl.addEventListener('input', () => {
+            channelEl.value = channelEl.value.replace(/\D/g, '').slice(0, 6);
+            syncPresetSelection();
+        });
+
+        saveSkyBtn.addEventListener('click', saveCurrentSky);
+        generateSkyBtn.addEventListener('click', () => {
+            const pin = generateSkyPin();
+            channelEl.value = pin;
+            syncPresetSelection();
+            channelEl.focus();
+            showStatus('Generated new Sky PIN: ' + pin, 'success');
+        });
+        clearSentBtn.addEventListener('click', () => {
+            setSentMessages([]);
+            renderSentMessages();
+            showStatus('Cleared sent message history', 'loading');
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+        messageEl.addEventListener('keypress', e => {
+            if (e.key === 'Enter' && e.ctrlKey) sendMessage();
+        });
+        testBtn.addEventListener('click', testConnection);
+        if (!channelEl.value.trim()) {
+            channelEl.value = generateSkyPin();
+        }
+        syncPresetSelection();
+        renderSavedSkies();
+        renderSentMessages();
+        initBackgroundMusic();
+
+        async function testConnection() {
+            if (!supabaseClient) {
+                showStatus('Supabase client not initialized', 'error');
+                return;
+            }
+            showStatus('Testing connection...', 'loading');
+            try {
+                const { error } = await supabaseClient
+                    .from('lanterns')
+                    .select('id')
+                    .limit(1);
+                if (error) {
+                    console.error('Test error:', error);
+                    showStatus('API reachable but query failed: ' + error.message, 'error');
+                } else {
+                    updateAuthStatus('Client reachable - insert governed by open RLS policy', '#dfffe6');
+                    showStatus('Connection OK and lanterns table is accessible', 'success');
+                }
+            } catch (err) {
+                console.error('Low-level error:', err);
+                showStatus('Network/DNS error - check SUPABASE_URL or internet', 'error');
+            }
+        }
+
+        async function sendMessage() {
+            if (!supabaseClient) {
+                showStatus('Supabase client not initialized', 'error');
+                return;
+            }
+
+            const msg = messageEl.value.trim();
+            const name = ownerEl.value.trim() || 'Anonymous';
+            const ch = channelEl.value.trim() ? channelEl.value.trim() : ensureSkyPin();
+
+            if (!msg || !ch) {
+                showStatus('Please enter a message and Sky PIN', 'error');
+                return;
+            }
+
+            if (!/^[0-9]{3,6}$/.test(ch)) {
+                showStatus('Sky PIN must be 3 to 6 digits', 'error');
+                return;
+            }
+
+            showStatus('Launching lantern...', 'loading');
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'SENDING...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('lanterns')
+                    .insert([{
+                        room_id: ch,
+                        message_text: msg,
+                        sender_name: name
+                    }]);
+
+                if (error) {
+                    console.error('Insert error:', error);
+                    throw error;
+                }
+
+                showStatus('Lantern launched for ' + name + ' in Sky ' + ch, 'success');
+                pushSentMessage({
+                    pin: ch,
+                    name: name,
+                    message: msg,
+                    ts: Date.now()
+                });
+                messageEl.value = '';
+                ownerEl.focus();
+            } catch (error) {
+                const msgText = error && error.message ? error.message : String(error);
+                if (msgText.toLowerCase().includes('row-level security')) {
+                    showStatus('RLS blocked insert. Check the new open INSERT policy for anon/authenticated roles.', 'error');
+                } else {
+                    showStatus(msgText, 'error');
+                }
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'SEND TO SKY';
+            }
+        }
+
+        function showStatus(text, type) {
+            statusEl.textContent = text;
+            statusEl.className = 'status ' + type + ' show';
+            setTimeout(() => statusEl.classList.remove('show'), 5000);
+        }
+    </script>
+</body>
+</html>
