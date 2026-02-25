@@ -546,6 +546,39 @@
             text-align: center;
         }
 
+        .quick-link-wrap {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 214, 138, 0.16);
+            background: rgba(255, 214, 138, 0.06);
+            color: var(--text);
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 237, 199, 0.06);
+        }
+
+        .quick-link:hover {
+            background: rgba(255, 214, 138, 0.1);
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 237, 199, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .quick-link:active {
+            transform: scale(0.99);
+        }
+
         @keyframes riseIn {
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
@@ -876,6 +909,16 @@
                 <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
                 <div id="status" class="status" role="status" aria-live="polite"></div>
                 <p class="note">Use the same Sky PIN shown in the Airbox Spectacles Lens.</p>
+                <div class="quick-link-wrap">
+                    <a
+                        class="quick-link"
+                        href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open Spectacles Lens
+                    </a>
+                </div>
             </div>
         </section>
 
