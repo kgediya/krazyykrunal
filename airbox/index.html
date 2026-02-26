@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Airbox Web Companion</title>
+    <title>SkyHi Web Companion</title>
     <style>
         :root {
             --bg: #060606;
@@ -91,14 +91,15 @@
         .hero::before {
             content: "";
             position: absolute;
-            left: 50%;
-            top: 26px;
-            width: 170px;
-            height: 170px;
+            left: calc(50% + clamp(12px, 2.8vw, 20px));
+            top: clamp(74px, 15vw, 98px);
+            width: min(230px, 66vw);
+            height: min(140px, 40vw);
             transform: translateX(-50%);
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(244, 205, 120, 0.25), transparent 68%);
-            filter: blur(4px);
+            border-radius: 999px;
+            background:
+                radial-gradient(ellipse at center, rgba(244, 205, 120, 0.24) 0%, rgba(244, 205, 120, 0.12) 45%, transparent 76%);
+            filter: blur(8px);
             pointer-events: none;
         }
 
@@ -876,12 +877,12 @@
 </head>
 <body>
     <main class="shell">
-        <section class="hero" aria-label="Airbox Web Companion branding">
-            <img class="brand-logo" src="./Logo.png" alt="Airbox logo" onerror="this.style.display='none';document.getElementById('brandText').hidden=false;">
+        <section class="hero" aria-label="SkyHi Web Companion branding">
+            <img class="brand-logo" src="./New Logo 2.png" alt="SkyHi logo" onerror="this.style.display='none';document.getElementById('brandText').hidden=false;">
             <div id="brandText" hidden>
-                <h1 style="font-size: 46px; line-height: 1; font-weight: 700;">Airbox</h1>
+                <h1 style="font-size: 46px; line-height: 1; font-weight: 700;">SkyHi</h1>
             </div>
-            <p class="hero-title">Airbox Web Companion</p>
+            <p class="hero-title">SkyHi Web Companion</p>
         </section>
 
         <section class="panel" aria-labelledby="portalHeading">
@@ -908,7 +909,7 @@
 
                 <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
                 <div id="status" class="status" role="status" aria-live="polite"></div>
-                <p class="note">Use the same Sky PIN shown in the Airbox Spectacles Lens.</p>
+                <p class="note">Enter this Sky PIN in your Spectacles Lens, and watch your messages come alive.</p>
                 <div class="quick-link-wrap">
                     <a
                         class="quick-link"
@@ -940,6 +941,7 @@
             <strong>SUPABASE</strong><br>
             <span id="creds-status">Checking SUPABASE_URL and ANON_KEY...</span><br>
             <button class="small-btn" id="testBtn" type="button">Test connection</button>
+            <button class="small-btn" id="muteAudioBtn" type="button" aria-pressed="false">Mute Audio</button>
         </section>
     </main>
 
@@ -975,6 +977,7 @@
         const sentMessagesListEl = document.getElementById('sentMessagesList');
         const clearSentBtn = document.getElementById('clearSentBtn');
         const bgMusicEl = document.getElementById('bgMusic');
+        const muteAudioBtn = document.getElementById('muteAudioBtn');
 
         const webSenderId = (() => {
             const key = 'airbox_web_sender_id';
@@ -990,10 +993,20 @@
 
         const savedSkiesKey = 'airbox_saved_skies';
         const sentMessagesKey = 'airbox_sent_messages';
+        const bgMusicMutedKey = 'skyhi_bg_music_muted';
+
+        function updateMuteButton() {
+            if (!muteAudioBtn || !bgMusicEl) return;
+            const muted = !!bgMusicEl.muted;
+            muteAudioBtn.textContent = muted ? 'Unmute Audio' : 'Mute Audio';
+            muteAudioBtn.setAttribute('aria-pressed', String(muted));
+        }
 
         function initBackgroundMusic() {
             if (!bgMusicEl) return;
             bgMusicEl.volume = 0.4;
+            bgMusicEl.muted = localStorage.getItem(bgMusicMutedKey) === '1';
+            updateMuteButton();
 
             const tryPlay = () => {
                 const playPromise = bgMusicEl.play();
@@ -1203,6 +1216,14 @@
         });
 
         saveSkyBtn.addEventListener('click', saveCurrentSky);
+        if (muteAudioBtn) {
+            muteAudioBtn.addEventListener('click', () => {
+                if (!bgMusicEl) return;
+                bgMusicEl.muted = !bgMusicEl.muted;
+                localStorage.setItem(bgMusicMutedKey, bgMusicEl.muted ? '1' : '0');
+                updateMuteButton();
+            });
+        }
         generateSkyBtn.addEventListener('click', () => {
             const pin = generateSkyPin();
             channelEl.value = pin;
