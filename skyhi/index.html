@@ -19,6 +19,11 @@
             --input-focus: rgba(255, 255, 255, 0.14);
         }
 
+        body.theme-love {
+            --text: #fff1f0;
+            --muted: rgba(255, 233, 233, 0.78);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
@@ -70,6 +75,30 @@
             animation: glowPulse 10s ease-in-out infinite alternate;
         }
 
+        body.theme-love {
+            background:
+                radial-gradient(circle at 50% 12%, rgba(255, 179, 196, 0.16), transparent 42%),
+                radial-gradient(circle at 78% 28%, rgba(227, 149, 152, 0.12), transparent 36%),
+                radial-gradient(circle at 20% 74%, rgba(255, 201, 177, 0.08), transparent 38%),
+                radial-gradient(circle at 50% 120%, rgba(219, 137, 124, 0.08), transparent 44%),
+                linear-gradient(180deg, #10090b 0%, #090506 55%, #040203 100%);
+        }
+
+        body.theme-love::before {
+            background-image:
+                radial-gradient(circle, rgba(255, 216, 218, 0.9) 0 1px, transparent 1.7px),
+                radial-gradient(circle, rgba(246, 168, 175, 0.78) 0 1px, transparent 1.9px),
+                radial-gradient(circle, rgba(255, 227, 208, 0.62) 0 1px, transparent 2px);
+        }
+
+        body.theme-love::after {
+            background:
+                radial-gradient(circle at 30% 35%, rgba(255, 173, 196, 0.08), transparent 32%),
+                radial-gradient(circle at 75% 60%, rgba(234, 153, 144, 0.08), transparent 36%),
+                linear-gradient(180deg, rgba(255, 205, 192, 0.04), transparent 28%),
+                linear-gradient(0deg, rgba(0, 0, 0, 0.38), transparent 40%);
+        }
+
         .shell {
             width: 100%;
             max-width: 470px;
@@ -101,6 +130,11 @@
                 radial-gradient(ellipse at center, rgba(244, 205, 120, 0.24) 0%, rgba(244, 205, 120, 0.12) 45%, transparent 76%);
             filter: blur(8px);
             pointer-events: none;
+        }
+
+        body.theme-love .hero::before {
+            background:
+                radial-gradient(ellipse at center, rgba(255, 191, 201, 0.26) 0%, rgba(242, 167, 151, 0.14) 46%, transparent 78%);
         }
 
         .brand-logo {
@@ -166,6 +200,30 @@
             pointer-events: none;
         }
 
+        body.theme-love .panel {
+            background: linear-gradient(180deg, rgba(255, 215, 220, 0.1), rgba(255, 235, 232, 0.04));
+            border-color: rgba(255, 188, 190, 0.18);
+            box-shadow:
+                0 16px 34px rgba(0, 0, 0, 0.42),
+                0 4px 12px rgba(232, 148, 130, 0.07),
+                inset 0 1px 0 rgba(255, 227, 231, 0.12),
+                inset 0 -10px 24px rgba(0, 0, 0, 0.16);
+        }
+
+        body.theme-love .panel::before {
+            background:
+                linear-gradient(145deg, rgba(255, 229, 232, 0.08), transparent 40%),
+                radial-gradient(circle at 15% 0%, rgba(255, 196, 198, 0.12), transparent 48%);
+        }
+
+        body.theme-love .panel::after {
+            background: radial-gradient(circle, rgba(236, 151, 147, 0.14), transparent 72%);
+        }
+
+        body.theme-love .panel-title {
+            color: rgba(255, 216, 222, 0.95);
+        }
+
         .panel > * {
             position: relative;
             z-index: 1;
@@ -211,6 +269,24 @@
             transform: scale(0.99);
         }
 
+        body.theme-love .small-btn,
+        body.theme-love .secondary-btn,
+        body.theme-love .save-btn,
+        body.theme-love .ghost-btn,
+        body.theme-love .remove-sky-btn {
+            border-color: rgba(255, 192, 198, 0.2);
+            background: rgba(255, 188, 190, 0.07);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 228, 232, 0.08);
+        }
+
+        body.theme-love .small-btn:hover,
+        body.theme-love .secondary-btn:hover,
+        body.theme-love .save-btn:hover,
+        body.theme-love .ghost-btn:hover,
+        body.theme-love .remove-sky-btn:hover {
+            background: rgba(255, 188, 190, 0.12);
+        }
+
         .channels {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -240,6 +316,54 @@
             background: linear-gradient(180deg, rgba(255, 218, 140, 0.28), rgba(196, 137, 32, 0.2));
             border-color: rgba(255, 217, 143, 0.34);
             box-shadow: inset 0 1px 0 rgba(255, 235, 196, 0.16), 0 8px 18px rgba(94, 58, 11, 0.2);
+        }
+
+        body.theme-love .channel-btn,
+        body.theme-love .type-btn {
+            border-color: rgba(255, 192, 198, 0.18);
+            background: rgba(255, 188, 190, 0.06);
+        }
+
+        body.theme-love .channel-btn:hover,
+        body.theme-love .type-btn:hover {
+            background: rgba(255, 188, 190, 0.11);
+        }
+
+        body.theme-love .channel-btn.active,
+        body.theme-love .type-btn.active {
+            background: linear-gradient(180deg, rgba(255, 201, 207, 0.3), rgba(214, 130, 122, 0.2));
+            border-color: rgba(255, 203, 208, 0.34);
+            box-shadow: inset 0 1px 0 rgba(255, 231, 234, 0.16), 0 8px 18px rgba(110, 53, 54, 0.2);
+        }
+
+        .lantern-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .type-btn {
+            border: 1px solid rgba(255, 214, 138, 0.14);
+            background: rgba(255, 214, 138, 0.05);
+            color: var(--text);
+            border-radius: 14px;
+            padding: 11px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: inset 0 1px 0 rgba(255, 239, 209, 0.05);
+        }
+
+        .type-btn:hover {
+            background: rgba(255, 214, 138, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .type-btn.active {
+            background: linear-gradient(180deg, rgba(255, 218, 140, 0.28), rgba(196, 137, 32, 0.2));
+            border-color: rgba(255, 217, 143, 0.34);
+            box-shadow: inset 0 1px 0 rgba(255, 235, 196, 0.16), 0 8px 18px rgba(94, 58, 11, 0.18);
         }
 
         .field-inline {
@@ -461,6 +585,24 @@
             box-shadow: 0 0 0 3px rgba(243, 207, 132, 0.1);
         }
 
+        body.theme-love input,
+        body.theme-love textarea {
+            border-color: rgba(255, 188, 190, 0.16);
+            background: rgba(255, 188, 190, 0.05);
+        }
+
+        body.theme-love input::placeholder,
+        body.theme-love textarea::placeholder {
+            color: rgba(255, 223, 226, 0.5);
+        }
+
+        body.theme-love input:focus,
+        body.theme-love textarea:focus {
+            background: rgba(255, 188, 190, 0.1);
+            border-color: rgba(255, 200, 205, 0.34);
+            box-shadow: 0 0 0 3px rgba(239, 176, 166, 0.12);
+        }
+
         textarea {
             min-height: 100px;
             max-height: 220px;
@@ -499,6 +641,30 @@
                 0 6px 14px rgba(196, 124, 18, 0.14),
                 inset 0 1px 0 rgba(255, 235, 196, 0.18),
                 inset 0 -8px 16px rgba(92, 52, 7, 0.14);
+        }
+
+        body.theme-love .cta {
+            border-color: rgba(255, 214, 220, 0.24);
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255, 240, 242, 0.14), transparent 50%),
+                linear-gradient(180deg, rgba(255, 198, 204, 0.24), rgba(173, 96, 88, 0.2));
+            color: #fff3f2;
+            box-shadow:
+                0 14px 28px rgba(0, 0, 0, 0.34),
+                0 4px 12px rgba(214, 126, 118, 0.14),
+                inset 0 1px 0 rgba(255, 233, 236, 0.16),
+                inset 0 -8px 14px rgba(92, 44, 41, 0.14);
+        }
+
+        body.theme-love .cta:hover:not(:disabled) {
+            background:
+                radial-gradient(circle at 30% 20%, rgba(255, 243, 245, 0.18), transparent 50%),
+                linear-gradient(180deg, rgba(255, 206, 212, 0.32), rgba(191, 105, 96, 0.24));
+            box-shadow:
+                0 18px 34px rgba(0, 0, 0, 0.38),
+                0 6px 14px rgba(214, 126, 118, 0.16),
+                inset 0 1px 0 rgba(255, 236, 239, 0.18),
+                inset 0 -8px 16px rgba(92, 44, 41, 0.16);
         }
 
         .cta:disabled {
@@ -547,6 +713,10 @@
             text-align: center;
         }
 
+        body.theme-love .note {
+            color: rgba(255, 219, 222, 0.8);
+        }
+
         .quick-link-wrap {
             margin-top: 10px;
             display: flex;
@@ -558,26 +728,60 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            border: 1px solid rgba(255, 214, 138, 0.16);
-            background: rgba(255, 214, 138, 0.06);
-            color: var(--text);
+            border: 1px solid rgba(255, 223, 158, 0.38);
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 248, 230, 0.16), transparent 48%),
+                linear-gradient(180deg, rgba(255, 220, 140, 0.24), rgba(188, 122, 18, 0.2));
+            color: #fff6e1;
             border-radius: 999px;
-            padding: 10px 14px;
+            padding: 11px 16px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.03em;
             text-decoration: none;
             transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 237, 199, 0.06);
+            box-shadow:
+                0 10px 22px rgba(0, 0, 0, 0.24),
+                0 0 0 1px rgba(255, 223, 158, 0.06),
+                0 0 18px rgba(243, 190, 77, 0.16),
+                inset 0 1px 0 rgba(255, 243, 214, 0.22);
         }
 
         .quick-link:hover {
-            background: rgba(255, 214, 138, 0.1);
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 237, 199, 0.08);
-            transform: translateY(-1px);
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 248, 230, 0.2), transparent 52%),
+                linear-gradient(180deg, rgba(255, 226, 152, 0.3), rgba(206, 136, 25, 0.24));
+            box-shadow:
+                0 14px 26px rgba(0, 0, 0, 0.28),
+                0 0 22px rgba(243, 190, 77, 0.24),
+                inset 0 1px 0 rgba(255, 243, 214, 0.25);
+            transform: translateY(-2px);
         }
 
         .quick-link:active {
             transform: scale(0.99);
+        }
+
+        body.theme-love .quick-link {
+            border-color: rgba(255, 210, 215, 0.38);
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 244, 246, 0.16), transparent 48%),
+                linear-gradient(180deg, rgba(255, 204, 211, 0.24), rgba(191, 110, 104, 0.2));
+            box-shadow:
+                0 10px 22px rgba(0, 0, 0, 0.24),
+                0 0 0 1px rgba(255, 220, 224, 0.06),
+                0 0 18px rgba(241, 159, 157, 0.2),
+                inset 0 1px 0 rgba(255, 240, 242, 0.22);
+        }
+
+        body.theme-love .quick-link:hover {
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255, 246, 247, 0.2), transparent 52%),
+                linear-gradient(180deg, rgba(255, 212, 218, 0.3), rgba(205, 118, 111, 0.24));
+            box-shadow:
+                0 14px 26px rgba(0, 0, 0, 0.28),
+                0 0 22px rgba(241, 159, 157, 0.28),
+                inset 0 1px 0 rgba(255, 242, 244, 0.25);
         }
 
         @keyframes riseIn {
@@ -907,6 +1111,14 @@
                     <textarea id="message" placeholder="Send a wish to the sky lanterns..." maxlength="500"></textarea>
                 </div>
 
+                <div class="field">
+                    <label>Lantern Type</label>
+                    <div class="lantern-type-grid" role="group" aria-label="Lantern type">
+                        <button class="type-btn active" type="button" data-shape-type="0" aria-pressed="true">Normal</button>
+                        <button class="type-btn" type="button" data-shape-type="1" aria-pressed="false">Love</button>
+                    </div>
+                </div>
+
                 <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
                 <div id="status" class="status" role="status" aria-live="polite"></div>
                 <p class="note">Enter this Sky PIN in your Spectacles Lens, and watch your messages come alive.</p>
@@ -978,6 +1190,7 @@
         const clearSentBtn = document.getElementById('clearSentBtn');
         const bgMusicEl = document.getElementById('bgMusic');
         const muteAudioBtn = document.getElementById('muteAudioBtn');
+        const lanternTypeButtons = Array.from(document.querySelectorAll('.type-btn'));
 
         const webSenderId = (() => {
             const key = 'airbox_web_sender_id';
@@ -1099,6 +1312,22 @@
             });
         }
 
+        function setLanternType(shapeType) {
+            const normalizedShapeType = shapeType === 1 ? 1 : 0;
+            lanternTypeButtons.forEach(btn => {
+                const isActive = btn.dataset.shapeType === String(normalizedShapeType);
+                btn.classList.toggle('active', isActive);
+                btn.setAttribute('aria-pressed', String(isActive));
+            });
+            document.body.classList.toggle('theme-love', normalizedShapeType === 1);
+        }
+
+        function getLanternType() {
+            const activeBtn = lanternTypeButtons.find(btn => btn.classList.contains('active'));
+            const raw = activeBtn ? Number(activeBtn.dataset.shapeType) : 0;
+            return raw === 1 ? 1 : 0;
+        }
+
         function escapeHtml(text) {
             return String(text)
                 .replace(/&/g, '&amp;')
@@ -1216,6 +1445,11 @@
         });
 
         saveSkyBtn.addEventListener('click', saveCurrentSky);
+        lanternTypeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setLanternType(btn.dataset.shapeType === '1' ? 1 : 0);
+            });
+        });
         if (muteAudioBtn) {
             muteAudioBtn.addEventListener('click', () => {
                 if (!bgMusicEl) return;
@@ -1246,6 +1480,7 @@
             channelEl.value = generateSkyPin();
         }
         syncPresetSelection();
+        setLanternType(0);
         renderSavedSkies();
         renderSentMessages();
         initBackgroundMusic();
@@ -1283,6 +1518,7 @@
             const msg = messageEl.value.trim();
             const name = ownerEl.value.trim() || 'Anonymous';
             const ch = channelEl.value.trim() ? channelEl.value.trim() : ensureSkyPin();
+            const shapeType = getLanternType();
 
             if (!msg || !ch) {
                 showStatus('Please enter a message and Sky PIN', 'error');
@@ -1304,7 +1540,8 @@
                     .insert([{
                         room_id: ch,
                         message_text: msg,
-                        sender_name: name
+                        sender_name: name,
+                        shape_type: shapeType
                     }]);
 
                 if (error) {
