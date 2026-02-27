@@ -546,6 +546,141 @@
             font-size: 12px;
         }
 
+        .receive-controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .receive-status {
+            margin-bottom: 10px;
+            border-radius: 12px;
+            padding: 8px 10px;
+            font-size: 12px;
+            line-height: 1.35;
+            color: rgba(255, 233, 194, 0.86);
+            border: 1px solid rgba(255, 214, 138, 0.12);
+            background: rgba(255, 214, 138, 0.05);
+        }
+
+        .receive-status.error {
+            color: #ffe3e3;
+            border-color: rgba(246, 162, 162, 0.28);
+            background: rgba(220, 92, 92, 0.12);
+        }
+
+        .receiver-focus {
+            position: relative;
+            border: 1px solid rgba(255, 214, 138, 0.14);
+            border-radius: 16px;
+            padding: 11px 12px;
+            margin-bottom: 10px;
+            background:
+                radial-gradient(circle at 12% 15%, rgba(255, 229, 175, 0.12), transparent 56%),
+                rgba(255, 214, 138, 0.05);
+            overflow: hidden;
+        }
+
+        .receiver-focus::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -28px;
+            top: -56px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 207, 96, 0.18), transparent 70%);
+            pointer-events: none;
+        }
+
+        .receiver-focus-title {
+            color: rgba(255, 223, 158, 0.9);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .receiver-focus-text {
+            color: rgba(255, 247, 226, 0.93);
+            font-size: 13px;
+            line-height: 1.38;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .incoming-list {
+            display: grid;
+            gap: 8px;
+            max-height: min(42vh, 390px);
+            overflow: auto;
+            padding-right: 2px;
+        }
+
+        .incoming-empty {
+            color: rgba(255, 227, 172, 0.66);
+            font-size: 13px;
+            padding: 4px 2px;
+        }
+
+        .incoming-item {
+            border: 1px solid rgba(255, 214, 138, 0.12);
+            background: rgba(255, 214, 138, 0.04);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: grid;
+            gap: 6px;
+            box-shadow: inset 0 1px 0 rgba(255, 236, 193, 0.03), 0 8px 18px rgba(0, 0, 0, 0.14);
+        }
+
+        .incoming-item.live {
+            border-color: rgba(255, 230, 176, 0.32);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 245, 220, 0.08),
+                0 8px 18px rgba(0, 0, 0, 0.16),
+                0 0 0 1px rgba(255, 214, 138, 0.15),
+                0 0 20px rgba(255, 188, 69, 0.12);
+            animation: riseIn 220ms ease-out;
+        }
+
+        .incoming-item.love {
+            border-color: rgba(255, 192, 198, 0.2);
+            background: rgba(255, 188, 190, 0.06);
+        }
+
+        .incoming-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(255, 235, 196, 0.72);
+        }
+
+        .incoming-sender {
+            color: rgba(255, 236, 194, 0.96);
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .incoming-text {
+            color: rgba(255, 247, 226, 0.95);
+            font-size: 14px;
+            line-height: 1.38;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .receive-link-wrap {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
         .fields {
             display: grid;
             gap: 12px;
@@ -864,6 +999,14 @@
                 gap: 8px;
                 align-items: stretch;
             }
+            .receive-controls {
+                grid-template-columns: 1fr 1fr;
+                align-items: stretch;
+            }
+            .receive-controls input {
+                grid-column: 1 / -1;
+                min-width: 0;
+            }
             .field-inline input {
                 grid-column: 1 / -1;
                 min-width: 0;
@@ -942,6 +1085,7 @@
                 grid-template-columns: minmax(520px, 620px) minmax(340px, 430px);
                 grid-template-areas:
                     "hero hero"
+                    "send view"
                     "send saved"
                     "send sent"
                     "send conn";
@@ -956,24 +1100,29 @@
                 padding: 0 8px 6px;
             }
 
-            .shell > section:nth-of-type(2) {
+            .send-panel {
                 grid-area: send;
                 position: sticky;
                 top: 16px;
                 align-self: start;
             }
 
-            .shell > section:nth-of-type(3) {
+            .view-panel {
+                grid-area: view;
+                align-self: start;
+            }
+
+            .saved-panel {
                 grid-area: saved;
                 align-self: start;
             }
 
-            .shell > section:nth-of-type(4) {
+            .sent-panel {
                 grid-area: sent;
                 align-self: start;
             }
 
-            .shell > section:nth-of-type(5) {
+            .conn-panel {
                 grid-area: conn;
                 align-self: start;
             }
@@ -1027,19 +1176,21 @@
                 font-size: 15px;
             }
 
-            .shell > section:nth-of-type(3),
-            .shell > section:nth-of-type(4),
-            .shell > section:nth-of-type(5) {
+            .view-panel,
+            .saved-panel,
+            .sent-panel,
+            .conn-panel {
                 min-height: 0;
             }
 
-            .shell > section:nth-of-type(3) {
+            .view-panel,
+            .saved-panel {
                 padding-top: 13px;
                 padding-bottom: 13px;
             }
 
-            .shell > section:nth-of-type(4),
-            .shell > section:nth-of-type(5) {
+            .sent-panel,
+            .conn-panel {
                 padding-top: 13px;
                 padding-bottom: 13px;
             }
@@ -1072,6 +1223,10 @@
             .note {
                 font-size: 12px;
             }
+
+            .incoming-list {
+                max-height: min(34vh, 320px);
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1089,7 +1244,7 @@
             <p class="hero-title">SkyHi Web Companion</p>
         </section>
 
-        <section class="panel" aria-labelledby="portalHeading">
+        <section class="panel send-panel" aria-labelledby="portalHeading">
             <div class="panel-title" id="portalHeading">Send To Sky</div>
             <div class="fields">
                 <div class="field">
@@ -1135,12 +1290,17 @@
             </div>
         </section>
 
-        <section class="panel" aria-labelledby="savedSkiesHeading">
+        <section class="panel view-panel" aria-labelledby="viewSkyHeading">
+            <div class="panel-title" id="viewSkyHeading">View My Sky</div>
+            <a id="openImmersiveBtn" class="cta" href="./receive.html" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">OPEN IMMERSIVE SKY</a>
+        </section>
+
+        <section class="panel saved-panel" aria-labelledby="savedSkiesHeading">
             <div class="panel-title" id="savedSkiesHeading">Saved Skies</div>
             <div id="savedSkiesList" class="saved-list" aria-live="polite"></div>
         </section>
 
-        <section class="panel" aria-labelledby="sentMessagesHeading">
+        <section class="panel sent-panel" aria-labelledby="sentMessagesHeading">
             <div class="panel-head">
                 <div class="panel-title" id="sentMessagesHeading">Sent Messages</div>
                 <button id="clearSentBtn" class="ghost-btn" type="button">Clear History</button>
@@ -1148,7 +1308,7 @@
             <div id="sentMessagesList" class="sent-list" aria-live="polite"></div>
         </section>
 
-        <section class="panel creds" aria-labelledby="connHeading">
+        <section class="panel creds conn-panel" aria-labelledby="connHeading">
             <div class="panel-title" id="connHeading">Connection</div>
             <strong>SUPABASE</strong><br>
             <span id="creds-status">Checking SUPABASE_URL and ANON_KEY...</span><br>
@@ -1191,6 +1351,7 @@
         const bgMusicEl = document.getElementById('bgMusic');
         const muteAudioBtn = document.getElementById('muteAudioBtn');
         const lanternTypeButtons = Array.from(document.querySelectorAll('.type-btn'));
+        const openImmersiveBtn = document.getElementById('openImmersiveBtn');
 
         const webSenderId = (() => {
             const key = 'airbox_web_sender_id';
@@ -1207,6 +1368,7 @@
         const savedSkiesKey = 'airbox_saved_skies';
         const sentMessagesKey = 'airbox_sent_messages';
         const bgMusicMutedKey = 'skyhi_bg_music_muted';
+        const currentSkyPinKey = 'skyhi_current_sky_pin';
 
         function updateMuteButton() {
             if (!muteAudioBtn || !bgMusicEl) return;
@@ -1261,9 +1423,19 @@
             let pin = channelEl.value.trim();
             if (/^[0-9]{3,6}$/.test(pin)) return pin;
             pin = generateSkyPin();
-            channelEl.value = pin;
-            syncPresetSelection();
+            setSkyPin(pin, false);
             return pin;
+        }
+
+        function setSkyPin(pin, shouldFocus) {
+            const clean = String(pin || '').replace(/\D/g, '').slice(0, 6);
+            channelEl.value = clean;
+            if (/^[0-9]{3,6}$/.test(clean)) {
+                localStorage.setItem(currentSkyPinKey, clean);
+            }
+            syncPresetSelection();
+            syncImmersiveLink();
+            if (shouldFocus) channelEl.focus();
         }
 
         function getSavedSkies() {
@@ -1335,6 +1507,12 @@
                 .replace(/>/g, '&gt;')
                 .replace(/\"/g, '&quot;')
                 .replace(/'/g, '&#39;');
+        }
+
+        function syncImmersiveLink() {
+            if (!openImmersiveBtn) return;
+            const pin = channelEl && /^[0-9]{3,6}$/.test(channelEl.value.trim()) ? channelEl.value.trim() : '';
+            openImmersiveBtn.href = pin ? ('./receive.html?pin=' + encodeURIComponent(pin)) : './receive.html';
         }
 
         function renderSentMessages() {
@@ -1411,9 +1589,7 @@
         savedSkiesListEl.addEventListener('click', e => {
             const selectBtn = e.target.closest('.saved-sky-btn');
             if (selectBtn) {
-                channelEl.value = selectBtn.dataset.channel;
-                syncPresetSelection();
-                channelEl.focus();
+                setSkyPin(selectBtn.dataset.channel, true);
                 return;
             }
 
@@ -1433,15 +1609,18 @@
         sentMessagesListEl.addEventListener('click', e => {
             const skyBtn = e.target.closest('[data-use-sky]');
             if (!skyBtn) return;
-            channelEl.value = skyBtn.dataset.useSky;
-            syncPresetSelection();
-            channelEl.focus();
+            setSkyPin(skyBtn.dataset.useSky, true);
             showStatus('Loaded Sky ' + skyBtn.dataset.useSky + ' from sent history', 'loading');
         });
 
         channelEl.addEventListener('input', () => {
-            channelEl.value = channelEl.value.replace(/\D/g, '').slice(0, 6);
+            const clean = channelEl.value.replace(/\D/g, '').slice(0, 6);
+            channelEl.value = clean;
+            if (/^[0-9]{3,6}$/.test(clean)) {
+                localStorage.setItem(currentSkyPinKey, clean);
+            }
             syncPresetSelection();
+            syncImmersiveLink();
         });
 
         saveSkyBtn.addEventListener('click', saveCurrentSky);
@@ -1460,9 +1639,7 @@
         }
         generateSkyBtn.addEventListener('click', () => {
             const pin = generateSkyPin();
-            channelEl.value = pin;
-            syncPresetSelection();
-            channelEl.focus();
+            setSkyPin(pin, true);
             showStatus('Generated new Sky PIN: ' + pin, 'success');
         });
         clearSentBtn.addEventListener('click', () => {
@@ -1470,14 +1647,18 @@
             renderSentMessages();
             showStatus('Cleared sent message history', 'loading');
         });
-
         sendBtn.addEventListener('click', sendMessage);
         messageEl.addEventListener('keypress', e => {
             if (e.key === 'Enter' && e.ctrlKey) sendMessage();
         });
         testBtn.addEventListener('click', testConnection);
-        if (!channelEl.value.trim()) {
-            channelEl.value = generateSkyPin();
+        const persistedSkyPin = localStorage.getItem(currentSkyPinKey);
+        if (/^[0-9]{3,6}$/.test(persistedSkyPin || '')) {
+            setSkyPin(persistedSkyPin, false);
+        } else if (!channelEl.value.trim()) {
+            setSkyPin(generateSkyPin(), false);
+        } else {
+            setSkyPin(channelEl.value.trim(), false);
         }
         syncPresetSelection();
         setLanternType(0);
