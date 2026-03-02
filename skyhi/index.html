@@ -155,6 +155,32 @@
             text-transform: uppercase;
         }
 
+        .intro-panel {
+            margin-bottom: 12px;
+        }
+
+        .intro-text {
+            color: rgba(255, 244, 221, 0.9);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .intro-steps {
+            margin: 0;
+            padding-left: 18px;
+            display: grid;
+            gap: 6px;
+            color: rgba(255, 236, 200, 0.9);
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        .intro-steps strong {
+            color: rgba(255, 244, 221, 0.98);
+            font-weight: 700;
+        }
+
         .panel {
             position: relative;
             background: linear-gradient(180deg, rgba(255, 235, 196, 0.1), rgba(255, 255, 255, 0.04));
@@ -856,6 +882,9 @@
             margin-top: 10px;
             display: flex;
             justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .quick-link {
@@ -1244,6 +1273,37 @@
             <p class="hero-title">SkyHi Web Companion</p>
         </section>
 
+        <section class="panel intro-panel" aria-labelledby="introHeading">
+            <div class="panel-title" id="introHeading">What Is SkyHi?</div>
+            <p class="intro-text">
+                SkyHi is a Spectacles-first immersive experience.
+                This web app is the companion that lets you send lantern wishes from your phone/laptop into the same live Sky PIN.
+            </p>
+            <ol class="intro-steps">
+                <li><strong>Start on Spectacles:</strong> Open the SkyHi Lens on Spectacles first.</li>
+                <li><strong>Match Sky PIN:</strong> Use the same 3-6 digit Sky PIN on Spectacles and this companion web app.</li>
+                <li><strong>Send from Web:</strong> Write a message here and tap "Send To Sky" to launch it into Spectacles.</li>
+            </ol>
+            <div class="quick-link-wrap">
+                <a
+                    class="quick-link"
+                    href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Open Spectacles Lens
+                </a>
+                <a
+                    class="quick-link"
+                    href="https://www.linkedin.com/posts/krazyykrunal_spatialcommunicationusingspectacles-snapcloud-activity-7433691151527911424-2x-3?utm_source=share&utm_medium=member_desktop&rcm=ACoAABrf9V0B5ypR3xhNIZMcahSS9bDPsiX3kl8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Know More
+                </a>
+            </div>
+        </section>
+
         <section class="panel send-panel" aria-labelledby="portalHeading">
             <div class="panel-title" id="portalHeading">Send To Sky</div>
             <div class="fields">
@@ -1276,17 +1336,7 @@
 
                 <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
                 <div id="status" class="status" role="status" aria-live="polite"></div>
-                <p class="note">Enter this Sky PIN in your Spectacles Lens, and watch your messages come alive.</p>
-                <div class="quick-link-wrap">
-                    <a
-                        class="quick-link"
-                        href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Open Spectacles Lens
-                    </a>
-                </div>
+                <p class="note">Use the same Sky PIN in the SkyHi Spectacles Lens to see these messages come alive.</p>
             </div>
         </section>
 
@@ -1311,7 +1361,7 @@
         <section class="panel creds conn-panel" aria-labelledby="connHeading">
             <div class="panel-title" id="connHeading">Connection</div>
             <strong>SUPABASE</strong><br>
-            <span id="creds-status">Checking SUPABASE_URL and ANON_KEY...</span><br>
+            <span id="creds-status">Checking edge gateway...</span><br>
             <button class="small-btn" id="testBtn" type="button">Test connection</button>
             <button class="small-btn" id="muteAudioBtn" type="button" aria-pressed="false">Mute Audio</button>
         </section>
@@ -1319,23 +1369,15 @@
 
     <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline hidden></audio>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://pmsvailryexqutzvzcsd.snapcloud.dev';
         const SUPABASE_ANON_KEY =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtc3ZhaWxyeWV4cXV0enZ6Y3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzI3MzMsImV4cCI6MjA4MjUwODczM30.WTvkWsgBddhUPvTYhG6NIBR697Csb4mPzrbR5nUDRbs';
+        const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/lantern-processing';
 
-        let supabaseClient;
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const cs = document.getElementById('creds-status');
-            cs.textContent = 'Client ready - open web sender mode (RLS policy-based)';
-            cs.style.color = '#dfffe6';
-        } catch (e) {
-            const cs = document.getElementById('creds-status');
-            cs.textContent = 'Failed to create client: ' + e.message;
-            cs.style.color = '#ffe4e4';
-        }
+        const cs = document.getElementById('creds-status');
+        cs.textContent = 'Edge gateway mode enabled';
+        cs.style.color = '#dfffe6';
 
         const sendBtn = document.getElementById('sendBtn');
         const statusEl = document.getElementById('status');
@@ -1512,7 +1554,36 @@
         function syncImmersiveLink() {
             if (!openImmersiveBtn) return;
             const pin = channelEl && /^[0-9]{3,6}$/.test(channelEl.value.trim()) ? channelEl.value.trim() : '';
-            openImmersiveBtn.href = pin ? ('./receive.html?pin=' + encodeURIComponent(pin)) : './receive.html';
+            if (pin) {
+                openImmersiveBtn.href = './receive.html?pin=' + encodeURIComponent(pin);
+            } else {
+                openImmersiveBtn.href = './receive.html';
+            }
+        }
+
+        async function callGateway(payload) {
+            const res = await fetch(EDGE_FUNCTION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+            let body = null;
+            try {
+                body = await res.json();
+            } catch (_) {
+                body = null;
+            }
+            if (!res.ok) {
+                const message = body && body.error
+                    ? body.error
+                    : ('HTTP ' + res.status);
+                throw new Error(message);
+            }
+            return body;
         }
 
         function renderSentMessages() {
@@ -1667,35 +1738,28 @@
         initBackgroundMusic();
 
         async function testConnection() {
-            if (!supabaseClient) {
-                showStatus('Supabase client not initialized', 'error');
+            const pin = channelEl.value.trim();
+            if (!/^[0-9]{3,6}$/.test(pin)) {
+                showStatus('Enter a valid Sky PIN first', 'error');
                 return;
             }
-            showStatus('Testing connection...', 'loading');
+            showStatus('Testing edge gateway...', 'loading');
             try {
-                const { error } = await supabaseClient
-                    .from('lanterns')
-                    .select('id')
-                    .limit(1);
-                if (error) {
-                    console.error('Test error:', error);
-                    showStatus('API reachable but query failed: ' + error.message, 'error');
-                } else {
-                    updateAuthStatus('Client reachable - insert governed by open RLS policy', '#dfffe6');
-                    showStatus('Connection OK and lanterns table is accessible', 'success');
-                }
+                const body = await callGateway({
+                    action: 'fetch',
+                    roomPin: pin,
+                    limit: 1
+                });
+                const items = body && Array.isArray(body.items) ? body.items : [];
+                updateAuthStatus('Gateway reachable and origin allowed', '#dfffe6');
+                showStatus('Connection OK (fetched ' + items.length + ' item(s))', 'success');
             } catch (err) {
-                console.error('Low-level error:', err);
-                showStatus('Network/DNS error - check SUPABASE_URL or internet', 'error');
+                const msg = err && err.message ? err.message : String(err);
+                showStatus('Gateway error: ' + msg, 'error');
             }
         }
 
         async function sendMessage() {
-            if (!supabaseClient) {
-                showStatus('Supabase client not initialized', 'error');
-                return;
-            }
-
             const msg = messageEl.value.trim();
             const name = ownerEl.value.trim() || 'Anonymous';
             const ch = channelEl.value.trim() ? channelEl.value.trim() : ensureSkyPin();
@@ -1716,19 +1780,13 @@
             sendBtn.textContent = 'SENDING...';
 
             try {
-                const { error } = await supabaseClient
-                    .from('lanterns')
-                    .insert([{
-                        room_id: ch,
-                        message_text: msg,
-                        sender_name: name,
-                        shape_type: shapeType
-                    }]);
-
-                if (error) {
-                    console.error('Insert error:', error);
-                    throw error;
-                }
+                await callGateway({
+                    action: 'send',
+                    roomPin: ch,
+                    messageText: msg,
+                    senderName: name,
+                    shapeType
+                });
 
                 showStatus('Lantern launched for ' + name + ' in Sky ' + ch, 'success');
                 pushSentMessage({
@@ -1741,11 +1799,7 @@
                 ownerEl.focus();
             } catch (error) {
                 const msgText = error && error.message ? error.message : String(error);
-                if (msgText.toLowerCase().includes('row-level security')) {
-                    showStatus('RLS blocked insert. Check the new open INSERT policy for anon/authenticated roles.', 'error');
-                } else {
-                    showStatus(msgText, 'error');
-                }
+                showStatus(msgText, 'error');
             } finally {
                 sendBtn.disabled = false;
                 sendBtn.textContent = 'SEND TO SKY';

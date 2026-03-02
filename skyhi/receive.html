@@ -176,14 +176,14 @@
     <div class="hud">
         <section class="panel">
             <div class="title">SkyHi Immersive Receiver</div>
-            <div class="subtitle">Night sky portal with live arriving lanterns</div>
+            <div class="subtitle">Night sky portal with secure lantern refresh</div>
             <div class="controls">
                 <input id="roomInput" type="text" inputmode="numeric" pattern="[0-9]{3,6}" maxlength="6" placeholder="Sky PIN (3-6 digits)">
                 <button id="watchBtn" type="button">Watch Sky</button>
                 <button id="stopBtn" type="button">Stop</button>
                 <a class="link-btn" href="./index.html">Back</a>
             </div>
-            <div id="status" class="status">Idle. Enter a Sky PIN and tap Watch Sky.</div>
+            <div id="status" class="status">Idle. Enter Sky PIN and tap Watch Sky.</div>
             <div class="legend">
                 <span><i class="dot gold"></i>Normal Lantern</span>
                 <span><i class="dot rose"></i>Love Lantern</span>
@@ -196,7 +196,6 @@
     <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline hidden></audio>
 
     <link rel="icon" href="data:,">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="importmap">
     {
       "imports": {
@@ -210,6 +209,7 @@
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         const SUPABASE_URL = 'https://pmsvailryexqutzvzcsd.snapcloud.dev';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtc3ZhaWxyeWV4cXV0enZ6Y3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzI3MzMsImV4cCI6MjA4MjUwODczM30.WTvkWsgBddhUPvTYhG6NIBR697Csb4mPzrbR5nUDRbs';
+        const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/lantern-processing';
 
         const roomInput = document.getElementById('roomInput');
         const watchBtn = document.getElementById('watchBtn');
@@ -220,8 +220,7 @@
         const bgMusic = document.getElementById('bgMusic');
         const receivePinKey = 'skyhi_receive_pin';
 
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        let subChannel = null;
+        let pollTimer = null;
         let activePin = '';
 
         let renderer, scene, camera, clock;
@@ -261,6 +260,29 @@
                 shapeType: Number(row.shape_type) === 1 ? 1 : 0,
                 createdAt: row.created_at || new Date().toISOString()
             };
+        }
+
+        async function callGateway(payload) {
+            const res = await fetch(EDGE_FUNCTION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+            let body = null;
+            try {
+                body = await res.json();
+            } catch (_) {
+                body = null;
+            }
+            if (!res.ok) {
+                const message = body && body.error ? body.error : ('HTTP ' + res.status);
+                throw new Error(message);
+            }
+            return body;
         }
 
         function getParticleTexture() {
@@ -624,10 +646,10 @@
         }
 
         async function stopWatching() {
-            if (subChannel) {
-                try { await supabaseClient.removeChannel(subChannel); } catch (_) {}
+            if (pollTimer) {
+                clearInterval(pollTimer);
+                pollTimer = null;
             }
-            subChannel = null;
             activePin = '';
             setStatus('Stopped. Enter a Sky PIN and tap Watch Sky.', false);
         }
@@ -644,38 +666,34 @@
             localStorage.setItem(receivePinKey, pin);
             setStatus('Loading Sky ' + pin + '...', false);
 
-            try {
-                const { data, error } = await supabaseClient
-                    .from('lanterns')
-                    .select('id, room_id, message_text, sender_name, shape_type, created_at')
-                    .eq('room_id', pin)
-                    .order('created_at', { ascending: true })
-                    .limit(40);
-                if (error) throw error;
-
-                for (const row of data || []) {
+            const fetchSky = async (markLive) => {
+                const body = await callGateway({
+                    action: 'fetch',
+                    roomPin: pin,
+                    limit: 40
+                });
+                const items = body && Array.isArray(body.items) ? body.items : [];
+                for (const row of items) {
                     const parsed = parseRow(row);
-                    if (parsed) queueLantern(parsed, false);
+                    if (parsed) queueLantern(parsed, markLive);
                 }
+                return items.length;
+            };
 
-                subChannel = supabaseClient
-                    .channel('skyhi-immersive-' + pin + '-' + Date.now())
-                    .on('postgres_changes', {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'lanterns',
-                        filter: 'room_id=eq.' + pin
-                    }, payload => {
-                        const parsed = parseRow(payload.new);
-                        if (!parsed) return;
-                        queueLantern(parsed, true);
-                        setStatus('Live on Sky ' + pin + '. New lantern from ' + parsed.sender + '.', false);
-                    })
-                    .subscribe(status => {
-                        if (status === 'SUBSCRIBED') {
-                            setStatus('Live on Sky ' + pin + '. Awaiting lanterns.', false);
+            try {
+                const count = await fetchSky(false);
+                setStatus('Watching Sky ' + pin + ' (secure refresh). Loaded ' + count + ' lantern(s).', false);
+                pollTimer = setInterval(async () => {
+                    if (!activePin || activePin !== pin) return;
+                    try {
+                        const found = await fetchSky(true);
+                        if (found > 0) {
+                            setStatus('Watching Sky ' + pin + '. Refreshed.', false);
                         }
-                    });
+                    } catch (err) {
+                        setStatus('Refresh error: ' + (err && err.message ? err.message : String(err)), true);
+                    }
+                }, 3000);
             } catch (err) {
                 setStatus('Unable to watch Sky ' + pin + ': ' + (err && err.message ? err.message : String(err)), true);
             }
