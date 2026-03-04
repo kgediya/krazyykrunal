@@ -878,6 +878,25 @@
             color: rgba(255, 219, 222, 0.8);
         }
 
+        .notify-wrap {
+            margin-top: 0;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .notify-wrap .small-btn {
+            min-width: 170px;
+        }
+
+        .notify-status {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 236, 200, 0.86);
+        }
+
         .quick-link-wrap {
             margin-top: 10px;
             display: flex;
@@ -1276,14 +1295,15 @@
         <section class="panel intro-panel" aria-labelledby="introHeading">
             <div class="panel-title" id="introHeading">What Is SkyHi?</div>
             <p class="intro-text">
-                SkyHi is a Spectacles-first immersive experience.
-                This web app is the companion that lets you send lantern wishes from your phone/laptop into the same live Sky PIN.
+                SkyHi is a spatial communication platform built for Spectacles, where sky lanterns are used as the communication medium.
+                This web app is the companion that lets you send lantern messages from your phone/laptop into the same live Sky PIN.
             </p>
             <ol class="intro-steps">
-                <li><strong>Start on Spectacles:</strong> Open the SkyHi Lens on Spectacles first.</li>
-                <li><strong>Match Sky PIN:</strong> Use the same 3-6 digit Sky PIN on Spectacles and this companion web app.</li>
-                <li><strong>Send from Web:</strong> Write a message here and tap "Send To Sky" to launch it into Spectacles.</li>
+                <li><strong>Send from Web:</strong> You can directly use this companion web app to send SkyHis.</li>
+                <li><strong>Choose Sky PIN:</strong> Create or enter any 3-6 digit Sky PIN for your messages.</li>
+                <li><strong>View on Spectacles:</strong> Open the same Sky PIN in the SkyHi Lens anytime for immersive viewing.</li>
             </ol>
+            <p class="note" style="margin-top:8px;">Private SkyHis are coming soon.</p>
             <div class="quick-link-wrap">
                 <a
                     class="quick-link"
@@ -1341,8 +1361,17 @@
         </section>
 
         <section class="panel view-panel" aria-labelledby="viewSkyHeading">
-            <div class="panel-title" id="viewSkyHeading">View My Sky</div>
+            <div class="panel-title" id="viewSkyHeading">View A Sky</div>
             <a id="openImmersiveBtn" class="cta" href="./receive.html" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">OPEN IMMERSIVE SKY</a>
+        </section>
+
+        <section class="panel notify-panel" aria-labelledby="notifyHeading">
+            <div class="panel-title" id="notifyHeading">Sky Notifications</div>
+            <div class="notify-wrap">
+                <button class="small-btn" id="enableNotifyBtn" type="button">Enable For This Sky PIN</button>
+                <button class="small-btn" id="disableNotifyBtn" type="button">Disable Notifications</button>
+            </div>
+            <p class="notify-status" id="notifyStatus" aria-live="polite">Notifications are off</p>
         </section>
 
         <section class="panel saved-panel" aria-labelledby="savedSkiesHeading">
@@ -1374,6 +1403,8 @@
         const SUPABASE_ANON_KEY =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtc3ZhaWxyeWV4cXV0enZ6Y3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzI3MzMsImV4cCI6MjA4MjUwODczM30.WTvkWsgBddhUPvTYhG6NIBR697Csb4mPzrbR5nUDRbs';
         const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/lantern-processing';
+        const SKY_SUBSCRIBE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/sky-subscribe';
+        const VAPID_PUBLIC_KEY = 'BL5MT5cHhIvOAs_vI7PejeJGZkZTuzeOye0bXQesWiHu4e2bRAgRajQsznR-7wtLcyTT7jljW1DEH0zceYQasoU';
 
         const cs = document.getElementById('creds-status');
         cs.textContent = 'Edge gateway mode enabled';
@@ -1394,6 +1425,9 @@
         const muteAudioBtn = document.getElementById('muteAudioBtn');
         const lanternTypeButtons = Array.from(document.querySelectorAll('.type-btn'));
         const openImmersiveBtn = document.getElementById('openImmersiveBtn');
+        const enableNotifyBtn = document.getElementById('enableNotifyBtn');
+        const disableNotifyBtn = document.getElementById('disableNotifyBtn');
+        const notifyStatusEl = document.getElementById('notifyStatus');
 
         const webSenderId = (() => {
             const key = 'airbox_web_sender_id';
@@ -1411,6 +1445,184 @@
         const sentMessagesKey = 'airbox_sent_messages';
         const bgMusicMutedKey = 'skyhi_bg_music_muted';
         const currentSkyPinKey = 'skyhi_current_sky_pin';
+        const notifySkyPinKey = 'skyhi_notify_sky_pin';
+        const pushDeviceIdKey = 'skyhi_push_device_id';
+
+        function getPushDeviceId() {
+            let id = localStorage.getItem(pushDeviceIdKey);
+            if (!id) {
+                id = (window.crypto && crypto.randomUUID)
+                    ? crypto.randomUUID()
+                    : ('push-' + Date.now());
+                localStorage.setItem(pushDeviceIdKey, id);
+            }
+            return id;
+        }
+
+        function updateNotifyStatus(text) {
+            if (!notifyStatusEl) return;
+            notifyStatusEl.textContent = text;
+        }
+
+        function updateNotifyButtons(disabled) {
+            if (enableNotifyBtn) enableNotifyBtn.disabled = !!disabled;
+            if (disableNotifyBtn) disableNotifyBtn.disabled = !!disabled;
+        }
+
+        function ensurePushSupport() {
+            return (
+                typeof window !== 'undefined' &&
+                'Notification' in window &&
+                'serviceWorker' in navigator &&
+                'PushManager' in window
+            );
+        }
+
+        function base64UrlToUint8Array(base64Url) {
+            const padding = '='.repeat((4 - (base64Url.length % 4)) % 4);
+            const base64 = (base64Url + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const raw = atob(base64);
+            const output = new Uint8Array(raw.length);
+            for (let i = 0; i < raw.length; ++i) output[i] = raw.charCodeAt(i);
+            return output;
+        }
+
+        async function callSubscribeApi(payload) {
+            const res = await fetch(SKY_SUBSCRIBE_FUNCTION_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+            let body = null;
+            try {
+                body = await res.json();
+            } catch (_) {
+                body = null;
+            }
+            if (!res.ok) {
+                const message = body && body.error ? body.error : ('HTTP ' + res.status);
+                throw new Error(message);
+            }
+            return body;
+        }
+
+        async function getPushRegistration() {
+            return navigator.serviceWorker.register('./push-sw.js');
+        }
+
+        async function syncNotificationState() {
+            if (!ensurePushSupport()) {
+                updateNotifyStatus('Notifications not supported in this browser');
+                updateNotifyButtons(true);
+                return;
+            }
+
+            const registration = await navigator.serviceWorker.getRegistration('./');
+            const subscription = registration ? await registration.pushManager.getSubscription() : null;
+            const pin = localStorage.getItem(notifySkyPinKey);
+            const permission = Notification.permission;
+
+            if (subscription && permission === 'granted') {
+                updateNotifyStatus(pin ? ('Notifications enabled for Sky ' + pin) : 'Notifications enabled');
+            } else if (permission === 'denied') {
+                updateNotifyStatus('Notification permission denied in browser settings');
+            } else {
+                updateNotifyStatus('Notifications are off');
+            }
+        }
+
+        async function enableNotificationsForSky() {
+            if (!ensurePushSupport()) {
+                showStatus('Notifications are not supported in this browser', 'error');
+                return;
+            }
+
+            const pin = channelEl.value.trim();
+            if (!/^[0-9]{3,6}$/.test(pin)) {
+                showStatus('Enter a valid Sky PIN first', 'error');
+                return;
+            }
+
+            if (!VAPID_PUBLIC_KEY || VAPID_PUBLIC_KEY.includes('PUT_YOUR_VAPID_PUBLIC_KEY')) {
+                showStatus('Set VAPID_PUBLIC_KEY in SkyHi web app first', 'error');
+                return;
+            }
+
+            updateNotifyButtons(true);
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    showStatus('Notification permission not granted', 'error');
+                    await syncNotificationState();
+                    return;
+                }
+
+                const registration = await getPushRegistration();
+                let subscription = await registration.pushManager.getSubscription();
+                if (!subscription) {
+                    subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: base64UrlToUint8Array(VAPID_PUBLIC_KEY)
+                    });
+                }
+
+                await callSubscribeApi({
+                    action: 'subscribe',
+                    skyPin: pin,
+                    deviceId: getPushDeviceId(),
+                    subscription
+                });
+
+                localStorage.setItem(notifySkyPinKey, pin);
+                updateNotifyStatus('Notifications enabled for Sky ' + pin);
+                showStatus('Notifications enabled for Sky ' + pin, 'success');
+            } catch (err) {
+                const msg = err && err.message ? err.message : String(err);
+                showStatus('Failed to enable notifications: ' + msg, 'error');
+            } finally {
+                updateNotifyButtons(false);
+                await syncNotificationState();
+            }
+        }
+
+        async function disableNotifications() {
+            if (!ensurePushSupport()) {
+                showStatus('Notifications are not supported in this browser', 'error');
+                return;
+            }
+
+            updateNotifyButtons(true);
+            try {
+                const registration = await getPushRegistration();
+                const subscription = await registration.pushManager.getSubscription();
+                if (!subscription) {
+                    localStorage.removeItem(notifySkyPinKey);
+                    updateNotifyStatus('Notifications are off');
+                    showStatus('No active push subscription found', 'loading');
+                    return;
+                }
+
+                await callSubscribeApi({
+                    action: 'unsubscribe',
+                    pushEndpoint: subscription.endpoint
+                });
+
+                await subscription.unsubscribe();
+                localStorage.removeItem(notifySkyPinKey);
+                updateNotifyStatus('Notifications are off');
+                showStatus('Notifications disabled', 'success');
+            } catch (err) {
+                const msg = err && err.message ? err.message : String(err);
+                showStatus('Failed to disable notifications: ' + msg, 'error');
+            } finally {
+                updateNotifyButtons(false);
+                await syncNotificationState();
+            }
+        }
 
         function updateMuteButton() {
             if (!muteAudioBtn || !bgMusicEl) return;
@@ -1723,8 +1935,13 @@
             if (e.key === 'Enter' && e.ctrlKey) sendMessage();
         });
         testBtn.addEventListener('click', testConnection);
+        if (enableNotifyBtn) enableNotifyBtn.addEventListener('click', enableNotificationsForSky);
+        if (disableNotifyBtn) disableNotifyBtn.addEventListener('click', disableNotifications);
+        const initialUrlPin = new URLSearchParams(window.location.search).get('pin');
         const persistedSkyPin = localStorage.getItem(currentSkyPinKey);
-        if (/^[0-9]{3,6}$/.test(persistedSkyPin || '')) {
+        if (/^[0-9]{3,6}$/.test(initialUrlPin || '')) {
+            setSkyPin(initialUrlPin, false);
+        } else if (/^[0-9]{3,6}$/.test(persistedSkyPin || '')) {
             setSkyPin(persistedSkyPin, false);
         } else if (!channelEl.value.trim()) {
             setSkyPin(generateSkyPin(), false);
@@ -1736,6 +1953,7 @@
         renderSavedSkies();
         renderSentMessages();
         initBackgroundMusic();
+        syncNotificationState();
 
         async function testConnection() {
             const pin = channelEl.value.trim();
