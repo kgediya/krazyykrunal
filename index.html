@@ -1,86 +1,95 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Krazyy Krunal</title>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+  <meta name="description" content="Krazyy Krunal portfolio: AR/VR prototypes, immersive campaigns, and interactive 3D experiences.">
+  <title>Krazyy Krunal | AR/VR Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="./favicon-32x32.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="main-header">
-  <div class="logo-greeting-row">
-  <img src="Logo2.png" alt="Krazyy Krunal Logo" class="site-logo" />
-  <div class="greeting-container">
-  <span class="greeting-anim" id="greeting-anim"></span><span class="greeting-static">I'm Krazyy Krunal</span>
-</div>
-</div>
-  <div class="header-subtitle">an AR/VR Prototyper Building All Things Krazyy</div>
-</header>
-  <nav class="nav-bar">
-    <button class="nav-btn" id="menu-connect">CONNECT</button>
-    <button class="nav-btn" id="menu-tools">TOOLS</button>
-  </nav>
-  <!-- Submenus go here - outside nav, above your main gallery -->
+  <canvas id="scene-bg" aria-hidden="true"></canvas>
+
+  <header class="hero-shell">
+    <div class="hero-top-row">
+      <a class="brand-lockup" href="/" aria-label="Krazyy Krunal Home">
+        <img src="Logo2.png" alt="Krazyy Krunal logo" class="site-logo">
+        <div class="brand-copy">
+          <p class="brand-kicker">KRAZYY CREATIVE LAB</p>
+          <h1>Krazyy Krunal</h1>
+        </div>
+      </a>
+
+      <nav class="nav-bar" aria-label="Primary navigation">
+        <button class="nav-btn" id="menu-connect" type="button">CONNECT</button>
+        <button class="nav-btn" id="menu-tools" type="button">TOOLS</button>
+      </nav>
+    </div>
+
+    <div class="hero-panel">
+      <p class="hero-greeting"><span class="greeting-anim" id="greeting-anim"></span><span class="greeting-static">Let's build immersive XR</span></p>
+      <p class="header-subtitle">AR/VR prototyper building high-impact immersive stories, playful utility products, and branded interactive experiences.</p>
+      <div class="hero-meta">
+        <span>Spatial Design</span>
+        <span>Lens Studio</span>
+        <span>WebAR</span>
+        <span>3D UI Systems</span>
+      </div>
+    </div>
+  </header>
+
   <div class="submenu-bar connect-icons" id="connect-submenu">
-  <a target="_blank" href="https://www.instagram.com/krazyykrunal/" title="Instagram">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" />
-  </a>
-  <a target="_blank" href="https://lensstudio.snapchat.com/creator/H_rVvZAY8Q0cafg8oxDHfw" title="Snapchat">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/snapchat.png" alt="Snapchat" />
-  </a>
-  <a target="_blank" href="https://www.linkedin.com/in/krazyykrunal" title="LinkedIn">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/linkedin.png" alt="LinkedIn" />
-  </a>
-  <a target="_blank" href="https://xrbazaar.co/creators/krazyykrunal/" title="XR Bazaar">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/shop.png" alt="XR Bazaar" />
-  </a>
-  <a target="_blank" href="https://github.com/kgediya" title="GitHub">
-    <img src="https://img.icons8.com/ios-glyphs/50/ffffff/github.png" alt="GitHub" />
-  </a>
-  <a target="_blank" href="mailto:kgediya0898@gmail.com?subject=XR%20Enquiry%20x%20Krunal" title="Email">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/filled-message.png" alt="Email" />
-  </a>
-</div>
+    <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/krazyykrunal/" title="Instagram">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram">
+    </a>
+    <a target="_blank" rel="noopener noreferrer" href="https://lensstudio.snapchat.com/creator/H_rVvZAY8Q0cafg8oxDHfw" title="Snapchat">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/snapchat.png" alt="Snapchat">
+    </a>
+    <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/krazyykrunal" title="LinkedIn">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/linkedin.png" alt="LinkedIn">
+    </a>
+    <a target="_blank" rel="noopener noreferrer" href="https://xrbazaar.co/creators/krazyykrunal/" title="XR Bazaar">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/shop.png" alt="XR Bazaar">
+    </a>
+    <a target="_blank" rel="noopener noreferrer" href="https://github.com/kgediya" title="GitHub">
+      <img src="https://img.icons8.com/ios-glyphs/50/ffffff/github.png" alt="GitHub">
+    </a>
+    <a target="_blank" rel="noopener noreferrer" href="mailto:kgediya0898@gmail.com?subject=XR%20Enquiry%20x%20Krunal" title="Email">
+      <img src="https://img.icons8.com/ios-filled/50/ffffff/filled-message.png" alt="Email">
+    </a>
+  </div>
+
   <div class="submenu-bar" id="tools-submenu">
-     <a href="https://krazyy-kam-public.netlify.app">LS WebAR Publisher</a>
+    <a href="https://krazyy-kam-public.netlify.app" target="_blank" rel="noopener noreferrer">LS WebAR Publisher</a>
     <a href="/portalcreator/">Skybox Generator</a>
     <a href="/dynalinks/">Dynalinks</a>
     <a href="/makqr/">Kustom MakQR</a>
-    <a href="/spritesheetls/">LS Animation</a>
+    
     <a href="/xrplanner/">XR Planner</a>
-    <a href="/linkedinassist/">LinkedIn Assist</a>
+    <a href="/blueprint/">Blueprint 3D</a>
+    <a href="/airmusic/">AirMusic</a>
+    <a href="/audiohelper/">Media Helper</a>
+    <a href="/skyhi/">SkyHi</a>
   </div>
+
   <main>
-    <section>
-      <h2 class="section-title">Selected XR Works</h2>
-      <div id="project-gallery">
-        <!-- Example work cards: -->
-        <div class="work-card">
-          <img src="https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif" alt="Sample 1">
-          <p class="work-title">Sample Project 1</p>
-        </div>
-        <div class="work-card">
-          <img src="https://media.giphy.com/media/3o7aCVpPjgTP2gFzA0/giphy.gif" alt="Sample 2">
-          <p class="work-title">Sample Project 2</p>
-        </div>
-        <div class="work-card">
-          <img src="https://media.giphy.com/media/26tknCqiJrBQG6bxC/giphy.gif" alt="Sample 3">
-          <p class="work-title">Sample Project 3</p>
-        </div>
-        <div class="work-card">
-          <img src="https://media.giphy.com/media/xT1XGNBGznjjLSQ9YY/giphy.gif" alt="Sample 4">
-          <p class="work-title">Sample Project 4</p>
-        </div>
+    <section class="portfolio-section">
+      <div class="title-row">
+        <p class="section-kicker">Portfolio</p>
+        <h2 class="section-title">Selected XR Works</h2>
       </div>
+      <div id="project-gallery" aria-live="polite"></div>
     </section>
   </main>
+
+  <script src="https://unpkg.com/three@0.162.0/build/three.min.js"></script>
   <script src="main.js"></script>
 </body>
-
 </html>
-
 
 

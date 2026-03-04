@@ -1,119 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Audio Conversion</title>
-  <style>
-    @font-face {
-      font-family: 'PF Tempesta Five';
-      font-style: normal;
-      font-weight: 400;
-      src: local('PF Tempesta Five'), url('.././assets/pf_tempesta_five.woff') format('woff');
-    }
-    body {
-      font-family: 'PF Tempesta Five', Arial, sans-serif;
-    }
-    .card {
-      max-width: 400px;
-      margin: 10% auto;
-      padding: 20px;
-      background-color: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
-    }
-    .input-wrapper {
-      margin-bottom: 10px;
-    }
-    .progress-bar {
-      width: 100%;
-      height: 30px;
-      background-color: #f2f2f2;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      margin-top: 15px;
-    }
-    .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background-color: #000000;
-      border-radius: 5px;
-      transition: width 0.2s ease-in-out;
-    }
-    #qualityControl {
-      margin-top: 10px;
-    }
-    button {
-      font-family: 'PF Tempesta Five', Arial, sans-serif;
-      padding: 8px 16px;
-      background-color: #000000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #282828;
-    }
-    input[type="file"] {
-      display: none;
-    }
-    .custom-file-upload {
-      display: inline-block;
-      padding: 8px 16px;
-      background-color: #000000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .custom-file-upload:hover {
-      background-color: #282828;
-    }
-    select {
-      font-family: 'PF Tempesta Five', Arial, sans-serif;
-      padding: 5px;
-      border-radius: 4px;
-    }
-    .file-name {
-      margin-top: 5px;
-    }
-  </style>
-  <script src="./enable-thread.js"></script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JHT3XY2K0H"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JHT3XY2K0H');
-</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting to Media Helper</title>
+  <meta http-equiv="refresh" content="0; url=../audiohelper/" />
 </head>
 <body>
-  <div class="card">
-    <h1>Audio Conversion</h1>
-    <div class="input-wrapper">
-      <input type="file" id="fileInput" accept="audio/*" multiple>
-      <label for="fileInput" class="custom-file-upload">Choose Files</label>
-    </div>
-    <div class="file-name" id="fileName"></div>
-    <div id="qualityControl">
-      <label for="quality">Quality:</label>
-      <select id="quality">
-        <option value="64k">Low</option>
-        <option value="128k" selected>Medium</option>
-        <option value="256k">High</option>
-      </select>
-    </div>
-    <div class="progress-bar">
-      <div id="progressBarFill" class="progress-bar-fill"></div>
-    </div>
-    <button id="convert" onclick="convertAudios()" disabled>Convert</button>
-  </div>
-
-  <script src="./ffmpeg-wasm.js"></script>
-  <script src="../assets/jszip.js"></script>
-  <script>
-   const _0x443d7e=_0x1c15;(function(_0x52c688,_0x139276){const _0xbbdc02=_0x1c15,_0x7906e6=_0x52c688();while(!![]){try{const _0x436a80=parseInt(_0xbbdc02(0x16c))/0x1*(-parseInt(_0xbbdc02(0x165))/0x2)+parseInt(_0xbbdc02(0x160))/0x3+-parseInt(_0xbbdc02(0x16f))/0x4+parseInt(_0xbbdc02(0x14f))/0x5+-parseInt(_0xbbdc02(0x156))/0x6*(-parseInt(_0xbbdc02(0x14b))/0x7)+-parseInt(_0xbbdc02(0x17b))/0x8+parseInt(_0xbbdc02(0x166))/0x9;if(_0x436a80===_0x139276)break;else _0x7906e6['push'](_0x7906e6['shift']());}catch(_0x341acc){_0x7906e6['push'](_0x7906e6['shift']());}}}(_0x4929,0xa64b1));const {createFFmpeg,fetchFile}=FFmpeg,ffmpeg=createFFmpeg({'log':!![]});console[_0x443d7e(0x15f)](gtag);async function loadFFmpeg(){const _0x4719c4=_0x443d7e;await ffmpeg['load'](),console[_0x4719c4(0x15f)]('WASM\x20LOADED'),document[_0x4719c4(0x14a)](_0x4719c4(0x173))[_0x4719c4(0x179)]=![];}async function convertAudio(_0x58c9de,_0x553fb4){const _0x1ce816=_0x443d7e;gtag(_0x1ce816(0x16d),'button_click',{'event_category':'Buttons','event_label':_0x1ce816(0x175)});const _0x20e832=_0x1ce816(0x150);ffmpeg['FS'](_0x1ce816(0x17c),_0x20e832,await fetchFile(_0x58c9de)),ffmpeg['setProgress'](({ratio:_0x3aa35a})=>{const _0x1a46a5=_0x1ce816,_0x4a7ea2=document['getElementById'](_0x1a46a5(0x15c));_0x4a7ea2[_0x1a46a5(0x157)]['width']=_0x3aa35a*0x64+'%';});const _0x61f6db=_0x58c9de[_0x1ce816(0x17a)]['substring'](0x0,_0x58c9de[_0x1ce816(0x17a)]['lastIndexOf']('.'))+_0x1ce816(0x174);await ffmpeg[_0x1ce816(0x16a)]('-i',_0x20e832,_0x1ce816(0x153),'1',_0x1ce816(0x177),_0x1ce816(0x159),_0x1ce816(0x162),_0x1ce816(0x16b),_0x1ce816(0x15b),_0x553fb4,_0x61f6db);const _0x4a71cd=ffmpeg['FS']('readFile',_0x61f6db),_0x1767e0=document['createElement']('a');_0x1767e0[_0x1ce816(0x164)]=URL['createObjectURL'](new Blob([_0x4a71cd[_0x1ce816(0x15e)]])),_0x1767e0[_0x1ce816(0x17d)]=_0x61f6db,_0x1767e0[_0x1ce816(0x176)]();}async function convertAudios(){const _0x7e97f0=_0x443d7e,_0x4365c7=document[_0x7e97f0(0x14a)](_0x7e97f0(0x17e)),_0x3880fd=_0x4365c7[_0x7e97f0(0x168)];if(_0x3880fd[_0x7e97f0(0x15a)]===0x0){alert(_0x7e97f0(0x163));return;}const _0x3da0cc=document['getElementById'](_0x7e97f0(0x16e)),_0x1dffe5=_0x3da0cc[_0x7e97f0(0x161)];if(_0x3880fd[_0x7e97f0(0x15a)]===0x1){if(_0x7e97f0(0x154)==='xSXYw'){_0x2ec8e0(_0x3640ed[0x0],_0x131f40);return;}else{convertAudio(_0x3880fd[0x0],_0x1dffe5);return;}}const _0x113ff2=new JSZip();ffmpeg[_0x7e97f0(0x14e)](({ratio:_0x3f5438})=>{const _0x3859c2=_0x7e97f0,_0x4612e0=document[_0x3859c2(0x14a)](_0x3859c2(0x15c));_0x4612e0[_0x3859c2(0x157)]['width']=_0x3f5438*0x64+'%';});for(let _0x30530f=0x0;_0x30530f<_0x3880fd[_0x7e97f0(0x15a)];_0x30530f++){if(_0x7e97f0(0x167)!==_0x7e97f0(0x171)){const _0x36a253=_0x3880fd[_0x30530f],_0x204c6e=_0x7e97f0(0x14d)+_0x30530f;ffmpeg['FS'](_0x7e97f0(0x17c),_0x204c6e,await fetchFile(_0x36a253));const _0x2ca608=_0x36a253[_0x7e97f0(0x17a)][_0x7e97f0(0x172)](0x0,_0x36a253[_0x7e97f0(0x17a)][_0x7e97f0(0x170)]('.'))+_0x7e97f0(0x174);await ffmpeg[_0x7e97f0(0x16a)]('-i',_0x204c6e,'-ac','1',_0x7e97f0(0x177),_0x7e97f0(0x159),'-c:a','aac',_0x7e97f0(0x15b),_0x1dffe5,_0x2ca608);const _0x51e9b0=ffmpeg['FS'](_0x7e97f0(0x17f),_0x2ca608);_0x113ff2[_0x7e97f0(0x169)](_0x2ca608,_0x51e9b0[_0x7e97f0(0x15e)]);}else{_0x1eeff7('Please\x20select\x20at\x20least\x20one\x20file.');return;}}const _0x448977=await _0x113ff2[_0x7e97f0(0x178)]({'type':_0x7e97f0(0x152)}),_0xbe60b7=document[_0x7e97f0(0x15d)]('a');_0xbe60b7['href']=URL['createObjectURL'](_0x448977),_0xbe60b7[_0x7e97f0(0x17d)]=_0x7e97f0(0x14c),_0xbe60b7[_0x7e97f0(0x176)]();}function _0x1c15(_0x127ec6,_0x18290c){const _0x4929aa=_0x4929();return _0x1c15=function(_0x1c1522,_0x5d9b98){_0x1c1522=_0x1c1522-0x14a;let _0x2e0ff0=_0x4929aa[_0x1c1522];return _0x2e0ff0;},_0x1c15(_0x127ec6,_0x18290c);}window['onload']=loadFFmpeg;function _0x4929(){const _0x3a11fc=['-ar','generateAsync','disabled','name','10383536Uacyup','writeFile','download','fileInput','readFile','getElementById','160643dChYNz','converted_audios.zip','input-file-','setProgress','2364180ESLAVG','input-file','addEventListener','blob','-ac','uKsda','\x20file','228iqaoJQ','style','fileName','44100','length','-b:a','progressBarFill','createElement','buffer','log','2351220shoOSa','value','-c:a','Please\x20select\x20at\x20least\x20one\x20file.','href','130XVjwRY','11969235YhXGnh','ukmlH','files','file','run','aac','5540kzhOyy','event','quality','4477496kmkSpO','lastIndexOf','QxtfI','substring','convert','.m4a','Convert\x20Audio','click'];_0x4929=function(){return _0x3a11fc;};return _0x4929();}const fileInput=document[_0x443d7e(0x14a)](_0x443d7e(0x17e));fileInput[_0x443d7e(0x151)]('change',function(){const _0x37f43d=_0x443d7e,_0x3f0511=document[_0x37f43d(0x14a)](_0x37f43d(0x158)),_0x46f92d=this[_0x37f43d(0x168)][_0x37f43d(0x15a)];progressBarFill[_0x37f43d(0x157)]['width']='0%',_0x3f0511['textContent']=_0x46f92d>0x1?_0x46f92d+_0x37f43d(0x155)+(_0x46f92d>0x1?'s':'')+'\x20selected':this[_0x37f43d(0x168)][0x0][_0x37f43d(0x17a)];});
-  </script>
+  <p>Redirecting to <a href="../audiohelper/">Media Helper Studio</a>...</p>
 </body>
 </html>

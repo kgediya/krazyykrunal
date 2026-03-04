@@ -1,26 +1,28 @@
 Blockly.defineBlocksWithJsonArray([
-  // 1. Behavior Trigger Block
   {
     "type": "behavior_trigger",
-    "message0": "When %1 do %2",
+    "message0": "when %1 %2 do %3",
     "args0": [
       {
         "type": "field_dropdown",
         "name": "TRIGGER",
         "options": [
+          ["Lens Start", "OnStartEvent"],
+          ["Turn On", "TurnOnEvent"],
+          ["Turn Off", "TurnOffEvent"],
+          ["Update", "UpdateEvent"],
+          ["Late Update", "LateUpdateEvent"],
           ["Tap", "TapEvent"],
           ["Touch Start", "TouchStartEvent"],
+          ["Touch Move", "TouchMoveEvent"],
           ["Touch End", "TouchEndEvent"],
-          ["Face Found", "FaceFoundEvent"],
-          ["Smile Started", "SmileStartedEvent"],
-          ["On Enabled", "OnEnabled"],
-          ["On Disabled", "OnDisabled"],
-          ["On Start", "TurnOnEvent"],
-          ["On Awake", "OnAwake"],
-          ["On Custom Trigger", "CustomTrigger"],
-          ["Animation End", "animationEnd"],
-          ["Tween End", "tweenEnd"]
+          ["Custom Trigger", "CustomTrigger"]
         ]
+      },
+      {
+        "type": "field_input",
+        "name": "CUSTOM_TRIGGER",
+        "text": "my_custom_event"
       },
       {
         "type": "input_statement",
@@ -28,56 +30,57 @@ Blockly.defineBlocksWithJsonArray([
       }
     ],
     "colour": 230,
-    "tooltip": "WHEN this event happens, do..."
+    "tooltip": "Lens Studio event entrypoint.",
+    "helpUrl": ""
   },
-
-  // 2. Response: Set Text
   {
     "type": "behavior_set_text",
     "message0": "set %1 text to %2",
     "args0": [
       { "type": "field_input", "name": "TARGET", "text": "script.textComponent" },
-      { "type": "input_value", "name": "TEXT"}
+      { "type": "input_value", "name": "TEXT" }
     ],
     "previousStatement": null,
     "nextStatement": null,
     "colour": 160,
-    "tooltip": "Set a Text or Text3D component's text"
+    "tooltip": "Set text on Text/Text3D component.",
+    "helpUrl": ""
   },
-
-  // 3. Response: Play Sound
   {
     "type": "behavior_play_sound",
-    "message0": "play sound on %1",
+    "message0": "play sound on %1 volume %2",
     "args0": [
-      { "type": "field_input", "name": "COMPONENT", "text": "script.audioComponent" }
+      { "type": "field_input", "name": "COMPONENT", "text": "script.audioComponent" },
+      { "type": "field_number", "name": "VOLUME", "value": 1, "min": 0, "max": 1, "precision": 0.05 }
     ],
     "previousStatement": null,
     "nextStatement": null,
     "colour": 60,
-    "tooltip": "Play a sound on an AudioComponent"
+    "tooltip": "Play AudioComponent with volume.",
+    "helpUrl": ""
   },
-
-  // 4. Response: Show Hint
   {
     "type": "behavior_show_hint",
     "message0": "show hint %1 for %2 sec",
     "args0": [
-      { "type": "field_dropdown", "name": "HINTID", "options": [
-        ["Smile", "lens_hint_smile"], 
-        ["Tap", "lens_hint_tap"],
-        ["Tilt your head", "lens_hint_tilt_your_head"],
-        ["Open mouth", "lens_hint_open_your_mouth"]
-      ]},
-      { "type": "field_number", "name": "DURATION", "value": 2, "min": 1 }
+      {
+        "type": "field_dropdown",
+        "name": "HINTID",
+        "options": [
+          ["Smile", "lens_hint_smile"],
+          ["Tap", "lens_hint_tap"],
+          ["Tilt your head", "lens_hint_tilt_your_head"],
+          ["Open mouth", "lens_hint_open_your_mouth"]
+        ]
+      },
+      { "type": "field_number", "name": "DURATION", "value": 2, "min": 0.2, "precision": 0.1 }
     ],
     "previousStatement": null,
     "nextStatement": null,
     "colour": 100,
-    "tooltip": "Show a device hint (on device)"
+    "tooltip": "Show Lens device hint.",
+    "helpUrl": ""
   },
-
-  // 5. Response: Send Custom Trigger
   {
     "type": "behavior_send_trigger",
     "message0": "send custom trigger %1",
@@ -87,23 +90,67 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 200,
-    "tooltip": "Send a named trigger for other scripts"
+    "tooltip": "Send trigger via global.behaviorSystem.",
+    "helpUrl": ""
   },
-
-  // 6. Print/Log
+  {
+    "type": "lens_call_api",
+    "message0": "call script.api %1 with %2",
+    "args0": [
+      { "type": "field_input", "name": "METHOD", "text": "onPulse" },
+      { "type": "input_value", "name": "ARG" }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 300,
+    "tooltip": "Safely call script.api method.",
+    "helpUrl": ""
+  },
+  {
+    "type": "behavior_wait",
+    "message0": "wait %1 sec then %2",
+    "args0": [
+      { "type": "field_number", "name": "SECONDS", "value": 1, "min": 0, "precision": 0.1 },
+      { "type": "input_statement", "name": "DO" }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 285,
+    "tooltip": "Delay actions using DelayedCallbackEvent.",
+    "helpUrl": ""
+  },
+  {
+    "type": "behavior_set_enabled",
+    "message0": "set %1 enabled %2",
+    "args0": [
+      { "type": "field_input", "name": "TARGET", "text": "script.sceneObject" },
+      {
+        "type": "field_dropdown",
+        "name": "ENABLED",
+        "options": [
+          ["true", "true"],
+          ["false", "false"]
+        ]
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Toggle SceneObject/Component enabled flag.",
+    "helpUrl": ""
+  },
   {
     "type": "behavior_print",
     "message0": "print %1",
     "args0": [
-      { "type": "input_value", "name": "VALUE"}
+      { "type": "input_value", "name": "VALUE" }
     ],
     "previousStatement": null,
     "nextStatement": null,
     "colour": 20,
-    "tooltip": "Print to console"
+    "tooltip": "Print to Lens Logger.",
+    "helpUrl": ""
   },
-
-  // 7. String value (helper)
   {
     "type": "behavior_string",
     "message0": "\"%1\"",
@@ -111,6 +158,7 @@ Blockly.defineBlocksWithJsonArray([
       { "type": "field_input", "name": "TXT", "text": "" }
     ],
     "output": "String",
-    "colour": 160
+    "colour": 160,
+    "helpUrl": ""
   }
 ]);

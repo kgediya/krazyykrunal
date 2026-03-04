@@ -1,126 +1,240 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>360 Portal Generator</title>
+  <title>Skybox Generator | Krazyy Krunal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Add your custom CSS styling here */
-    @font-face {
-      font-family: 'PF Tempesta Five';
-      font-style: normal;
-      font-weight: 400;
-      src: local('PF Tempesta Five'), url('.././assets/pf_tempesta_five.woff') format('woff');
-    }
+  :root {
+    --bg: #050505;
+    --bg-soft: #0c0c0c;
+    --panel: rgba(18, 18, 18, 0.84);
+    --line: rgba(255, 255, 255, 0.18);
+    --line-strong: rgba(255, 255, 255, 0.52);
+    --text: #f5f5f5;
+    --muted: rgba(245, 245, 245, 0.72);
+    --shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  }
 
-    body {
-      font-family: 'PF Tempesta Five', Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
+  * { box-sizing: border-box; }
 
-    h1 {
-      text-align: center;
-    }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.08), transparent 24%),
+      radial-gradient(circle at 88% 18%, rgba(255,255,255,0.07), transparent 26%),
+      linear-gradient(170deg, #010101 0%, #0a0a0a 100%);
+    padding: 22px 14px 34px;
+  }
 
-    #upload-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+  .tool-shell {
+    width: min(900px, 100%);
+    margin: 0 auto;
+  }
 
-    #image-upload {
-      display: none;
-    }
+  .tool-topbar {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+  }
 
-    #image-preview {
-      max-width: 400px;
-      max-height: 400px;
-      margin: 0 auto;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-    }
+  h1 {
+    margin: 0;
+    font-family: 'Sora', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-    #image-preview img {
-      display: block;
-      max-width: 100%;
-      max-height: 100%;
-    }
+  h1::before {
+    content: '';
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: center / contain no-repeat url('../Logo2.png');
+    filter: drop-shadow(0 0 12px rgba(255,255,255,0.24));
+  }
 
-    #result {
-      text-align: center;
-    }
+  .tool-subtitle {
+    margin: 10px 0 0;
+    color: var(--muted);
+    line-height: 1.55;
+    font-size: 0.95rem;
+  }
 
-    #split-button {
-      padding: 10px 20px;
-      font-size: 16px;
-      font-family: 'PF Tempesta Five', Arial, sans-serif;
-      background-color: #000000;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+  #upload-container,
+  #result {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 18px;
+    background: var(--panel);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(8px);
+    text-align: center;
+  }
 
-    #split-button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
+  #upload-container.dragover {
+    border-color: var(--line-strong);
+    background: rgba(255,255,255,0.1);
+  }
 
-    #download-button {
-      display: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #00ba3b;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background-color 0.3s;
-    }
+  #upload-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
 
-    #download-button:hover {
-      background-color: #005e12;
-    }
-#download-portal-button {
-      display: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #008CBA;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background-color 0.3s;
-    }
+  #upload-label:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.15);
+  }
 
-    #download-portal-button:hover {
-      background-color: #005580;
-    }
-    #loading-bar-container {
-      width: 100%;
-      height: 20px;
-      background-color: #f1f1f1;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
+  .hint-row {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
 
-    #loading-bar {
-      height: 100%;
-      width: 0;
-      background-color: #4caf50;
-      transition: width 0.3s;
-    }
+  .quality-row {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
 
-    .hidden {
-      display: none;
-    }
-  </style>
+  #quality-mode {
+    min-height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    padding: 6px 12px;
+    font: inherit;
+  }
+
+  #quality-mode option {
+    color: #111;
+    background: #fff;
+  }
+
+  .status-note {
+    min-height: 20px;
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .status-note.success { color: #9ef0b2; }
+  .status-note.error { color: #ff9e9e; }
+
+  #image-upload { display: none; }
+
+  #image-preview {
+    width: min(520px, 100%);
+    min-height: 190px;
+    max-height: 430px;
+    margin: 16px auto 0;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,0.03);
+  }
+
+  #image-preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #split-button,
+  #download-button,
+  #download-portal-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 10px 18px;
+    margin: 6px;
+    font: inherit;
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+
+  #split-button:hover,
+  #download-button:hover,
+  #download-portal-button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.16);
+  }
+
+  #split-button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  #download-button,
+  #download-portal-button {
+    display: none;
+  }
+
+  #loading-bar-container {
+    width: min(520px, 100%);
+    height: 12px;
+    margin: 12px auto;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    overflow: hidden;
+  }
+
+  #loading-bar {
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #949494 0%, #ffffff 100%);
+    transition: width .3s;
+  }
+
+  .hidden { display: none; }
+</style>
 </head>
 <body>
-  <h1>360 Portal Generator</h1>
+  <main class="tool-shell">
+    <header class="tool-topbar">
+      <h1>Skybox Generator</h1>
+      <p class="tool-subtitle">Upload a 360 panorama, split it into portal-ready segments, and export package assets in one flow.</p>
+    </header>
 
   <div id="upload-container">
     <label for="image-upload" id="upload-label">
@@ -128,6 +242,17 @@
     </label>
     <input type="file" id="image-upload" accept="image/*" />
     <div id="image-preview"></div>
+    <div class="quality-row">
+      <label for="quality-mode">Processing Quality</label>
+      <select id="quality-mode">
+        <option value="original">Original (Best quality)</option>
+        <option value="high">High (Faster)</option>
+        <option value="balanced" selected>Balanced (Recommended)</option>
+        <option value="fast">Fast (Quick preview)</option>
+      </select>
+    </div>
+    <p class="hint-row">Tip: Drag and drop your panorama here. Best results with 2:1 equirectangular images.</p>
+    <p class="status-note" id="status-note" aria-live="polite"></p>
   </div>
 
   <div id="result">
@@ -138,11 +263,191 @@
     <a id="download-button" download="split_images.zip">Download Images</a><br><br>
     <a id="download-portal-button" download="portal-sphere.gltf">Download Sphere</a>
   </div>
+    </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <script>
+    (() => {
+      const uploadInput = document.getElementById('image-upload');
+      const uploadContainer = document.getElementById('upload-container');
+      const qualityMode = document.getElementById('quality-mode');
+      const previewHost = document.getElementById('image-preview');
+      const splitButton = document.getElementById('split-button');
+      const loadingContainer = document.getElementById('loading-bar-container');
+      const loadingBar = document.getElementById('loading-bar');
+      const downloadZip = document.getElementById('download-button');
+      const downloadSphere = document.getElementById('download-portal-button');
+      const status = document.getElementById('status-note');
+      let previewObjectUrl = '';
+
+      function setStatus(message, tone = '') {
+        status.textContent = message;
+        status.classList.remove('success', 'error');
+        if (tone) status.classList.add(tone);
+      }
+
+      function isImageFile(file) {
+        return !!file && file.type.startsWith('image/');
+      }
+
+      function handleFileSelection(file) {
+        if (!isImageFile(file)) {
+          setStatus('Please choose a valid image file.', 'error');
+          return;
+        }
+        if (previewObjectUrl) {
+          URL.revokeObjectURL(previewObjectUrl);
+          previewObjectUrl = '';
+        }
+        previewObjectUrl = URL.createObjectURL(file);
+        previewHost.innerHTML = `<img src="${previewObjectUrl}" alt="Uploaded Image Preview">`;
+        const isLikelyPanorama = (file.name || '').match(/360|pano|panorama|equirect/i);
+        if (isLikelyPanorama) {
+          setStatus('Panorama detected. Ready to split.', 'success');
+        } else {
+          setStatus('Image selected. If output looks odd, use a 2:1 panorama image.', '');
+        }
+      }
+
+      function getMaxDimensionForMode() {
+        const mode = qualityMode.value;
+        if (mode === 'original') return 0;
+        if (mode === 'high') return 4096;
+        if (mode === 'fast') return 2048;
+        return 3072; // balanced
+      }
+
+      async function optimizePreviewImage(file) {
+        const maxDimension = getMaxDimensionForMode();
+        if (!file || maxDimension === 0) return;
+        if (!file.type.startsWith('image/')) return;
+
+        const rawDataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const image = await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = rawDataUrl;
+        });
+
+        const longest = Math.max(image.width, image.height);
+        if (longest <= maxDimension) return;
+
+        const scale = maxDimension / longest;
+        const width = Math.round(image.width * scale);
+        const height = Math.round(image.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(image, 0, 0, width, height);
+        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+        const previewImg = previewHost.querySelector('img');
+        if (previewImg) {
+          previewImg.src = optimizedDataUrl;
+          setStatus(`Optimized to ${width}x${height} for faster processing.`, 'success');
+        }
+      }
+
+      ['dragenter', 'dragover'].forEach((eventName) => {
+        uploadContainer.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          uploadContainer.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach((eventName) => {
+        uploadContainer.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          uploadContainer.classList.remove('dragover');
+        });
+      });
+
+      uploadContainer.addEventListener('drop', (event) => {
+        const files = event.dataTransfer && event.dataTransfer.files;
+        if (!files || !files.length) return;
+        uploadInput.files = files;
+        uploadInput.dispatchEvent(new Event('change', { bubbles: true }));
+        handleFileSelection(files[0]);
+      });
+
+      uploadInput.addEventListener('change', () => {
+        const file = uploadInput.files && uploadInput.files[0];
+        handleFileSelection(file);
+        setTimeout(() => {
+          optimizePreviewImage(file).catch(() => {
+            setStatus('Using original image (optimization skipped).', '');
+          });
+        }, 60);
+      });
+
+      qualityMode.addEventListener('change', () => {
+        const file = uploadInput.files && uploadInput.files[0];
+        if (!file) return;
+        setStatus('Applying quality mode...', '');
+        optimizePreviewImage(file).catch(() => {
+          setStatus('Could not re-optimize preview. Using original image.', '');
+        });
+      });
+
+      splitButton.addEventListener('click', () => {
+        setStatus('Processing image. This can take a few seconds...', '');
+      });
+
+      const observer = new MutationObserver(() => {
+        const progress = parseFloat((loadingBar.style.width || '0').replace('%', ''));
+        if (!Number.isNaN(progress) && progress > 0 && progress < 100) {
+          setStatus(`Processing ${Math.round(progress)}%`, '');
+        }
+
+        const zipVisible = getComputedStyle(downloadZip).display !== 'none';
+        const sphereVisible = getComputedStyle(downloadSphere).display !== 'none';
+        if (zipVisible || sphereVisible) {
+          setStatus('Done. Your files are ready to download.', 'success');
+        }
+
+        const processingVisible = !loadingContainer.classList.contains('hidden');
+        if (!processingVisible && progress === 0 && splitButton.disabled) {
+          setStatus('Select an image to begin.', '');
+        }
+      });
+
+      observer.observe(loadingBar, {
+        attributes: true,
+        attributeFilter: ['style']
+      });
+      observer.observe(loadingContainer, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+      observer.observe(downloadZip, {
+        attributes: true,
+        attributeFilter: ['style']
+      });
+      observer.observe(downloadSphere, {
+        attributes: true,
+        attributeFilter: ['style']
+      });
+
+      setStatus('Select an image to begin.', '');
+    })();
+  </script>
   <!-- Include Inflate library -->
  
   <script type="module">
-  const _0x348a30=_0x1675;(function(_0x387288,_0x3781ca){const _0x3f7c76=_0x1675,_0x498b02=_0x387288();while(!![]){try{const _0x5c79d2=-parseInt(_0x3f7c76(0x178))/0x1*(parseInt(_0x3f7c76(0x15a))/0x2)+parseInt(_0x3f7c76(0x187))/0x3+parseInt(_0x3f7c76(0x171))/0x4*(-parseInt(_0x3f7c76(0x162))/0x5)+-parseInt(_0x3f7c76(0x173))/0x6+-parseInt(_0x3f7c76(0x16a))/0x7*(parseInt(_0x3f7c76(0x16c))/0x8)+parseInt(_0x3f7c76(0x141))/0x9*(-parseInt(_0x3f7c76(0x167))/0xa)+parseInt(_0x3f7c76(0x150))/0xb;if(_0x5c79d2===_0x3781ca)break;else _0x498b02['push'](_0x498b02['shift']());}catch(_0x434752){_0x498b02['push'](_0x498b02['shift']());}}}(_0x23ce,0x1a314));import*as _0xcd17fa from'https://cdn.skypack.dev/three@0.132.2/build/three.module.js';import{FBXLoader}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/FBXLoader.js';import{MTLLoader}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/MTLLoader.js';import{OBJLoader}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/OBJLoader.js';import{OrbitControls}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';import{GLTFExporter}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/exporters/GLTFExporter.js';function _0x23ce(){const _0x4c6a7a=['inline-block','\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>','name','191852oWNxCY','stringify','split-button','click','file','change','display','download-button','798315xtqHNA','<img\x20src=\x22','material','innerHTML','atob','59950gEezUX','Scene','AuBmX','294czDnAF','width','34536ijRcWy','getElementById','fhDtb','add','download','4WegSiy','log','587478aRPWgX','load','whIbG','color_','OErFv','1sxKCHr','createObjectURL','MeshBasicMaterial','reload','DPtUN','.././resources/general/sphere.fbx','application/json','height','style','src','qyBVE','img','portal.gltf','length','canvas','232212XXnDzH','generateAsync','image.*','reject','readAsDataURL','classList','DOMContentLoaded','forEach','onload','createElement','map','loading-bar-container','99MHrfqQ','download-portal-button','image-upload','inRPV','onclick','YvKkS','result','xBHmv','remove','hidden','KOYaB','.jpg','none','image/jpeg','replace','6937051zUSqHx','href','then','disabled','needsUpdate','images.zip','getObjectByName'];_0x23ce=function(){return _0x4c6a7a;};return _0x23ce();}function _0x1675(_0x516d2c,_0x238f14){const _0x23cec1=_0x23ce();return _0x1675=function(_0x1675ce,_0x2715ea){_0x1675ce=_0x1675ce-0x13e;let _0x506309=_0x23cec1[_0x1675ce];return _0x506309;},_0x1675(_0x516d2c,_0x238f14);}const fbxPath=_0x348a30(0x17d),materialPrefix=_0x348a30(0x176),numMaterials=0x8;var firstRun=!![];document['addEventListener'](_0x348a30(0x18d),function(){const _0x3a9916=_0x348a30,_0x82503b=document[_0x3a9916(0x16d)](_0x3a9916(0x143)),_0x4c4538=document[_0x3a9916(0x16d)]('image-preview'),_0x474238=document[_0x3a9916(0x16d)](_0x3a9916(0x15c)),_0x12630a=document['getElementById'](_0x3a9916(0x161)),_0x1cd69e=document['getElementById'](_0x3a9916(0x142)),_0xd7264b=document[_0x3a9916(0x16d)](_0x3a9916(0x140)),_0x29d930=document['getElementById']('loading-bar'),_0x4685f5=new FBXLoader(),_0x307c22=new GLTFExporter(),_0x5773e4=new _0xcd17fa[(_0x3a9916(0x168))]();let _0x470b98=null;var _0x3e2588=0x0;_0x82503b['addEventListener'](_0x3a9916(0x15f),function(_0x23b672){const _0x7da691=_0x3a9916;if(_0x7da691(0x175)==='WoBlX')_0x1e0052[_0x7da691(0x18c)]['add'](_0x7da691(0x14a)),_0x12b47c[_0x7da691(0x165)]=_0x7da691(0x163)+_0x174894+_0x7da691(0x158);else{const _0x30e893=_0x23b672['target']['files'][0x0];if(_0x30e893&&_0x30e893['type']['match'](_0x7da691(0x189))){const _0x905d62=new FileReader();_0x905d62[_0x7da691(0x18f)]=function(){const _0x3d7716=_0x7da691;if('EpEiT'!==_0x3d7716(0x14b)){const _0x1ecdb4=_0x905d62[_0x3d7716(0x147)];_0x4c4538[_0x3d7716(0x165)]=_0x3d7716(0x163)+_0x1ecdb4+'\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>',_0x474238[_0x3d7716(0x153)]=![],_0x470b98=null,_0x12630a[_0x3d7716(0x180)][_0x3d7716(0x160)]='none',_0x1cd69e[_0x3d7716(0x180)][_0x3d7716(0x160)]=_0x3d7716(0x14d);}else{_0x807799++;const _0x36d727=_0x5c1bfb/_0x27e8bd*0x64;_0x22895e[_0x3d7716(0x180)][_0x3d7716(0x16b)]=_0x36d727+'%',_0x56f21d(_0x54bcc6),_0x556c67===_0xb96e89&&(_0x36d68d[_0x3d7716(0x18c)][_0x3d7716(0x16f)](_0x3d7716(0x14a)),_0x243f60['innerHTML']=_0x3d7716(0x163)+_0x481bdd+_0x3d7716(0x158));}},_0x905d62[_0x7da691(0x18b)](_0x30e893);}}});const _0x34df3d=console[_0x3a9916(0x172)];_0x474238['addEventListener'](_0x3a9916(0x15d),function(){const _0x16f7e9=_0x3a9916;if(!firstRun){if(_0x16f7e9(0x182)!==_0x16f7e9(0x182))_0x10d713[_0x16f7e9(0x18e)](function(_0x248431,_0x387715){const _0x794043=_0x16f7e9;_0xdfa1a[_0x794043(0x149)](_0x248431);});else{location[_0x16f7e9(0x17b)]();return;}}const _0x440b7e=_0x4c4538['querySelector'](_0x16f7e9(0x183))[_0x16f7e9(0x181)],_0x5118ff=0x2,_0x38fccd=0x4;_0x474238[_0x16f7e9(0x153)]=!![],_0x29d930['style'][_0x16f7e9(0x16b)]='0',_0xd7264b[_0x16f7e9(0x18c)][_0x16f7e9(0x149)](_0x16f7e9(0x14a)),_0x12630a['style'][_0x16f7e9(0x160)]=_0x16f7e9(0x14d),_0x1cd69e[_0x16f7e9(0x180)][_0x16f7e9(0x160)]=_0x16f7e9(0x14d),_0x1386b7(_0x440b7e,_0x5118ff,_0x38fccd);});const _0x488b91=_0x3a2b01=>{return new Promise((_0x5e29c1,_0x411881)=>{const _0x5da488=_0x1675;if(_0x5da488(0x146)===_0x5da488(0x146)){const _0xc0daf7=new _0xcd17fa['TextureLoader']();_0xc0daf7['load'](_0x3a2b01,_0x211504=>{const _0x210093=_0x5da488;_0x211504[_0x210093(0x154)]=!![],_0x5e29c1(_0x211504);},undefined,_0x4a8062=>{_0x411881(_0x4a8062);});}else _0x4d9e69[_0x46f9b1]=_0x9ba60['charCodeAt'](_0x366145);});},_0x598f5d=async(_0x895a3c,_0x33193b)=>{const _0x539904=_0x3a9916;if(_0x539904(0x17c)!==_0x539904(0x169))try{_0x4c4538[_0x539904(0x165)]=_0x539904(0x163)+_0x895a3c+_0x539904(0x158);const _0x2bcb0d=await _0x488b91(_0x895a3c);_0x2bcb0d[_0x539904(0x159)]=_0x539904(0x176)+(_0x3e2588+0x1),_0x34df3d(_0x2bcb0d);const _0x5098ce=new _0xcd17fa[(_0x539904(0x17a))]();return _0x5098ce[_0x539904(0x159)]=_0x539904(0x176)+(_0x3e2588+0x1),_0x33193b[_0x539904(0x164)]=_0x5098ce,_0x33193b[_0x539904(0x164)][_0x539904(0x13f)]=_0x2bcb0d,_0x33193b[_0x539904(0x164)][_0x539904(0x154)]=!![],_0x3e2588=_0x3e2588+0x1,Promise['resolve']();}catch(_0x5664a2){return Promise['reject'](_0x5664a2);}else{const _0x43f829=new _0xda4003();_0x43f829[_0x539904(0x18f)]=function(){const _0x58bace=_0x539904,_0x494ab0=_0x43f829[_0x58bace(0x147)];_0x41eaa8[_0x58bace(0x165)]='<img\x20src=\x22'+_0x494ab0+'\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>',_0x421bb0[_0x58bace(0x153)]=![],_0x3faf86=null,_0x586189[_0x58bace(0x180)]['display']='none',_0x1155c5[_0x58bace(0x180)][_0x58bace(0x160)]='none';},_0x43f829[_0x539904(0x18b)](_0x56e320);}};function _0x1386b7(_0xf401cf,_0x124591,_0x425266){const _0x4766c6=_0x3a9916;if(_0x4766c6(0x148)==='oGzbO'){const _0x52637f=new _0x1cca94([_0x517e12['stringify'](_0x1cf225)],{'type':_0x4766c6(0x17e)}),_0x4e2476=_0x28d60c[_0x4766c6(0x179)](_0x52637f);_0x318a0c[_0x4766c6(0x170)]=_0x4766c6(0x184),_0x4a8c50[_0x4766c6(0x151)]=_0x4e2476,_0x16b7f5[_0x4766c6(0x180)][_0x4766c6(0x160)]=_0x4766c6(0x157);}else{const _0x16001d=document[_0x4766c6(0x13e)](_0x4766c6(0x186)),_0x24c5ba=_0x16001d['getContext']('2d'),_0xda01d6=new Image();_0xda01d6[_0x4766c6(0x181)]=_0xf401cf,_0xda01d6[_0x4766c6(0x18f)]=function(){const _0x4ff201=_0x4766c6;if(_0x4ff201(0x144)!=='yLFDO'){_0x16001d['width']=_0xda01d6[_0x4ff201(0x16b)],_0x16001d['height']=_0xda01d6[_0x4ff201(0x17f)],_0x24c5ba['drawImage'](_0xda01d6,0x0,0x0);const _0x1e4cef=_0xda01d6['width']/_0x425266,_0x22dc23=_0xda01d6[_0x4ff201(0x17f)]/_0x124591;_0x470b98===null?_0x470b98=new JSZip():_0x470b98[_0x4ff201(0x18e)](function(_0x4b7c2f,_0x11ea27){const _0x51415a=_0x4ff201;if(_0x51415a(0x177)!==_0x51415a(0x177)){const _0x5555f8=_0x3605ec[_0x51415a(0x147)];_0x4df820[_0x51415a(0x165)]=_0x51415a(0x163)+_0x5555f8+'\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>',_0x53edf1[_0x51415a(0x153)]=![],_0x12f6e1=null,_0x13b148[_0x51415a(0x180)][_0x51415a(0x160)]=_0x51415a(0x14d),_0x137525[_0x51415a(0x180)][_0x51415a(0x160)]=_0x51415a(0x14d);}else _0x470b98['remove'](_0x4b7c2f);});let _0x28f696=-0x1;const _0x3423d5=_0x124591*_0x425266;function _0x43db0c(){const _0x36da1c=_0x4ff201;_0x28f696++;const _0xca88b=_0x28f696/_0x3423d5*0x64;_0x29d930[_0x36da1c(0x180)][_0x36da1c(0x16b)]=_0xca88b+'%',_0x34df3d(_0x28f696),_0x28f696===_0x3423d5&&(_0xd7264b[_0x36da1c(0x18c)][_0x36da1c(0x16f)]('hidden'),_0x4c4538[_0x36da1c(0x165)]='<img\x20src=\x22'+_0xf401cf+_0x36da1c(0x158));}_0x4685f5[_0x4ff201(0x174)](fbxPath,async function(_0x2c9e4a){const _0x32593e=_0x4ff201;for(let _0x4b5fe5=0x0;_0x4b5fe5<_0x124591;_0x4b5fe5++){if('fhDtb'!==_0x32593e(0x16e)){const _0x9f371=_0x24f7aa[_0x32593e(0x179)](_0x5bb72e);_0x7702b0[_0x32593e(0x170)]=_0x32593e(0x155),_0x4a2256[_0x32593e(0x145)]=()=>{const _0x44a546=_0x32593e,_0x30b5e0=_0x16d27b['createElement']('a');_0x30b5e0[_0x44a546(0x151)]=_0x510353,_0x30b5e0[_0x44a546(0x15d)]();},_0x2456f1[_0x32593e(0x151)]=_0x9f371,_0x2054c8[_0x32593e(0x180)][_0x32593e(0x160)]=_0x32593e(0x157),_0x2b1452[_0x32593e(0x153)]=![],_0xac1591(),_0x5e16e7=![];}else for(let _0x3a17d6=0x0;_0x3a17d6<_0x425266;_0x3a17d6++){const _0x2bf683=document['createElement']('canvas'),_0x3d6edb=_0x2bf683['getContext']('2d');_0x2bf683[_0x32593e(0x16b)]=_0x1e4cef,_0x2bf683[_0x32593e(0x17f)]=_0x22dc23,_0x3d6edb['drawImage'](_0x16001d,_0x3a17d6*_0x1e4cef,_0x4b5fe5*_0x22dc23,_0x1e4cef,_0x22dc23,0x0,0x0,_0x1e4cef,_0x22dc23);const _0x51ed57=_0x2bf683['toDataURL'](_0x32593e(0x14e)),_0x52eb78=_0x51ed57[_0x32593e(0x14f)](/^data:image\/\w+;base64,/,''),_0x1707b9=window[_0x32593e(0x166)](_0x52eb78),_0x364730=new Uint8Array(_0x1707b9[_0x32593e(0x185)]),_0x3eae56=_0x2c9e4a[_0x32593e(0x156)](_0x32593e(0x176)+(_0x3e2588+0x1));await _0x598f5d(_0x51ed57,_0x3eae56,_0x3e2588),_0x34df3d(_0x3e2588);for(let _0x4b573b=0x0;_0x4b573b<_0x1707b9[_0x32593e(0x185)];_0x4b573b++){_0x364730[_0x4b573b]=_0x1707b9['charCodeAt'](_0x4b573b);}_0x470b98[_0x32593e(0x15e)]('color_'+_0x3e2588+_0x32593e(0x14c),_0x364730,{'binary':!![]}),_0x43db0c();}}_0x5773e4[_0x32593e(0x16f)](_0x2c9e4a),_0x34df3d(_0x2c9e4a),_0x307c22['parse'](_0x5773e4,function(_0x3ac57b){const _0x1028ba=_0x32593e,_0xe50335=new Blob([JSON[_0x1028ba(0x15b)](_0x3ac57b)],{'type':_0x1028ba(0x17e)}),_0x548268=URL[_0x1028ba(0x179)](_0xe50335);_0x1cd69e[_0x1028ba(0x170)]=_0x1028ba(0x184),_0x1cd69e[_0x1028ba(0x151)]=_0x548268,_0x1cd69e[_0x1028ba(0x180)][_0x1028ba(0x160)]=_0x1028ba(0x157);}),_0x470b98[_0x32593e(0x188)]({'type':'blob'})[_0x32593e(0x152)](function(_0x3acbf1){const _0x34727a=_0x32593e,_0x2feec5=URL[_0x34727a(0x179)](_0x3acbf1);_0x12630a[_0x34727a(0x170)]=_0x34727a(0x155),_0x12630a['onclick']=()=>{const _0x476517=_0x34727a,_0x4e68aa=document['createElement']('a');_0x4e68aa[_0x476517(0x151)]=fbxPath,_0x4e68aa[_0x476517(0x15d)]();},_0x12630a[_0x34727a(0x151)]=_0x2feec5,_0x12630a[_0x34727a(0x180)][_0x34727a(0x160)]=_0x34727a(0x157),_0x474238[_0x34727a(0x153)]=![],_0x43db0c(),firstRun=![];});});}else return _0x2d50b4[_0x4ff201(0x18a)](_0x44c682);};}}});
+  const _0x348a30=_0x1675;(function(_0x387288,_0x3781ca){const _0x3f7c76=_0x1675,_0x498b02=_0x387288();while(!![]){try{const _0x5c79d2=-parseInt(_0x3f7c76(0x178))/0x1*(parseInt(_0x3f7c76(0x15a))/0x2)+parseInt(_0x3f7c76(0x187))/0x3+parseInt(_0x3f7c76(0x171))/0x4*(-parseInt(_0x3f7c76(0x162))/0x5)+-parseInt(_0x3f7c76(0x173))/0x6+-parseInt(_0x3f7c76(0x16a))/0x7*(parseInt(_0x3f7c76(0x16c))/0x8)+parseInt(_0x3f7c76(0x141))/0x9*(-parseInt(_0x3f7c76(0x167))/0xa)+parseInt(_0x3f7c76(0x150))/0xb;if(_0x5c79d2===_0x3781ca)break;else _0x498b02['push'](_0x498b02['shift']());}catch(_0x434752){_0x498b02['push'](_0x498b02['shift']());}}}(_0x23ce,0x1a314));import*as _0xcd17fa from'https://cdn.skypack.dev/three@0.132.2/build/three.module.js';import{FBXLoader}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/FBXLoader.js';import{GLTFExporter}from'https://cdn.skypack.dev/three@0.132.2/examples/jsm/exporters/GLTFExporter.js';function _0x23ce(){const _0x4c6a7a=['inline-block','\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>','name','191852oWNxCY','stringify','split-button','click','file','change','display','download-button','798315xtqHNA','<img\x20src=\x22','material','innerHTML','atob','59950gEezUX','Scene','AuBmX','294czDnAF','width','34536ijRcWy','getElementById','fhDtb','add','download','4WegSiy','log','587478aRPWgX','load','whIbG','color_','OErFv','1sxKCHr','createObjectURL','MeshBasicMaterial','reload','DPtUN','.././resources/general/sphere.fbx','application/json','height','style','src','qyBVE','img','portal.gltf','length','canvas','232212XXnDzH','generateAsync','image.*','reject','readAsDataURL','classList','DOMContentLoaded','forEach','onload','createElement','map','loading-bar-container','99MHrfqQ','download-portal-button','image-upload','inRPV','onclick','YvKkS','result','xBHmv','remove','hidden','KOYaB','.jpg','none','image/jpeg','replace','6937051zUSqHx','href','then','disabled','needsUpdate','images.zip','getObjectByName'];_0x23ce=function(){return _0x4c6a7a;};return _0x23ce();}function _0x1675(_0x516d2c,_0x238f14){const _0x23cec1=_0x23ce();return _0x1675=function(_0x1675ce,_0x2715ea){_0x1675ce=_0x1675ce-0x13e;let _0x506309=_0x23cec1[_0x1675ce];return _0x506309;},_0x1675(_0x516d2c,_0x238f14);}const fbxPath=_0x348a30(0x17d),materialPrefix=_0x348a30(0x176),numMaterials=0x8;var firstRun=!![];document['addEventListener'](_0x348a30(0x18d),function(){const _0x3a9916=_0x348a30,_0x82503b=document[_0x3a9916(0x16d)](_0x3a9916(0x143)),_0x4c4538=document[_0x3a9916(0x16d)]('image-preview'),_0x474238=document[_0x3a9916(0x16d)](_0x3a9916(0x15c)),_0x12630a=document['getElementById'](_0x3a9916(0x161)),_0x1cd69e=document['getElementById'](_0x3a9916(0x142)),_0xd7264b=document[_0x3a9916(0x16d)](_0x3a9916(0x140)),_0x29d930=document['getElementById']('loading-bar'),_0x4685f5=new FBXLoader(),_0x307c22=new GLTFExporter(),_0x5773e4=new _0xcd17fa[(_0x3a9916(0x168))]();let _0x470b98=null;var _0x3e2588=0x0;_0x82503b['addEventListener'](_0x3a9916(0x15f),function(_0x23b672){const _0x7da691=_0x3a9916;if(_0x7da691(0x175)==='WoBlX')_0x1e0052[_0x7da691(0x18c)]['add'](_0x7da691(0x14a)),_0x12b47c[_0x7da691(0x165)]=_0x7da691(0x163)+_0x174894+_0x7da691(0x158);else{const _0x30e893=_0x23b672['target']['files'][0x0];if(_0x30e893&&_0x30e893['type']['match'](_0x7da691(0x189))){const _0x905d62=new FileReader();_0x905d62[_0x7da691(0x18f)]=function(){const _0x3d7716=_0x7da691;if('EpEiT'!==_0x3d7716(0x14b)){const _0x1ecdb4=_0x905d62[_0x3d7716(0x147)];_0x4c4538[_0x3d7716(0x165)]=_0x3d7716(0x163)+_0x1ecdb4+'\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>',_0x474238[_0x3d7716(0x153)]=![],_0x470b98=null,_0x12630a[_0x3d7716(0x180)][_0x3d7716(0x160)]='none',_0x1cd69e[_0x3d7716(0x180)][_0x3d7716(0x160)]=_0x3d7716(0x14d);}else{_0x807799++;const _0x36d727=_0x5c1bfb/_0x27e8bd*0x64;_0x22895e[_0x3d7716(0x180)][_0x3d7716(0x16b)]=_0x36d727+'%',_0x56f21d(_0x54bcc6),_0x556c67===_0xb96e89&&(_0x36d68d[_0x3d7716(0x18c)][_0x3d7716(0x16f)](_0x3d7716(0x14a)),_0x243f60['innerHTML']=_0x3d7716(0x163)+_0x481bdd+_0x3d7716(0x158));}},_0x905d62[_0x7da691(0x18b)](_0x30e893);}}});const _0x34df3d=console[_0x3a9916(0x172)];_0x474238['addEventListener'](_0x3a9916(0x15d),function(){const _0x16f7e9=_0x3a9916;if(!firstRun){if(_0x16f7e9(0x182)!==_0x16f7e9(0x182))_0x10d713[_0x16f7e9(0x18e)](function(_0x248431,_0x387715){const _0x794043=_0x16f7e9;_0xdfa1a[_0x794043(0x149)](_0x248431);});else{}}const _0x440b7e=_0x4c4538['querySelector'](_0x16f7e9(0x183))[_0x16f7e9(0x181)],_0x5118ff=0x2,_0x38fccd=0x4;_0x474238[_0x16f7e9(0x153)]=!![],_0x29d930['style'][_0x16f7e9(0x16b)]='0',_0xd7264b[_0x16f7e9(0x18c)][_0x16f7e9(0x149)](_0x16f7e9(0x14a)),_0x12630a['style'][_0x16f7e9(0x160)]=_0x16f7e9(0x14d),_0x1cd69e[_0x16f7e9(0x180)][_0x16f7e9(0x160)]=_0x16f7e9(0x14d),_0x1386b7(_0x440b7e,_0x5118ff,_0x38fccd);});const _0x488b91=_0x3a2b01=>{return new Promise((_0x5e29c1,_0x411881)=>{const _0x5da488=_0x1675;if(_0x5da488(0x146)===_0x5da488(0x146)){const _0xc0daf7=new _0xcd17fa['TextureLoader']();_0xc0daf7['load'](_0x3a2b01,_0x211504=>{const _0x210093=_0x5da488;_0x211504[_0x210093(0x154)]=!![],_0x5e29c1(_0x211504);},undefined,_0x4a8062=>{_0x411881(_0x4a8062);});}else _0x4d9e69[_0x46f9b1]=_0x9ba60['charCodeAt'](_0x366145);});},_0x598f5d=async(_0x895a3c,_0x33193b)=>{const _0x539904=_0x3a9916;if(_0x539904(0x17c)!==_0x539904(0x169))try{_0x4c4538[_0x539904(0x165)]=_0x539904(0x163)+_0x895a3c+_0x539904(0x158);const _0x2bcb0d=await _0x488b91(_0x895a3c);_0x2bcb0d[_0x539904(0x159)]=_0x539904(0x176)+(_0x3e2588+0x1),_0x34df3d(_0x2bcb0d);const _0x5098ce=new _0xcd17fa[(_0x539904(0x17a))]();return _0x5098ce[_0x539904(0x159)]=_0x539904(0x176)+(_0x3e2588+0x1),_0x33193b[_0x539904(0x164)]=_0x5098ce,_0x33193b[_0x539904(0x164)][_0x539904(0x13f)]=_0x2bcb0d,_0x33193b[_0x539904(0x164)][_0x539904(0x154)]=!![],_0x3e2588=_0x3e2588+0x1,Promise['resolve']();}catch(_0x5664a2){return Promise['reject'](_0x5664a2);}else{const _0x43f829=new _0xda4003();_0x43f829[_0x539904(0x18f)]=function(){const _0x58bace=_0x539904,_0x494ab0=_0x43f829[_0x58bace(0x147)];_0x41eaa8[_0x58bace(0x165)]='<img\x20src=\x22'+_0x494ab0+'\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>',_0x421bb0[_0x58bace(0x153)]=![],_0x3faf86=null,_0x586189[_0x58bace(0x180)]['display']='none',_0x1155c5[_0x58bace(0x180)][_0x58bace(0x160)]='none';},_0x43f829[_0x539904(0x18b)](_0x56e320);}};function _0x1386b7(_0xf401cf,_0x124591,_0x425266){const _0x4766c6=_0x3a9916;if(_0x4766c6(0x148)==='oGzbO'){const _0x52637f=new _0x1cca94([_0x517e12['stringify'](_0x1cf225)],{'type':_0x4766c6(0x17e)}),_0x4e2476=_0x28d60c[_0x4766c6(0x179)](_0x52637f);_0x318a0c[_0x4766c6(0x170)]=_0x4766c6(0x184),_0x4a8c50[_0x4766c6(0x151)]=_0x4e2476,_0x16b7f5[_0x4766c6(0x180)][_0x4766c6(0x160)]=_0x4766c6(0x157);}else{const _0x16001d=document[_0x4766c6(0x13e)](_0x4766c6(0x186)),_0x24c5ba=_0x16001d['getContext']('2d'),_0xda01d6=new Image();_0xda01d6[_0x4766c6(0x181)]=_0xf401cf,_0xda01d6[_0x4766c6(0x18f)]=function(){const _0x4ff201=_0x4766c6;if(_0x4ff201(0x144)!=='yLFDO'){_0x16001d['width']=_0xda01d6[_0x4ff201(0x16b)],_0x16001d['height']=_0xda01d6[_0x4ff201(0x17f)],_0x24c5ba['drawImage'](_0xda01d6,0x0,0x0);const _0x1e4cef=_0xda01d6['width']/_0x425266,_0x22dc23=_0xda01d6[_0x4ff201(0x17f)]/_0x124591;_0x470b98===null?_0x470b98=new JSZip():_0x470b98[_0x4ff201(0x18e)](function(_0x4b7c2f,_0x11ea27){const _0x51415a=_0x4ff201;if(_0x51415a(0x177)!==_0x51415a(0x177)){const _0x5555f8=_0x3605ec[_0x51415a(0x147)];_0x4df820[_0x51415a(0x165)]=_0x51415a(0x163)+_0x5555f8+'\x22\x20alt=\x22Uploaded\x20Image\x22\x20/>',_0x53edf1[_0x51415a(0x153)]=![],_0x12f6e1=null,_0x13b148[_0x51415a(0x180)][_0x51415a(0x160)]=_0x51415a(0x14d),_0x137525[_0x51415a(0x180)][_0x51415a(0x160)]=_0x51415a(0x14d);}else _0x470b98['remove'](_0x4b7c2f);});let _0x28f696=-0x1;const _0x3423d5=_0x124591*_0x425266;function _0x43db0c(){const _0x36da1c=_0x4ff201;_0x28f696++;const _0xca88b=_0x28f696/_0x3423d5*0x64;_0x29d930[_0x36da1c(0x180)][_0x36da1c(0x16b)]=_0xca88b+'%',_0x34df3d(_0x28f696),_0x28f696===_0x3423d5&&(_0xd7264b[_0x36da1c(0x18c)][_0x36da1c(0x16f)]('hidden'),_0x4c4538[_0x36da1c(0x165)]='<img\x20src=\x22'+_0xf401cf+_0x36da1c(0x158));}_0x4685f5[_0x4ff201(0x174)](fbxPath,async function(_0x2c9e4a){const _0x32593e=_0x4ff201;for(let _0x4b5fe5=0x0;_0x4b5fe5<_0x124591;_0x4b5fe5++){if('fhDtb'!==_0x32593e(0x16e)){const _0x9f371=_0x24f7aa[_0x32593e(0x179)](_0x5bb72e);_0x7702b0[_0x32593e(0x170)]=_0x32593e(0x155),_0x4a2256[_0x32593e(0x145)]=()=>{const _0x44a546=_0x32593e,_0x30b5e0=_0x16d27b['createElement']('a');_0x30b5e0[_0x44a546(0x151)]=_0x510353,_0x30b5e0[_0x44a546(0x15d)]();},_0x2456f1[_0x32593e(0x151)]=_0x9f371,_0x2054c8[_0x32593e(0x180)][_0x32593e(0x160)]=_0x32593e(0x157),_0x2b1452[_0x32593e(0x153)]=![],_0xac1591(),_0x5e16e7=![];}else for(let _0x3a17d6=0x0;_0x3a17d6<_0x425266;_0x3a17d6++){const _0x2bf683=document['createElement']('canvas'),_0x3d6edb=_0x2bf683['getContext']('2d');_0x2bf683[_0x32593e(0x16b)]=_0x1e4cef,_0x2bf683[_0x32593e(0x17f)]=_0x22dc23,_0x3d6edb['drawImage'](_0x16001d,_0x3a17d6*_0x1e4cef,_0x4b5fe5*_0x22dc23,_0x1e4cef,_0x22dc23,0x0,0x0,_0x1e4cef,_0x22dc23);const _0x51ed57=_0x2bf683['toDataURL'](_0x32593e(0x14e)),_0x52eb78=_0x51ed57[_0x32593e(0x14f)](/^data:image\/\w+;base64,/,''),_0x1707b9=window[_0x32593e(0x166)](_0x52eb78),_0x364730=new Uint8Array(_0x1707b9[_0x32593e(0x185)]),_0x3eae56=_0x2c9e4a[_0x32593e(0x156)](_0x32593e(0x176)+(_0x3e2588+0x1));await _0x598f5d(_0x51ed57,_0x3eae56,_0x3e2588),_0x34df3d(_0x3e2588);for(let _0x4b573b=0x0;_0x4b573b<_0x1707b9[_0x32593e(0x185)];_0x4b573b++){_0x364730[_0x4b573b]=_0x1707b9['charCodeAt'](_0x4b573b);}_0x470b98[_0x32593e(0x15e)]('color_'+_0x3e2588+_0x32593e(0x14c),_0x364730,{'binary':!![]}),_0x43db0c();}}_0x5773e4[_0x32593e(0x16f)](_0x2c9e4a),_0x34df3d(_0x2c9e4a),_0x307c22['parse'](_0x5773e4,function(_0x3ac57b){const _0x1028ba=_0x32593e,_0xe50335=new Blob([JSON[_0x1028ba(0x15b)](_0x3ac57b)],{'type':_0x1028ba(0x17e)}),_0x548268=URL[_0x1028ba(0x179)](_0xe50335);_0x1cd69e[_0x1028ba(0x170)]=_0x1028ba(0x184),_0x1cd69e[_0x1028ba(0x151)]=_0x548268,_0x1cd69e[_0x1028ba(0x180)][_0x1028ba(0x160)]=_0x1028ba(0x157);}),_0x470b98[_0x32593e(0x188)]({'type':'blob'})[_0x32593e(0x152)](function(_0x3acbf1){const _0x34727a=_0x32593e,_0x2feec5=URL[_0x34727a(0x179)](_0x3acbf1);_0x12630a[_0x34727a(0x170)]=_0x34727a(0x155),_0x12630a['onclick']=()=>{const _0x476517=_0x34727a,_0x4e68aa=document['createElement']('a');_0x4e68aa[_0x476517(0x151)]=fbxPath,_0x4e68aa[_0x476517(0x15d)]();},_0x12630a[_0x34727a(0x151)]=_0x2feec5,_0x12630a[_0x34727a(0x180)][_0x34727a(0x160)]=_0x34727a(0x157),_0x474238[_0x34727a(0x153)]=![],_0x43db0c(),firstRun=![];});});}else return _0x2d50b4[_0x4ff201(0x18a)](_0x44c682);};}}});
   </script>
 </body>
 </html>
+
+
+
+
+
+

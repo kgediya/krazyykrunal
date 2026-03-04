@@ -2,220 +2,379 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kustom QR Code Generator</title>
+    <title>Kustom QR Lab | Krazyy Krunal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="./favicon-32x32.png">
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
     <style>
-        @font-face {
-            font-family: 'PF Tempesta Five';
-            font-style: normal;
-            font-weight: 400;
-            src: local('PF Tempesta Five'), url('.././assets/pf_tempesta_five.woff') format('woff');
-        }
+  :root {
+    --bg: #050505;
+    --panel: rgba(18, 18, 18, 0.84);
+    --line: rgba(255,255,255,0.18);
+    --line-strong: rgba(255,255,255,0.52);
+    --text: #f5f5f5;
+    --muted: rgba(245,245,245,0.72);
+    --shadow: 0 24px 60px rgba(0,0,0,0.5);
+  }
 
-        body {
-            font-family: 'PF Tempesta Five', Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
+  * { box-sizing: border-box; }
 
-        .card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.08), transparent 24%),
+      radial-gradient(circle at 88% 18%, rgba(255,255,255,0.07), transparent 26%),
+      linear-gradient(170deg, #010101 0%, #0a0a0a 100%);
+    padding: 22px 14px 34px;
+  }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-u{
+  .tool-shell {
+    width: min(900px, 100%);
+    margin: 0 auto;
+    display: grid;
+    gap: 14px;
+  }
+
+  .tool-topbar,
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+  }
+
+  .tool-topbar { padding: 16px 18px; }
+
+  .tool-topbar h1 {
+    margin: 0;
+    font-family: 'Sora', sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+  }
+
+  .tool-topbar p {
+    margin: 10px 0 0;
+    color: var(--muted);
+    line-height: 1.55;
+    font-size: .95rem;
+  }
+
+  .card { padding: 20px; }
+
+  h1 {
     text-align: center;
-}
-        #canvas {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
+    margin: 0 0 18px;
+    font-family: 'Sora', sans-serif;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    color: var(--muted);
+  }
 
-        #canvas canvas {
-            max-width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+  #canvas {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
 
-        select,
-        input[type="text"],
-        input[type="file"],
-        button {
-            margin-top: 10px;
-           
-            display: block;
-            width: 100%;
-            padding: 8px 0px 8px 0px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 16px;
-            outline: none;
-            font-family: 'PF Tempesta Five', Arial, sans-serif;
-        }
-        label[for="foreground-color"],
-        label[for="secondary-color"],
-        label[for="background-color"] {
-            display: block;
-            margin-top: 10px;
-        }
-        input[type="color"] {
-            display: block;
-            margin-top: 10px;
-            width: 100%;
-            height: 50px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            outline: none;
-            font-family: 'PF Tempesta Five', Arial, sans-serif;
-        }
+  .preset-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
 
-        /* Style for custom file input button */
-        .file-input-container {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
+  .preset-btn {
+    min-height: 40px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    padding: 8px 10px;
+    transition: transform .18s ease, background .18s ease, border-color .18s ease;
+  }
 
-        /* Style for custom file input button */
-        input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            visibility: hidden;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
+  .preset-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.15);
+    border-color: var(--line-strong);
+  }
 
-        /* Customize the "Select Logo" button style */
-        label[for="logo"] {
-            display: inline-block;
-            background-color: #000000;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 4px;
-            text-align: center;
-            cursor: pointer;
-        }
+  .status-msg {
+    min-height: 20px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--muted);
+  }
 
-        input[type="file"]::before {
-            content: 'Select Logo';
-            display: inline-block;
-            background-color: #000000;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 4px;
-            text-align: center;
-            cursor: pointer;
-            
-        }
+  .status-msg.error { color: #ff8c8c; }
+  .status-msg.success { color: #9ef0b2; }
 
-        input[type="file"]::after {
-            content: 'No file selected';
-            display: block;
-            margin-top: 5px;
-            font-size: 14px;
-            color: #666;
-        }
-        .file-name {
-            display: block;
-            margin-top: 5px;
-            font-size: 14px;
-            color: #666;
-        }
+  .action-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
 
-        /* Apply custom font to select dropdown */
-        select {
-            font-family: 'PF Tempesta Five', Arial, sans-serif;
-        }
+  .custom-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
 
-        button {
-            margin-top: 20px;
-            background-color: #000000;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+  #canvas canvas,
+  #canvas svg {
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fff;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
 
-        button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
-        }
+  select,
+  input[type="text"],
+  input[type="file"],
+  button {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    text-align: center;
+    font: inherit;
+    color: #fff;
+    outline: none;
+    background: rgba(255,255,255,0.06);
+  }
 
-        button:hover {
-            background-color: #353535;
-        }
+  select option {
+    color: #111111;
+    background: #ffffff;
+  }
 
-        label {
-            display: block;
-            margin-top: 10px;
-        }
+  input::placeholder { color: rgba(255,255,255,0.48); }
 
-        p1 {
-            margin-top: 20px;
-        }
+  label,
+  label[for="foreground-color"],
+  label[for="secondary-color"],
+  label[for="background-color"] {
+    display: block;
+    margin-top: 10px;
+    color: var(--muted);
+    letter-spacing: .03em;
+    font-size: .92rem;
+  }
 
-        a {
-            color: #000000;
-            text-decoration: none;
-            display: block;
-            margin-top: 20px;
-          
-        }
-    </style>
+  input[type="color"] {
+    display: block;
+    margin-top: 10px;
+    width: 100%;
+    height: 48px;
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    outline: none;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .file-input-container {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  label[for="logo"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    min-width: 90px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    cursor: pointer;
+    transition: transform .18s ease, background .18s ease;
+  }
+
+  label[for="logo"]:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.16);
+  }
+
+  .file-name {
+    display: inline-block;
+    margin-top: 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 700px) {
+    .custom-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  button {
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: .04em;
+    transition: transform .18s ease, background .18s ease;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.16);
+  }
+
+  button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  p1 {
+    margin-top: 20px;
+    display: block;
+    color: var(--muted);
+  }
+
+  a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    margin-top: 20px;
+    border-bottom: 1px dashed rgba(255,255,255,0.42);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
  
 </head>
 <body>
-    <div class="card">
-        <h1>Kustom MakQR</h1>
+    <main class="tool-shell">
+      <header class="tool-topbar">
+        <h1>Kustom QR Lab</h1>
+        <p>Generate branded QR codes with clearer controls, kustom logo support, and quick download flow.</p>
+      </header>
+      <div class="card">
+        <h1>Kustom QR Lab</h1>
         <div id="secret" hidden>Redirection Mode On</div>
         <label for="linkType">Select Style</label>
         <select name="type" id="linkType">
             <option value="insta" selected>Instagram</option>
             <option value="facebook">Facebook</option>
             <option value="snapchat">Snapchat</option>
-            <option value="twitter">Twitter</option>
+            <option value="twitter">X (Twitter)</option>
             <option value="youtube">Youtube</option>
             <option value="discord">Discord</option>
-            <option value="custom">Custom</option>
+            <option value="custom">Kustom</option>
         </select>
+        <div class="preset-grid kustom-only-control">
+          <button type="button" class="preset-btn" data-preset="mono">Mono Grid</button>
+          <button type="button" class="preset-btn" data-preset="invert">Invert Pop</button>
+          <button type="button" class="preset-btn" data-preset="neon">Neon Edge</button>
+          <button type="button" class="preset-btn" data-preset="citrus">Citrus Punch</button>
+          <button type="button" class="preset-btn" data-preset="ocean">Ocean Wave</button>
+          <button type="button" class="preset-btn" data-preset="royal">Royal Pulse</button>
+          <button type="button" class="preset-btn" data-preset="sunset">Sunset Blend</button>
+          <button type="button" class="preset-btn" data-preset="mint">Mint Frost</button>
+          <button type="button" class="preset-btn" data-preset="ember">Ember Glow</button>
+          <button type="button" class="preset-btn" data-preset="berry">Berry Pop</button>
+        </div>
 
-        <label for="foreground-color">Foreground Color</label>
-        <input type="color" name="foreGround" id="foreground-color" hidden>
+        <label class="kustom-color-control" for="foreground-color">Foreground Color</label>
+        <input class="kustom-color-control" type="color" name="foreGround" id="foreground-color">
     
-        <label for="secondary-color">Dots</label>
-        <input type="color" name="secondaryColor" id="secondary-color" hidden>
+        <label class="kustom-color-control" for="secondary-color">Dots</label>
+        <input class="kustom-color-control" type="color" name="secondaryColor" id="secondary-color">
     
-        <label for="background-color">Background Color</label>
-        <input type="color" name="backGround" id="background-color" value="#fff" hidden>
+        <label class="kustom-color-control" for="background-color">Background Color</label>
+        <input class="kustom-color-control" type="color" name="backGround" id="background-color" value="#ffffff">
     <input type="text" name="link" id="link_data" placeholder="Enter your link here & submit">
+    <p id="status-msg" class="status-msg" aria-live="polite"></p>
       
+        <label>Advanced Style Controls</label>
+        <div class="custom-grid">
+          <select id="dotShape">
+            <option value="dots">Dots</option>
+            <option value="rounded">Rounded</option>
+            <option value="classy-rounded">Classy Rounded</option>
+            <option value="classy">Classy</option>
+            <option value="square">Square</option>
+            <option value="extra-rounded">Extra Rounded</option>
+          </select>
+          <select id="cornerShape">
+            <option value="dots">Corners: Dots</option>
+            <option value="square">Corners: Square</option>
+            <option value="extra-rounded">Corners: Extra Rounded</option>
+          </select>
+          <select id="cornerDotShape">
+            <option value="dots">Corner Dot: Dot</option>
+            <option value="square">Corner Dot: Square</option>
+          </select>
+          <select id="eccLevel">
+            <option value="Q">Error Correction: Q</option>
+            <option value="H">Error Correction: H</option>
+            <option value="M">Error Correction: M</option>
+            <option value="L">Error Correction: L</option>
+          </select>
+          <label for="logoSize">Logo Size</label>
+          <input id="logoSize" type="range" min="0.28" max="0.55" step="0.01" value="0.45">
+        </div>
+
         <button id="submit">Generate QR</button>
-        <p1>Custom Logo</p1><br>
-      
-        <div class="file-input-container">
-            <label for="logo" id="file-label">Select Logo</label>
+        <p1>Logo</p1>
+
+        <div class="file-input-container logo-row">
+            <label for="logo" id="file-label">Logo</label>
             <input type="file" name="logo" id="logo" accept="image/png, image/jpeg">
             <span class="file-name">No file chosen</span>
         </div>
-        <button id="download_qr" disabled>Download QR</button>
+        <div class="action-row">
+          <button id="download_qr" disabled>Download PNG</button>
+          <button id="download_svg" disabled>Download SVG</button>
+        </div>
+        <button id="copy_link" disabled>Copy Link</button>
         <div id="canvas"></div>
      
         <canvas hidden></canvas>
@@ -223,260 +382,419 @@ u{
         <br><br>
         <u><a href="http://" hidden id="link-gen"></a></u>
     </div>
+        </main>
     <script type="module">
-     
-  var developermode = false;
+const DOM = {
+  secret: document.getElementById('secret'),
+  linkType: document.getElementById('linkType'),
+  foregroundColor: document.getElementById('foreground-color'),
+  secondaryColor: document.getElementById('secondary-color'),
+  backgroundColor: document.getElementById('background-color'),
+  dotShape: document.getElementById('dotShape'),
+  cornerShape: document.getElementById('cornerShape'),
+  cornerDotShape: document.getElementById('cornerDotShape'),
+  logoSize: document.getElementById('logoSize'),
+  eccLevel: document.getElementById('eccLevel'),
+  linkInput: document.getElementById('link_data'),
+  status: document.getElementById('status-msg'),
+  submit: document.getElementById('submit'),
+  logoInput: document.getElementById('logo'),
+  fileName: document.querySelector('.file-name'),
+  downloadPng: document.getElementById('download_qr'),
+  downloadSvg: document.getElementById('download_svg'),
+  copyLink: document.getElementById('copy_link'),
+  linkOutput: document.getElementById('link-gen'),
+  qrMount: document.getElementById('canvas'),
+  maskCanvas: document.querySelector('canvas'),
+  presetButtons: document.querySelectorAll('.preset-btn'),
+  kustomColorControls: document.querySelectorAll('.kustom-color-control'),
+  kustomOnlyControls: document.querySelectorAll('.kustom-only-control')
+};
 
-const query = window.location.search;
-const urlParams = new URLSearchParams(query)
-if(parseInt(urlParams.get('redirection'))){
-developermode = true;
-document.getElementById('link_data').placeholder  = 'Enter The Redirection Key'
-document.getElementById('secret').hidden = false;}
+const state = {
+  developerMode: false,
+  activeTheme: DOM.linkType.value,
+  maskedLogo: '',
+  qr: null,
+  generatedLink: '',
+  lastOptions: null
+};
 
-var themes = {
-'snapchat':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/snapLogo.png',
-    'primary-color':'#000',
-    'secondary-color':'#000',
-    'background-color':'#FFFD01'
-},
-'insta':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/instagramLogo.png',
-    'primary-color':'#00E0B9',
-    'secondary-color':'#FF5C83',
-    'background-color':'#fff',
-    'gradient':[{ offset: 0, color: "#feda75" }, { offset: 0.2, color: "#fa7e1e" },{ offset: 0.4, color: "#d62976" },{ offset: 0.6, color: "#962fbf" },{ offset: 0.8, color: "#4f5bd5" }]
-},
-'facebook':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/facebookLogo.png',
-    'primary-color':'#1778F2',
-    'secondary-color':'#1778F2',
-    'background-color':'#fff'
-},
-'youtube':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/youtubeLogo.png',
-    'primary-color':'#FF0000',
-    'secondary-color':'#FF0000',
-    'background-color':'#fff'
-},
-'twitter':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/twitterLogo.png',
-    'primary-color':'#00AEEF',
-    'secondary-color':'#00AEEF',
-    'background-color':'#fff'
-},
-'discord':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/discord logo.png',
-    'primary-color':'#5865F2',
-    'secondary-color':'#5865F2',
-    'background-color':'#00'
-},
-'flipkart':{
-    'logo':'https://raw.githubusercontent.com/kgediya/RandomHosting/main/fklogo.png',
-    'primary-color':'#007BDC',
-    'secondary-color':'#FDD83F',
-    'background-color':'#fff'
-},
-'custom':{
-    'logo':'',
-    'primary-color':'#000',
-    'secondary-color':'#000',
-    'background-color':'#fff'
-}
-
-}
-function changeUI(theme) {
-            // ... (same as before) ...
-            var foregroundColorLabel = document.querySelector('label[for="foreground-color"]');
-            var secondaryColorLabel = document.querySelector('label[for="secondary-color"]');
-            var backgroundColorLabel = document.querySelector('label[for="background-color"]');
-            var foregroundColorInput = document.getElementById('foreground-color');
-            var secondaryColorInput = document.getElementById('secondary-color');
-            var backgroundColorInput = document.getElementById('background-color');
-
-            if (theme === 'custom') {
-                foregroundColorLabel.style.display = 'block';
-                secondaryColorLabel.style.display = 'block';
-                backgroundColorLabel.style.display = 'block';
-                foregroundColorInput.style.display = 'block';
-                secondaryColorInput.style.display = 'block';
-                backgroundColorInput.style.display = 'block';
-            } else {
-                foregroundColorLabel.style.display = 'none';
-                secondaryColorLabel.style.display = 'none';
-                backgroundColorLabel.style.display = 'none';
-                foregroundColorInput.style.display = 'none';
-                secondaryColorInput.style.display = 'none';
-                backgroundColorInput.style.display = 'none';
-            }
-        }
-
-var themeStyle = document.getElementById('linkType').value;
-changeUI(themeStyle)
-document.getElementById('linkType').onchange = function(event){
-
-themeStyle = document.getElementById('linkType').value
-changeUI(themeStyle)
-
-}
-var qrCodeObj = null;
-var file =null;
-var finalImage = null;
-// get a reference to the file input
-const fileInput = document.querySelector('#logo');
-
-// get a reference to the output canvas
-const canvas = document.querySelector('canvas');
-
-// listen for the change event so we can capture the file
-fileInput.addEventListener('change', (e) => {
-    // get a reference to the file
-    const img = e.target.files[0];
-    const fileName = document.querySelector('.file-name');
-            if (fileInput.files.length > 0) {
-                fileName.innerText = fileInput.files[0].name;
-            } else {
-                fileName.innerText = 'No file chosen';
-            }
-    // let's load the image data
-    const image = new Image();
-    image.onload = () => {
-        // use min size so we get a square
-        const size = Math.min(image.naturalWidth, image.naturalHeight);
-        console.log(size)
-        // let's update the canvas size
-        canvas.width = size;
-        canvas.height = size;
-
-        // draw image to canvas
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(image, 0, 0);
-
-        // only draw image where mask is
-        ctx.globalCompositeOperation = 'destination-in';
-
-        // draw our circle mask
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        ctx.arc(
-            size * 0.5, // x
-            size * 0.5, // y
-            size * 0.5, // radius
-            0, // start angle
-            2 * Math.PI // end angle
-        );
-        ctx.fill();
-
-        // restore to default composite operation (is draw over current image)
-        ctx.globalCompositeOperation = 'source-over';
-
-        // show canvas
-        canvas.hidden = true;
-        finalImage = canvas.toDataURL('image/png');
-       
-    };
-    image.src = URL.createObjectURL(img)
-});
-
-document.getElementById('submit').onclick = function(){
-    if(document.getElementById('linkType').value=='custom'){
-        themes[themeStyle]['primary-color'] =  document.getElementById('foreground-color').value
-        themes[themeStyle]['secondary-color'] =  document.getElementById('secondary-color').value
-        themes[themeStyle]['background-color'] =  document.getElementById('background-color').value
-    }
-    try{
-       
-        file = finalImage?finalImage: URL.createObjectURL(document.getElementById('logo').files[0])
-
-    }catch{
-
-    }
-   
-    if(qrCodeObj!=null){
-        document.getElementById("canvas").innerHTML = ''
-    }
-    var linkData = null;
-    if(document.getElementById('linkType').value ==='lens_id'){
-linkData = "http://directlink-opener.github.io/?lensId="+document.getElementById('lensID').value+"&cat="+ document.getElementById('cat').value;
-    }
-else{
-    if(developermode){
-linkData = 'http://directlink-opener.github.io/?key='+document.getElementById('link_data').value       }else
-   linkData= document.getElementById('link_data').value
-}    
-function prependProtocol(linkValue) {
-           
-            if (linkValue !== '' && !linkValue.startsWith('http://') && !linkValue.startsWith('https://')) {
-                linkValue = 'http://' + linkValue;
-                
-            }
-            return linkValue
-        }
-linkData = prependProtocol(linkData)        
-console.log(linkData)
-qrCodeObj = new QRCodeStyling({
-    width: 512,
-    height: 512,
-    id:'qrcode',
-    type: "svg",
-    data: linkData,
-    image: file!=null?file:themes[themeStyle]['logo'],
-    dotsOptions: {
-        gradient:{
-            type:'linear',
-            colorStops:themes[themeStyle]['gradient']?themes[themeStyle]['gradient']:[{ offset: 0, color: themes[themeStyle]['primary-color'] }, { offset: 1, color: themes[themeStyle]['primary-color'] }]
-        },
-        type: "dots"
-    },
-    backgroundOptions: {
-        color: themes[themeStyle]['background-color'],
-    },
-    cornersSquareOptions:{
-        gradient:{
-            type:'linear',
-            colorStops:themes[themeStyle]['gradient']?themes[themeStyle]['gradient']:[{ offset: 0, color: themes[themeStyle]['secondary-color'] }, { offset: 1, color: themes[themeStyle]['secondary-color'] }]
-  
-        },
-
-       
-        type:"dots"
-    },
-    cornersDotOptions:{
-        type:'dots'
-    },
-    imageOptions: {
-        crossOrigin: "anonymous",
-        margin: 10,
-        imageSize:0.5
-    }
-});
-document.getElementById('download_qr').disabled = false;
-qrCodeObj.append(document.getElementById("canvas"));
-
-document.getElementById('link-gen').href = linkData;
-
-document.getElementById('link-gen').innerText = (linkData.replace("https://","")).replace("http://","")
-document.getElementById('link-gen').hidden = false
-
-}
-document.getElementById('download_qr').onclick = async function(){
-
-qrCodeObj.download({ name: "qr", extension: "png" });
-}
-
-
-async function logQueryParameters() {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    
-    // Check if there are any query parameters
-    if (urlSearchParams.has('link')) {
-      const link = urlSearchParams.get('link');
-      document.getElementById('link_data').value = link
-      
-    }
+const themes = {
+  snapchat: {
+    logo: 'https://raw.githubusercontent.com/kgediya/RandomHosting/main/snapLogo.png',
+    primaryColor: '#000000',
+    secondaryColor: '#000000',
+    backgroundColor: '#FFFD01'
+  },
+  insta: {
+    logo: 'https://raw.githubusercontent.com/kgediya/RandomHosting/main/instagramLogo.png',
+    primaryColor: '#00E0B9',
+    secondaryColor: '#FF5C83',
+    backgroundColor: '#ffffff',
+    gradient: [
+      { offset: 0, color: '#feda75' },
+      { offset: 0.2, color: '#fa7e1e' },
+      { offset: 0.4, color: '#d62976' },
+      { offset: 0.6, color: '#962fbf' },
+      { offset: 0.8, color: '#4f5bd5' }
+    ]
+  },
+  facebook: {
+    logo: 'https://raw.githubusercontent.com/kgediya/RandomHosting/main/facebookLogo.png',
+    primaryColor: '#1778F2',
+    secondaryColor: '#1778F2',
+    backgroundColor: '#ffffff'
+  },
+  youtube: {
+    logo: 'https://raw.githubusercontent.com/kgediya/RandomHosting/main/youtubeLogo.png',
+    primaryColor: '#FF0000',
+    secondaryColor: '#FF0000',
+    backgroundColor: '#ffffff'
+  },
+  twitter: {
+    logo: './assets/x-logo.png',
+    primaryColor: '#000000',
+    secondaryColor: '#1f1f1f',
+    backgroundColor: '#ffffff'
+  },
+  discord: {
+    logo: 'https://raw.githubusercontent.com/kgediya/RandomHosting/main/discord logo.png',
+    primaryColor: '#5865F2',
+    secondaryColor: '#5865F2',
+    backgroundColor: '#000000'
+  },
+  custom: {
+    logo: '',
+    primaryColor: '#000000',
+    secondaryColor: '#000000',
+    backgroundColor: '#ffffff'
   }
-  logQueryParameters()
+};
+
+const presets = {
+  mono: { foreground: '#000000', secondary: '#3f3f3f', background: '#ffffff' },
+  invert: { foreground: '#ffffff', secondary: '#d0d0d0', background: '#000000' },
+  neon: { foreground: '#00f5ff', secondary: '#8a2eff', background: '#050505' },
+  citrus: { foreground: '#ff8a00', secondary: '#ffd000', background: '#ffffff' },
+  ocean: { foreground: '#0084ff', secondary: '#00d4ff', background: '#f7fbff' },
+  royal: { foreground: '#4a4dff', secondary: '#8b5cf6', background: '#ffffff' },
+  sunset: { foreground: '#ff5b5b', secondary: '#ff9f43', background: '#fffaf2' },
+  mint: { foreground: '#00b894', secondary: '#55efc4', background: '#f4fffb' },
+  ember: { foreground: '#ff3d00', secondary: '#ff9100', background: '#fff7f0' },
+  berry: { foreground: '#c026d3', secondary: '#ec4899', background: '#fff7ff' }
+};
+
+function setStatus(message, tone = '') {
+  DOM.status.textContent = message;
+  DOM.status.classList.remove('error', 'success');
+  if (tone) DOM.status.classList.add(tone);
+}
+
+function setControlState(enabled) {
+  DOM.downloadPng.disabled = !enabled;
+  DOM.downloadSvg.disabled = !enabled;
+  DOM.copyLink.disabled = !enabled;
+}
+
+function toggleCustomControls(themeName) {
+  const show = themeName === 'custom';
+  DOM.kustomColorControls.forEach((control) => {
+    control.style.display = show ? 'block' : 'none';
+  });
+  DOM.kustomOnlyControls.forEach((control) => {
+    control.style.display = show ? 'grid' : 'none';
+  });
+}
+
+function withProtocol(raw) {
+  const value = (raw || '').trim();
+  if (!value) return '';
+  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  return `https://${value}`;
+}
+
+function parseDestination(raw) {
+  const candidate = withProtocol(raw);
+  if (!candidate) return { ok: false, reason: 'Please enter a link before generating.' };
+  try {
+    const parsed = new URL(candidate);
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return { ok: false, reason: 'Only HTTP and HTTPS links are supported.' };
+    }
+    if (!parsed.hostname || !parsed.hostname.includes('.')) {
+      return { ok: false, reason: 'Enter a valid destination URL.' };
+    }
+    return { ok: true, value: parsed.href };
+  } catch {
+    return { ok: false, reason: 'Enter a valid destination URL.' };
+  }
+}
+
+function buildThemeConfig(themeName) {
+  if (themeName === 'custom') {
+    return {
+      logo: '',
+      primaryColor: DOM.foregroundColor.value || '#000000',
+      secondaryColor: DOM.secondaryColor.value || '#000000',
+      backgroundColor: DOM.backgroundColor.value || '#ffffff'
+    };
+  }
+  return { ...themes[themeName] };
+}
+
+function buildQrOptions(data, themeConfig, logoSource) {
+  const primaryStops = themeConfig.gradient || [
+    { offset: 0, color: themeConfig.primaryColor },
+    { offset: 1, color: themeConfig.primaryColor }
+  ];
+  const secondaryStops = themeConfig.gradient || [
+    { offset: 0, color: themeConfig.secondaryColor },
+    { offset: 1, color: themeConfig.secondaryColor }
+  ];
+
+  const selectedDotShape = DOM.dotShape.value || 'dots';
+  const selectedCornerShape = DOM.cornerShape.value || 'dots';
+  const selectedCornerDotShape = DOM.cornerDotShape.value || 'dots';
+  let selectedEcc = DOM.eccLevel.value || 'Q';
+  let selectedLogoSize = Number.parseFloat(DOM.logoSize.value || '0.45');
+  if (Number.isNaN(selectedLogoSize)) selectedLogoSize = 0.45;
+  selectedLogoSize = Math.max(0.28, Math.min(0.55, selectedLogoSize));
+
+  // Keep scanner reliability when branding is used.
+  if (logoSource && ['L', 'M'].includes(selectedEcc)) {
+    selectedEcc = 'Q';
+    DOM.eccLevel.value = 'Q';
+  }
+
+  const options = {
+    width: 640,
+    height: 640,
+    type: 'svg',
+    data,
+    margin: 8,
+    qrOptions: { errorCorrectionLevel: selectedEcc },
+    dotsOptions: {
+      type: selectedDotShape,
+      roundSize: false,
+      gradient: { type: 'linear', colorStops: primaryStops }
+    },
+    backgroundOptions: { color: themeConfig.backgroundColor },
+    cornersSquareOptions: {
+      type: selectedCornerShape,
+      gradient: { type: 'linear', colorStops: secondaryStops }
+    },
+    cornersDotOptions: { type: selectedCornerDotShape }
+  };
+
+  if (logoSource) {
+    options.image = logoSource;
+    options.imageOptions = {
+      crossOrigin: 'anonymous',
+      margin: 10,
+      imageSize: selectedLogoSize
+    };
+  }
+
+  return options;
+}
+
+async function maskLogoFile(file) {
+  if (!file) {
+    state.maskedLogo = '';
+    DOM.fileName.innerText = 'No file chosen';
+    return;
+  }
+
+  DOM.fileName.innerText = file.name;
+  const objectUrl = URL.createObjectURL(file);
+
+  try {
+    const image = new Image();
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = objectUrl;
+    });
+
+    const size = Math.min(image.naturalWidth, image.naturalHeight);
+    const canvas = DOM.maskCanvas;
+    canvas.width = size;
+    canvas.height = size;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, size, size);
+    ctx.drawImage(image, 0, 0, size, size);
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.beginPath();
+    ctx.arc(size * 0.5, size * 0.5, size * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+    canvas.hidden = true;
+
+    state.maskedLogo = canvas.toDataURL('image/png');
+    setStatus('Logo ready. Generate QR to preview.', '');
+  } catch {
+    state.maskedLogo = '';
+    setStatus('Could not process this logo. Try a PNG/JPG image.', 'error');
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
+function resolveQrData() {
+  if (state.developerMode) {
+    const key = DOM.linkInput.value.trim();
+    if (!key) {
+      return { ok: false, reason: 'Enter the redirection key before generating.' };
+    }
+    return { ok: true, value: `http://directlink-opener.github.io/?key=${encodeURIComponent(key)}` };
+  }
+
+  return parseDestination(DOM.linkInput.value);
+}
+
+function renderPreviewLink(url) {
+  state.generatedLink = url;
+  DOM.linkOutput.href = url;
+  DOM.linkOutput.innerText = url.replace(/^https?:\/\//, '');
+  DOM.linkOutput.hidden = false;
+}
+
+async function generateQr() {
+  const parsed = resolveQrData();
+  if (!parsed.ok) {
+    setStatus(parsed.reason, 'error');
+    return;
+  }
+
+  const originalLabel = DOM.submit.textContent;
+  DOM.submit.disabled = true;
+  DOM.submit.textContent = 'Generating...';
+
+  try {
+    const themeConfig = buildThemeConfig(state.activeTheme);
+    const logoSource = state.maskedLogo || themeConfig.logo || '';
+    const options = buildQrOptions(parsed.value, themeConfig, logoSource);
+    state.lastOptions = options;
+
+    DOM.qrMount.innerHTML = '';
+    state.qr = new QRCodeStyling(options);
+    state.qr.append(DOM.qrMount);
+
+    renderPreviewLink(parsed.value);
+    setControlState(true);
+    setStatus('QR generated successfully.', 'success');
+  } catch {
+    setControlState(false);
+    setStatus('Failed to generate QR. Please try again.', 'error');
+  } finally {
+    DOM.submit.disabled = false;
+    DOM.submit.textContent = originalLabel;
+  }
+}
+
+async function exportQr(extension) {
+  if (!state.lastOptions) return;
+  try {
+    const isSvg = extension === 'svg';
+    const exportOptions = {
+      ...state.lastOptions,
+      width: 2048,
+      height: 2048,
+      type: isSvg ? 'svg' : 'canvas'
+    };
+    const exportQr = new QRCodeStyling(exportOptions);
+    const blob = await exportQr.getRawData(extension);
+    if (!blob) throw new Error('No export blob returned');
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kustom-qr-lab.${extension}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setStatus(`Downloaded ${extension.toUpperCase()} successfully.`, 'success');
+  } catch {
+    setStatus(`Failed to download ${extension.toUpperCase()}. Please try again.`, 'error');
+  }
+}
+
+async function copyGeneratedLink() {
+  if (!state.generatedLink) return;
+  try {
+    await navigator.clipboard.writeText(state.generatedLink);
+    setStatus('Link copied to clipboard.', 'success');
+  } catch {
+    setStatus('Unable to copy link. Please copy manually from below.', 'error');
+  }
+}
+
+function applyPreset(name) {
+  const preset = presets[name];
+  if (!preset) return;
+  DOM.linkType.value = 'custom';
+  state.activeTheme = 'custom';
+  toggleCustomControls('custom');
+
+  DOM.foregroundColor.value = preset.foreground;
+  DOM.secondaryColor.value = preset.secondary;
+  DOM.backgroundColor.value = preset.background;
+  setStatus('Preset applied. Add your link and generate.', '');
+}
+
+function syncThemeSelection() {
+  state.activeTheme = DOM.linkType.value;
+  toggleCustomControls(state.activeTheme);
+  setStatus(`Style switched to ${state.activeTheme}.`, '');
+}
+
+function hydrateFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  if (parseInt(params.get('redirection'), 10)) {
+    state.developerMode = true;
+    DOM.linkInput.placeholder = 'Enter The Redirection Key';
+    DOM.secret.hidden = false;
+  }
+  if (params.has('link')) {
+    DOM.linkInput.value = params.get('link') || '';
+  }
+}
+
+DOM.logoInput.addEventListener('change', async (event) => {
+  const file = event.target.files && event.target.files[0];
+  await maskLogoFile(file);
+});
+
+[DOM.dotShape, DOM.cornerShape, DOM.cornerDotShape, DOM.logoSize, DOM.eccLevel].forEach((control) => {
+  control.addEventListener('change', () => {
+    setStatus('Style options updated. Generate to refresh QR.', '');
+  });
+});
+
+DOM.submit.addEventListener('click', generateQr);
+DOM.downloadPng.addEventListener('click', () => {
+  exportQr('png');
+});
+DOM.downloadSvg.addEventListener('click', () => {
+  exportQr('svg');
+});
+DOM.copyLink.addEventListener('click', copyGeneratedLink);
+DOM.linkType.addEventListener('change', syncThemeSelection);
+
+DOM.presetButtons.forEach((button) => {
+  button.addEventListener('click', () => applyPreset(button.dataset.preset));
+});
+
+hydrateFromQuery();
+syncThemeSelection();
+setControlState(false);
+setStatus('Add your link and generate a QR.', '');
     </script>
 </body>
 </html>
+
+
+
+
+

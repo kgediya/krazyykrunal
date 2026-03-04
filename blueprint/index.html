@@ -1,175 +1,1176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>3D Room Model</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-        #canvas {
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blueprint 3D Builder</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090a0c;
+      --panel: #12141a;
+      --text: #f5f7ff;
+      --muted: #a9afc3;
+      --line: #2c3242;
+      --accent: #7ea0ff;
+      --accent-2: #c8d6ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: radial-gradient(circle at 15% 0%, #151a28 0%, transparent 35%), var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+    }
+
+    .panel {
+      border-right: 1px solid var(--line);
+      background: linear-gradient(170deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      padding: 14px;
+      overflow: auto;
+    }
+
+    .panel h1 {
+      font-size: 1.12rem;
+      margin: 0 0 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .group {
+      margin-bottom: 14px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(9, 11, 16, 0.6);
+    }
+
+    .group h2 {
+      margin: 0 0 10px;
+      font-size: 0.84rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .row label {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .row output {
+      color: var(--text);
+      font-size: 0.8rem;
+      min-width: 42px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      margin: 4px 0 10px;
+    }
+
+    input[type="file"],
+    button,
+    select {
+      width: 100%;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: #111521;
+      color: var(--text);
+      padding: 8px 9px;
+      font: inherit;
+    }
+
+    button {
+      background: linear-gradient(180deg, #7ea0ff, #6286eb);
+      color: #0a1020;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    button:hover { filter: brightness(1.05); }
+    button.secondary {
+      background: #111521;
+      color: var(--text);
+      border: 1px solid var(--line);
+      font-weight: 500;
+    }
+
+    .status {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    #view {
+      position: relative;
+      min-width: 0;
+    }
+
+    #canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .badge {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      font-size: 0.74rem;
+      color: #dce5ff;
+      background: rgba(10, 14, 25, 0.74);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 8px;
+      pointer-events: none;
+    }
+
+    @media (max-width: 960px) {
+      #app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .panel {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
 </head>
 <body>
-    <div id="canvas"></div>
-   
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.js"></script>
-    <script type="module">
-     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
+  <div id="app">
+    <aside class="panel">
+      <h1>Blueprint 3D Builder</h1>
+      <p class="subtitle">Upload a floorplan and generate optimized wall blocks. Built for fast preview + cleaner geometry.</p>
 
-import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/loaders/DRACOLoader.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+      <div class="group">
+        <h2>Source</h2>
+        <input id="fileInput" type="file" accept="image/*" />
+        <button id="sampleBtn" class="secondary" type="button">Load Sample Plan</button>
+        <button id="sample2Btn" class="secondary" type="button">Load Sample Plan 2</button>
+      </div>
 
-        // Blueprint Image URL
-        const blueprintUrl = './test.png';
+      <div class="group">
+        <h2>Detection</h2>
+        <div class="row"><label for="detectMode">Wall detection</label></div>
+        <select id="detectMode">
+          <option value="dark">Dark pixels</option>
+          <option value="blue">Blue lines</option>
+          <option value="both" selected>Dark + Blue</option>
+        </select>
 
-        // Create a scene
-        const scene = new THREE.Scene();
-        console.log(scene)
-        // Create a camera
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 0, 10);
+        <div class="row"><label for="threshold">Dark threshold</label><output id="thresholdOut">90</output></div>
+        <input id="threshold" type="range" min="20" max="180" value="90" />
 
-        // Create a renderer
-        const renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas').appendChild(renderer.domElement);
-        var imageData = null;
-        // Load blueprint image as a texture
-        const textureLoader = new THREE.TextureLoader();
-        const blueprintTexture = textureLoader.load(blueprintUrl, () => {
-            processBlueprint();
-            render();
-        });
+        <div class="row"><label for="minRun">Min run length</label><output id="minRunOut">3</output></div>
+        <input id="minRun" type="range" min="1" max="16" value="3" />
 
-        // Process the blueprint image
-        function processBlueprint() {
-            // Create a canvas element
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = blueprintTexture.image.width;
-            canvas.height = blueprintTexture.image.height;
-            context.drawImage(blueprintTexture.image, 0, 0);
-            imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+        <div class="row"><label for="maxResolution">Max process size</label><output id="maxResolutionOut">900</output></div>
+        <input id="maxResolution" type="range" min="256" max="1800" step="32" value="900" />
 
-            // Get the pixel data
-           
-            // Loop through each pixel to extract details
-            for (let i = 0; i < imageData.length; i += 4) {
-                const r = imageData[i];
-                const g = imageData[i + 1];
-                const b = imageData[i + 2];
+        <div class="row"><label for="openingDetect">Preserve door/window gaps</label><input id="openingDetect" type="checkbox" checked /></div>
+        <div class="row"><label for="openingBright">Opening brightness</label><output id="openingBrightOut">210</output></div>
+        <input id="openingBright" type="range" min="130" max="250" value="210" />
+        <div class="row"><label for="openingMaxSpan">Opening max span</label><output id="openingMaxSpanOut">22</output></div>
+        <input id="openingMaxSpan" type="range" min="4" max="60" value="22" />
 
-                // Example: Create walls from blue color
-                if (r === 0 && g === 0 && b === 255) {
-                    const wallDimensions = calculateWallDimensions(i, canvas.width);
-                    createWall(wallDimensions);
-                }
+        <div class="row"><label for="textExempt">Exempt text annotations</label><input id="textExempt" type="checkbox" checked /></div>
+        <div class="row"><label for="textMaxArea">Text max area</label><output id="textMaxAreaOut">280</output></div>
+        <input id="textMaxArea" type="range" min="40" max="1200" step="20" value="280" />
+        <div class="row"><label for="textMaxDim">Text max dimension</label><output id="textMaxDimOut">36</output></div>
+        <input id="textMaxDim" type="range" min="8" max="120" step="2" value="36" />
+      </div>
+
+      <div class="group">
+        <h2>3D Output</h2>
+        <div class="row"><label for="buildMode">Build style</label></div>
+        <select id="buildMode">
+          <option value="outline" selected>Precise outline walls</option>
+          <option value="blocks">Solid blocks (fast)</option>
+        </select>
+
+        <div class="row"><label for="pixelScale">Pixel scale</label><output id="pixelScaleOut">0.05</output></div>
+        <input id="pixelScale" type="range" min="0.01" max="0.2" step="0.01" value="0.05" />
+
+        <div class="row"><label for="wallHeight">Wall height</label><output id="wallHeightOut">2.8</output></div>
+        <input id="wallHeight" type="range" min="1" max="8" step="0.1" value="2.8" />
+
+        <div class="row"><label for="wallThickness">Wall thickness</label><output id="wallThicknessOut">0.16</output></div>
+        <input id="wallThickness" type="range" min="0.04" max="0.5" step="0.01" value="0.16" />
+
+        <button id="rebuildBtn" type="button">Rebuild Model</button>
+        <button id="downloadGlbBtn" class="secondary" type="button">Download GLB</button>
+      </div>
+
+      <div class="group">
+        <h2>Status</h2>
+        <div id="status" class="status">Ready. Load a floorplan to start.</div>
+      </div>
+    </aside>
+
+    <main id="view">
+      <canvas id="canvas"></canvas>
+      <div class="badge">Drag: orbit | Wheel: zoom | Right-drag: pan</div>
+    </main>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js';
+    import { GLTFExporter } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/exporters/GLTFExporter.js';
+    import * as BufferGeometryUtils from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/utils/BufferGeometryUtils.js';
+
+    const el = {
+      canvas: document.getElementById('canvas'),
+      fileInput: document.getElementById('fileInput'),
+      sampleBtn: document.getElementById('sampleBtn'),
+      sample2Btn: document.getElementById('sample2Btn'),
+      detectMode: document.getElementById('detectMode'),
+      threshold: document.getElementById('threshold'),
+      thresholdOut: document.getElementById('thresholdOut'),
+      minRun: document.getElementById('minRun'),
+      minRunOut: document.getElementById('minRunOut'),
+      maxResolution: document.getElementById('maxResolution'),
+      maxResolutionOut: document.getElementById('maxResolutionOut'),
+      openingDetect: document.getElementById('openingDetect'),
+      openingBright: document.getElementById('openingBright'),
+      openingBrightOut: document.getElementById('openingBrightOut'),
+      openingMaxSpan: document.getElementById('openingMaxSpan'),
+      openingMaxSpanOut: document.getElementById('openingMaxSpanOut'),
+      textExempt: document.getElementById('textExempt'),
+      textMaxArea: document.getElementById('textMaxArea'),
+      textMaxAreaOut: document.getElementById('textMaxAreaOut'),
+      textMaxDim: document.getElementById('textMaxDim'),
+      textMaxDimOut: document.getElementById('textMaxDimOut'),
+      buildMode: document.getElementById('buildMode'),
+      pixelScale: document.getElementById('pixelScale'),
+      pixelScaleOut: document.getElementById('pixelScaleOut'),
+      wallHeight: document.getElementById('wallHeight'),
+      wallHeightOut: document.getElementById('wallHeightOut'),
+      wallThickness: document.getElementById('wallThickness'),
+      wallThicknessOut: document.getElementById('wallThicknessOut'),
+      rebuildBtn: document.getElementById('rebuildBtn'),
+      downloadGlbBtn: document.getElementById('downloadGlbBtn'),
+      status: document.getElementById('status')
+    };
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x090a0c);
+
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 5000);
+    camera.position.set(18, 18, 18);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: el.canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.target.set(0, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    keyLight.position.set(15, 35, 20);
+    scene.add(keyLight);
+
+    const world = new THREE.Group();
+    world.name = 'BlueprintModel';
+    scene.add(world);
+
+    let currentImage = null;
+    let currentSourceName = 'floorplan';
+    let isBuilding = false;
+    let pendingRebuild = false;
+    const MAX_INSTANCE_COUNT = 300000;
+
+    function setStatus(lines) {
+      el.status.textContent = Array.isArray(lines) ? lines.join('\n') : String(lines);
+    }
+
+    function syncOutputs() {
+      el.thresholdOut.textContent = el.threshold.value;
+      el.minRunOut.textContent = el.minRun.value;
+      el.maxResolutionOut.textContent = el.maxResolution.value;
+      el.openingBrightOut.textContent = el.openingBright.value;
+      el.openingMaxSpanOut.textContent = el.openingMaxSpan.value;
+      el.textMaxAreaOut.textContent = el.textMaxArea.value;
+      el.textMaxDimOut.textContent = el.textMaxDim.value;
+      el.pixelScaleOut.textContent = Number(el.pixelScale.value).toFixed(2);
+      el.wallHeightOut.textContent = Number(el.wallHeight.value).toFixed(1);
+      el.wallThicknessOut.textContent = Number(el.wallThickness.value).toFixed(2);
+    }
+
+    function clearWorld() {
+      while (world.children.length) {
+        const obj = world.children.pop();
+        if (obj.userData && Array.isArray(obj.userData.disposables)) {
+          for (let i = 0; i < obj.userData.disposables.length; i += 1) {
+            const disposable = obj.userData.disposables[i];
+            if (disposable && typeof disposable.dispose === 'function') disposable.dispose();
+          }
+        }
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((m) => {
+              if (m.map) m.map.dispose();
+              m.dispose();
+            });
+          } else {
+            if (obj.material.map) obj.material.map.dispose();
+            obj.material.dispose();
+          }
+        }
+      }
+    }
+
+    function runLengthEncodeRow(binary, width, y, minRun) {
+      const runs = [];
+      const rowOffset = y * width;
+      let x = 0;
+
+      while (x < width) {
+        if (!binary[rowOffset + x]) {
+          x += 1;
+          continue;
+        }
+
+        const start = x;
+        while (x < width && binary[rowOffset + x]) x += 1;
+
+        const end = x - 1;
+        if ((end - start + 1) >= minRun) {
+          runs.push({ x1: start, x2: end });
+        }
+      }
+
+      return runs;
+    }
+
+    function mergeRunsToRectangles(binary, width, height, minRun) {
+      const rectangles = [];
+      let active = new Map();
+
+      for (let y = 0; y < height; y += 1) {
+        const runs = runLengthEncodeRow(binary, width, y, minRun);
+        const nextActive = new Map();
+
+        for (let i = 0; i < runs.length; i += 1) {
+          const run = runs[i];
+          const key = `${run.x1}:${run.x2}`;
+          const prev = active.get(key);
+
+          if (prev) {
+            prev.y2 = y;
+            nextActive.set(key, prev);
+            active.delete(key);
+          } else {
+            nextActive.set(key, { x1: run.x1, x2: run.x2, y1: y, y2: y });
+          }
+        }
+
+        active.forEach((rect) => rectangles.push(rect));
+        active = nextActive;
+      }
+
+      active.forEach((rect) => rectangles.push(rect));
+      return rectangles;
+    }
+
+    function mergeHorizontalSegments(segments) {
+      const grouped = new Map();
+      for (let i = 0; i < segments.length; i += 1) {
+        const s = segments[i];
+        const list = grouped.get(s.z) || [];
+        list.push(s);
+        grouped.set(s.z, list);
+      }
+
+      const merged = [];
+      grouped.forEach((list, z) => {
+        list.sort((a, b) => a.x1 - b.x1);
+        let current = { z, x1: list[0].x1, x2: list[0].x2 };
+
+        for (let i = 1; i < list.length; i += 1) {
+          const seg = list[i];
+          if (seg.x1 <= current.x2) {
+            current.x2 = Math.max(current.x2, seg.x2);
+          } else {
+            merged.push(current);
+            current = { z, x1: seg.x1, x2: seg.x2 };
+          }
+        }
+
+        merged.push(current);
+      });
+
+      return merged;
+    }
+
+    function mergeVerticalSegments(segments) {
+      const grouped = new Map();
+      for (let i = 0; i < segments.length; i += 1) {
+        const s = segments[i];
+        const list = grouped.get(s.x) || [];
+        list.push(s);
+        grouped.set(s.x, list);
+      }
+
+      const merged = [];
+      grouped.forEach((list, x) => {
+        list.sort((a, b) => a.y1 - b.y1);
+        let current = { x, y1: list[0].y1, y2: list[0].y2 };
+
+        for (let i = 1; i < list.length; i += 1) {
+          const seg = list[i];
+          if (seg.y1 <= current.y2) {
+            current.y2 = Math.max(current.y2, seg.y2);
+          } else {
+            merged.push(current);
+            current = { x, y1: seg.y1, y2: seg.y2 };
+          }
+        }
+
+        merged.push(current);
+      });
+
+      return merged;
+    }
+
+    function extractBoundarySegments(binary, width, height) {
+      const horizontal = [];
+      const vertical = [];
+
+      const at = (x, y) => (
+        x >= 0 &&
+        x < width &&
+        y >= 0 &&
+        y < height &&
+        binary[(y * width) + x] === 1
+      );
+
+      for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+          if (!at(x, y)) continue;
+
+          if (!at(x, y - 1)) horizontal.push({ z: y, x1: x, x2: x + 1 });
+          if (!at(x, y + 1)) horizontal.push({ z: y + 1, x1: x, x2: x + 1 });
+          if (!at(x - 1, y)) vertical.push({ x, y1: y, y2: y + 1 });
+          if (!at(x + 1, y)) vertical.push({ x: x + 1, y1: y, y2: y + 1 });
+        }
+      }
+
+      return {
+        horizontal: mergeHorizontalSegments(horizontal),
+        vertical: mergeVerticalSegments(vertical)
+      };
+    }
+
+    function createOutlineWalls(binary, width, height, pixelScale, wallHeight, wallThickness) {
+      const { horizontal, vertical } = extractBoundarySegments(binary, width, height);
+      const total = horizontal.length + vertical.length;
+
+      if (total === 0) {
+        return { segmentCount: 0, horizontalCount: 0, verticalCount: 0, capped: false };
+      }
+
+      const capped = total > MAX_INSTANCE_COUNT;
+      const instanceCount = Math.min(total, MAX_INSTANCE_COUNT);
+      const wallGeo = new THREE.BoxGeometry(1, 1, 1);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0xe0e4ef, roughness: 0.5, metalness: 0.06 });
+      const walls = new THREE.InstancedMesh(wallGeo, wallMat, instanceCount);
+      walls.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+
+      const matrix = new THREE.Matrix4();
+      const pos = new THREE.Vector3();
+      const quat = new THREE.Quaternion();
+      const scl = new THREE.Vector3();
+
+      let idx = 0;
+
+      for (let i = 0; i < horizontal.length; i += 1) {
+        if (idx >= instanceCount) break;
+        const h = horizontal[i];
+        const length = (h.x2 - h.x1) * pixelScale;
+        if (length <= 0) continue;
+
+        pos.set(
+          (((h.x1 + h.x2) * 0.5) - (width * 0.5)) * pixelScale,
+          wallHeight * 0.5,
+          (h.z - (height * 0.5)) * pixelScale
+        );
+        scl.set(length, wallHeight, wallThickness);
+        matrix.compose(pos, quat, scl);
+        walls.setMatrixAt(idx, matrix);
+        idx += 1;
+      }
+
+      for (let i = 0; i < vertical.length; i += 1) {
+        if (idx >= instanceCount) break;
+        const v = vertical[i];
+        const length = (v.y2 - v.y1) * pixelScale;
+        if (length <= 0) continue;
+
+        pos.set(
+          (v.x - (width * 0.5)) * pixelScale,
+          wallHeight * 0.5,
+          (((v.y1 + v.y2) * 0.5) - (height * 0.5)) * pixelScale
+        );
+        scl.set(wallThickness, wallHeight, length);
+        matrix.compose(pos, quat, scl);
+        walls.setMatrixAt(idx, matrix);
+        idx += 1;
+      }
+
+      walls.count = idx;
+      walls.instanceMatrix.needsUpdate = true;
+      world.add(walls);
+
+      return {
+        segmentCount: idx,
+        horizontalCount: horizontal.length,
+        verticalCount: vertical.length,
+        capped
+      };
+    }
+
+    function setBusy(busy) {
+      el.rebuildBtn.disabled = busy;
+      el.downloadGlbBtn.disabled = busy;
+      if (busy) {
+        el.rebuildBtn.textContent = 'Building...';
+      } else {
+        el.rebuildBtn.textContent = 'Rebuild Model';
+      }
+    }
+
+    function sanitizeFilename(name) {
+      const base = String(name || 'blueprint-model').trim().toLowerCase().replace(/[^a-z0-9-_]+/g, '-');
+      return (base.replace(/^-+|-+$/g, '') || 'blueprint-model');
+    }
+
+    function downloadBlob(blob, filename) {
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 400);
+    }
+
+    function buildExportableSceneGraph() {
+      const exportRoot = new THREE.Group();
+      exportRoot.name = world.name || 'BlueprintModel';
+      const mergeFn =
+        BufferGeometryUtils.mergeBufferGeometries ||
+        BufferGeometryUtils.mergeGeometries ||
+        null;
+
+      world.updateWorldMatrix(true, true);
+
+      for (let i = 0; i < world.children.length; i += 1) {
+        const child = world.children[i];
+
+        if (child.isInstancedMesh) {
+          const baseGeometry = child.geometry;
+          const baseMaterial = Array.isArray(child.material)
+            ? child.material.map((m) => m.clone())
+            : child.material.clone();
+          const instanceMatrix = new THREE.Matrix4();
+          const localToWorld = child.matrixWorld.clone();
+          const transformed = [];
+
+          for (let j = 0; j < child.count; j += 1) {
+            child.getMatrixAt(j, instanceMatrix);
+            const geom = baseGeometry.clone();
+            geom.applyMatrix4(instanceMatrix);
+            geom.applyMatrix4(localToWorld);
+            transformed.push(geom);
+          }
+
+          if (transformed.length > 0) {
+            if (mergeFn) {
+              const merged = mergeFn(transformed, false);
+              for (let j = 0; j < transformed.length; j += 1) transformed[j].dispose();
+
+              if (merged) {
+                const mergedMesh = new THREE.Mesh(merged, baseMaterial);
+                mergedMesh.name = child.name || 'MergedInstancedMesh';
+                exportRoot.add(mergedMesh);
+              }
+            } else {
+              // Fallback for older utility builds: export as separate meshes.
+              for (let j = 0; j < transformed.length; j += 1) {
+                const partMat = Array.isArray(baseMaterial)
+                  ? baseMaterial.map((m) => m.clone())
+                  : baseMaterial.clone();
+                const partMesh = new THREE.Mesh(transformed[j], partMat);
+                partMesh.name = `${child.name || 'InstancedPart'}_${j}`;
+                exportRoot.add(partMesh);
+              }
             }
+          }
+        } else if (child.isMesh) {
+          const meshGeometry = child.geometry.clone();
+          const meshMaterial = Array.isArray(child.material)
+            ? child.material.map((m) => m.clone())
+            : child.material.clone();
+          const meshClone = new THREE.Mesh(meshGeometry, meshMaterial);
+          meshClone.name = child.name || 'ExportMesh';
+          meshClone.matrix.copy(child.matrixWorld);
+          meshClone.matrixAutoUpdate = false;
+          exportRoot.add(meshClone);
+        }
+      }
+
+      return exportRoot;
+    }
+
+    function disposeSceneGraph(root) {
+      root.traverse((obj) => {
+        if (!obj.isMesh) return;
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach((m) => {
+              if (m.map) m.map.dispose();
+              m.dispose();
+            });
+          } else {
+            if (obj.material.map) obj.material.map.dispose();
+            obj.material.dispose();
+          }
+        }
+      });
+    }
+
+    function exportCurrentModelAsGlb() {
+      if (world.children.length === 0) {
+        setStatus('Nothing to export yet. Build a model first.');
+        return;
+      }
+
+      try {
+        const exporter = new GLTFExporter();
+        const exportRoot = buildExportableSceneGraph();
+        const filename = `${sanitizeFilename(currentSourceName)}-${el.buildMode.value}.glb`;
+
+        exporter.parse(exportRoot, (result) => {
+          if (!(result instanceof ArrayBuffer)) {
+            setStatus('GLB export failed: exporter did not return binary payload.');
+            disposeSceneGraph(exportRoot);
+            return;
+          }
+          downloadBlob(new Blob([result], { type: 'model/gltf-binary' }), filename);
+          setStatus((el.status.textContent ? `${el.status.textContent}\n` : '') + `Exported: ${filename}`);
+          disposeSceneGraph(exportRoot);
+        }, { binary: true, onlyVisible: true, trs: false });
+      } catch (err) {
+        setStatus(`GLB export failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
+    function classifyPixel(r, g, b, a, mode, darkThreshold) {
+      if (a < 10) return false;
+
+      const luminance = (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
+      const isDark = luminance <= darkThreshold;
+      const isBlue = b > 90 && b > (r + 35) && b > (g + 35);
+
+      if (mode === 'dark') return isDark;
+      if (mode === 'blue') return isBlue;
+      return isDark || isBlue;
+    }
+
+    function countWallPixels(binary) {
+      let count = 0;
+      for (let i = 0; i < binary.length; i += 1) {
+        if (binary[i]) count += 1;
+      }
+      return count;
+    }
+
+    function removeTextComponents(binary, width, height, maxArea, maxDim) {
+      const visited = new Uint8Array(width * height);
+      const stack = [];
+      let removedPixels = 0;
+      let removedComponents = 0;
+
+      for (let start = 0; start < binary.length; start += 1) {
+        if (binary[start] === 0 || visited[start]) continue;
+
+        stack.length = 0;
+        stack.push(start);
+        visited[start] = 1;
+
+        const component = [];
+        let area = 0;
+        let minX = width;
+        let maxX = -1;
+        let minY = height;
+        let maxY = -1;
+        let touchesEdge = false;
+
+        while (stack.length) {
+          const idx = stack.pop();
+          component.push(idx);
+          area += 1;
+
+          const x = idx % width;
+          const y = (idx - x) / width;
+
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+          if (x === 0 || y === 0 || x === width - 1 || y === height - 1) touchesEdge = true;
+
+          const left = idx - 1;
+          const right = idx + 1;
+          const up = idx - width;
+          const down = idx + width;
+
+          if (x > 0 && binary[left] && !visited[left]) { visited[left] = 1; stack.push(left); }
+          if (x < width - 1 && binary[right] && !visited[right]) { visited[right] = 1; stack.push(right); }
+          if (y > 0 && binary[up] && !visited[up]) { visited[up] = 1; stack.push(up); }
+          if (y < height - 1 && binary[down] && !visited[down]) { visited[down] = 1; stack.push(down); }
         }
 
-        // Calculate wall dimensions based on a specific pixel index and canvas width
-        function calculateWallDimensions(pixelIndex, canvasWidth) {
-            const pixelX = pixelIndex / 4 % canvasWidth;
-            const pixelY = Math.floor(pixelIndex / (4 * canvasWidth));
+        const boxW = (maxX - minX + 1);
+        const boxH = (maxY - minY + 1);
+        const likelyText = !touchesEdge && area <= maxArea && boxW <= maxDim && boxH <= maxDim;
 
-            const wallWidth = findWallWidth(pixelX, pixelY, canvasWidth);
-            const wallHeight = findWallHeight(pixelX, pixelY, canvasWidth);
-
-            return {
-                width: wallWidth,
-                height: wallHeight
-            };
+        if (likelyText) {
+          for (let i = 0; i < component.length; i += 1) {
+            binary[component[i]] = 0;
+          }
+          removedPixels += component.length;
+          removedComponents += 1;
         }
+      }
 
-        // Find the width of the wall
-        function findWallWidth(pixelX, pixelY, canvasWidth) {
-            let wallWidth = 1;
-            let nextPixelIndex = ((pixelY * canvasWidth) + pixelX + wallWidth) * 4;
-            console.log(imageData)
-            let nextPixelR =imageData[nextPixelIndex];
+      return { removedPixels, removedComponents };
+    }
 
-            while (nextPixelR === 0) {
-                wallWidth++;
-                nextPixelIndex = ((pixelY * canvasWidth) + pixelX + wallWidth) * 4;
-                nextPixelR = imageData[nextPixelIndex];
+    function carveOpeningGaps(binary, luminance, width, height, brightThreshold, maxSpan) {
+      const forcedOpen = new Uint8Array(width * height);
+      const minSpan = 2;
+      const minFlank = 3;
+
+      for (let y = 0; y < height; y += 1) {
+        const row = y * width;
+        let x = 0;
+
+        while (x < width) {
+          while (x < width && binary[row + x] === 0) x += 1;
+          const leftStart = x;
+          while (x < width && binary[row + x] === 1) x += 1;
+          const leftRun = x - leftStart;
+
+          const gapStart = x;
+          while (x < width && luminance[row + x] >= brightThreshold) x += 1;
+          const gapLen = x - gapStart;
+
+          const rightStart = x;
+          while (x < width && binary[row + x] === 1) x += 1;
+          const rightRun = x - rightStart;
+
+          if (leftRun >= minFlank && rightRun >= minFlank && gapLen >= minSpan && gapLen <= maxSpan) {
+            for (let gx = gapStart; gx < gapStart + gapLen; gx += 1) {
+              forcedOpen[row + gx] = 1;
             }
-
-            return wallWidth;
+          }
         }
+      }
 
-        // Find the height of the wall
-        function findWallHeight(pixelX, pixelY, canvasWidth) {
-            let wallHeight = 1;
-            let nextPixelIndex = ((pixelY + wallHeight) * canvasWidth + pixelX) * 4;
-            let nextPixelR = imageData[nextPixelIndex];
+      for (let x = 0; x < width; x += 1) {
+        let y = 0;
 
-            while (nextPixelR === 0) {
-                wallHeight++;
-                nextPixelIndex = ((pixelY + wallHeight) * canvasWidth + pixelX) * 4;
-                nextPixelR = imageData[nextPixelIndex];
+        while (y < height) {
+          while (y < height && binary[(y * width) + x] === 0) y += 1;
+          const topStart = y;
+          while (y < height && binary[(y * width) + x] === 1) y += 1;
+          const topRun = y - topStart;
+
+          const gapStart = y;
+          while (y < height && luminance[(y * width) + x] >= brightThreshold) y += 1;
+          const gapLen = y - gapStart;
+
+          const bottomStart = y;
+          while (y < height && binary[(y * width) + x] === 1) y += 1;
+          const bottomRun = y - bottomStart;
+
+          if (topRun >= minFlank && bottomRun >= minFlank && gapLen >= minSpan && gapLen <= maxSpan) {
+            for (let gy = gapStart; gy < gapStart + gapLen; gy += 1) {
+              forcedOpen[(gy * width) + x] = 1;
             }
-
-            return wallHeight;
+          }
         }
+      }
 
-        // Create a wall with given dimensions
-        function createWall({ width, height }) {
-            const wallGeometry = new THREE.BoxGeometry(width / 1, height / 1, 0.1);
-            const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xCCCCCC });
-            const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+      let carvedPixels = 0;
+      for (let i = 0; i < forcedOpen.length; i += 1) {
+        if (!forcedOpen[i] || !binary[i]) continue;
+        binary[i] = 0;
+        carvedPixels += 1;
+      }
 
-            wallMesh.position.set(width / 2, height / 2, 0);
+      return { carvedPixels };
+    }
 
-            scene.add(wallMesh);
+    function createProcessingCanvas(image, maxResolution) {
+      const sourceW = image.width;
+      const sourceH = image.height;
+      const largest = Math.max(sourceW, sourceH);
+      const scale = largest > maxResolution ? (maxResolution / largest) : 1;
+
+      const width = Math.max(1, Math.round(sourceW * scale));
+      const height = Math.max(1, Math.round(sourceH * scale));
+
+      const cvs = document.createElement('canvas');
+      cvs.width = width;
+      cvs.height = height;
+      const ctx = cvs.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(image, 0, 0, width, height);
+
+      return { canvas: cvs, context: ctx, width, height, scale };
+    }
+
+    function fitCamera(modelWidth, modelDepth, wallHeight) {
+      const radius = Math.max(modelWidth, modelDepth) * 0.65;
+      const y = Math.max(8, wallHeight * 2.2);
+      camera.position.set(radius, y, radius);
+      controls.target.set(0, wallHeight * 0.35, 0);
+      controls.update();
+    }
+
+    function buildModel(image) {
+      const t0 = performance.now();
+      clearWorld();
+
+      const detectMode = el.detectMode.value;
+      const darkThreshold = Number(el.threshold.value);
+      const minRun = Number(el.minRun.value);
+      const maxResolution = Number(el.maxResolution.value);
+      const openingDetect = el.openingDetect.checked;
+      const openingBright = Number(el.openingBright.value);
+      const openingMaxSpan = Number(el.openingMaxSpan.value);
+      const textExempt = el.textExempt.checked;
+      const textMaxArea = Number(el.textMaxArea.value);
+      const textMaxDim = Number(el.textMaxDim.value);
+      const buildMode = el.buildMode.value;
+      const pixelScale = Number(el.pixelScale.value);
+      const wallHeight = Number(el.wallHeight.value);
+      const wallThickness = Number(el.wallThickness.value);
+
+      const { canvas, context, width, height, scale } = createProcessingCanvas(image, maxResolution);
+      const data = context.getImageData(0, 0, width, height).data;
+
+      const binary = new Uint8Array(width * height);
+      const luminance = new Uint8Array(width * height);
+
+      for (let i = 0, p = 0; i < data.length; i += 4, p += 1) {
+        const lum = Math.round((0.2126 * data[i]) + (0.7152 * data[i + 1]) + (0.0722 * data[i + 2]));
+        luminance[p] = lum;
+        const wall = classifyPixel(
+          data[i],
+          data[i + 1],
+          data[i + 2],
+          data[i + 3],
+          detectMode,
+          darkThreshold
+        );
+
+        binary[p] = wall ? 1 : 0;
+      }
+
+      const initialWallPixels = countWallPixels(binary);
+      let removedTextPixels = 0;
+      let removedTextComponents = 0;
+      let carvedOpeningPixels = 0;
+
+      if (textExempt) {
+        const textCleanup = removeTextComponents(binary, width, height, textMaxArea, textMaxDim);
+        removedTextPixels = textCleanup.removedPixels;
+        removedTextComponents = textCleanup.removedComponents;
+      }
+
+      if (openingDetect) {
+        const openingCleanup = carveOpeningGaps(binary, luminance, width, height, openingBright, openingMaxSpan);
+        carvedOpeningPixels = openingCleanup.carvedPixels;
+      }
+
+      const wallPixels = countWallPixels(binary);
+
+      let countLabel = 'Wall blocks';
+      let countValue = 0;
+      let extraMetric = '';
+      let warnings = '';
+
+      const floorTexture = new THREE.CanvasTexture(canvas);
+      floorTexture.encoding = THREE.sRGBEncoding;
+      floorTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+      const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(width * pixelScale, height * pixelScale),
+        new THREE.MeshStandardMaterial({ map: floorTexture, roughness: 0.95, metalness: 0.02 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      floor.userData.disposables = [floorTexture];
+      world.add(floor);
+
+      if (buildMode === 'outline') {
+        const outline = createOutlineWalls(binary, width, height, pixelScale, wallHeight, wallThickness);
+        countLabel = 'Wall segments';
+        countValue = outline.segmentCount;
+        extraMetric = `H/V merged: ${outline.horizontalCount}/${outline.verticalCount}`;
+        if (outline.capped) warnings = `Warning: segment count capped at ${MAX_INSTANCE_COUNT.toLocaleString()}`;
+      } else {
+        const rectangles = mergeRunsToRectangles(binary, width, height, minRun)
+          .filter((rect) => ((rect.x2 - rect.x1 + 1) * (rect.y2 - rect.y1 + 1)) >= minRun);
+        const capped = rectangles.length > MAX_INSTANCE_COUNT;
+        const instanceCount = Math.min(rectangles.length, MAX_INSTANCE_COUNT);
+        countValue = instanceCount;
+
+        if (instanceCount > 0) {
+          const wallGeo = new THREE.BoxGeometry(1, 1, 1);
+          const wallMat = new THREE.MeshStandardMaterial({ color: 0xe0e4ef, roughness: 0.55, metalness: 0.05 });
+          const walls = new THREE.InstancedMesh(wallGeo, wallMat, instanceCount);
+          walls.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+
+          const matrix = new THREE.Matrix4();
+          const pos = new THREE.Vector3();
+          const quat = new THREE.Quaternion();
+          const scl = new THREE.Vector3();
+
+          for (let i = 0; i < instanceCount; i += 1) {
+            const r = rectangles[i];
+            const rectW = (r.x2 - r.x1 + 1) * pixelScale;
+            const rectD = (r.y2 - r.y1 + 1) * pixelScale;
+
+            const centerX = ((r.x1 + r.x2 + 1) * 0.5 - width * 0.5) * pixelScale;
+            const centerZ = ((r.y1 + r.y2 + 1) * 0.5 - height * 0.5) * pixelScale;
+
+            pos.set(centerX, wallHeight * 0.5, centerZ);
+            scl.set(rectW, wallHeight, rectD);
+            matrix.compose(pos, quat, scl);
+            walls.setMatrixAt(i, matrix);
+          }
+
+          walls.instanceMatrix.needsUpdate = true;
+          world.add(walls);
         }
-        // Create ambient light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
+        if (capped) warnings = `Warning: block count capped at ${MAX_INSTANCE_COUNT.toLocaleString()}`;
+      }
 
-        // Create directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        directionalLight.position.set(0, 1, 1);
-        scene.add(directionalLight);
+      fitCamera(width * pixelScale, height * pixelScale, wallHeight);
 
-        // Add orbit controls
-        const controls = new OrbitControls( camera, renderer.domElement );
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = true
-        controls.update();
-        // Function to handle window resize
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            render();
+      const ms = (performance.now() - t0).toFixed(1);
+      setStatus([
+        `Image: ${image.width} x ${image.height}`,
+        `Processed: ${width} x ${height} (${(scale * 100).toFixed(1)}%)`,
+        `Build mode: ${buildMode}`,
+        `Wall pixels: ${wallPixels} (initial ${initialWallPixels})`,
+        `${countLabel}: ${countValue}`,
+        extraMetric,
+        warnings,
+        `Text exempted: ${removedTextComponents} comps / ${removedTextPixels} px`,
+        `Openings carved: ${carvedOpeningPixels} px`,
+        `Build time: ${ms}ms`
+      ].filter(Boolean));
+    }
+
+    function loadImageFromUrl(url) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+        img.src = url;
+      });
+    }
+
+    function loadImageFromFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error('Failed to parse selected image.'));
+          img.src = String(reader.result || '');
+        };
+        reader.onerror = () => reject(new Error('Failed to read file.'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function rebuild() {
+      if (!currentImage) {
+        setStatus('No image loaded yet. Upload one or use sample.');
+        return;
+      }
+
+      if (isBuilding) {
+        pendingRebuild = true;
+        return;
+      }
+
+      isBuilding = true;
+      setBusy(true);
+
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        buildModel(currentImage);
+      } catch (err) {
+        setStatus(`Build failed: ${err instanceof Error ? err.message : String(err)}`);
+      } finally {
+        isBuilding = false;
+        setBusy(false);
+        if (pendingRebuild) {
+          pendingRebuild = false;
+          rebuild();
         }
+      }
+    }
 
-        // Render the scene
-        function render() {
-           
-            controls.update(); // Update orbit controls
-            renderer.render(scene, camera);
-        }
+    function resize() {
+      const view = document.getElementById('view');
+      const width = view.clientWidth;
+      const height = view.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / Math.max(1, height);
+      camera.updateProjectionMatrix();
+    }
 
-        // Add event listener for window resize
-        window.addEventListener('resize', onWindowResize, false);
-        function animate() {
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
 
-requestAnimationFrame( animate );
+    const boundControls = [
+      el.threshold,
+      el.minRun,
+      el.maxResolution,
+      el.openingBright,
+      el.openingMaxSpan,
+      el.textMaxArea,
+      el.textMaxDim,
+      el.pixelScale,
+      el.wallHeight,
+      el.wallThickness
+    ];
+    boundControls.forEach((input) => {
+      input.addEventListener('input', () => {
+        syncOutputs();
+      });
+      input.addEventListener('change', rebuild);
+    });
 
-// required if controls.enableDamping or controls.autoRotate are set to true
-controls.update();
+    el.detectMode.addEventListener('change', rebuild);
+    el.openingDetect.addEventListener('change', rebuild);
+    el.textExempt.addEventListener('change', rebuild);
+    el.buildMode.addEventListener('change', rebuild);
 
-renderer.render( scene, camera );
+    el.fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      setStatus('Loading selected image...');
 
-}
-        // Start rendering the scene
-       animate()
-    </script>
+      try {
+        currentImage = await loadImageFromFile(file);
+        currentSourceName = file.name ? file.name.replace(/\.[a-z0-9]+$/i, '') : 'uploaded-floorplan';
+        rebuild();
+      } catch (err) {
+        setStatus(`Load failed: ${err instanceof Error ? err.message : String(err)}`);
+      } finally {
+        el.fileInput.value = '';
+      }
+    });
+
+    el.sampleBtn.addEventListener('click', async () => {
+      setStatus('Loading sample floorplan...');
+      try {
+        currentImage = await loadImageFromUrl('./FloorPlan.jpg');
+        currentSourceName = 'floorplan-sample-1';
+        rebuild();
+      } catch (err) {
+        setStatus(`Load failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    });
+
+    el.sample2Btn.addEventListener('click', async () => {
+      setStatus('Loading sample floorplan 2...');
+      try {
+        currentImage = await loadImageFromUrl('./FloorPlan2.jpg');
+        currentSourceName = 'floorplan-sample-2';
+        rebuild();
+      } catch (err) {
+        setStatus(`Load failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    });
+
+    el.rebuildBtn.addEventListener('click', rebuild);
+    el.downloadGlbBtn.addEventListener('click', exportCurrentModelAsGlb);
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'e') {
+        event.preventDefault();
+        exportCurrentModelAsGlb();
+      }
+    });
+
+    syncOutputs();
+    resize();
+    animate();
+
+    // Initial sample
+    loadImageFromUrl('./FloorPlan.jpg')
+      .then((img) => {
+        currentImage = img;
+        rebuild();
+      })
+      .catch(() => {
+        setStatus('Ready. Could not preload sample, upload a blueprint image.');
+      });
+  </script>
 </body>
 </html>

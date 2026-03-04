@@ -3,226 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Shortlink Generator</title>
+  <title>Dynalinks | Krazyy Krunal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <!-- Add Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <style>
+  :root {
+    --bg: #050505;
+    --panel: rgba(18, 18, 18, 0.84);
+    --line: rgba(255, 255, 255, 0.18);
+    --line-strong: rgba(255, 255, 255, 0.52);
+    --text: #f5f5f5;
+    --muted: rgba(245, 245, 245, 0.72);
+    --shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  }
 
-@font-face {
-            font-family: 'PF Tempesta Five';
-            font-style: normal;
-            font-weight: 400;
-            src: local('PF Tempesta Five'), url('.././assets/pf_tempesta_five.woff') format('woff');
-        }
+  * { box-sizing: border-box; }
 
-    body {
-      font-family: 'PF Tempesta Five', sans-serif;
-      background-color: #f1f1f1;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    h2{
-        text-align: center;
-    }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    background:
+      radial-gradient(circle at 12% 10%, rgba(255,255,255,0.08), transparent 24%),
+      radial-gradient(circle at 88% 20%, rgba(255,255,255,0.07), transparent 26%),
+      linear-gradient(170deg, #010101 0%, #0a0a0a 100%);
+    padding: 22px 14px 34px;
+    display: grid;
+    place-items: center;
+  }
 
-    .card {
-      background-color: #fff;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 800px;
-      width: 100%;
-    }
+  .tool-shell {
+    width: min(1040px, 100%);
+    display: grid;
+    gap: 14px;
+  }
 
-    .button-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
+  .tool-topbar,
+  .card {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+  }
 
-    .button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 10px;
-    }
+  .tool-topbar {
+    padding: 16px 18px;
+  }
 
-    .button:hover {
-      background-color: #0056b3;
-    }
+  .tool-topbar h1 {
+    margin: 0;
+    font-family: 'Sora', sans-serif;
+    letter-spacing: 0.08em;
+    font-size: clamp(1.1rem, 2.8vw, 1.6rem);
+    text-transform: uppercase;
+  }
 
-    ul {
-      list-style: none;
-      padding: 0;
-    }
+  .tool-topbar p {
+    margin: 10px 0 0;
+    color: var(--muted);
+    line-height: 1.55;
+    font-size: .95rem;
+  }
 
-    li {
-      margin-bottom: 10px;
-    }
+  .card {
+    padding: 20px;
+  }
 
-    a {
-      color: #007bff;
-      text-decoration: none;
-    }
+  h2 {
+    margin: 0;
+    text-align: center;
+    font-family: 'Sora', sans-serif;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 1rem;
+    color: var(--muted);
+  }
 
-    a:hover {
-      text-decoration: underline;
-    }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+  .button,
+  .sign-out-button,
+  .delete-button,
+  .edit-button,
+  .qr-button {
+    font-family: inherit;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform .18s ease, background .18s ease;
+  }
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
+  .button,
+  .sign-out-button { padding: 10px 16px; }
 
-    th {
-      background-color: #f2f2f2;
-    }
+  .delete-button,
+  .edit-button,
+  .qr-button {
+    padding: 7px 12px;
+    margin-right: 5px;
+    margin-bottom: 8px;
+  }
 
-    .button-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
+  .delete-button { color: #ff8c8c; }
 
-    .button {
-    font-family: 'PF Tempesta Five', sans-serif;
-      padding: 10px 20px;
-      background-color: #000000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
+  .button:hover,
+  .sign-out-button:hover,
+  .delete-button:hover,
+  .edit-button:hover,
+  .qr-button:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.16);
+  }
 
-    .button:hover {
-      background-color: #000000;
-    }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    border-radius: 14px;
+    overflow: hidden;
+  }
 
-    
-    .delete-button {
-        font-family: 'PF Tempesta Five', sans-serif;
-      background-color: #000000;
-      color: #ff0000;
-      border: none;
-      border-radius: 4px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 5px;
-      margin-bottom: 10px;
-    }
+  th,
+  td {
+    border: 1px solid var(--line);
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+    color: var(--text);
+    background: rgba(255,255,255,0.02);
+  }
 
-    
-    .delete-button:hover {
-      background-color: #222222;
-    }
-    .edit-button {
-        font-family: 'PF Tempesta Five', sans-serif;
-      background-color: #000000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 5px;
-      margin-bottom: 10px;
-    }
+  th {
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    font-size: .78rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.07);
+  }
 
-    
-    .edit-button:hover {
-      background-color: #222222;
-    }
-    .qr-button {
-        font-family: 'PF Tempesta Five', sans-serif;
-      background-color: #0055ff;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 6px 10px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 5px;
-      margin-bottom: 10px;
-    }
+  a {
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(255,255,255,0.45);
+    word-break: break-all;
+  }
 
-    
-    .qr-button:hover {
-      background-color: #003ca3;
-    }
-    .sign-out-button {
-        font-family: 'PF Tempesta Five', sans-serif;
-      padding: 10px 20px;
-      background-color: #dc3545;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
+  a:hover { border-bottom-color: #fff; }
 
-    .sign-out-button:hover {
-      background-color: #c82333;
-    }
-    @media (max-width: 600px) {
-      .card {
-        padding: 10px;
-        margin: 10px;
-      }
-
-      .button-container {
-        flex-direction: column;
-        margin-top: 10px;
-      }
-
-      .button {
-        margin-bottom: 10px;
-      }
-
-      .button:not(:last-child) {
-        margin-bottom: 5px;
-      }
-
-      table {
-        font-size: 8px;
-      }
-
-      /* Add margin to the buttons */
-      .sign-out-button,
-      .create-link-button,
-      .edit-button,
-      .delete-button,
-      .qr-button {
-        margin-bottom: 10px;
-      }
-    }
-  </style>
+  @media (max-width: 700px) {
+    .card { padding: 14px; }
+    table { font-size: 11px; }
+    th, td { padding: 8px; }
+  }
+</style>
 </head>
 <body>
+  <main class="tool-shell">
+    <header class="tool-topbar">
+      <h1>Dynalinks</h1>
+      <p>Create, manage, and edit short links with a cleaner operator workflow and faster access to actions.</p>
+    </header>
     <div class="card">
-        <h2>Dynamic Link Generator</h2>
+        <h2>Dynalinks</h2>
         <table hidden>
           <thead>
             <tr>
@@ -238,6 +196,11 @@
           <button id="createLinkButton" class="button" hidden>Create Link</button>
         </div>
       </div>
+    </main>
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
+
+
+

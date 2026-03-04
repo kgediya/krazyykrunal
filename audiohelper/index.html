@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Media Helper Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07080b;
+      --panel: #10131b;
+      --line: #2b3140;
+      --text: #f6f8ff;
+      --muted: #acb6ca;
+      --accent: #92adff;
+      --accent-2: #6f8ff8;
+      --ok: #72d796;
+      --err: #ff8b8b;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', 'Sora', 'Segoe UI', Arial, sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(146, 173, 255, 0.18), transparent 36%),
+        radial-gradient(circle at 88% 100%, rgba(111, 143, 248, 0.1), transparent 30%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .shell {
+      width: min(1100px, calc(100% - 1.2rem));
+      margin: 1rem auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(165deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+      padding: 1rem;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.26);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-family: 'Sora', 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 0.35rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .group {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.7rem;
+      background: rgba(9, 12, 18, 0.65);
+    }
+
+    .group h2 {
+      margin-bottom: 0.55rem;
+      color: var(--muted);
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.3rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    select,
+    input[type="file"],
+    input[type="number"],
+    button {
+      font: inherit;
+      color: var(--text);
+      background: #0f1320;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.52rem 0.58rem;
+      width: 100%;
+    }
+
+    input[type="checkbox"] { accent-color: var(--accent); }
+
+    .check-line {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 0.2rem;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.6rem;
+    }
+
+    button {
+      cursor: pointer;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-main {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #0c1223;
+      border: none;
+      font-weight: 700;
+    }
+
+    .btn-ghost { background: rgba(255,255,255,0.04); }
+
+    .trim-helpers {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.35rem;
+      margin-top: 0.2rem;
+    }
+
+    .trim-helpers button {
+      padding: 0.4rem 0.45rem;
+      font-size: 0.72rem;
+    }
+
+    .status-line {
+      margin-top: 0.7rem;
+      padding: 0.55rem 0.6rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.4;
+      min-height: 2.2rem;
+      white-space: pre-wrap;
+    }
+
+    .status-line.ok { color: var(--ok); }
+    .status-line.err { color: var(--err); }
+
+    .progress {
+      margin-top: 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
+      background: #090c13;
+    }
+
+    .progress > div {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #6f8ff8, #9eb5ff);
+      transition: width 0.1s linear;
+    }
+
+    .queue,
+    .results {
+      margin-top: 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(9, 12, 18, 0.65);
+      max-height: 220px;
+      overflow: auto;
+      padding: 0.45rem;
+    }
+
+    .queue-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding: 0.35rem 0.3rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .queue-item:last-child { border-bottom: 0; }
+
+    .results-wrap {
+      display: grid;
+      gap: 0.7rem;
+      margin-top: 0.7rem;
+    }
+
+    .results-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .results-head h3 {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .result-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.55rem;
+      margin-bottom: 0.45rem;
+      background: rgba(8, 10, 16, 0.78);
+    }
+
+    .result-card:last-child { margin-bottom: 0; }
+
+    .result-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    audio,
+    video {
+      width: 100%;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 900px) {
+      .toolbar { grid-template-columns: 1fr; }
+      .btn-row { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .trim-helpers { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+  <script src="./enable-thread.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JHT3XY2K0H"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-JHT3XY2K0H');
+  </script>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <h1>Media Helper Studio</h1>
+      <p class="subtitle">Compress audio/video, trim clips quickly, preview results, then download when ready.</p>
+
+      <div class="toolbar">
+        <div class="group">
+          <h2>Pipeline</h2>
+          <div class="field">
+            <label for="mode">Mode</label>
+            <select id="mode">
+              <option value="audio" selected>Audio to MP3</option>
+              <option value="video">Video to MP4 (portrait)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="compressionPreset">Compression Preset</label>
+            <select id="compressionPreset">
+              <option value="low">Low (smallest)</option>
+              <option value="medium" selected>Medium (balanced)</option>
+              <option value="high">High (better quality)</option>
+              <option value="ultra">Ultra (highest quality)</option>
+            </select>
+          </div>
+
+          <div id="audioOptions">
+            <div class="two-col">
+              <div class="field">
+                <label for="audioBitrate">Bitrate</label>
+                <select id="audioBitrate">
+                  <option value="96k">96k</option>
+                  <option value="128k" selected>128k</option>
+                  <option value="192k">192k</option>
+                  <option value="256k">256k</option>
+                  <option value="320k">320k</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="audioRate">Sample Rate</label>
+                <select id="audioRate">
+                  <option value="">Auto</option>
+                  <option value="22050">22050</option>
+                  <option value="32000">32000</option>
+                  <option value="44100" selected>44100</option>
+                  <option value="48000">48000</option>
+                </select>
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="field">
+                <label for="audioChannels">Channels</label>
+                <select id="audioChannels">
+                  <option value="1">Mono</option>
+                  <option value="2" selected>Stereo</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="audioVbr">VBR Quality</label>
+                <select id="audioVbr">
+                  <option value="">Off (CBR)</option>
+                  <option value="2">VBR High (2)</option>
+                  <option value="4">VBR Medium (4)</option>
+                  <option value="6">VBR Low (6)</option>
+                </select>
+              </div>
+            </div>
+            <label class="check-line"><input id="audioNormalize" type="checkbox" /> Normalize loudness</label>
+          </div>
+
+          <div id="videoOptions" class="hidden">
+            <div class="two-col">
+              <div class="field">
+                <label for="videoPreset">Resolution</label>
+                <select id="videoPreset">
+                  <option value="720x1280" selected>720x1280</option>
+                  <option value="1080x1920">1080x1920</option>
+                  <option value="1080x1080">1080x1080</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="videoFps">FPS</label>
+                <select id="videoFps">
+                  <option value="24">24</option>
+                  <option value="30" selected>30</option>
+                  <option value="60">60</option>
+                </select>
+              </div>
+            </div>
+            <div class="two-col">
+              <div class="field">
+                <label for="videoCrf">CRF</label>
+                <select id="videoCrf">
+                  <option value="18">18 (best)</option>
+                  <option value="21">21 (high)</option>
+                  <option value="23" selected>23 (balanced)</option>
+                  <option value="28">28 (smaller)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="videoSpeed">Encode Speed</label>
+                <select id="videoSpeed">
+                  <option value="ultrafast">ultrafast</option>
+                  <option value="veryfast" selected>veryfast</option>
+                  <option value="medium">medium</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="videoAudioBitrate">Video Audio Bitrate</label>
+              <select id="videoAudioBitrate">
+                <option value="96k">96k</option>
+                <option value="128k" selected>128k</option>
+                <option value="192k">192k</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="two-col" style="margin-top:0.45rem;">
+            <div class="field">
+              <label for="trimStart">Trim Start (sec)</label>
+              <input id="trimStart" type="number" min="0" step="0.1" placeholder="0" />
+            </div>
+            <div class="field">
+              <label for="trimDuration">Duration (sec)</label>
+              <input id="trimDuration" type="number" min="0.1" step="0.1" placeholder="full" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="trimPreset">Trim Preset</label>
+            <select id="trimPreset">
+              <option value="custom" selected>Custom</option>
+              <option value="15">First 15s</option>
+              <option value="30">First 30s</option>
+              <option value="60">First 60s</option>
+              <option value="90">First 90s</option>
+            </select>
+          </div>
+          <div class="trim-helpers">
+            <button id="start0Btn" class="btn-ghost" type="button">Start 0s</button>
+            <button id="start5Btn" class="btn-ghost" type="button">Start 5s</button>
+            <button id="start10Btn" class="btn-ghost" type="button">Start 10s</button>
+            <button id="clearTrimBtn" class="btn-ghost" type="button">Clear Trim</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>Source</h2>
+          <div class="field">
+            <label for="fileInput">Files</label>
+            <input type="file" id="fileInput" multiple />
+          </div>
+          <div class="btn-row">
+            <button id="reloadBtn" class="btn-ghost" type="button">Reload Engine</button>
+            <button id="convertBtn" class="btn-main" type="button" disabled>Process</button>
+            <button id="clearBtn" class="btn-ghost" type="button">Clear</button>
+          </div>
+          <div class="status-line" id="status">Initializing engine...</div>
+          <div class="progress"><div id="progressFill"></div></div>
+          <div class="queue" id="queue"></div>
+        </div>
+      </div>
+
+      <div class="results-wrap">
+        <div class="results-head">
+          <h3>Preview Output</h3>
+          <button id="downloadAllBtn" class="btn-main" type="button" disabled>Download All</button>
+        </div>
+        <div class="results" id="results">
+          <div class="queue-item"><span>No output yet. Process files to preview.</span><span>0</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./ffmpeg-wasm.js"></script>
+  <script src="../assets/jszip.js"></script>
+  <script>
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    let ffmpeg = null;
+
+    const el = {
+      mode: document.getElementById('mode'),
+      compressionPreset: document.getElementById('compressionPreset'),
+      trimPreset: document.getElementById('trimPreset'),
+      start0Btn: document.getElementById('start0Btn'),
+      start5Btn: document.getElementById('start5Btn'),
+      start10Btn: document.getElementById('start10Btn'),
+      clearTrimBtn: document.getElementById('clearTrimBtn'),
+      audioOptions: document.getElementById('audioOptions'),
+      videoOptions: document.getElementById('videoOptions'),
+      audioBitrate: document.getElementById('audioBitrate'),
+      audioRate: document.getElementById('audioRate'),
+      audioChannels: document.getElementById('audioChannels'),
+      audioVbr: document.getElementById('audioVbr'),
+      audioNormalize: document.getElementById('audioNormalize'),
+      videoPreset: document.getElementById('videoPreset'),
+      videoFps: document.getElementById('videoFps'),
+      videoCrf: document.getElementById('videoCrf'),
+      videoSpeed: document.getElementById('videoSpeed'),
+      videoAudioBitrate: document.getElementById('videoAudioBitrate'),
+      trimStart: document.getElementById('trimStart'),
+      trimDuration: document.getElementById('trimDuration'),
+      fileInput: document.getElementById('fileInput'),
+      reloadBtn: document.getElementById('reloadBtn'),
+      convertBtn: document.getElementById('convertBtn'),
+      clearBtn: document.getElementById('clearBtn'),
+      downloadAllBtn: document.getElementById('downloadAllBtn'),
+      status: document.getElementById('status'),
+      progressFill: document.getElementById('progressFill'),
+      queue: document.getElementById('queue'),
+      results: document.getElementById('results')
+    };
+
+    const state = { loaded: false, busy: false, results: [] };
+
+    function safeGtag(eventName, params) {
+      if (typeof window.gtag === 'function') window.gtag('event', eventName, params || {});
+    }
+
+    function setStatus(text, kind = '') {
+      el.status.classList.remove('ok', 'err');
+      if (kind === 'ok') el.status.classList.add('ok');
+      if (kind === 'err') el.status.classList.add('err');
+      el.status.textContent = text;
+    }
+
+    function setProgress(pct) {
+      const safe = Math.max(0, Math.min(100, Number.isFinite(pct) ? pct : 0));
+      el.progressFill.style.width = `${safe.toFixed(1)}%`;
+    }
+
+    function updateConvertState() {
+      el.convertBtn.disabled = state.busy || !state.loaded || el.fileInput.files.length === 0;
+      el.downloadAllBtn.disabled = state.busy || state.results.length === 0;
+    }
+
+    function setBusy(busy) {
+      state.busy = busy;
+      el.convertBtn.disabled = busy || !state.loaded || el.fileInput.files.length === 0;
+      el.fileInput.disabled = busy;
+      el.mode.disabled = busy;
+      el.reloadBtn.disabled = busy;
+      el.clearBtn.disabled = busy;
+      el.downloadAllBtn.disabled = busy || state.results.length === 0;
+      [
+        el.compressionPreset, el.trimPreset, el.audioBitrate, el.audioRate, el.audioChannels, el.audioVbr, el.audioNormalize,
+        el.videoPreset, el.videoFps, el.videoCrf, el.videoSpeed, el.videoAudioBitrate,
+        el.trimStart, el.trimDuration, el.start0Btn, el.start5Btn, el.start10Btn, el.clearTrimBtn
+      ].forEach((node) => { node.disabled = busy; });
+      if (busy) setStatus('Processing...');
+    }
+
+    function sanitizeBase(name) {
+      return (name || 'output')
+        .replace(/\.[^.]+$/, '')
+        .trim()
+        .replace(/[^a-zA-Z0-9-_]+/g, '_')
+        .replace(/^_+|_+$/g, '') || 'output';
+    }
+
+    function cleanupFsSafe(path) {
+      if (!ffmpeg) return;
+      try { ffmpeg.FS('unlink', path); } catch (_) {}
+    }
+
+    function clearResultUrls() {
+      for (let i = 0; i < state.results.length; i += 1) {
+        if (state.results[i].url) URL.revokeObjectURL(state.results[i].url);
+      }
+      state.results = [];
+    }
+
+    function renderResults() {
+      if (state.results.length === 0) {
+        el.results.innerHTML = '<div class="queue-item"><span>No output yet. Process files to preview.</span><span>0</span></div>';
+        updateConvertState();
+        return;
+      }
+
+      el.results.innerHTML = state.results.map((item, idx) => {
+        const tag = item.kind === 'audio'
+          ? `<audio controls preload="metadata" src="${item.url}"></audio>`
+          : `<video controls preload="metadata" src="${item.url}"></video>`;
+        return `
+          <div class="result-card">
+            <div class="result-title"><span>${idx + 1}. ${item.name}</span><button class="btn-ghost" data-download-index="${idx}" type="button">Download</button></div>
+            ${tag}
+          </div>
+        `;
+      }).join('');
+
+      el.results.querySelectorAll('[data-download-index]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const index = Number(btn.getAttribute('data-download-index'));
+          const item = state.results[index];
+          if (!item) return;
+          triggerDownload(item.blob, item.name);
+        });
+      });
+
+      updateConvertState();
+    }
+
+    function updateModeUI() {
+      const isAudio = el.mode.value === 'audio';
+      el.audioOptions.classList.toggle('hidden', !isAudio);
+      el.videoOptions.classList.toggle('hidden', isAudio);
+      el.fileInput.accept = isAudio ? 'audio/*,video/*' : 'video/*';
+      applyCompressionPreset();
+      renderQueue();
+    }
+
+    function applyCompressionPreset() {
+      const preset = el.compressionPreset.value;
+      const isAudio = el.mode.value === 'audio';
+
+      if (isAudio) {
+        if (preset === 'low') {
+          el.audioBitrate.value = '96k';
+          el.audioRate.value = '32000';
+          el.audioChannels.value = '1';
+          el.audioVbr.value = '';
+        } else if (preset === 'medium') {
+          el.audioBitrate.value = '128k';
+          el.audioRate.value = '44100';
+          el.audioChannels.value = '2';
+          el.audioVbr.value = '';
+        } else if (preset === 'high') {
+          el.audioBitrate.value = '192k';
+          el.audioRate.value = '44100';
+          el.audioChannels.value = '2';
+          el.audioVbr.value = '4';
+        } else {
+          el.audioBitrate.value = '256k';
+          el.audioRate.value = '48000';
+          el.audioChannels.value = '2';
+          el.audioVbr.value = '2';
+        }
+      } else {
+        if (preset === 'low') {
+          el.videoPreset.value = '720x1280';
+          el.videoFps.value = '24';
+          el.videoCrf.value = '28';
+          el.videoSpeed.value = 'ultrafast';
+          el.videoAudioBitrate.value = '96k';
+        } else if (preset === 'medium') {
+          el.videoPreset.value = '720x1280';
+          el.videoFps.value = '30';
+          el.videoCrf.value = '23';
+          el.videoSpeed.value = 'veryfast';
+          el.videoAudioBitrate.value = '128k';
+        } else if (preset === 'high') {
+          el.videoPreset.value = '1080x1920';
+          el.videoFps.value = '30';
+          el.videoCrf.value = '21';
+          el.videoSpeed.value = 'veryfast';
+          el.videoAudioBitrate.value = '128k';
+        } else {
+          el.videoPreset.value = '1080x1920';
+          el.videoFps.value = '60';
+          el.videoCrf.value = '18';
+          el.videoSpeed.value = 'medium';
+          el.videoAudioBitrate.value = '192k';
+        }
+      }
+    }
+
+    function applyTrimPreset() {
+      const preset = el.trimPreset.value;
+      if (preset === 'custom') return;
+      el.trimStart.value = '0';
+      el.trimDuration.value = preset;
+    }
+
+    function setTrimStart(value) {
+      el.trimPreset.value = 'custom';
+      el.trimStart.value = String(value);
+    }
+
+    function getTrimArgs() {
+      const args = [];
+      const start = (el.trimStart.value || '').trim();
+      const duration = (el.trimDuration.value || '').trim();
+      if (start) args.push('-ss', start);
+      if (duration) args.push('-t', duration);
+      return args;
+    }
+
+    function getVideoFilter() {
+      const [w, h] = el.videoPreset.value.split('x');
+      const fps = el.videoFps.value;
+      return `scale=${w}:${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:black,fps=${fps}`;
+    }
+
+    function getAudioOutputExt() { return '.mp3'; }
+
+    function renderQueue() {
+      const files = Array.from(el.fileInput.files || []);
+      if (files.length === 0) {
+        el.queue.innerHTML = '<div class="queue-item"><span>No files selected.</span><span>0</span></div>';
+        return;
+      }
+      const ext = el.mode.value === 'audio' ? getAudioOutputExt() : '.mp4';
+      el.queue.innerHTML = files.map((f, idx) =>
+        `<div class="queue-item"><span>${idx + 1}. ${f.name}</span><span>${sanitizeBase(f.name)}${ext}</span></div>`
+      ).join('');
+    }
+
+    async function createEngine() {
+      ffmpeg = createFFmpeg({ log: false });
+      await ffmpeg.load();
+      state.loaded = true;
+      updateConvertState();
+    }
+
+    async function loadEngineAuto() {
+      state.loaded = false;
+      updateConvertState();
+      setStatus('Loading FFmpeg engine...');
+      try {
+        await createEngine();
+        setStatus('Engine ready.', 'ok');
+        safeGtag('mediahelper_engine_loaded', { mode: el.mode.value });
+      } catch (err) {
+        setStatus(`Engine load failed: ${err && err.message ? err.message : String(err)}`, 'err');
+      }
+    }
+
+    async function reloadEngine() {
+      if (state.busy) return;
+      setStatus('Reloading engine...');
+      ffmpeg = null;
+      await loadEngineAuto();
+    }
+
+    async function convertOne(file, index, total) {
+      const mode = el.mode.value;
+      const inputName = `in_${Date.now()}_${index}`;
+      const outputExt = mode === 'audio' ? getAudioOutputExt() : '.mp4';
+      const outputName = `${sanitizeBase(file.name)}${outputExt}`;
+
+      ffmpeg.setProgress(({ ratio }) => {
+        const per = Math.max(0, Math.min(1, ratio || 0));
+        const overall = ((index + per) / total) * 100;
+        setProgress(overall);
+      });
+
+      ffmpeg.FS('writeFile', inputName, await fetchFile(file));
+
+      try {
+        const trimArgs = getTrimArgs();
+        if (mode === 'audio') {
+          const args = ['-i', inputName, ...trimArgs, '-ac', el.audioChannels.value];
+          if (el.audioRate.value) args.push('-ar', el.audioRate.value);
+          if (el.audioNormalize.checked) args.push('-af', 'loudnorm');
+          args.push('-c:a', 'libmp3lame');
+          if (el.audioVbr.value) args.push('-q:a', el.audioVbr.value);
+          else args.push('-b:a', el.audioBitrate.value);
+          args.push(outputName);
+          await ffmpeg.run(...args);
+        } else {
+          await ffmpeg.run(
+            '-i', inputName,
+            ...trimArgs,
+            '-vf', getVideoFilter(),
+            '-c:v', 'libx264',
+            '-preset', el.videoSpeed.value,
+            '-crf', el.videoCrf.value,
+            '-pix_fmt', 'yuv420p',
+            '-movflags', '+faststart',
+            '-c:a', 'aac',
+            '-b:a', el.videoAudioBitrate.value,
+            outputName
+          );
+        }
+
+        const data = ffmpeg.FS('readFile', outputName);
+        const blob = new Blob([data.buffer.slice(0)]);
+        return {
+          name: outputName,
+          blob,
+          url: URL.createObjectURL(blob),
+          kind: mode
+        };
+      } finally {
+        cleanupFsSafe(inputName);
+        cleanupFsSafe(outputName);
+      }
+    }
+
+    function triggerDownload(blob, filename) {
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 300);
+    }
+
+    async function downloadAllResults() {
+      if (state.results.length === 0) return;
+      if (state.results.length === 1) {
+        const item = state.results[0];
+        triggerDownload(item.blob, item.name);
+        return;
+      }
+
+      const zip = new JSZip();
+      state.results.forEach((r) => zip.file(r.name, r.blob));
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const base = el.mode.value === 'audio' ? 'media-helper-audio' : 'media-helper-video';
+      triggerDownload(zipBlob, `${base}_batch.zip`);
+    }
+
+    async function convertAll() {
+      if (!state.loaded || !ffmpeg) {
+        setStatus('Engine not ready. Wait for auto-load or click Reload Engine.', 'err');
+        return;
+      }
+
+      const files = Array.from(el.fileInput.files || []);
+      if (files.length === 0) {
+        setStatus('Please select at least one file.', 'err');
+        return;
+      }
+
+      setBusy(true);
+      setProgress(0);
+      clearResultUrls();
+      renderResults();
+
+      try {
+        safeGtag('mediahelper_convert_start', { mode: el.mode.value, count: files.length });
+
+        const outputs = [];
+        for (let i = 0; i < files.length; i += 1) {
+          setStatus(`Processing ${i + 1}/${files.length}: ${files[i].name}`);
+          const out = await convertOne(files[i], i, files.length);
+          outputs.push(out);
+        }
+
+        state.results = outputs;
+        renderResults();
+        setProgress(100);
+        setStatus(`Done. Preview ready for ${outputs.length} file${outputs.length > 1 ? 's' : ''}.`, 'ok');
+        safeGtag('mediahelper_convert_done', { mode: el.mode.value, count: outputs.length });
+      } catch (err) {
+        setStatus(`Conversion failed: ${err && err.message ? err.message : String(err)}`, 'err');
+        safeGtag('mediahelper_convert_error', { mode: el.mode.value });
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function clearAll() {
+      if (state.busy) return;
+      el.fileInput.value = '';
+      el.trimStart.value = '';
+      el.trimDuration.value = '';
+      el.trimPreset.value = 'custom';
+      setProgress(0);
+      renderQueue();
+      clearResultUrls();
+      renderResults();
+      updateConvertState();
+      setStatus(state.loaded ? 'Engine ready.' : 'Initializing engine...');
+    }
+
+    function initModeFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get('mode');
+      if (mode === 'video' || mode === 'audio') el.mode.value = mode;
+      const preset = params.get('preset');
+      if (preset && ['low', 'medium', 'high', 'ultra'].includes(preset)) {
+        el.compressionPreset.value = preset;
+      }
+    }
+
+    el.reloadBtn.addEventListener('click', reloadEngine);
+    el.convertBtn.addEventListener('click', convertAll);
+    el.clearBtn.addEventListener('click', clearAll);
+    el.downloadAllBtn.addEventListener('click', () => {
+      downloadAllResults().catch((err) => setStatus(`Download failed: ${err && err.message ? err.message : String(err)}`, 'err'));
+    });
+
+    el.fileInput.addEventListener('change', () => {
+      setProgress(0);
+      renderQueue();
+      updateConvertState();
+      if (el.fileInput.files.length > 0) {
+        setStatus(`${el.fileInput.files.length} file${el.fileInput.files.length > 1 ? 's' : ''} selected.`);
+      } else {
+        setStatus(state.loaded ? 'Engine ready.' : 'Initializing engine...');
+      }
+    });
+
+    el.mode.addEventListener('change', updateModeUI);
+    el.compressionPreset.addEventListener('change', () => applyCompressionPreset());
+    el.trimPreset.addEventListener('change', applyTrimPreset);
+    el.start0Btn.addEventListener('click', () => setTrimStart(0));
+    el.start5Btn.addEventListener('click', () => setTrimStart(5));
+    el.start10Btn.addEventListener('click', () => setTrimStart(10));
+    el.clearTrimBtn.addEventListener('click', () => {
+      el.trimPreset.value = 'custom';
+      el.trimStart.value = '';
+      el.trimDuration.value = '';
+    });
+
+    initModeFromQuery();
+    updateModeUI();
+    renderQueue();
+    renderResults();
+    setProgress(0);
+    loadEngineAuto();
+  </script>
+</body>
+</html>

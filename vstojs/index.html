@@ -2,29 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lens Studio Block Logic Builder</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kustom VSToJS Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- Blockly CDN -->
   <script src="https://unpkg.com/blockly/blockly.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Lens Studio Block Logic Builder</h1>
-  </header>
-  <main>
-    <div class="container">
-      <div id="blocklyDiv"></div>
-      <div class="codePanel">
-        <h2>Your Lens Studio JS</h2>
-        <pre id="codeArea"></pre>
-        <button id="copyBtn">Copy to Clipboard</button>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">KX</span>
+        <div>
+          <h1>Kustom VSToJS Lab</h1>
+          <p>Build Snap Lens behavior scripts with visual logic, Lens-ready scaffolds, and instant code output.</p>
+        </div>
       </div>
-    </div>
-  </main>
-  <footer>
-    <span>Made for Lens Studio creators — Powered by Blockly</span>
-  </footer>
+      <div class="top-actions">
+        <button id="clearBtn" class="btn btn-ghost" type="button">Clear</button>
+        <button id="saveBtn" class="btn btn-ghost" type="button">Save Blocks</button>
+        <label for="importBlocksInput" class="btn btn-ghost">Load Blocks</label>
+        <input id="importBlocksInput" type="file" accept="application/json" hidden>
+        <button id="downloadJsBtn" class="btn" type="button">Download JS</button>
+        <button id="copyBtn" class="btn" type="button">Copy JS</button>
+      </div>
+    </header>
+
+    <main class="workspace-layout">
+      <section class="panel panel-builder">
+        <div class="panel-head">
+          <h2>Logic Builder</h2>
+          <span id="workspaceStats">0 blocks</span>
+        </div>
+        <div id="blocklyDiv"></div>
+      </section>
+
+      <section class="panel panel-code">
+        <div class="panel-head">
+          <h2>Generated Script</h2>
+          <span id="statusText">Ready</span>
+        </div>
+        <textarea id="codeArea" readonly spellcheck="false"></textarea>
+        <div class="panel-foot">
+          <span id="autosaveState">Autosave: idle</span>
+          <button id="downloadBlocksBtn" class="btn btn-ghost" type="button">Export Blocks JSON</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      <span>Made for Lens Studio creators. Powered by Blockly.</span>
+    </footer>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
   <script src="blocks.js"></script>
   <script src="main.js"></script>
 </body>
