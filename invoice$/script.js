@@ -236,11 +236,116 @@ async function getGoogleDriveToken() {
   if (cachedToken && now < tokenExpiry) {
     return cachedToken;
   }
-  const res = await fetch(VALTOWN_TOKEN_URL);
+  let lastError = null;
+  const attempts = [
+    () => fetch(VALTOWN_TOKEN_URL, { method: "GET" }),
+    () => fetch(VALTOWN_TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "token" })
+    }),
+    () => fetch(VALTOWN_TOKEN_URL, { method: "POST" })
+  ];
+
+  for (const requestToken of attempts) {
+    try {
+      const res = await requestToken();
+      if (!res.ok) {
+        lastError = new Error(`Token request failed (${res.status})`);
+        continue;
+      }
+      const data = await res.json();
+      const token = data.access_token || data.accessToken || data.token;
+      if (!token) {
+        lastError = new Error("Token response missing access token");
+        continue;
+      }
+      const expiresIn = Number(data.expires_in || data.expiresIn || 3600);
+      cachedToken = token;
+      tokenExpiry = now + Math.max(60, expiresIn - 60) * 1000; // 1 min buffer
+      return cachedToken;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw new Error(`Token request failed: ${lastError?.message || "unknown error"}`);
+}
+
+async function uploadPdfViaValtown(pdfBlob, fileName) {
+  const buildForm = (withFolderId) => {
+    const form = new FormData();
+    form.append("file", pdfBlob, fileName);
+    form.append("filename", fileName);
+    if (withFolderId) {
+      form.append("folderId", GOOGLE_DRIVE_FOLDER_ID);
+    }
+    return form;
+  };
+
+  let lastError = null;
+  for (const withFolderId of [true, false]) {
+    try {
+      const res = await fetch(VALTOWN_TOKEN_URL, {
+        method: "POST",
+        body: buildForm(withFolderId)
+      });
+      if (!res.ok) {
+        let detail = "";
+        try {
+          detail = await res.text();
+        } catch (_) {}
+        const err = new Error(`Valtown upload failed (${res.status})${detail ? `: ${detail}` : ""}`);
+        err.status = res.status;
+        lastError = err;
+        continue;
+      }
+      const result = await res.json();
+      if (!result.id) {
+        lastError = new Error("Valtown upload response missing file id");
+        continue;
+      }
+      return result;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw new Error(`Valtown upload failed: ${lastError?.message || "unknown error"}`);
+}
+
+async function uploadPdfViaDriveApi(pdfBlob, fileName) {
+  const accessToken = await getGoogleDriveToken();
+
+  const metadata = {
+    name: fileName,
+    mimeType: "application/pdf",
+    parents: [GOOGLE_DRIVE_FOLDER_ID]
+  };
+
+  const multipart = new FormData();
+  multipart.append(
+    "metadata",
+    new Blob([JSON.stringify(metadata)], { type: "application/json" })
+  );
+  multipart.append("file", pdfBlob, fileName);
+
+  const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    },
+    body: multipart
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Drive API upload failed (${res.status}): ${errorText}`);
+  }
   const data = await res.json();
-  cachedToken = data.access_token;
-  tokenExpiry = now + (data.expires_in - 60) * 1000; // minus 1 min buffer
-  return cachedToken;
+  if (!data.id) {
+    throw new Error("Drive API response missing file id");
+  }
+  return data;
 }
 
 // === DOWNLOAD + UPLOAD ===
@@ -306,25 +411,23 @@ document.getElementById("download").addEventListener("click", async () => {
         })
         .output('blob');
 
-      const form = new FormData();
-      form.append("file", pdfBlob, fileName);
-      form.append("filename", fileName);
-
-      const uploadRes = await fetch(
-        "https://krazyykrunal--a701dafe5a3611f09f24f69ea79377d9.web.val.run",
-        { method: "POST", body: form }
-      );
-
-      const result = await uploadRes.json();
-      if (result.id) {
-        alert(`Uploaded to Google Drive ✅`);
-      } else {
-        alert("Upload failed ❌");
-        console.error(result);
+      let uploadResult;
+      try {
+        uploadResult = await uploadPdfViaValtown(pdfBlob, fileName);
+      } catch (valtownErr) {
+        if (valtownErr && (valtownErr.status === 401 || valtownErr.status === 403)) {
+          throw new Error("Cloud endpoint is unauthorized (403). Update or re-enable your Valtown endpoint access.");
+        }
+        console.warn("Valtown upload failed, trying Drive API fallback...", valtownErr);
+        uploadResult = await uploadPdfViaDriveApi(pdfBlob, fileName);
       }
+
+      const fileId = uploadResult.id;
+      const driveUrl = uploadResult.webViewLink || `https://drive.google.com/file/d/${fileId}/view`;
+      alert(`Uploaded to Google Drive ✅\n${driveUrl}`);
     } catch (err) {
       console.error("Google Drive upload error:", err);
-      alert("Error uploading invoice ❌");
+      alert(`Error uploading invoice ❌\n${err.message || err}`);
     }
   }
 
