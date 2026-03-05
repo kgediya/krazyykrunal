@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kustom QR Lab | Krazyy Krunal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -76,20 +77,23 @@
     font-family: 'Sora', sans-serif;
     letter-spacing: .06em;
     text-transform: uppercase;
-    font-size: 1.05rem;
+    font-size: 1.12rem;
     color: var(--muted);
   }
 
   #canvas {
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     margin-top: 20px;
+    width: 100%;
+    overflow: visible;
   }
 
   .preset-grid {
     margin-top: 12px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 8px;
   }
 
@@ -136,8 +140,21 @@
     margin-top: 12px;
   }
 
+  #canvas > div {
+    width: auto !important;
+    max-width: 100%;
+    height: auto !important;
+    margin: 0 auto;
+    overflow: visible !important;
+  }
+
+  #canvas > div canvas,
+  #canvas > div svg,
   #canvas canvas,
   #canvas svg {
+    display: block;
+    width: auto !important;
+    height: auto !important;
     max-width: 100%;
     border: 1px solid var(--line);
     border-radius: 16px;
@@ -153,12 +170,13 @@
     margin-top: 10px;
     display: block;
     width: 100%;
-    min-height: 44px;
-    padding: 10px 12px;
+    min-height: 46px;
+    padding: 11px 12px;
     border: 1px solid var(--line);
     border-radius: 12px;
     text-align: center;
     font: inherit;
+    font-size: 16px;
     color: #fff;
     outline: none;
     background: rgba(255,255,255,0.06);
@@ -186,7 +204,7 @@
     display: block;
     margin-top: 10px;
     width: 100%;
-    height: 48px;
+    height: 46px;
     padding: 6px;
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -243,11 +261,101 @@
     margin-top: 0;
     font-size: 13px;
     color: var(--muted);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .section-label {
+    margin-top: 18px;
+    margin-bottom: 0;
+    color: var(--muted);
+    letter-spacing: .03em;
+    font-size: .92rem;
+  }
+
+  @media (max-width: 900px) {
+    .tool-shell {
+      width: 100%;
+    }
+    .tool-topbar,
+    .card {
+      border-radius: 16px;
+    }
   }
 
   @media (max-width: 700px) {
+    body {
+      padding: 16px 12px 24px;
+    }
+    .tool-topbar {
+      padding: 16px;
+    }
+    .card {
+      padding: 16px;
+    }
+    .tool-topbar h1 {
+      font-size: 1.26rem;
+    }
+    .tool-topbar p {
+      font-size: .95rem;
+      line-height: 1.52;
+    }
+    h1 {
+      font-size: 1rem;
+      margin-bottom: 14px;
+    }
+    label,
+    .section-label {
+      font-size: .93rem;
+      margin-top: 12px;
+    }
+    .custom-grid,
+    .action-row {
+      margin-top: 10px;
+    }
     .custom-grid {
       grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .preset-grid {
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+    .action-row {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .logo-row {
+      gap: 10px;
+    }
+    #canvas {
+      margin-top: 16px;
+    }
+    #canvas > div {
+      width: min(100%, 420px) !important;
+    }
+    a {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .preset-btn {
+      min-height: 42px;
+      padding: 8px 10px;
+      font-size: .9rem;
+    }
+    .tool-topbar p {
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+    select,
+    input[type="text"],
+    button {
+      min-height: 46px;
+      padding: 10px 12px;
     }
   }
 
@@ -363,7 +471,7 @@
         </div>
 
         <button id="submit">Generate QR</button>
-        <p1>Logo</p1>
+        <p class="section-label">Logo</p>
 
         <div class="file-input-container logo-row">
             <label for="logo" id="file-label">Logo</label>
@@ -417,7 +525,8 @@ const state = {
   maskedLogo: '',
   qr: null,
   generatedLink: '',
-  lastOptions: null
+  lastOptions: null,
+  lastViewportWidth: window.innerWidth
 };
 
 const themes = {
@@ -543,7 +652,13 @@ function buildThemeConfig(themeName) {
   return { ...themes[themeName] };
 }
 
-function buildQrOptions(data, themeConfig, logoSource) {
+function getPreviewSize() {
+  const mountWidth = DOM.qrMount ? DOM.qrMount.clientWidth : 320;
+  const safeWidth = Number.isFinite(mountWidth) && mountWidth > 0 ? mountWidth : 320;
+  return Math.max(240, Math.min(640, Math.floor(safeWidth)));
+}
+
+function buildQrOptions(data, themeConfig, logoSource, size = 640) {
   const primaryStops = themeConfig.gradient || [
     { offset: 0, color: themeConfig.primaryColor },
     { offset: 1, color: themeConfig.primaryColor }
@@ -568,8 +683,8 @@ function buildQrOptions(data, themeConfig, logoSource) {
   }
 
   const options = {
-    width: 640,
-    height: 640,
+    width: size,
+    height: size,
     type: 'svg',
     data,
     margin: 8,
@@ -675,7 +790,8 @@ async function generateQr() {
   try {
     const themeConfig = buildThemeConfig(state.activeTheme);
     const logoSource = state.maskedLogo || themeConfig.logo || '';
-    const options = buildQrOptions(parsed.value, themeConfig, logoSource);
+    const previewSize = getPreviewSize();
+    const options = buildQrOptions(parsed.value, themeConfig, logoSource, previewSize);
     state.lastOptions = options;
 
     DOM.qrMount.innerHTML = '';
@@ -692,6 +808,37 @@ async function generateQr() {
     DOM.submit.disabled = false;
     DOM.submit.textContent = originalLabel;
   }
+}
+
+function scheduleResponsiveRegenerate() {
+  if (!state.lastOptions || !state.generatedLink) return;
+
+  if (scheduleResponsiveRegenerate._timer) {
+    clearTimeout(scheduleResponsiveRegenerate._timer);
+  }
+
+  scheduleResponsiveRegenerate._timer = setTimeout(async () => {
+    const widthDelta = Math.abs(window.innerWidth - (state.lastViewportWidth || window.innerWidth));
+    state.lastViewportWidth = window.innerWidth;
+    if (widthDelta < 8) return;
+
+    const parsed = resolveQrData();
+    if (!parsed.ok) return;
+
+    try {
+      const themeConfig = buildThemeConfig(state.activeTheme);
+      const logoSource = state.maskedLogo || themeConfig.logo || '';
+      const previewSize = getPreviewSize();
+      const options = buildQrOptions(parsed.value, themeConfig, logoSource, previewSize);
+      state.lastOptions = options;
+
+      DOM.qrMount.innerHTML = '';
+      state.qr = new QRCodeStyling(options);
+      state.qr.append(DOM.qrMount);
+    } catch {
+      // Keep current preview if responsive regenerate fails.
+    }
+  }, 220);
 }
 
 async function exportQr(extension) {
@@ -785,6 +932,9 @@ DOM.linkType.addEventListener('change', syncThemeSelection);
 DOM.presetButtons.forEach((button) => {
   button.addEventListener('click', () => applyPreset(button.dataset.preset));
 });
+
+window.addEventListener('resize', scheduleResponsiveRegenerate);
+window.addEventListener('orientationchange', scheduleResponsiveRegenerate);
 
 hydrateFromQuery();
 syncThemeSelection();
