@@ -415,11 +415,11 @@ document.getElementById("download").addEventListener("click", async () => {
       try {
         uploadResult = await uploadPdfViaValtown(pdfBlob, fileName);
       } catch (valtownErr) {
-        if (valtownErr && (valtownErr.status === 401 || valtownErr.status === 403)) {
-          throw new Error("Cloud endpoint is unauthorized (403). Update or re-enable your Valtown endpoint access.");
+        const status = valtownErr?.status;
+        if (status === 401 || status === 403) {
+          throw new Error("Cloud endpoint is unauthorized. Allow your site origin in backend.");
         }
-        console.warn("Valtown upload failed, trying Drive API fallback...", valtownErr);
-        uploadResult = await uploadPdfViaDriveApi(pdfBlob, fileName);
+        throw new Error(`Cloud upload failed: ${valtownErr?.message || "unknown upload error"}`);
       }
 
       const fileId = uploadResult.id;
