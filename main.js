@@ -120,6 +120,9 @@ function setupMenus() {
         submenu.classList.add('show');
         menuBtn.classList.add('active');
         menuBtn.setAttribute('aria-expanded', 'true');
+        requestAnimationFrame(() => {
+          ensureSubmenuVisible(submenu);
+        });
       }
     });
   });
@@ -128,6 +131,21 @@ function setupMenus() {
     const isMenuClick = event.target.closest('.nav-btn') || event.target.closest('.submenu-bar');
     if (!isMenuClick) closeAll();
   });
+}
+
+function ensureSubmenuVisible(submenu) {
+  const isSmallLayout = window.matchMedia('(max-width: 768px)').matches;
+  if (!isSmallLayout || !submenu) return;
+
+  const rect = submenu.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+  const topPadding = 12;
+  const hiddenBelowFold = rect.bottom > viewportHeight - 16;
+  const hiddenAboveFold = rect.top < topPadding;
+
+  if (hiddenBelowFold || hiddenAboveFold) {
+    smoothScrollToY(window.scrollY + rect.top - topPadding, 700);
+  }
 }
 
 function setupSmoothNavigation() {
@@ -154,6 +172,11 @@ function setupSmoothNavigation() {
 function smoothScrollToElement(element, duration = 1000) {
   const startY = window.scrollY;
   const targetY = element.getBoundingClientRect().top + window.scrollY - 20;
+  smoothScrollToY(targetY, duration);
+}
+
+function smoothScrollToY(targetY, duration = 1000) {
+  const startY = window.scrollY;
   const distance = targetY - startY;
   const startTime = performance.now();
 

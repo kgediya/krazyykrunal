@@ -458,6 +458,12 @@ main {
   overflow: hidden;
 }
 
+.social-widget-shell [class^="elfsight-app-"],
+.social-widget-shell [class*=" elfsight-app-"] {
+  width: 100%;
+  max-width: 100%;
+}
+
 .feature-card,
 .work-card,
 .tool-card,
@@ -848,8 +854,9 @@ main {
     text-align: center;
   }
 
-  #project-gallery {
-    grid-template-columns: 1fr;
+  #project-gallery,
+  .tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .title-row {
@@ -872,6 +879,80 @@ main {
     min-height: 360px;
   }
 
+  .work-card,
+  .tool-card {
+    min-height: 0;
+  }
+
+  .work-card {
+    aspect-ratio: 0.88 / 1.12;
+  }
+
+  .work-body {
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .work-meta {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+
+  .work-title {
+    font-size: 0.82rem;
+    line-height: 1.12;
+  }
+
+  .work-summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.72rem;
+    line-height: 1.38;
+  }
+
+  .work-footer {
+    margin-top: 2px;
+  }
+
+  .feature-link {
+    font-size: 0.7rem;
+  }
+
+  .tool-card {
+    min-height: 0;
+    aspect-ratio: 0.9 / 1.02;
+  }
+
+  .tool-body {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .tool-type {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .tool-title {
+    font-size: 0.84rem;
+    line-height: 1.14;
+  }
+
+  .tool-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.72rem;
+    line-height: 1.34;
+  }
+
+  .tool-link {
+    font-size: 0.68rem;
+  }
+
   .embed-grid {
     grid-auto-columns: 88vw;
   }
@@ -879,6 +960,12 @@ main {
   .social-widget-shell {
     padding: 10px;
     border-radius: 18px;
+    margin-left: -2px;
+    margin-right: -2px;
+  }
+
+  #social-log .title-row {
+    margin-bottom: 12px;
   }
 
   .spotlight-avatar-shell {
