@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   rotateGreetings(greetings);
-  setupMenus();
   setupSmoothNavigation();
+  setupMobileSectionNav();
   loadPortfolio();
   initThreeBackdrop();
   initSpectaclesCursor();
@@ -98,65 +98,6 @@ function rotateGreetings(greetings) {
   }, 2300);
 }
 
-function setupMenus() {
-  const menuSubmenus = {
-    'menu-connect': 'connect-submenu',
-    'menu-tools': 'tools-submenu'
-  };
-
-  const closeAll = () => {
-    Object.entries(menuSubmenus).forEach(([menuId, submenuId]) => {
-      const submenu = document.getElementById(submenuId);
-      const menu = document.getElementById(menuId);
-      if (submenu) submenu.classList.remove('show');
-      if (menu) {
-        menu.classList.remove('active');
-        menu.setAttribute('aria-expanded', 'false');
-      }
-    });
-  };
-
-  Object.entries(menuSubmenus).forEach(([menuId, submenuId]) => {
-    const menuBtn = document.getElementById(menuId);
-    const submenu = document.getElementById(submenuId);
-    if (!menuBtn || !submenu) return;
-
-    menuBtn.addEventListener('click', (event) => {
-      event.stopPropagation();
-      const wasOpen = submenu.classList.contains('show');
-      closeAll();
-      if (!wasOpen) {
-        submenu.classList.add('show');
-        menuBtn.classList.add('active');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        requestAnimationFrame(() => {
-          ensureSubmenuVisible(submenu);
-        });
-      }
-    });
-  });
-
-  document.addEventListener('click', (event) => {
-    const isMenuClick = event.target.closest('.nav-btn') || event.target.closest('.submenu-bar');
-    if (!isMenuClick) closeAll();
-  });
-}
-
-function ensureSubmenuVisible(submenu) {
-  const isSmallLayout = window.matchMedia('(max-width: 768px)').matches;
-  if (!isSmallLayout || !submenu) return;
-
-  const rect = submenu.getBoundingClientRect();
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-  const topPadding = 12;
-  const hiddenBelowFold = rect.bottom > viewportHeight - 16;
-  const hiddenAboveFold = rect.top < topPadding;
-
-  if (hiddenBelowFold || hiddenAboveFold) {
-    smoothScrollToY(window.scrollY + rect.top - topPadding, 700);
-  }
-}
-
 function setupSmoothNavigation() {
   const links = document.querySelectorAll('a[href^="#"]');
   links.forEach((link) => {
@@ -180,8 +121,18 @@ function setupSmoothNavigation() {
 
 function smoothScrollToElement(element, duration = 1000) {
   const startY = window.scrollY;
-  const targetY = element.getBoundingClientRect().top + window.scrollY - 20;
+  const customOffset = element.id === 'roles-connect'
+    ? Math.max(window.innerHeight * 0.4, getScrollOffset())
+    : getScrollOffset();
+  const targetY = element.getBoundingClientRect().top + window.scrollY - customOffset;
   smoothScrollToY(targetY, duration);
+}
+
+function getScrollOffset() {
+  const mobileNav = document.querySelector('.mobile-section-nav');
+  const isMobileNavVisible = mobileNav && window.matchMedia('(max-width: 768px)').matches;
+  const navOffset = isMobileNavVisible ? mobileNav.offsetHeight + 16 : 0;
+  return 20 + navOffset;
 }
 
 function smoothScrollToY(targetY, duration = 1000) {
@@ -214,6 +165,63 @@ function loadPortfolio() {
     })
     .then((data) => renderPortfolio(normalizePortfolio(data)))
     .catch(() => renderPortfolio(fallbackPortfolio));
+}
+
+function setupMobileSectionNav() {
+  const nav = document.querySelector('.mobile-section-nav');
+  if (!nav) return;
+
+  const links = Array.from(nav.querySelectorAll('[data-section-link]'));
+  const sectionToNavId = {
+    'hero-top': 'hero-top',
+    'roles-section': 'roles-section',
+    'featured-work': 'featured-work',
+    'recent-builds': 'featured-work',
+    'tools-section': 'tools-section',
+    'social-log': 'social-log'
+  };
+  const sectionIds = links.map((link) => link.getAttribute('data-section-link')).filter(Boolean);
+  const trackedSectionIds = ['hero-top', 'roles-section', 'featured-work', 'recent-builds', 'tools-section', 'social-log'];
+  const sections = trackedSectionIds
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+
+  if (!links.length || !sections.length) return;
+
+  const setActive = (id) => {
+    links.forEach((link) => {
+      const isActive = link.getAttribute('data-section-link') === id;
+      link.classList.toggle('active', isActive);
+      link.setAttribute('aria-current', isActive ? 'true' : 'false');
+    });
+  };
+
+  let activeId = 'hero-top';
+
+  const updateActiveSection = () => {
+    const viewportMidpoint = window.innerHeight * 0.5;
+    let currentId = sections[0].id;
+
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= viewportMidpoint && rect.bottom >= viewportMidpoint) {
+        currentId = section.id;
+      }
+    });
+
+    const mappedId = sectionToNavId[currentId] || currentId;
+
+    if (mappedId === activeId) return;
+
+    activeId = mappedId;
+    setActive(mappedId);
+    const activeLink = nav.querySelector(`[data-section-link="${mappedId}"]`);
+    activeLink?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  };
+
+  updateActiveSection();
+  window.addEventListener('scroll', updateActiveSection, { passive: true });
+  window.addEventListener('resize', updateActiveSection);
 }
 
 function normalizePortfolio(data) {
@@ -581,7 +589,7 @@ function initSpectaclesCursor() {
   });
 
   document.addEventListener('pointerover', (event) => {
-    const hoverable = event.target.closest('a, button, .nav-btn, .tool-card, .work-card, .feature-card, .role-card');
+    const hoverable = event.target.closest('a, button, .tool-card, .work-card, .feature-card, .role-card');
     document.body.classList.toggle('cursor-hover', Boolean(hoverable));
   });
 

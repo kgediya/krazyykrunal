@@ -16,7 +16,7 @@
   <canvas id="scene-bg" aria-hidden="true"></canvas>
   <div class="spectacles-cursor" id="spectacles-cursor" aria-hidden="true"></div>
 
-  <header class="hero-shell">
+  <header class="hero-shell" id="hero-top">
     <div class="hero-top-row">
       <a class="brand-lockup" href="/" aria-label="Krazyy Krunal Home">
         <img src="Logo2.png" alt="Krazyy Krunal logo" class="site-logo">
@@ -26,10 +26,6 @@
         </div>
       </a>
 
-      <nav class="nav-bar" aria-label="Primary navigation">
-        <button class="nav-btn" id="menu-connect" type="button" aria-expanded="false" aria-controls="connect-submenu">CONNECT</button>
-        <button class="nav-btn" id="menu-tools" type="button" aria-expanded="false" aria-controls="tools-submenu">TOOLS</button>
-      </nav>
     </div>
 
     <div class="hero-panel">
@@ -40,7 +36,7 @@
         <p class="hero-signature">Krunal MB Gediya, Mumbai, India </p>
         <div class="hero-actions">
           <a class="hero-cta hero-cta-primary" href="#featured-work">View Featured Work</a>
-          <a class="hero-cta" href="#recent-builds">Browse Recent Builds</a>
+          <a class="hero-cta" href="#roles-connect">Find Me Around The Internet</a>
           <a class="hero-cta" href="mailto:kgediya0898@gmail.com?subject=Project%20Enquiry%20for%20Krunal%20MB%20Gediya&body=Hi%20Krunal%2C%0D%0A%0D%0AI%20came%20across%20your%20portfolio%20and%20wanted%20to%20discuss%20a%20project.%0D%0A%0D%0AProject%20type%3A%0D%0ATimeline%3A%0D%0ABudget%20range%3A%0D%0AWhat%20we%20need%20help%20with%3A%0D%0AReference%20links%20%28if%20any%29%3A%0D%0A%0D%0AThanks%2C%0D%0A">Let's Build Something</a>
         </div>
       </div>
@@ -48,39 +44,13 @@
     </div>
   </header>
 
-  <div class="submenu-bar connect-icons" id="connect-submenu">
-    <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/krazyykrunal/" title="Instagram">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram">
-    </a>
-    <a target="_blank" rel="noopener noreferrer" href="https://lensstudio.snapchat.com/creator/H_rVvZAY8Q0cafg8oxDHfw" title="Snapchat">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/snapchat.png" alt="Snapchat">
-    </a>
-    <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/krazyykrunal" title="LinkedIn">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/linkedin.png" alt="LinkedIn">
-    </a>
-    <a target="_blank" rel="noopener noreferrer" href="https://xrbazaar.co/creators/krazyykrunal/" title="XR Bazaar">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/shop.png" alt="XR Bazaar">
-    </a>
-    <a target="_blank" rel="noopener noreferrer" href="https://github.com/kgediya" title="GitHub">
-      <img src="https://img.icons8.com/ios-glyphs/50/ffffff/github.png" alt="GitHub">
-    </a>
-    <a target="_blank" rel="noopener noreferrer" href="mailto:kgediya0898@gmail.com?subject=XR%20Enquiry%20x%20Krunal" title="Email">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/filled-message.png" alt="Email">
-    </a>
-  </div>
-
-  <div class="submenu-bar" id="tools-submenu">
-    <a href="https://krazyy-kam-public.netlify.app" target="_blank" rel="noopener noreferrer">LS WebAR Publisher</a>
-    <a href="/portalcreator/">Skybox Generator</a>
-    <a href="/dynalinks/">Dynalinks</a>
-    <a href="/makqr/">Kustom MakQR</a>
-    
-    <a href="/xrplanner/">XR Planner</a>
-    <a href="/blueprint/">Blueprint 3D</a>
-    <a href="/airmusic/">AirMusic</a>
-    <a href="/audiohelper/">Media Helper</a>
-    <a href="/skyhi/">SkyHi</a>
-  </div>
+  <nav class="mobile-section-nav" aria-label="Section navigation">
+    <a class="mobile-section-link" href="#hero-top" data-section-link="hero-top">Home</a>
+    <a class="mobile-section-link" href="#roles-section" data-section-link="roles-section">About</a>
+    <a class="mobile-section-link" href="#featured-work" data-section-link="featured-work">Work</a>
+    <a class="mobile-section-link" href="#tools-section" data-section-link="tools-section">Tools</a>
+    <a class="mobile-section-link" href="#social-log" data-section-link="social-log">Feed</a>
+  </nav>
 
   <main>
     <section class="portfolio-section" id="roles-section">
@@ -90,6 +60,29 @@
         <p class="section-intro">Most of my work sits somewhere between building, teaching, and bringing people together around XR.</p>
       </div>
       <div id="roles-grid" class="roles-grid" aria-live="polite"></div>
+      <div class="roles-connect-wrap" id="roles-connect">
+        <p class="section-kicker roles-connect-kicker">Find Me Around</p>
+        <div class="roles-connect" aria-label="Connect with Krunal">
+        <a class="roles-connect-btn" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/krazyykrunal/" title="Instagram">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram">
+        </a>
+        <a class="roles-connect-btn" target="_blank" rel="noopener noreferrer" href="https://lensstudio.snapchat.com/creator/H_rVvZAY8Q0cafg8oxDHfw" title="Snapchat">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/snapchat.png" alt="Snapchat">
+        </a>
+        <a class="roles-connect-btn" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/krazyykrunal" title="LinkedIn">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/linkedin.png" alt="LinkedIn">
+        </a>
+        <a class="roles-connect-btn" target="_blank" rel="noopener noreferrer" href="https://xrbazaar.co/creators/krazyykrunal/" title="XR Bazaar">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/shop.png" alt="XR Bazaar">
+        </a>
+        <a class="roles-connect-btn" target="_blank" rel="noopener noreferrer" href="https://github.com/kgediya" title="GitHub">
+          <img src="https://img.icons8.com/ios-glyphs/50/ffffff/github.png" alt="GitHub">
+        </a>
+        <a class="roles-connect-btn" target="_blank" rel="noopener noreferrer" href="mailto:kgediya0898@gmail.com?subject=XR%20Enquiry%20x%20Krunal" title="Email">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/filled-message.png" alt="Email">
+        </a>
+        </div>
+      </div>
     </section>
 
     <section class="portfolio-section" id="featured-work">
