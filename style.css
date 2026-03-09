@@ -496,6 +496,68 @@ main {
   min-height: 430px;
 }
 
+.section-more-card {
+  min-height: 250px;
+  height: var(--section-height, auto);
+  grid-column: auto / span var(--section-span, 1);
+  width: 100%;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 42%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+    rgba(10, 10, 10, 0.9);
+  border-right-color: transparent;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 76%, rgba(0, 0, 0, 0.18) 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 76%, rgba(0, 0, 0, 0.18) 92%, transparent 100%);
+}
+
+.work-more-card {
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.section-more-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(12, 12, 12, 0.04) 0%, rgba(12, 12, 12, 0.16) 40%, rgba(12, 12, 12, 0.58) 78%, rgba(12, 12, 12, 0.02) 100%);
+  z-index: 1;
+}
+
+.section-more-body {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: end;
+  gap: 12px;
+  min-height: 100%;
+  max-width: min(420px, 70%);
+  padding: 24px;
+}
+
+.section-more-kicker {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.64);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.section-more-title {
+  margin: 0;
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  line-height: 1.16;
+}
+
+.section-more-copy {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.55;
+}
+
 .feature-card img,
 .work-card img {
   width: 100%;
@@ -887,6 +949,15 @@ main {
   filter: grayscale(10%) contrast(1.12);
 }
 
+.section-more-card:hover,
+.section-more-card:focus-within {
+  border-color: rgba(255, 255, 255, 0.4);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 42%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(10, 10, 10, 0.94);
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(14px);
@@ -1119,6 +1190,15 @@ main {
 
   .feature-card {
     min-height: 360px;
+  }
+
+  .section-more-card {
+    min-height: 220px;
+  }
+
+  .section-more-body {
+    max-width: 72%;
+    padding: 18px;
   }
 
   .role-card {

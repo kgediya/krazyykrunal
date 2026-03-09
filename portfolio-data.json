@@ -59,20 +59,18 @@
       "cta": "See Updates"
     },
     {
-      "title": "Launch 360 Zones",
-      "summary": "Launch spaces built to feel cinematic without becoming confusing or heavy.",
-      "meta": "Signature Build / Spatial Launch",
-      "img": "./assets/workgifs/image48.gif",
-      "href": "https://www.instagram.com/krazyykrunal/",
-      "cta": "See Updates"
+      "title": "Fiction To Reality",
+      "summary": "Concepts that start a bit dreamy and end up feeling surprisingly real.",
+      "meta": "Signature Build / Concept XR",
+      "img": "./assets/workgifs/image47.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal"
     },
     {
-      "title": "Product Features Games",
-      "summary": "Interactive explainers where product education and play sit in the same room.",
-      "meta": "Signature Build / Explainer Play",
-      "img": "./assets/workgifs/image41.gif",
-      "href": "https://www.instagram.com/krazyykrunal/",
-      "cta": "See Updates"
+      "title": "Location Based",
+      "summary": "Work that depends on place, movement, and the feeling of being there.",
+      "meta": "Signature Build / Contextual XR",
+      "img": "./assets/workgifs/image50.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal"
     },
     {
       "title": "Educational",
@@ -85,17 +83,17 @@
   ],
   "recent": [
     {
-      "title": "Location Based",
-      "summary": "Work that depends on place, movement, and the feeling of being there.",
-      "meta": "Recent Drop / Contextual XR",
-      "img": "./assets/workgifs/image50.gif",
-      "href": "https://www.linkedin.com/in/krazyykrunal"
-    },
-    {
       "title": "Custom Try On",
       "summary": "Try-on experiments that lean into charm, novelty, and a little bit of swagger.",
       "meta": "Recent Drop / Fashion XR",
       "img": "./assets/workgifs/image46.gif",
+      "href": "https://www.instagram.com/krazyykrunal/"
+    },
+    {
+      "title": "Product Features Games",
+      "summary": "Interactive explainers where product education and play sit in the same room.",
+      "meta": "Recent Drop / Explainer Play",
+      "img": "./assets/workgifs/image41.gif",
       "href": "https://www.instagram.com/krazyykrunal/"
     },
     {
@@ -106,11 +104,11 @@
       "href": "https://www.linkedin.com/in/krazyykrunal"
     },
     {
-      "title": "Fiction To Reality",
-      "summary": "Concepts that start a bit dreamy and end up feeling surprisingly real.",
-      "meta": "Recent Drop / Concept XR",
-      "img": "./assets/workgifs/image47.gif",
-      "href": "https://www.linkedin.com/in/krazyykrunal"
+      "title": "Launch 360 Zones",
+      "summary": "Launch spaces built to feel cinematic without becoming confusing or heavy.",
+      "meta": "Recent Drop / Spatial Launch",
+      "img": "./assets/workgifs/image48.gif",
+      "href": "https://www.instagram.com/krazyykrunal/"
     },
     {
       "title": "Festive Games",

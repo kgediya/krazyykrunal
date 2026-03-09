@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPortfolio();
   initThreeBackdrop();
   initSpectaclesCursor();
+  window.addEventListener('resize', syncContinuationCards);
 });
 
 const fallbackPortfolio = {
@@ -200,7 +201,7 @@ function setupMobileSectionNav() {
 
   const updateActiveSection = () => {
     const viewportMidpoint = window.innerHeight * 0.5;
-    let currentId = sections[0].id;
+    let currentId = activeId;
 
     sections.forEach((section) => {
       const rect = section.getBoundingClientRect();
@@ -324,6 +325,15 @@ function renderFeatured(items) {
       `;
     })
     .join('');
+
+  appendContinuationCard(root, {
+    baseClass: 'feature-card',
+    extraClass: 'feature-more-card',
+    delay: `${(items.length % 8) * 60}ms`,
+    title: 'There is more chaos, experiments, and build energy where this came from.',
+    copy: 'The rest usually lands on Instagram first.'
+  });
+  syncContinuationCards();
 }
 
 function renderRecent(items) {
@@ -355,6 +365,15 @@ function renderRecent(items) {
       `;
     })
     .join('');
+
+  appendContinuationCard(root, {
+    baseClass: 'work-card',
+    extraClass: 'work-more-card',
+    delay: `${(items.length % 10) * 55}ms`,
+    title: 'More playful side quests, weird little builds, and half-serious experiments live beyond this point.',
+    copy: 'Instagram usually gets the overflow first.'
+  });
+  syncContinuationCards();
 }
 
 function renderTools(items) {
@@ -425,6 +444,63 @@ function renderSocial(items) {
     })
     .join('');
   processInstagramEmbeds();
+}
+
+function appendContinuationCard(root, config) {
+  const placeholder = document.createElement('a');
+  placeholder.className = `${config.baseClass} section-more-card ${config.extraClass} reveal`;
+  placeholder.href = 'https://www.instagram.com/krazyykrunal/';
+  placeholder.target = '_blank';
+  placeholder.rel = 'noopener noreferrer';
+  placeholder.style.setProperty('--delay', config.delay);
+  placeholder.innerHTML = `
+    <div class="section-more-body">
+      <p class="section-more-kicker">See More</p>
+      <h3 class="section-more-title">${escapeHtml(config.title)}</h3>
+      <p class="section-more-copy">${escapeHtml(config.copy)}</p>
+    </div>
+  `;
+  root.appendChild(placeholder);
+}
+
+function syncContinuationCards() {
+  syncContinuationCard('featured-gallery', '.feature-card', '.feature-more-card');
+  syncContinuationCard('project-gallery', '.work-card', '.work-more-card');
+}
+
+function syncContinuationCard(rootId, cardSelector, placeholderSelector) {
+  const root = document.getElementById(rootId);
+  const placeholder = root?.querySelector(placeholderSelector);
+  if (!root || !placeholder) return;
+
+  const cards = Array.from(root.querySelectorAll(`${cardSelector}:not(${placeholderSelector})`));
+  const computed = window.getComputedStyle(root);
+  const columns = computed.gridTemplateColumns
+    .split(' ')
+    .filter((value) => value && value !== '/').length;
+
+  if (!cards.length || columns <= 1) {
+    placeholder.hidden = true;
+    placeholder.style.removeProperty('--section-span');
+    placeholder.style.removeProperty('--section-height');
+    return;
+  }
+
+  const remainder = cards.length % columns;
+  if (remainder === 0) {
+    placeholder.hidden = true;
+    placeholder.style.removeProperty('--section-span');
+    placeholder.style.removeProperty('--section-height');
+    return;
+  }
+
+  const span = columns - remainder;
+  const measuredHeight = cards[0]?.offsetHeight;
+  placeholder.hidden = false;
+  placeholder.style.setProperty('--section-span', String(span));
+  if (measuredHeight) {
+    placeholder.style.setProperty('--section-height', `${measuredHeight}px`);
+  }
 }
 
 function processInstagramEmbeds() {
