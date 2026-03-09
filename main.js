@@ -11,9 +11,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
   rotateGreetings(greetings);
   setupMenus();
-  loadGallery();
+  setupSmoothNavigation();
+  loadPortfolio();
   initThreeBackdrop();
+  initSpectaclesCursor();
 });
+
+const fallbackPortfolio = {
+  spotlight: {
+    image: './bitmoji-avatar-trimmed.png',
+    imageAlt: 'Bitmoji avatar of Krazyy Krunal'
+  },
+  featured: [
+    {
+      title: 'AR Home Automation',
+      summary: 'A spatial control layer for smart-home interactions with utility at the center.',
+      meta: 'Utility XR / Spectacles Prototype',
+      img: 'https://github.com/kgediya/spectacles-smart-home-ar/raw/main/assets/demo-preview.gif',
+      href: 'https://github.com/kgediya/spectacles-smart-home-ar',
+      cta: 'View Build'
+    }
+  ],
+  recent: [
+    {
+      title: 'Immersive XR Experiments',
+      summary: 'Quick updates can be added here as lightweight cards.',
+      meta: 'Recent Build',
+      img: 'https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif',
+      href: 'https://www.linkedin.com/in/krazyykrunal'
+    }
+  ],
+  tools: [
+    {
+      title: 'XR Planner',
+      description: 'A planning tool for immersive build workflows.',
+      type: 'Planning Tool',
+      href: '/xrplanner/',
+      tags: ['Planning', 'Ops', 'XR']
+    }
+  ],
+  social: [
+    {
+      platform: 'instagram',
+      permalink: 'https://www.instagram.com/reel/DL4rk36t4gH/?utm_source=ig_embed&utm_campaign=loading',
+      captioned: false,
+      label: 'Recent Drop'
+    },
+    {
+      platform: 'instagram',
+      permalink: 'https://www.instagram.com/reel/DMOF81vNuJz/?utm_source=ig_embed&utm_campaign=loading',
+      captioned: false,
+      label: 'Experiment'
+    },
+    {
+      platform: 'instagram',
+      permalink: 'https://www.instagram.com/reel/DIOheUktl60/?utm_source=ig_embed&utm_campaign=loading',
+      captioned: false,
+      label: 'Behind The Build'
+    }
+  ]
+};
 
 function rotateGreetings(greetings) {
   const greetingEl = document.getElementById('greeting-anim');
@@ -39,20 +96,20 @@ function setupMenus() {
   };
 
   const closeAll = () => {
-    Object.values(menuSubmenus).forEach((submenuId) => {
+    Object.entries(menuSubmenus).forEach(([menuId, submenuId]) => {
       const submenu = document.getElementById(submenuId);
-      if (submenu) submenu.classList.remove('show');
-    });
-
-    Object.keys(menuSubmenus).forEach((menuId) => {
       const menu = document.getElementById(menuId);
-      if (menu) menu.classList.remove('active');
+      if (submenu) submenu.classList.remove('show');
+      if (menu) {
+        menu.classList.remove('active');
+        menu.setAttribute('aria-expanded', 'false');
+      }
     });
   };
 
-  Object.keys(menuSubmenus).forEach((menuId) => {
+  Object.entries(menuSubmenus).forEach(([menuId, submenuId]) => {
     const menuBtn = document.getElementById(menuId);
-    const submenu = document.getElementById(menuSubmenus[menuId]);
+    const submenu = document.getElementById(submenuId);
     if (!menuBtn || !submenu) return;
 
     menuBtn.addEventListener('click', (event) => {
@@ -62,6 +119,7 @@ function setupMenus() {
       if (!wasOpen) {
         submenu.classList.add('show');
         menuBtn.classList.add('active');
+        menuBtn.setAttribute('aria-expanded', 'true');
       }
     });
   });
@@ -72,47 +130,253 @@ function setupMenus() {
   });
 }
 
-function loadGallery() {
-  fetch('gifs.json')
-    .then((response) => {
-      if (!response.ok) throw new Error('Unable to fetch gifs.json');
-      return response.json();
-    })
-    .then((projects) => {
-      if (!Array.isArray(projects)) throw new Error('Invalid gallery format');
-      renderGallery(projects);
-    })
-    .catch(() => {
-      renderGallery([
-        { title: 'Immersive AR Experience', img: 'https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif' },
-        { title: 'Gamified Product Story', img: 'https://media.giphy.com/media/3o7aCVpPjgTP2gFzA0/giphy.gif' },
-        { title: 'Realtime 3D Lens UI', img: 'https://media.giphy.com/media/26tknCqiJrBQG6bxC/giphy.gif' }
-      ]);
+function setupSmoothNavigation() {
+  const links = document.querySelectorAll('a[href^="#"]');
+  links.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const href = link.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.querySelector(href);
+      if (!target) return;
+
+      event.preventDefault();
+      smoothScrollToElement(target, 1100);
+
+      if (history.pushState) {
+        history.pushState(null, '', href);
+      } else {
+        window.location.hash = href;
+      }
     });
+  });
 }
 
-function renderGallery(projects) {
-  const gallery = document.getElementById('project-gallery');
-  if (!gallery) return;
+function smoothScrollToElement(element, duration = 1000) {
+  const startY = window.scrollY;
+  const targetY = element.getBoundingClientRect().top + window.scrollY - 20;
+  const distance = targetY - startY;
+  const startTime = performance.now();
 
-  gallery.innerHTML = projects
-    .map((project, index) => {
-      const safeTitle = escapeHtml(project.title || 'XR Project');
-      const safeImg = escapeHtml(project.img || '');
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function step(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeInOutCubic(progress);
+    window.scrollTo(0, startY + distance * eased);
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    }
+  }
+
+  window.requestAnimationFrame(step);
+}
+
+function loadPortfolio() {
+  fetch('portfolio-data.json')
+    .then((response) => {
+      if (!response.ok) throw new Error('Unable to fetch portfolio-data.json');
+      return response.json();
+    })
+    .then((data) => renderPortfolio(normalizePortfolio(data)))
+    .catch(() => renderPortfolio(fallbackPortfolio));
+}
+
+function normalizePortfolio(data) {
+  return {
+    spotlight: data?.spotlight || fallbackPortfolio.spotlight,
+    featured: Array.isArray(data?.featured) ? data.featured : fallbackPortfolio.featured,
+    recent: Array.isArray(data?.recent) ? data.recent : fallbackPortfolio.recent,
+    tools: Array.isArray(data?.tools) ? data.tools : fallbackPortfolio.tools,
+    social: Array.isArray(data?.social) ? data.social : fallbackPortfolio.social
+  };
+}
+
+function renderPortfolio(data) {
+  renderSpotlight(data.spotlight);
+  renderFeatured(data.featured);
+  renderRecent(data.recent);
+  renderTools(data.tools);
+  renderSocial(data.social);
+  enableCardTilt();
+}
+
+function renderSpotlight(spotlight) {
+  const root = document.getElementById('hero-spotlight');
+  if (!root || !spotlight) return;
+
+  const safeImage = escapeAttribute(spotlight.image || './bitmoji-avatar-trimmed.png');
+  const safeImageAlt = escapeHtml(spotlight.imageAlt || 'Krazyy Krunal avatar');
+
+  root.innerHTML = `
+    <div class="spotlight-avatar-shell">
+      <img class="spotlight-avatar" src="${safeImage}" alt="${safeImageAlt}">
+    </div>
+  `;
+}
+
+function renderFeatured(items) {
+  const root = document.getElementById('featured-gallery');
+  if (!root) return;
+
+  if (!items.length) {
+    root.innerHTML = '<div class="section-empty">Add featured projects in <code>portfolio-data.json</code>.</div>';
+    return;
+  }
+
+  root.innerHTML = items
+    .map((item, index) => {
+      const safeTitle = escapeHtml(item.title || 'XR Project');
+      const safeSummary = escapeHtml(item.summary || '');
+      const safeMeta = escapeHtml(item.meta || '');
+      const safeImg = escapeHtml(item.img || '');
+      const safeHref = escapeAttribute(item.href || '#');
+      const safeCta = escapeHtml(item.cta || 'Open');
       return `
-        <article class="work-card reveal" style="--delay:${(index % 10) * 55}ms">
+        <article class="feature-card reveal" style="--delay:${(index % 8) * 60}ms">
           <img src="${safeImg}" alt="${safeTitle}" loading="lazy" decoding="async">
-          <p class="work-title">${safeTitle}</p>
+          <div class="feature-body">
+            <p class="feature-meta">${safeMeta}</p>
+            <h3 class="feature-title">${safeTitle}</h3>
+            <p class="feature-summary">${safeSummary}</p>
+            <div class="feature-footer">
+              <a class="feature-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeCta}</a>
+            </div>
+          </div>
         </article>
       `;
     })
     .join('');
+}
 
-  enableCardTilt();
+function renderRecent(items) {
+  const root = document.getElementById('project-gallery');
+  if (!root) return;
+
+  if (!items.length) {
+    root.innerHTML = '<div class="section-empty">Add recent builds in <code>portfolio-data.json</code>.</div>';
+    return;
+  }
+
+  root.innerHTML = items
+    .map((item, index) => {
+      const safeTitle = escapeHtml(item.title || 'XR Project');
+      const safeSummary = escapeHtml(item.summary || '');
+      const safeMeta = escapeHtml(item.meta || '');
+      const safeImg = escapeHtml(item.img || '');
+      const safeHref = escapeAttribute(item.href || '#');
+      return `
+        <article class="work-card reveal" style="--delay:${(index % 10) * 55}ms">
+          <img src="${safeImg}" alt="${safeTitle}" loading="lazy" decoding="async">
+          <div class="work-body">
+            <p class="work-meta">${safeMeta}</p>
+            <h3 class="work-title">${safeTitle}</h3>
+            <p class="work-summary">${safeSummary}</p>
+            <div class="work-footer">
+              <a class="feature-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">Open</a>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+}
+
+function renderTools(items) {
+  const root = document.getElementById('tool-gallery');
+  if (!root) return;
+
+  if (!items.length) {
+    root.innerHTML = '<div class="section-empty">Add tools in <code>portfolio-data.json</code>.</div>';
+    return;
+  }
+
+  root.innerHTML = items
+    .map((item, index) => {
+      const safeTitle = escapeHtml(item.title || 'Tool');
+      const safeDescription = escapeHtml(item.description || '');
+      const safeType = escapeHtml(item.type || 'Tool');
+      const safeHref = escapeAttribute(item.href || '#');
+      const external = isExternalLink(item.href);
+      return `
+        <a class="tool-card reveal" style="--delay:${(index % 10) * 45}ms" href="${safeHref}" target="${external ? '_blank' : '_self'}" rel="${external ? 'noopener noreferrer' : ''}">
+          <div class="tool-body">
+            <p class="tool-type">${safeType}</p>
+            <h3 class="tool-title">${safeTitle}</h3>
+            <p class="tool-description">${safeDescription}</p>
+            <span class="tool-link">Open Tool</span>
+          </div>
+        </a>
+      `;
+    })
+    .join('');
+}
+
+function renderSocial(items) {
+  const root = document.getElementById('social-feed');
+  if (!root) return;
+
+  if (!items.length) {
+    root.innerHTML = '<div class="section-empty">Add social embeds in <code>portfolio-data.json</code>.</div>';
+    return;
+  }
+
+  root.innerHTML = items
+    .map((item, index) => {
+      if ((item.platform || '').toLowerCase() === 'instagram' && item.permalink) {
+        const safePermalink = escapeAttribute(item.permalink);
+        const captioned = item.captioned ? ' data-instgrm-captioned' : '';
+        const safeLabel = escapeHtml(item.label || 'Instagram');
+        return `
+          <article class="embed-card reveal" style="--delay:${(index % 10) * 45}ms">
+            <div class="embed-card-head">
+              <p class="embed-label">${safeLabel}</p>
+              <a class="embed-link" href="${safePermalink}" target="_blank" rel="noopener noreferrer">Open</a>
+            </div>
+            <blockquote class="instagram-media"${captioned} data-instgrm-permalink="${safePermalink}" data-instgrm-version="14"></blockquote>
+          </article>
+        `;
+      }
+
+      const safeTitle = escapeHtml(item.fallbackTitle || 'Social post');
+      const safeDescription = escapeHtml(item.fallbackDescription || 'Embed unavailable for this platform.');
+      return `
+        <article class="embed-card reveal" style="--delay:${(index % 10) * 45}ms">
+          <div class="embed-fallback">
+            <h3 class="social-title">${safeTitle}</h3>
+            <p class="log-copy">${safeDescription}</p>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+  processInstagramEmbeds();
+}
+
+function processInstagramEmbeds() {
+  if (window.instgrm?.Embeds?.process) {
+    window.instgrm.Embeds.process();
+    return;
+  }
+
+  if (document.querySelector('script[data-instgrm-loader]')) return;
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.instagram.com/embed.js';
+  script.setAttribute('data-instgrm-loader', 'true');
+  script.onload = () => {
+    if (window.instgrm?.Embeds?.process) {
+      window.instgrm.Embeds.process();
+    }
+  };
+  document.body.appendChild(script);
 }
 
 function enableCardTilt() {
-  const cards = document.querySelectorAll('.work-card');
+  const cards = document.querySelectorAll('.feature-card, .work-card, .tool-card, .social-card');
   cards.forEach((card) => {
     card.addEventListener('pointermove', (event) => {
       const rect = card.getBoundingClientRect();
@@ -179,7 +443,7 @@ function initThreeBackdrop() {
 
   const knot = new THREE.Mesh(
     new THREE.TorusKnotGeometry(1.35, 0.3, 180, 26),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.14 })
+    new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.16 })
   );
   mainGroup.add(knot);
 
@@ -234,6 +498,40 @@ function initThreeBackdrop() {
   });
 }
 
+function initSpectaclesCursor() {
+  const supportsFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const cursor = document.getElementById('spectacles-cursor');
+  if (!supportsFinePointer || !cursor) return;
+
+  document.body.classList.add('cursor-active');
+
+  const state = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
+  };
+
+  window.addEventListener('pointermove', (event) => {
+    state.x = event.clientX;
+    state.y = event.clientY;
+    cursor.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) translate(-50%, -50%)`;
+  });
+
+  document.addEventListener('pointerover', (event) => {
+    const hoverable = event.target.closest('a, button, .nav-btn, .tool-card, .work-card, .feature-card');
+    document.body.classList.toggle('cursor-hover', Boolean(hoverable));
+  });
+
+  document.addEventListener('pointerleave', () => {
+    document.body.classList.remove('cursor-hover');
+  });
+
+  cursor.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) translate(-50%, -50%)`;
+}
+
+function isExternalLink(href) {
+  return typeof href === 'string' && /^(https?:)?\/\//.test(href);
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -241,4 +539,8 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value);
 }

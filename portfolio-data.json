@@ -1,0 +1,183 @@
+{
+  "spotlight": {
+    "image": "./bitmoji-avatar-trimmed.png",
+    "imageAlt": "Bitmoji avatar of Krazyy Krunal"
+  },
+  "featured": [
+    {
+      "title": "AR Home Automation",
+      "summary": "A smart-home prototype that tries to make AR feel genuinely useful instead of just flashy.",
+      "meta": "Utility XR / Spectacles Prototype",
+      "img": "https://github.com/kgediya/spectacles-smart-home-ar/raw/main/assets/demo-preview.gif",
+      "href": "https://github.com/kgediya/spectacles-smart-home-ar",
+      "cta": "View Build"
+    },
+    {
+      "title": "Phygital ARcade",
+      "summary": "A phygital play experiment where screen energy and physical interaction bounce off each other nicely.",
+      "meta": "Gamified Activation / Multiplayer Energy",
+      "img": "https://github.com/kgediya/ARcade-Racer/raw/main/Preview%20Files/preview1.gif",
+      "href": "https://github.com/kgediya/ARcade-Racer",
+      "cta": "View Build"
+    },
+    {
+      "title": "3D Product Showcase",
+      "summary": "A more tactile way to show off products with movement, depth, and just enough drama.",
+      "meta": "Brand Storytelling / Product Experience",
+      "img": "./assets/workgifs/image26.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal",
+      "cta": "See Updates"
+    },
+    {
+      "title": "Launch 360 Zones",
+      "summary": "Launch spaces built to feel cinematic without becoming confusing or heavy.",
+      "meta": "Immersive Launch / Spatial UI",
+      "img": "./assets/workgifs/image48.gif",
+      "href": "https://www.instagram.com/krazyykrunal/",
+      "cta": "See Updates"
+    }
+  ],
+  "recent": [
+    {
+      "title": "Festive Games",
+      "summary": "Quick festive game loops made to feel cheerful, replayable, and easy to ship.",
+      "meta": "Campaign Build",
+      "img": "./assets/workgifs/image29.gif",
+      "href": "https://www.instagram.com/krazyykrunal/"
+    },
+    {
+      "title": "Branded Games",
+      "summary": "Branded play formats built to make products feel memorable without becoming too ad-like.",
+      "meta": "Brand Engagement",
+      "img": "./assets/workgifs/image30.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal"
+    },
+    {
+      "title": "Rewards Reveal",
+      "summary": "Tiny reveal moments for rewards, surprises, and satisfying payoff.",
+      "meta": "Reward Mechanics",
+      "img": "./assets/workgifs/image32.gif",
+      "href": "https://www.instagram.com/krazyykrunal/"
+    },
+    {
+      "title": "Location Based",
+      "summary": "Work that depends on place, movement, and the feeling of being there.",
+      "meta": "Contextual XR",
+      "img": "./assets/workgifs/image50.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal"
+    },
+    {
+      "title": "Product Features Games",
+      "summary": "Interactive explainers where product education and play sit in the same room.",
+      "meta": "Explainer Play",
+      "img": "./assets/workgifs/image41.gif",
+      "href": "https://www.instagram.com/krazyykrunal/"
+    },
+    {
+      "title": "Fiction To Reality",
+      "summary": "Concepts that start a bit dreamy and end up feeling surprisingly real.",
+      "meta": "Concept XR",
+      "img": "./assets/workgifs/image47.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal"
+    },
+    {
+      "title": "Educational",
+      "summary": "Educational formats that explain more clearly without losing the fun.",
+      "meta": "Learning Experience",
+      "img": "./assets/workgifs/image49.gif",
+      "href": "https://www.linkedin.com/in/krazyykrunal"
+    },
+    {
+      "title": "Custom Try On",
+      "summary": "Try-on experiments that lean into charm, novelty, and a little bit of swagger.",
+      "meta": "Fashion XR",
+      "img": "./assets/workgifs/image46.gif",
+      "href": "https://www.instagram.com/krazyykrunal/"
+    }
+  ],
+  "tools": [
+    {
+      "title": "LS WebAR Publisher",
+      "description": "A publishing helper built to make Lens Studio to WebAR workflows less annoying.",
+      "type": "Workflow Utility",
+      "href": "https://krazyy-kam-public.netlify.app",
+      "tags": ["Publishing", "WebAR", "Utility"]
+    },
+    {
+      "title": "Skybox Generator",
+      "description": "A quick way to build spatial backdrops without wrestling the setup every time.",
+      "type": "Creator Tool",
+      "href": "/portalcreator/",
+      "tags": ["Skybox", "Environment", "XR"]
+    },
+    {
+      "title": "Dynalinks",
+      "description": "A small utility for making links and campaign routing feel a bit smarter.",
+      "type": "Growth Tool",
+      "href": "/dynalinks/",
+      "tags": ["Links", "Campaign", "Routing"]
+    },
+    {
+      "title": "Kustom MakQR",
+      "description": "A QR maker for when default generators feel too plain and too limiting.",
+      "type": "Utility Tool",
+      "href": "/makqr/",
+      "tags": ["QR", "Branding", "Utility"]
+    },
+    {
+      "title": "XR Planner",
+      "description": "A planning companion for turning scattered XR ideas into something trackable.",
+      "type": "Planning Tool",
+      "href": "/xrplanner/",
+      "tags": ["Planning", "Ops", "XR"]
+    },
+    {
+      "title": "Blueprint 3D",
+      "description": "A 3D-first helper for figuring out how an experience should actually take shape.",
+      "type": "Prototype Tool",
+      "href": "/blueprint/",
+      "tags": ["3D", "Structure", "Prototype"]
+    },
+    {
+      "title": "AirMusic",
+      "description": "A playful audio interaction experiment with a utility streak.",
+      "type": "Interactive Tool",
+      "href": "/airmusic/",
+      "tags": ["Audio", "Interaction", "Experiment"]
+    },
+    {
+      "title": "Media Helper",
+      "description": "A helper tool for media tasks that keep showing up in immersive workflows.",
+      "type": "Support Tool",
+      "href": "/audiohelper/",
+      "tags": ["Media", "Workflow", "Helper"]
+    },
+    {
+      "title": "SkyHi",
+      "description": "A small spatial side project that sits somewhere between utility and curiosity.",
+      "type": "Product Experiment",
+      "href": "/skyhi/",
+      "tags": ["Product", "Spatial", "Experiment"]
+    }
+  ],
+  "social": [
+    {
+      "platform": "instagram",
+      "permalink": "https://www.instagram.com/reel/DL4rk36t4gH/?utm_source=ig_embed&utm_campaign=loading",
+      "captioned": false,
+      "label": "Recent Drop"
+    },
+    {
+      "platform": "instagram",
+      "permalink": "https://www.instagram.com/reel/DMOF81vNuJz/?utm_source=ig_embed&utm_campaign=loading",
+      "captioned": false,
+      "label": "Experiment"
+    },
+    {
+      "platform": "instagram",
+      "permalink": "https://www.instagram.com/reel/DIOheUktl60/?utm_source=ig_embed&utm_campaign=loading",
+      "captioned": false,
+      "label": "Behind The Build"
+    }
+  ]
+}

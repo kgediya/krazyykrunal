@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -14,32 +14,37 @@
 </head>
 <body>
   <canvas id="scene-bg" aria-hidden="true"></canvas>
+  <div class="spectacles-cursor" id="spectacles-cursor" aria-hidden="true"></div>
 
   <header class="hero-shell">
     <div class="hero-top-row">
       <a class="brand-lockup" href="/" aria-label="Krazyy Krunal Home">
         <img src="Logo2.png" alt="Krazyy Krunal logo" class="site-logo">
         <div class="brand-copy">
-          <p class="brand-kicker">KRAZYY CREATIVE LAB</p>
+          <p class="brand-kicker">ALL THINGS KRAZYY BY</p>
           <h1>Krazyy Krunal</h1>
         </div>
       </a>
 
       <nav class="nav-bar" aria-label="Primary navigation">
-        <button class="nav-btn" id="menu-connect" type="button">CONNECT</button>
-        <button class="nav-btn" id="menu-tools" type="button">TOOLS</button>
+        <button class="nav-btn" id="menu-connect" type="button" aria-expanded="false" aria-controls="connect-submenu">CONNECT</button>
+        <button class="nav-btn" id="menu-tools" type="button" aria-expanded="false" aria-controls="tools-submenu">TOOLS</button>
       </nav>
     </div>
 
     <div class="hero-panel">
-      <p class="hero-greeting"><span class="greeting-anim" id="greeting-anim"></span><span class="greeting-static">Let's build immersive XR</span></p>
-      <p class="header-subtitle">AR/VR prototyper building high-impact immersive stories, playful utility products, and branded interactive experiences.</p>
-      <div class="hero-meta">
-        <span>Spatial Design</span>
-        <span>Lens Studio</span>
-        <span>WebAR</span>
-        <span>3D UI Systems</span>
+      <div class="hero-copy">
+        <p class="hero-greeting" id="greeting-anim"></p>
+        <h2 class="hero-statement">I make krazyy little XR things that feel alive ✨</h2>
+        <p class="header-subtitle">Some are polished launches, some are weird prototypes, some are tools I built because I needed them yesterday. This space is meant to hold all of that without losing the vibe.</p>
+        <p class="hero-signature">Krunal MB Gediya, Mumbai, India </p>
+        <div class="hero-actions">
+          <a class="hero-cta hero-cta-primary" href="#featured-work">View Featured Work</a>
+          <a class="hero-cta" href="#recent-builds">Browse Recent Builds</a>
+          <a class="hero-cta" href="mailto:kgediya0898@gmail.com?subject=Project%20Enquiry%20for%20Krunal%20MB%20Gediya&body=Hi%20Krunal%2C%0D%0A%0D%0AI%20came%20across%20your%20portfolio%20and%20wanted%20to%20discuss%20a%20project.%0D%0A%0D%0AProject%20type%3A%0D%0ATimeline%3A%0D%0ABudget%20range%3A%0D%0AWhat%20we%20need%20help%20with%3A%0D%0AReference%20links%20%28if%20any%29%3A%0D%0A%0D%0AThanks%2C%0D%0A">Let's Build Something</a>
+        </div>
       </div>
+      <aside class="hero-spotlight" id="hero-spotlight" aria-label="Portfolio snapshot"></aside>
     </div>
   </header>
 
@@ -78,12 +83,43 @@
   </div>
 
   <main>
-    <section class="portfolio-section">
+    <section class="portfolio-section" id="featured-work">
       <div class="title-row">
-        <p class="section-kicker">Portfolio</p>
-        <h2 class="section-title">Selected XR Works</h2>
+        <p class="section-kicker">Featured Work</p>
+        <h2 class="section-title">The work I keep coming back to</h2>
+        <p class="section-intro">A few projects that still feel closest to my style. Playful, immersive, and built with a strong sense of interaction.</p>
+      </div>
+      <div id="featured-gallery" class="feature-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="portfolio-section" id="recent-builds">
+      <div class="title-row">
+        <p class="section-kicker">Recent Builds</p>
+        <h2 class="section-title">Fresh experiments, launches, and late-night ideas</h2>
+        <p class="section-intro">This is the living part. New things can land here quickly, even if they are still rough around the edges.</p>
       </div>
       <div id="project-gallery" aria-live="polite"></div>
+    </section>
+
+    <section class="portfolio-section" id="tools-section">
+      <div class="title-row">
+        <p class="section-kicker">Tools</p>
+        <h2 class="section-title">Useful things I made for myself and others</h2>
+        <p class="section-intro">Small helpers, utility builds, and process shortcuts that make creating immersive work less painful.</p>
+      </div>
+      <div id="tool-gallery" class="tool-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="portfolio-section" id="social-log">
+      <div class="title-row">
+        <p class="section-kicker">Social Feed</p>
+        <h2 class="section-title">The internet trail of whatever I am making lately</h2>
+        <p class="section-intro">This is where the fresh stuff usually lands first. Little wins, weird prototypes, launch moments, behind-the-scenes chaos, and all the krazyy in-between bits.</p>
+      </div>
+      <div class="social-widget-shell">
+        <script src="https://elfsightcdn.com/platform.js" async></script>
+        <div class="elfsight-app-952a5f7c-4ac3-4b17-8b93-321234761741" data-elfsight-app-lazy></div>
+      </div>
     </section>
   </main>
 
@@ -91,5 +127,3 @@
   <script src="main.js"></script>
 </body>
 </html>
-
-
