@@ -256,19 +256,16 @@ function renderFeatured(items) {
       const safeMeta = escapeHtml(item.meta || '');
       const safeImg = escapeHtml(item.img || '');
       const safeHref = escapeAttribute(item.href || '#');
-      const safeCta = escapeHtml(item.cta || 'Open');
+      const external = isExternalLink(item.href);
       return `
-        <article class="feature-card reveal" style="--delay:${(index % 8) * 60}ms">
+        <a class="feature-card reveal" style="--delay:${(index % 8) * 60}ms" href="${safeHref}" target="${external ? '_blank' : '_self'}" rel="${external ? 'noopener noreferrer' : ''}">
           <img src="${safeImg}" alt="${safeTitle}" loading="lazy" decoding="async">
           <div class="feature-body">
             <p class="feature-meta">${safeMeta}</p>
             <h3 class="feature-title">${safeTitle}</h3>
             <p class="feature-summary">${safeSummary}</p>
-            <div class="feature-footer">
-              <a class="feature-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">${safeCta}</a>
-            </div>
           </div>
-        </article>
+        </a>
       `;
     })
     .join('');
@@ -290,18 +287,16 @@ function renderRecent(items) {
       const safeMeta = escapeHtml(item.meta || '');
       const safeImg = escapeHtml(item.img || '');
       const safeHref = escapeAttribute(item.href || '#');
+      const external = isExternalLink(item.href);
       return `
-        <article class="work-card reveal" style="--delay:${(index % 10) * 55}ms">
+        <a class="work-card reveal" style="--delay:${(index % 10) * 55}ms" href="${safeHref}" target="${external ? '_blank' : '_self'}" rel="${external ? 'noopener noreferrer' : ''}">
           <img src="${safeImg}" alt="${safeTitle}" loading="lazy" decoding="async">
           <div class="work-body">
             <p class="work-meta">${safeMeta}</p>
             <h3 class="work-title">${safeTitle}</h3>
             <p class="work-summary">${safeSummary}</p>
-            <div class="work-footer">
-              <a class="feature-link" href="${safeHref}" target="_blank" rel="noopener noreferrer">Open</a>
-            </div>
           </div>
-        </article>
+        </a>
       `;
     })
     .join('');
@@ -329,7 +324,6 @@ function renderTools(items) {
             <p class="tool-type">${safeType}</p>
             <h3 class="tool-title">${safeTitle}</h3>
             <p class="tool-description">${safeDescription}</p>
-            <span class="tool-link">Open Tool</span>
           </div>
         </a>
       `;
