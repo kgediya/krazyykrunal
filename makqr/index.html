@@ -212,6 +212,22 @@
     background: rgba(255,255,255,0.06);
   }
 
+  .transparent-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 4px;
+    color: rgba(255,255,255,0.82);
+    font-size: .92rem;
+  }
+
+  .transparent-toggle input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #ffffff;
+  }
+
   .file-input-container {
     position: relative;
     overflow: hidden;
@@ -438,6 +454,10 @@
     
         <label class="kustom-color-control" for="background-color">Background Color</label>
         <input class="kustom-color-control" type="color" name="backGround" id="background-color" value="#ffffff">
+        <label class="transparent-toggle" for="transparent-background">
+          <input type="checkbox" id="transparent-background">
+          <span>Transparent background</span>
+        </label>
     <input type="text" name="link" id="link_data" placeholder="Enter your link here & submit">
     <p id="status-msg" class="status-msg" aria-live="polite"></p>
       
@@ -498,6 +518,7 @@ const DOM = {
   foregroundColor: document.getElementById('foreground-color'),
   secondaryColor: document.getElementById('secondary-color'),
   backgroundColor: document.getElementById('background-color'),
+  transparentBackground: document.getElementById('transparent-background'),
   dotShape: document.getElementById('dotShape'),
   cornerShape: document.getElementById('cornerShape'),
   cornerDotShape: document.getElementById('cornerDotShape'),
@@ -641,15 +662,22 @@ function parseDestination(raw) {
 }
 
 function buildThemeConfig(themeName) {
+  const backgroundColor = DOM.transparentBackground.checked
+    ? 'rgba(0,0,0,0)'
+    : (DOM.backgroundColor.value || '#ffffff');
+
   if (themeName === 'custom') {
     return {
       logo: '',
       primaryColor: DOM.foregroundColor.value || '#000000',
       secondaryColor: DOM.secondaryColor.value || '#000000',
-      backgroundColor: DOM.backgroundColor.value || '#ffffff'
+      backgroundColor
     };
   }
-  return { ...themes[themeName] };
+  return {
+    ...themes[themeName],
+    backgroundColor: DOM.transparentBackground.checked ? 'rgba(0,0,0,0)' : themes[themeName].backgroundColor
+  };
 }
 
 function getPreviewSize() {
@@ -887,6 +915,7 @@ function applyPreset(name) {
   DOM.foregroundColor.value = preset.foreground;
   DOM.secondaryColor.value = preset.secondary;
   DOM.backgroundColor.value = preset.background;
+  DOM.transparentBackground.checked = false;
   setStatus('Preset applied. Add your link and generate.', '');
 }
 
@@ -928,6 +957,9 @@ DOM.downloadSvg.addEventListener('click', () => {
 });
 DOM.copyLink.addEventListener('click', copyGeneratedLink);
 DOM.linkType.addEventListener('change', syncThemeSelection);
+DOM.transparentBackground.addEventListener('change', () => {
+  setStatus('Background updated. Generate to refresh QR.', '');
+});
 
 DOM.presetButtons.forEach((button) => {
   button.addEventListener('click', () => applyPreset(button.dataset.preset));
