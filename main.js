@@ -1,12 +1,29 @@
-document.addEventListener('DOMContentLoaded', () => {
+﻿document.addEventListener('DOMContentLoaded', () => {
   const greetings = [
-    'Kem cho',
-    'Namaste',
+    'કેમ છો',
     'Hola',
+    'नमस्ते',
     'Bonjour',
+    'कसं काय',
     'Ciao',
-    'Salaam',
-    'Hello'
+    'ನಮಸ್ಕಾರ',
+    'سلام',
+    'నమస్కారం',
+    'こんにちは',
+    'வணக்கம்',
+    '你好',
+    'നമസ്കാരം',
+    '안녕하세요',
+    'ନମସ୍କାର',
+    'Olá',
+    'আসসালামু আলাইকুম',
+    'Привет',
+    'ਸਤ ਸ੍ਰੀ ਅਕਾਲ',
+    'Habari',
+    'Merhaba',
+    'Γεια σου',
+    'Hej',
+    'Hallo'
   ];
 
   rotateGreetings(greetings);
@@ -88,14 +105,46 @@ function rotateGreetings(greetings) {
 
   let currentIndex = 0;
   greetingEl.textContent = greetings[currentIndex];
+  greetingEl.animate(
+    [
+      { opacity: 0, transform: 'translateY(8px)' },
+      { opacity: 1, transform: 'translateY(0)' }
+    ],
+    {
+      duration: 520,
+      easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      fill: 'forwards'
+    }
+  );
 
   setInterval(() => {
-    greetingEl.style.opacity = '0';
-    setTimeout(() => {
+    const fadeOut = greetingEl.animate(
+      [
+        { opacity: 1, transform: 'translateY(0)' },
+        { opacity: 0, transform: 'translateY(-8px)' }
+      ],
+      {
+        duration: 380,
+        easing: 'ease',
+        fill: 'forwards'
+      }
+    );
+
+    fadeOut.onfinish = () => {
       currentIndex = (currentIndex + 1) % greetings.length;
       greetingEl.textContent = greetings[currentIndex];
-      greetingEl.style.opacity = '1';
-    }, 220);
+      greetingEl.animate(
+        [
+          { opacity: 0, transform: 'translateY(8px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 520,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'forwards'
+        }
+      );
+    };
   }, 2300);
 }
 
@@ -692,3 +741,4 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
   return escapeHtml(value);
 }
+
