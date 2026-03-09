@@ -157,13 +157,6 @@
       "tags": ["QR", "Branding", "Utility"]
     },
     {
-      "title": "XR Planner",
-      "description": "A planning companion for turning scattered XR ideas into something trackable.",
-      "type": "Planning Tool",
-      "href": "/xrplanner/",
-      "tags": ["Planning", "Ops", "XR"]
-    },
-    {
       "title": "Blueprint 3D",
       "description": "A 3D-first helper for figuring out how an experience should actually take shape.",
       "type": "Prototype Tool",
