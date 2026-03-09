@@ -360,15 +360,28 @@ main {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 10px;
+  width: 100%;
 }
 
 .roles-connect-wrap {
   margin-top: 20px;
   scroll-margin-top: 24px;
+  width: 100%;
 }
 
 .roles-connect-kicker {
   margin-bottom: 10px;
+}
+
+@media (min-width: 769px) {
+  .roles-connect {
+    justify-content: space-between;
+  }
+
+  .roles-connect-btn {
+    flex: 1 1 0;
+    max-width: none;
+  }
 }
 
 .roles-connect-btn {
