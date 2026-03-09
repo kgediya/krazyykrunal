@@ -3,6 +3,36 @@
     "image": "./bitmoji-avatar-trimmed.png",
     "imageAlt": "Bitmoji avatar of Krazyy Krunal"
   },
+  "roles": [
+    {
+      "eyebrow": "Builder",
+      "title": "XR prototyper and interaction tinkerer",
+      "description": "I build AR, WebXR, and spatial interaction projects with a focus on making them clear, useful, and fun to use.",
+      "note": "SnapAR / Spectacles / WebXR / Lens Studio",
+      "image": "./assets/roles/builder-placeholder.jpg"
+    },
+    {
+      "eyebrow": "Educator",
+      "title": "Visiting faculty for AR and VR",
+      "description": "I teach AR and VR in academic settings, helping students think through ideas, tools, and what it takes to actually build something meaningful.",
+      "note": "Somaiya School of Design",
+      "image": "./assets/roles/faculty-placeholder.jpg"
+    },
+    {
+      "eyebrow": "Community",
+      "title": "Co-founded XDG and co-lead XDG Mumbai",
+      "description": "I spend a lot of time building community spaces where XR people can meet, share work, learn from each other, and grow together.",
+      "note": "XDG Mumbai / meetups / workshops / ecosystem building",
+      "image": "./assets/roles/xdg-placeholder.jpg"
+    },
+    {
+      "eyebrow": "Bridge Person",
+      "title": "Somewhere between creator, mentor, and scene glue",
+      "description": "A lot of what I do is about connecting people, ideas, and opportunities across creative work, learning, and the larger XR scene.",
+      "note": "Public talks / workshops / community collaborations",
+      "image": "./assets/roles/mentor-placeholder.jpg"
+    }
+  ],
   "featured": [
     {
       "title": "AR Home Automation",

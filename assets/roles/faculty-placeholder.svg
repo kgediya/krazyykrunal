@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" role="img" aria-labelledby="title desc">
+  <title id="title">Faculty placeholder</title>
+  <desc id="desc">Dark placeholder artwork for the faculty role card.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#060606"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#bg)"/>
+  <rect x="130" y="250" width="940" height="820" rx="34" fill="#2b2b2b" opacity="0.18"/>
+  <path d="M210 460 H1000" stroke="#cfcfcf" stroke-opacity="0.18" stroke-width="16" stroke-linecap="round"/>
+  <path d="M210 610 H880" stroke="#cfcfcf" stroke-opacity="0.16" stroke-width="16" stroke-linecap="round"/>
+  <path d="M210 760 H950" stroke="#cfcfcf" stroke-opacity="0.14" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="340" cy="1220" r="240" fill="#343434" opacity="0.2"/>
+</svg>

@@ -22,6 +22,15 @@ const fallbackPortfolio = {
     image: './bitmoji-avatar-trimmed.png',
     imageAlt: 'Bitmoji avatar of Krazyy Krunal'
   },
+  roles: [
+    {
+      eyebrow: 'Builder',
+      title: 'XR prototyper and interaction tinkerer',
+      description: 'I build spatial prototypes, interactive experiments, and playful systems for immersive work.',
+      note: 'SnapAR / WebXR / Spectacles',
+      image: './assets/roles/builder-placeholder.jpg'
+    }
+  ],
   featured: [
     {
       title: 'AR Home Automation',
@@ -210,6 +219,7 @@ function loadPortfolio() {
 function normalizePortfolio(data) {
   return {
     spotlight: data?.spotlight || fallbackPortfolio.spotlight,
+    roles: Array.isArray(data?.roles) ? data.roles : fallbackPortfolio.roles,
     featured: Array.isArray(data?.featured) ? data.featured : fallbackPortfolio.featured,
     recent: Array.isArray(data?.recent) ? data.recent : fallbackPortfolio.recent,
     tools: Array.isArray(data?.tools) ? data.tools : fallbackPortfolio.tools,
@@ -219,11 +229,48 @@ function normalizePortfolio(data) {
 
 function renderPortfolio(data) {
   renderSpotlight(data.spotlight);
+  renderRoles(data.roles);
   renderFeatured(data.featured);
   renderRecent(data.recent);
   renderTools(data.tools);
   renderSocial(data.social);
   enableCardTilt();
+}
+
+function renderRoles(items) {
+  const root = document.getElementById('roles-grid');
+  if (!root) return;
+
+  if (!items.length) {
+    root.innerHTML = '';
+    return;
+  }
+
+  root.innerHTML = items
+    .map((item, index) => {
+      const safeEyebrow = escapeHtml(item.eyebrow || 'Role');
+      const safeTitle = escapeHtml(item.title || 'XR role');
+      const safeDescription = escapeHtml(item.description || '');
+      const safeNote = escapeHtml(item.note || '');
+      const safeImage = escapeAttribute(item.image || '');
+      const cardStyle = ` style="--delay:${(index % 8) * 45}ms"`;
+      const mediaMarkup = safeImage
+        ? `<div class="role-media" style="background-image:url('${safeImage}')"></div>`
+        : '';
+
+      return `
+        <article class="role-card reveal"${cardStyle}>
+          ${mediaMarkup}
+          <div class="role-content">
+            <p class="role-eyebrow">${safeEyebrow}</p>
+            <h3 class="role-title">${safeTitle}</h3>
+            <p class="role-description">${safeDescription}</p>
+            <p class="role-note">${safeNote}</p>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
 }
 
 function renderSpotlight(spotlight) {
@@ -393,7 +440,7 @@ function processInstagramEmbeds() {
 }
 
 function enableCardTilt() {
-  const cards = document.querySelectorAll('.feature-card, .work-card, .tool-card, .social-card');
+  const cards = document.querySelectorAll('.feature-card, .work-card, .tool-card, .social-card, .role-card');
   cards.forEach((card) => {
     card.addEventListener('pointermove', (event) => {
       const rect = card.getBoundingClientRect();
@@ -534,7 +581,7 @@ function initSpectaclesCursor() {
   });
 
   document.addEventListener('pointerover', (event) => {
-    const hoverable = event.target.closest('a, button, .nav-btn, .tool-card, .work-card, .feature-card');
+    const hoverable = event.target.closest('a, button, .nav-btn, .tool-card, .work-card, .feature-card, .role-card');
     document.body.classList.toggle('cursor-hover', Boolean(hoverable));
   });
 

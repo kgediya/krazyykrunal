@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" role="img" aria-labelledby="title desc">
+  <title id="title">Mentor placeholder</title>
+  <desc id="desc">Dark placeholder artwork for the mentor role card.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d1d1d"/>
+      <stop offset="100%" stop-color="#070707"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#bg)"/>
+  <path d="M190 1120 C300 860 510 720 620 720 C740 720 930 860 1010 1120" fill="none" stroke="#e1e1e1" stroke-opacity="0.14" stroke-width="28" stroke-linecap="round"/>
+  <circle cx="430" cy="560" r="120" fill="#4a4a4a" opacity="0.2"/>
+  <circle cx="770" cy="560" r="120" fill="#4a4a4a" opacity="0.2"/>
+  <path d="M430 430 V250" stroke="#cfcfcf" stroke-opacity="0.16" stroke-width="16" stroke-linecap="round"/>
+  <path d="M770 430 V250" stroke="#cfcfcf" stroke-opacity="0.16" stroke-width="16" stroke-linecap="round"/>
+  <path d="M280 1340 H920" stroke="#cfcfcf" stroke-opacity="0.12" stroke-width="18" stroke-linecap="round"/>
+</svg>

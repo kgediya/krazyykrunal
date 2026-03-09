@@ -101,6 +101,12 @@
 
     .field:last-child { margin-bottom: 0; }
 
+    .hint {
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
+
     label {
       color: var(--muted);
       font-size: 0.74rem;
@@ -294,7 +300,7 @@
   <main class="shell">
     <section class="panel">
       <h1>Media Helper Studio</h1>
-      <p class="subtitle">Compress audio/video, trim clips quickly, preview results, then download when ready.</p>
+      <p class="subtitle">Convert audio to MP3, extract MP3 from video, compress portrait MP4 exports, trim clips quickly, then download when ready.</p>
 
       <div class="toolbar">
         <div class="group">
@@ -302,7 +308,7 @@
           <div class="field">
             <label for="mode">Mode</label>
             <select id="mode">
-              <option value="audio" selected>Audio to MP3</option>
+              <option value="audio" selected>Audio or Video to MP3</option>
               <option value="video">Video to MP4 (portrait)</option>
             </select>
           </div>
@@ -441,6 +447,7 @@
           <div class="field">
             <label for="fileInput">Files</label>
             <input type="file" id="fileInput" multiple />
+            <div class="hint" id="fileInputHint">Drop audio files or videos to extract MP3 audio.</div>
           </div>
           <div class="btn-row">
             <button id="reloadBtn" class="btn-ghost" type="button">Reload Engine</button>
@@ -494,6 +501,7 @@
       trimStart: document.getElementById('trimStart'),
       trimDuration: document.getElementById('trimDuration'),
       fileInput: document.getElementById('fileInput'),
+      fileInputHint: document.getElementById('fileInputHint'),
       reloadBtn: document.getElementById('reloadBtn'),
       convertBtn: document.getElementById('convertBtn'),
       clearBtn: document.getElementById('clearBtn'),
@@ -599,6 +607,9 @@
       el.audioOptions.classList.toggle('hidden', !isAudio);
       el.videoOptions.classList.toggle('hidden', isAudio);
       el.fileInput.accept = isAudio ? 'audio/*,video/*' : 'video/*';
+      el.fileInputHint.textContent = isAudio
+        ? 'Drop audio files or videos to extract MP3 audio.'
+        : 'Drop video files to compress them into MP4.';
       applyCompressionPreset();
       renderQueue();
     }
@@ -803,7 +814,7 @@
       const zip = new JSZip();
       state.results.forEach((r) => zip.file(r.name, r.blob));
       const zipBlob = await zip.generateAsync({ type: 'blob' });
-      const base = el.mode.value === 'audio' ? 'media-helper-audio' : 'media-helper-video';
+      const base = el.mode.value === 'audio' ? 'media-helper-mp3' : 'media-helper-video';
       triggerDownload(zipBlob, `${base}_batch.zip`);
     }
 

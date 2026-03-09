@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" role="img" aria-labelledby="title desc">
+  <title id="title">Builder placeholder</title>
+  <desc id="desc">Dark placeholder artwork for the builder role card.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#202020"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1600" fill="url(#bg)"/>
+  <circle cx="860" cy="320" r="260" fill="#3a3a3a" opacity="0.34"/>
+  <circle cx="280" cy="1150" r="320" fill="#2c2c2c" opacity="0.28"/>
+  <path d="M120 1280 L560 760 L1040 1440" fill="none" stroke="#8a8a8a" stroke-opacity="0.24" stroke-width="34" stroke-linecap="round"/>
+  <path d="M160 340 L920 900" fill="none" stroke="#d0d0d0" stroke-opacity="0.14" stroke-width="20" stroke-linecap="round"/>
+</svg>
