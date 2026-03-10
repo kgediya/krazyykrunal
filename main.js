@@ -440,9 +440,14 @@ function renderTools(items) {
       const safeDescription = escapeHtml(item.description || '');
       const safeType = escapeHtml(item.type || 'Tool');
       const safeHref = escapeAttribute(item.href || '#');
+      const visual = getToolVisual(`${item?.title || ''} ${item?.type || ''} ${item?.description || ''}`.toLowerCase());
+      const safeBgFrom = escapeAttribute(visual.bgFrom);
+      const safeBgTo = escapeAttribute(visual.bgTo);
+      const safeGlow = escapeAttribute(visual.glow);
       const external = isExternalLink(item.href);
       return `
         <a class="tool-card reveal" style="--delay:${(index % 10) * 45}ms" href="${safeHref}" target="${external ? '_blank' : '_self'}" rel="${external ? 'noopener noreferrer' : ''}">
+          <div class="tool-media" style="--tool-bg-from:${safeBgFrom}; --tool-bg-to:${safeBgTo}; --tool-glow:${safeGlow};"></div>
           <div class="tool-body">
             <p class="tool-type">${safeType}</p>
             <h3 class="tool-title">${safeTitle}</h3>
@@ -452,6 +457,25 @@ function renderTools(items) {
       `;
     })
     .join('');
+}
+
+function getToolVisual(classifier) {
+  if (classifier.includes('qr')) {
+    return { emoji: '▦', bgFrom: '#111111', bgTo: '#1f1f1f', glow: '#f0f0f0' };
+  }
+  if (classifier.includes('skybox') || classifier.includes('portal') || classifier.includes('spatial')) {
+    return { emoji: '◉', bgFrom: '#0d1117', bgTo: '#15202f', glow: '#8fd3ff' };
+  }
+  if (classifier.includes('audio') || classifier.includes('media') || classifier.includes('music')) {
+    return { emoji: '♫', bgFrom: '#121016', bgTo: '#231c2f', glow: '#c39bff' };
+  }
+  if (classifier.includes('plan') || classifier.includes('blueprint') || classifier.includes('structure')) {
+    return { emoji: '⌖', bgFrom: '#0f1418', bgTo: '#1a242b', glow: '#95e6ff' };
+  }
+  if (classifier.includes('link') || classifier.includes('routing') || classifier.includes('campaign')) {
+    return { emoji: '∞', bgFrom: '#121212', bgTo: '#1d1d1d', glow: '#ffc78a' };
+  }
+  return { emoji: '✦', bgFrom: '#111111', bgTo: '#1a1a1a', glow: '#ffffff' };
 }
 
 function renderSocial(items) {

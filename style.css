@@ -113,7 +113,7 @@ main {
 .hero-top-row {
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
 }
@@ -147,6 +147,38 @@ main {
   letter-spacing: 0.28em;
   font-size: 0.7rem;
   color: var(--text-soft);
+}
+
+.nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.nav-btn {
+  border: 1px solid var(--line-strong);
+  background: rgba(0, 0, 0, 0.58);
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 0.84rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+  transform: translateY(-2px);
+  background: #fff;
+  color: #000;
+  border-color: #fff;
 }
 
 .hero-panel {
@@ -726,14 +758,37 @@ main {
   cursor: pointer;
   overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
     var(--panel-strong);
   isolation: isolate;
   border-color: rgba(255, 255, 255, 0.24);
   box-shadow:
     0 16px 26px rgba(0, 0, 0, 0.34),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.tool-media {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 72% 18%, color-mix(in srgb, var(--tool-glow, #ffffff) 28%, transparent), transparent 52%),
+    radial-gradient(circle at 18% 78%, color-mix(in srgb, var(--tool-glow, #ffffff) 16%, transparent), transparent 50%),
+    linear-gradient(145deg, color-mix(in srgb, var(--tool-bg-from, #141414) 82%, #000000), color-mix(in srgb, var(--tool-bg-to, #1d1d1d) 78%, #000000));
+  opacity: 0.72;
+  transform: scale(1.01);
+  filter: saturate(0.78) brightness(0.92);
+  transition: transform 220ms ease, opacity 220ms ease, filter 220ms ease;
+  z-index: 0;
+}
+
+.tool-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 8, 8, 0.16), rgba(8, 8, 8, 0.64)),
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.04), transparent 32%);
 }
 
 .tool-card::before {
@@ -745,7 +800,7 @@ main {
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 24%, transparent 76%, rgba(255, 255, 255, 0.04));
-  opacity: 0.7;
+  opacity: 0.24;
   z-index: 1;
   pointer-events: none;
   transition: opacity 180ms ease;
@@ -922,10 +977,18 @@ main {
   transform: translateX(2px);
 }
 
+.tool-card:hover .tool-media,
+.tool-card:focus-visible .tool-media,
+.tool-card:focus-within .tool-media {
+  opacity: 0.82;
+  transform: scale(1.02);
+  filter: saturate(0.88) brightness(0.98);
+}
+
 .tool-card:hover::after,
 .tool-card:focus-visible::after,
 .tool-card:focus-within::after {
-  opacity: 1;
+  opacity: 0.38;
 }
 
 .feature-card:hover::before,
@@ -991,6 +1054,10 @@ main {
 
   .brand-kicker {
     letter-spacing: 0.18em;
+  }
+
+  .nav-bar {
+    display: none;
   }
 
   .hero-panel {
