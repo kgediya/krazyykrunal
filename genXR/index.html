@@ -49,6 +49,14 @@
 
       <label for="prompt">WebXR app prompt</label>
       <textarea id="prompt" rows="8" placeholder="Build a WebXR rhythm game with floating lanes, score HUD, hand/controller input, and mobile fallback."></textarea>
+      <div class="actions compact">
+        <button id="voiceBtn" type="button" class="ghost">Start Voice Input</button>
+        <button id="clearPromptBtn" type="button" class="ghost">Clear</button>
+      </div>
+      <p id="voiceStatus" class="note">Voice: idle.</p>
+
+      <p class="mini-title">Quick ideas</p>
+      <div id="quickPrompts" class="chips"></div>
 
       <div class="actions">
         <button id="generateBtn" type="button">Generate App Files</button>

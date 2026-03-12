@@ -7,6 +7,10 @@ const apiKeyEl = document.getElementById("apiKey");
 const getKeyBtn = document.getElementById("getKeyBtn");
 const preferDebugKeyEl = document.getElementById("preferDebugKey");
 const promptEl = document.getElementById("prompt");
+const voiceBtn = document.getElementById("voiceBtn");
+const clearPromptBtn = document.getElementById("clearPromptBtn");
+const voiceStatusEl = document.getElementById("voiceStatus");
+const quickPromptsEl = document.getElementById("quickPrompts");
 const generateBtn = document.getElementById("generateBtn");
 const applyBtn = document.getElementById("applyBtn");
 const exampleBtn = document.getElementById("exampleBtn");
@@ -20,6 +24,9 @@ const scriptEditor = document.getElementById("scriptEditor");
 const tabEls = [...document.querySelectorAll(".tab")];
 let lastProvider = "gemini";
 const runtimeConfig = window.GENXR_CONFIG || {};
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let isListening = false;
 const requiredEls = [
   providerEl,
   modelEl,
@@ -28,6 +35,10 @@ const requiredEls = [
   getKeyBtn,
   preferDebugKeyEl,
   promptEl,
+  voiceBtn,
+  clearPromptBtn,
+  voiceStatusEl,
+  quickPromptsEl,
   generateBtn,
   applyBtn,
   exampleBtn,
@@ -312,6 +323,13 @@ function getGhostStarterFiles(engine) {
 }
 
 const examplePrompt = "Create a simple Snap Spectacles compatible WebXR app: a stylized ghost floating around with smooth idle animation, subtle particles, desktop touch/mouse fallback, and lightweight performance. Return complete code files.";
+const quickPrompts = [
+  "Simple ghost floating in a dark moonlit room with subtle particles.",
+  "Hand-tracking mini lab with floating cubes and tap-to-change color.",
+  "MR sci-fi portal in front of the user with light fog and ambient sound controls.",
+  "A-Frame lightweight haunted hall with one ghost and one interaction button.",
+  "Simple AR tabletop solar system with labels and smooth orbit motion."
+];
 
 if (requiredEls.some((el) => !el)) {
   console.warn("genXR builder UI elements are missing. Skipping boot.");
@@ -321,6 +339,8 @@ if (requiredEls.some((el) => !el)) {
 function boot() {
   hydrateSettings();
   wireEvents();
+  renderQuickPrompts();
+  setupVoiceInput();
   if (!promptEl.value.trim()) {
     promptEl.value = examplePrompt;
   }
@@ -332,6 +352,11 @@ function boot() {
 function wireEvents() {
   generateBtn.addEventListener("click", generateApp);
   applyBtn.addEventListener("click", applyCurrentFiles);
+  voiceBtn.addEventListener("click", toggleVoiceInput);
+  clearPromptBtn.addEventListener("click", () => {
+    promptEl.value = "";
+    setVoiceStatus("Voice: idle.");
+  });
   exampleBtn.addEventListener("click", () => {
     promptEl.value = examplePrompt;
   });
@@ -346,7 +371,12 @@ function wireEvents() {
   });
   getKeyBtn.addEventListener("click", openKeyPortal);
   providerEl.addEventListener("change", onProviderChange);
-  engineEl.addEventListener("change", persistSettings);
+  engineEl.addEventListener("change", () => {
+    persistSettings();
+    setGeneratedFiles(getGhostStarterFiles(engineEl.value));
+    applyCurrentFiles();
+    setStatus(`Switched starter to ${engineLabel(engineEl.value)}.`);
+  });
   openPreviewBtn.addEventListener("click", openPreviewTab);
 
   [providerEl, modelEl, engineEl, apiKeyEl].forEach((el) => {
@@ -454,6 +484,81 @@ function applyDebugKeyForProvider() {
   const key = provider === "openai" ? debugKeys.openai : debugKeys.gemini;
   if (typeof key === "string" && key.trim()) {
     apiKeyEl.value = key.trim();
+  }
+}
+
+function renderQuickPrompts() {
+  quickPromptsEl.innerHTML = "";
+  for (const text of quickPrompts) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip";
+    btn.textContent = text;
+    btn.addEventListener("click", () => {
+      promptEl.value = text;
+      setVoiceStatus("Voice: idle.");
+    });
+    quickPromptsEl.appendChild(btn);
+  }
+}
+
+function setupVoiceInput() {
+  if (!SpeechRecognition) {
+    voiceBtn.disabled = true;
+    setVoiceStatus("Voice not supported in this browser.");
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = true;
+  recognition.continuous = true;
+
+  recognition.onstart = () => {
+    isListening = true;
+    voiceBtn.textContent = "Stop Voice Input";
+    setVoiceStatus("Voice: listening...");
+  };
+
+  recognition.onresult = (event) => {
+    let transcript = "";
+    for (let i = event.resultIndex; i < event.results.length; i += 1) {
+      transcript += event.results[i][0].transcript;
+    }
+    if (transcript.trim()) {
+      promptEl.value = transcript.trim();
+    }
+    setVoiceStatus("Voice: transcribing...");
+  };
+
+  recognition.onerror = (event) => {
+    setVoiceStatus(`Voice error: ${event.error || "unknown"}.`);
+    stopVoiceInput();
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    voiceBtn.textContent = "Start Voice Input";
+    if (!voiceStatusEl.textContent.startsWith("Voice error")) {
+      setVoiceStatus("Voice: idle.");
+    }
+  };
+}
+
+function toggleVoiceInput() {
+  if (!recognition) {
+    setVoiceStatus("Voice not supported in this browser.");
+    return;
+  }
+  if (isListening) {
+    stopVoiceInput();
+    return;
+  }
+  recognition.start();
+}
+
+function stopVoiceInput() {
+  if (recognition && isListening) {
+    recognition.stop();
   }
 }
 
@@ -775,4 +880,8 @@ function buildUserPrompt(prompt, engine) {
 
 function setStatus(text) {
   statusEl.textContent = text;
+}
+
+function setVoiceStatus(text) {
+  voiceStatusEl.textContent = text;
 }
