@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>genXR - Prompt to Full WebXR App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="page">
+    <aside class="panel">
+      <p class="eyebrow">genXR builder</p>
+      <h1>Prompt Into Full WebXR App</h1>
+      <p class="hint">Generates `index.html`, `style.css`, and `app.js`, then runs the app in place.</p>
+
+      <div class="field-grid">
+        <div>
+          <label for="provider">Provider</label>
+          <select id="provider">
+            <option value="gemini">Gemini API</option>
+            <option value="openai">OpenAI API</option>
+          </select>
+        </div>
+        <div>
+          <label for="model">Model</label>
+          <input id="model" type="text" placeholder="gemini-3.1-flash-lite-preview">
+        </div>
+      </div>
+
+      <label for="engine">Engine</label>
+      <select id="engine">
+        <option value="three">Three.js (recommended)</option>
+        <option value="aframe">A-Frame</option>
+        <option value="8thwall">8th Wall-style</option>
+      </select>
+
+      <label for="apiKey">API key</label>
+      <div class="api-row">
+        <input id="apiKey" type="password" placeholder="Paste provider API key">
+        <button id="getKeyBtn" type="button" class="ghost">Get API Key</button>
+      </div>
+
+      <label for="prompt">WebXR app prompt</label>
+      <textarea id="prompt" rows="8" placeholder="Build a WebXR rhythm game with floating lanes, score HUD, hand/controller input, and mobile fallback."></textarea>
+
+      <div class="actions">
+        <button id="generateBtn" type="button">Generate App Files</button>
+        <button id="applyBtn" type="button" class="ghost">Apply Current Files</button>
+      </div>
+      <div class="actions">
+        <button id="exampleBtn" type="button" class="ghost">Use Example Prompt</button>
+        <button id="starterBtn" type="button" class="ghost">Load Ghost Starter</button>
+      </div>
+
+      <p class="note">API keys are stored in localStorage in this browser only.</p>
+      <p class="note">For WebXR VR mode, serve via HTTPS/localhost and use a supported browser/device.</p>
+      <p id="status" class="status">Ready.</p>
+    </aside>
+
+    <main class="stage">
+      <section class="preview-wrap">
+        <div class="preview-head">
+          <p class="overlay-title">Live App Preview</p>
+          <button id="openPreviewBtn" type="button" class="ghost">Open Preview Tab</button>
+        </div>
+        <iframe id="previewFrame" title="Generated app preview" allow="xr-spatial-tracking; fullscreen"></iframe>
+      </section>
+
+      <section class="files">
+        <div class="tabs">
+          <button class="tab active" data-target="indexEditor" type="button">index.html</button>
+          <button class="tab" data-target="styleEditor" type="button">style.css</button>
+          <button class="tab" data-target="scriptEditor" type="button">app.js</button>
+        </div>
+        <div class="editors">
+          <textarea id="indexEditor" class="editor"></textarea>
+          <textarea id="styleEditor" class="editor hidden"></textarea>
+          <textarea id="scriptEditor" class="editor hidden"></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./genxr.config.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
