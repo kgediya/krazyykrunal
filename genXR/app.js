@@ -5,6 +5,7 @@ const modelEl = document.getElementById("model");
 const engineEl = document.getElementById("engine");
 const apiKeyEl = document.getElementById("apiKey");
 const getKeyBtn = document.getElementById("getKeyBtn");
+const preferDebugKeyEl = document.getElementById("preferDebugKey");
 const promptEl = document.getElementById("prompt");
 const generateBtn = document.getElementById("generateBtn");
 const applyBtn = document.getElementById("applyBtn");
@@ -25,6 +26,7 @@ const requiredEls = [
   engineEl,
   apiKeyEl,
   getKeyBtn,
+  preferDebugKeyEl,
   promptEl,
   generateBtn,
   applyBtn,
@@ -338,6 +340,10 @@ function wireEvents() {
     applyCurrentFiles();
     setStatus(`Loaded ${engineLabel(engineEl.value)} ghost starter app.`);
   });
+  preferDebugKeyEl.addEventListener("change", () => {
+    applyDebugKeyForProvider();
+    persistSettings();
+  });
   getKeyBtn.addEventListener("click", openKeyPortal);
   providerEl.addEventListener("change", onProviderChange);
   engineEl.addEventListener("change", persistSettings);
@@ -387,15 +393,21 @@ function hydrateSettings() {
       modelEl.value = saved.model || defaultModelFor(providerEl.value);
       engineEl.value = saved.engine || cfgEngine;
       apiKeyEl.value = saved.apiKey || "";
+      preferDebugKeyEl.checked =
+        typeof saved.preferDebugKey === "boolean"
+          ? saved.preferDebugKey
+          : runtimeConfig.preferDebugKey === true;
     } catch {
       providerEl.value = cfgProvider;
       modelEl.value = defaultModelFor(providerEl.value);
       engineEl.value = cfgEngine;
+      preferDebugKeyEl.checked = runtimeConfig.preferDebugKey === true;
     }
   } else {
     providerEl.value = cfgProvider;
     modelEl.value = defaultModelFor(providerEl.value);
     engineEl.value = cfgEngine;
+    preferDebugKeyEl.checked = runtimeConfig.preferDebugKey === true;
   }
 
   if (runtimeConfig.defaultModel) {
@@ -416,7 +428,8 @@ function persistSettings() {
       provider: providerEl.value,
       model: modelEl.value.trim(),
       engine: engineEl.value,
-      apiKey: apiKeyEl.value.trim()
+      apiKey: apiKeyEl.value.trim(),
+      preferDebugKey: preferDebugKeyEl.checked
     })
   );
 }
@@ -432,7 +445,7 @@ function defaultModelFor(provider) {
 }
 
 function applyDebugKeyForProvider() {
-  const shouldUseDebug = runtimeConfig.preferDebugKey === true;
+  const shouldUseDebug = preferDebugKeyEl.checked;
   if (!shouldUseDebug) {
     return;
   }
