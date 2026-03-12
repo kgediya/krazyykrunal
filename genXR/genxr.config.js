@@ -11,7 +11,7 @@ window.GENXR_CONFIG = {
   // Put your temporary debug keys here.
   // Do not commit real production keys.
   apiKeys: {
-    gemini: "AIzaSyDADBpSz141cQyYM8Y-_PDiFpWIlM9ZdOw",
+    gemini: "AIzaSyATjFaqpPvprkJI3znZzfYbO4FloYYCtt",
     openai: ""
   }
 };
