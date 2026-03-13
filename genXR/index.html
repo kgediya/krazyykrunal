@@ -58,11 +58,14 @@
       <p class="mini-title">Quick ideas</p>
       <div id="quickPrompts" class="chips"></div>
 
-      <div class="actions">
-        <button id="generateBtn" type="button">Generate App Files</button>
-        <button id="applyBtn" type="button" class="ghost">Apply Current Files</button>
+      <div class="primary-cta">
+        <p class="mini-title cta-title">Create</p>
+        <button id="generateBtn" type="button">Generate Spatial App</button>
       </div>
-      <div class="actions">
+
+      <div class="actions secondary-actions">
+        <button id="openPreviewBtn" type="button" class="ghost">Open App</button>
+        <button id="applyBtn" type="button" class="ghost">Refresh Preview</button>
         <button id="exampleBtn" type="button" class="ghost">Use Example Prompt</button>
         <button id="starterBtn" type="button" class="ghost">Load Ghost Starter</button>
       </div>
@@ -75,13 +78,16 @@
     <main class="stage">
       <section class="preview-wrap">
         <div class="preview-head">
-          <p class="overlay-title">Live App Preview</p>
-          <button id="openPreviewBtn" type="button" class="ghost">Open Preview Tab</button>
+          <div>
+            <p class="overlay-title">Live Spatial App</p>
+            <p class="overlay-sub">Generate, preview, then open directly on device.</p>
+          </div>
         </div>
         <iframe id="previewFrame" title="Generated app preview" allow="xr-spatial-tracking; fullscreen"></iframe>
       </section>
 
-      <section class="files">
+      <details class="files" id="advancedPanel">
+        <summary class="advanced-summary">Advanced: edit generated code</summary>
         <div class="tabs">
           <button class="tab active" data-target="indexEditor" type="button">index.html</button>
           <button class="tab" data-target="styleEditor" type="button">style.css</button>
@@ -92,7 +98,7 @@
           <textarea id="styleEditor" class="editor hidden"></textarea>
           <textarea id="scriptEditor" class="editor hidden"></textarea>
         </div>
-      </section>
+      </details>
     </main>
   </div>
 

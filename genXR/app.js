@@ -18,6 +18,7 @@ const starterBtn = document.getElementById("starterBtn");
 const statusEl = document.getElementById("status");
 const previewFrame = document.getElementById("previewFrame");
 const openPreviewBtn = document.getElementById("openPreviewBtn");
+const advancedPanel = document.getElementById("advancedPanel");
 const indexEditor = document.getElementById("indexEditor");
 const styleEditor = document.getElementById("styleEditor");
 const scriptEditor = document.getElementById("scriptEditor");
@@ -27,6 +28,10 @@ const runtimeConfig = window.GENXR_CONFIG || {};
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 let isListening = false;
+let voiceMode = "none";
+let mediaRecorder = null;
+let mediaStream = null;
+let audioChunks = [];
 const requiredEls = [
   providerEl,
   modelEl,
@@ -46,6 +51,7 @@ const requiredEls = [
   statusEl,
   previewFrame,
   openPreviewBtn,
+  advancedPanel,
   indexEditor,
   styleEditor,
   scriptEditor
@@ -341,6 +347,9 @@ function boot() {
   wireEvents();
   renderQuickPrompts();
   setupVoiceInput();
+  initHoverEffects();
+  initPlayfulCursor();
+  advancedPanel.open = false;
   if (!promptEl.value.trim()) {
     promptEl.value = examplePrompt;
   }
@@ -492,7 +501,7 @@ function renderQuickPrompts() {
   for (const text of quickPrompts) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "chip";
+    btn.className = "chip is-hover-target";
     btn.textContent = text;
     btn.addEventListener("click", () => {
       promptEl.value = text;
@@ -500,66 +509,324 @@ function renderQuickPrompts() {
     });
     quickPromptsEl.appendChild(btn);
   }
+  initHoverEffects();
+}
+
+function initHoverEffects() {
+  const selectors = [
+    "button",
+    "input",
+    "select",
+    "textarea",
+    ".chip",
+    ".tab"
+  ];
+  for (const node of document.querySelectorAll(selectors.join(","))) {
+    node.classList.add("is-hover-target");
+  }
+}
+
+function initPlayfulCursor() {
+  const supportsPointer = "onpointermove" in window;
+  if (!supportsPointer) {
+    return;
+  }
+
+  document.body.classList.add("has-playful-cursor");
+  const cursor = document.createElement("div");
+  cursor.className = "playful-cursor";
+  document.body.appendChild(cursor);
+
+  window.addEventListener("pointermove", (event) => {
+    cursor.classList.add("visible");
+    cursor.style.left = `${event.clientX}px`;
+    cursor.style.top = `${event.clientY}px`;
+  });
+
+  window.addEventListener("pointerleave", () => {
+    cursor.classList.remove("visible");
+  });
+
+  document.addEventListener("pointerover", (event) => {
+    const target = event.target.closest(".is-hover-target");
+    if (!target) {
+      return;
+    }
+    cursor.classList.add("pulse");
+    target.classList.add("mr-hover");
+  });
+
+  document.addEventListener("pointerout", (event) => {
+    const target = event.target.closest(".is-hover-target");
+    if (!target) {
+      return;
+    }
+    cursor.classList.remove("pulse");
+    target.classList.remove("mr-hover");
+  });
 }
 
 function setupVoiceInput() {
-  if (!SpeechRecognition) {
-    voiceBtn.disabled = true;
-    setVoiceStatus("Voice not supported in this browser.");
+  if (SpeechRecognition) {
+    voiceMode = "webspeech";
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    recognition.onstart = () => {
+      isListening = true;
+      updateVoiceButton();
+      setVoiceStatus("Voice: listening...");
+    };
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        transcript += event.results[i][0].transcript;
+      }
+      if (transcript.trim()) {
+        promptEl.value = transcript.trim();
+      }
+      setVoiceStatus("Voice: transcribing...");
+    };
+
+    recognition.onerror = (event) => {
+      setVoiceStatus(`Voice error: ${event.error || "unknown"}.`);
+      stopVoiceInput();
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      updateVoiceButton();
+      if (!voiceStatusEl.textContent.startsWith("Voice error")) {
+        setVoiceStatus("Voice: idle.");
+      }
+    };
     return;
   }
-  recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-  recognition.interimResults = true;
-  recognition.continuous = true;
 
-  recognition.onstart = () => {
-    isListening = true;
-    voiceBtn.textContent = "Stop Voice Input";
-    setVoiceStatus("Voice: listening...");
-  };
+  if (navigator.mediaDevices?.getUserMedia && window.MediaRecorder) {
+    voiceMode = "recorder";
+    voiceBtn.disabled = false;
+    setVoiceStatus("Voice: record and transcribe.");
+    updateVoiceButton();
+    return;
+  }
 
-  recognition.onresult = (event) => {
-    let transcript = "";
-    for (let i = event.resultIndex; i < event.results.length; i += 1) {
-      transcript += event.results[i][0].transcript;
-    }
-    if (transcript.trim()) {
-      promptEl.value = transcript.trim();
-    }
-    setVoiceStatus("Voice: transcribing...");
-  };
-
-  recognition.onerror = (event) => {
-    setVoiceStatus(`Voice error: ${event.error || "unknown"}.`);
-    stopVoiceInput();
-  };
-
-  recognition.onend = () => {
-    isListening = false;
-    voiceBtn.textContent = "Start Voice Input";
-    if (!voiceStatusEl.textContent.startsWith("Voice error")) {
-      setVoiceStatus("Voice: idle.");
-    }
-  };
+  voiceBtn.disabled = true;
+  setVoiceStatus("Voice not supported in this browser.");
 }
 
 function toggleVoiceInput() {
+  if (voiceMode === "webspeech") {
+    if (!recognition) {
+      setVoiceStatus("Voice not supported in this browser.");
+      return;
+    }
+    if (isListening) {
+      stopVoiceInput();
+      return;
+    }
+    recognition.start();
+    return;
+  }
+
+  if (voiceMode === "recorder") {
+    if (isListening) {
+      stopVoiceInput();
+      return;
+    }
+    startRecordedVoiceInput();
+    return;
+  }
+
   if (!recognition) {
     setVoiceStatus("Voice not supported in this browser.");
     return;
   }
-  if (isListening) {
-    stopVoiceInput();
-    return;
-  }
-  recognition.start();
 }
 
 function stopVoiceInput() {
-  if (recognition && isListening) {
+  if (voiceMode === "webspeech" && recognition && isListening) {
     recognition.stop();
   }
+  if (voiceMode === "recorder" && mediaRecorder && isListening) {
+    mediaRecorder.stop();
+  }
+}
+
+async function startRecordedVoiceInput() {
+  const apiKey = apiKeyEl.value.trim();
+  if (!apiKey) {
+    setVoiceStatus("Voice transcription needs an API key.");
+    return;
+  }
+
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(mediaStream, pickRecorderOptions());
+    mediaRecorder.addEventListener("dataavailable", (event) => {
+      if (event.data && event.data.size > 0) {
+        audioChunks.push(event.data);
+      }
+    });
+    mediaRecorder.addEventListener("stop", handleRecordedVoiceStop);
+    mediaRecorder.start();
+    isListening = true;
+    updateVoiceButton();
+    setVoiceStatus("Voice: recording...");
+  } catch (error) {
+    setVoiceStatus(`Voice error: ${error.message || "microphone unavailable"}.`);
+  }
+}
+
+function pickRecorderOptions() {
+  const mimeTypes = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/ogg;codecs=opus"
+  ];
+  for (const mimeType of mimeTypes) {
+    if (MediaRecorder.isTypeSupported?.(mimeType)) {
+      return { mimeType };
+    }
+  }
+  return undefined;
+}
+
+async function handleRecordedVoiceStop() {
+  const chunks = audioChunks.slice();
+  audioChunks = [];
+  isListening = false;
+  updateVoiceButton();
+
+  if (mediaStream) {
+    for (const track of mediaStream.getTracks()) {
+      track.stop();
+    }
+    mediaStream = null;
+  }
+
+  if (!chunks.length) {
+    setVoiceStatus("Voice error: no audio captured.");
+    return;
+  }
+
+  try {
+    setVoiceStatus("Voice: uploading for transcription...");
+    const blob = new Blob(chunks, {
+      type: mediaRecorder?.mimeType || chunks[0].type || "audio/webm"
+    });
+    const transcript = await transcribeAudioBlob(blob);
+    if (!transcript.trim()) {
+      throw new Error("empty transcript");
+    }
+    promptEl.value = transcript.trim();
+    setVoiceStatus("Voice: transcript ready.");
+  } catch (error) {
+    setVoiceStatus(`Voice error: ${error.message || "transcription failed"}.`);
+  } finally {
+    mediaRecorder = null;
+  }
+}
+
+async function transcribeAudioBlob(blob) {
+  const provider = providerEl.value;
+  const apiKey = apiKeyEl.value.trim();
+  if (provider === "openai") {
+    return transcribeWithOpenAI(blob, apiKey);
+  }
+  return transcribeWithGemini(blob, apiKey);
+}
+
+async function transcribeWithOpenAI(blob, apiKey) {
+  const form = new FormData();
+  const voiceModel = runtimeConfig.voiceModels?.openai || "gpt-4o-mini-transcribe";
+  form.append("model", voiceModel);
+  form.append("file", blob, `voice.${pickFileExtension(blob.type)}`);
+
+  const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`
+    },
+    body: form
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data?.error?.message || "OpenAI transcription failed.");
+  }
+  return data?.text || "";
+}
+
+async function transcribeWithGemini(blob, apiKey) {
+  const model = runtimeConfig.voiceModels?.gemini || modelEl.value.trim() || "gemini-2.0-flash";
+  const audioBase64 = await blobToBase64(blob);
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: "Transcribe this audio exactly. Return plain text only."
+            },
+            {
+              inlineData: {
+                mimeType: blob.type || "audio/webm",
+                data: audioBase64
+              }
+            }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0
+      }
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data?.error?.message || "Gemini transcription failed.");
+  }
+  return (data?.candidates?.[0]?.content?.parts || []).map((part) => part.text || "").join("\n").trim();
+}
+
+function pickFileExtension(mimeType) {
+  if (mimeType.includes("mp4")) {
+    return "m4a";
+  }
+  if (mimeType.includes("ogg")) {
+    return "ogg";
+  }
+  return "webm";
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = String(reader.result || "");
+      const base64 = result.split(",")[1];
+      if (!base64) {
+        reject(new Error("audio encoding failed"));
+        return;
+      }
+      resolve(base64);
+    };
+    reader.onerror = () => reject(new Error("audio read failed"));
+    reader.readAsDataURL(blob);
+  });
 }
 
 async function generateApp() {
@@ -666,6 +933,7 @@ function composeSrcDoc(files) {
   const html = String(files.index_html || "");
   const css = String(files.style_css || "");
   const js = normalizeAppJsImports(String(files.app_js || ""));
+  const portalUrl = JSON.stringify(window.location.href);
 
   const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   const headMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
@@ -678,12 +946,85 @@ function composeSrcDoc(files) {
 <head>
   ${headContent}
   <style>${css}</style>
+  <style>${buildPortalReturnStyles()}</style>
 </head>
 <body>
   ${bodyContent}
+  ${buildPortalReturnButton()}
   <script type="module">${js.replace(/<\/script>/gi, "<\\/script>")}</script>
+  <script>${buildPortalReturnScript(portalUrl).replace(/<\/script>/gi, "<\\/script>")}</script>
 </body>
 </html>`;
+}
+
+function buildPortalReturnStyles() {
+  return `
+    .genxr-return {
+      position: fixed;
+      left: 16px;
+      top: 16px;
+      z-index: 2147483647;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 2px solid rgba(255,255,255,0.88);
+      border-radius: 999px;
+      background: rgba(7, 16, 30, 0.76);
+      color: #ffffff;
+      font: 700 14px/1 "Space Grotesk", system-ui, sans-serif;
+      letter-spacing: 0.01em;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+    .genxr-return::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-left: 3px solid currentColor;
+      border-bottom: 3px solid currentColor;
+      transform: rotate(45deg);
+      margin-left: 2px;
+    }
+    .genxr-return:hover,
+    .genxr-return:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.34), 0 0 0 4px rgba(255,255,255,0.16);
+    }
+    @media (max-width: 640px) {
+      .genxr-return {
+        left: 12px;
+        top: 12px;
+        min-height: 40px;
+        padding: 9px 12px;
+        font-size: 13px;
+      }
+    }
+  `;
+}
+
+function buildPortalReturnButton() {
+  return `<button class="genxr-return" id="genxrReturnBtn" type="button" aria-label="Back to genXR">Back to genXR</button>`;
+}
+
+function buildPortalReturnScript(portalUrl) {
+  return `
+    (() => {
+      const portalUrl = ${portalUrl};
+      const btn = document.getElementById("genxrReturnBtn");
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        if (window.top && window.top !== window.self) {
+          window.top.location.href = portalUrl;
+          return;
+        }
+        window.location.href = portalUrl;
+      });
+    })();
+  `;
 }
 
 function sanitizeHead(headContent) {
@@ -884,4 +1225,16 @@ function setStatus(text) {
 
 function setVoiceStatus(text) {
   voiceStatusEl.textContent = text;
+}
+
+function updateVoiceButton() {
+  if (voiceMode === "recorder") {
+    voiceBtn.textContent = isListening ? "Stop Recording" : "Record Voice Prompt";
+    return;
+  }
+  if (voiceMode === "webspeech") {
+    voiceBtn.textContent = isListening ? "Stop Voice Input" : "Start Voice Input";
+    return;
+  }
+  voiceBtn.textContent = "Voice Unsupported";
 }

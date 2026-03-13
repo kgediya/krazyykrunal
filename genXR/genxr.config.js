@@ -8,6 +8,12 @@ window.GENXR_CONFIG = {
   // Set false if you always want manual entry.
   preferDebugKey: true,
 
+  // Optional speech-to-text model overrides for voice input fallback.
+  voiceModels: {
+    gemini: "",
+    openai: ""
+  },
+
   // Put your temporary debug keys here.
   // Do not commit real production keys.
   apiKeys: {

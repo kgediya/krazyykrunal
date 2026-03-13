@@ -36,6 +36,11 @@ body {
     linear-gradient(140deg, var(--bg), var(--bg-2));
 }
 
+body.has-playful-cursor,
+body.has-playful-cursor * {
+  cursor: none !important;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -46,11 +51,41 @@ body::before {
   opacity: 0.28;
 }
 
+.playful-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 99999;
+  display: none;
+  transition: transform 0.06s linear, filter 0.12s ease;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cdefs%3E%3Cfilter id='g'%3E%3CfeDropShadow dx='2.5' dy='2.5' stdDeviation='0' flood-color='%231b3f6b'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23g)'%3E%3Cpath d='M7 4 L31 20 L20 22 L27 37 L18 40 L12 24 L4 33 Z' fill='%23ffda2f' stroke='%231b3f6b' stroke-width='3' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.playful-cursor::before,
+.playful-cursor::after {
+  content: none;
+}
+
+.playful-cursor.visible {
+  display: block;
+}
+
+.playful-cursor.pulse {
+  transform: translate(-50%, -50%) scale(1.12) rotate(-3deg);
+  filter: saturate(1.15) brightness(1.04) drop-shadow(0 0 10px rgba(255, 94, 196, 0.5));
+}
+
 .page {
   min-height: 100vh;
   padding: 14px;
   display: grid;
-  grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
@@ -61,6 +96,7 @@ body::before {
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-cartoon);
   overflow: auto;
+  order: 1;
 }
 
 .eyebrow {
@@ -168,7 +204,8 @@ textarea:focus {
 }
 
 .actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-top: 10px;
 }
@@ -207,6 +244,29 @@ button.ghost {
   box-shadow: 0 5px 0 #b0508d, 0 10px 20px rgba(18, 63, 119, 0.2);
 }
 
+.is-hover-target {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease, outline-color 0.12s ease;
+}
+
+.is-hover-target:hover,
+.is-hover-target:focus-visible,
+.is-hover-target.mr-hover {
+  outline: 4px solid rgba(255, 94, 196, 0.72);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 6px rgba(255, 218, 47, 0.45),
+    0 0 0 12px rgba(73, 232, 199, 0.26),
+    0 8px 0 #1b3f6b,
+    0 18px 30px rgba(18, 63, 119, 0.28),
+    0 0 24px rgba(255, 94, 196, 0.42);
+  transform: translateY(-2px) scale(1.03);
+  filter: saturate(1.12) brightness(1.03);
+}
+
+.is-hover-target:active {
+  transform: translateY(2px) scale(0.99);
+}
+
 .mini-title {
   margin: 12px 0 7px;
   font-size: 0.8rem;
@@ -214,6 +274,41 @@ button.ghost {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 800;
+}
+
+.primary-cta {
+  margin-top: 16px;
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+.cta-title {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #855900;
+}
+
+.primary-cta #generateBtn {
+  width: 100%;
+  min-height: 62px;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #ffd81d, #ffbf00);
+  box-shadow: 0 6px 0 #9b7000, 0 16px 28px rgba(18, 63, 119, 0.22);
+}
+
+.primary-cta #generateBtn:hover,
+.primary-cta #generateBtn:focus-visible,
+.primary-cta #generateBtn.mr-hover {
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.34),
+    0 0 0 12px rgba(255, 218, 47, 0.36),
+    0 6px 0 #9b7000,
+    0 18px 30px rgba(18, 63, 119, 0.26);
+}
+
+.secondary-actions {
+  margin-top: 0;
 }
 
 .chips {
@@ -251,8 +346,9 @@ button.ghost {
 .stage {
   min-height: 100vh;
   display: grid;
-  grid-template-rows: minmax(0, 53%) minmax(0, 47%);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 12px;
+  order: 2;
 }
 
 .preview-wrap,
@@ -262,6 +358,10 @@ button.ghost {
   background: linear-gradient(165deg, #fdfefe, #e6f3ff);
   box-shadow: var(--shadow-cartoon);
   overflow: hidden;
+}
+
+.preview-wrap {
+  min-height: 54vh;
 }
 
 .preview-head {
@@ -282,12 +382,45 @@ button.ghost {
   letter-spacing: 0.04em;
 }
 
+.overlay-sub {
+  margin: 4px 0 0;
+  color: #2d6296;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
 #previewFrame {
   width: 100%;
   height: calc(100% - 56px);
-  min-height: 280px;
+  min-height: 54vh;
   border: none;
   background: #000;
+}
+
+.advanced-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-weight: 800;
+  color: #1a4b81;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: linear-gradient(170deg, #dcf3ff, #cbeeff);
+  border-bottom: 3px solid #8fc7e6;
+}
+
+.advanced-summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-summary::after {
+  content: "Show";
+  float: right;
+  color: #0e75a7;
+}
+
+.files[open] .advanced-summary::after {
+  content: "Hide";
 }
 
 .tabs {
@@ -343,44 +476,64 @@ button.ghost {
   font-size: 0.82rem;
 }
 
-@media (min-width: 1320px) {
+@media (hover: none), (pointer: coarse) {
+  .is-hover-target {
+    outline: 3px solid rgba(73, 232, 199, 0.42);
+    outline-offset: 2px;
+  }
+}
+
+@media (min-width: 980px) {
+  .page {
+    padding: 14px;
+  }
+}
+
+@media (min-width: 980px) and (min-aspect-ratio: 11/9) {
+  .page {
+    grid-template-columns: minmax(340px, 410px) minmax(0, 1fr);
+  }
+
+  .panel {
+    order: 1;
+  }
+
+  .stage {
+    order: 2;
+    grid-template-rows: minmax(360px, 1fr) auto;
+  }
+
+  .preview-wrap {
+    min-height: 70vh;
+  }
+
+  #previewFrame {
+    min-height: 540px;
+  }
+
   .field-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 520px) {
   .page {
-    grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
-  }
-
-  .stage {
-    grid-template-rows: minmax(360px, 45vh) minmax(320px, 1fr);
-  }
-}
-
-@media (max-width: 960px) {
-  .page {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(72vh, 1fr);
-  }
-
-  .stage {
-    min-height: 74vh;
-    grid-template-rows: minmax(330px, 45vh) minmax(300px, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
-  .actions {
-    flex-direction: column;
+    padding: 10px;
   }
 
   .api-row {
     grid-template-columns: 1fr;
   }
 
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
   .tabs {
     flex-wrap: wrap;
+  }
+
+  #previewFrame {
+    min-height: 52vh;
   }
 }
