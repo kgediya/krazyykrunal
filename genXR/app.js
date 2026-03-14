@@ -32,6 +32,20 @@ let voiceMode = "none";
 let mediaRecorder = null;
 let mediaStream = null;
 let audioChunks = [];
+const MODEL_OPTIONS = {
+  gemini: [
+    { value: "gemini-3.1-flash-lite-preview", label: "Gemini 3.1 Flash Lite" },
+    { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash" },
+    { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro" },
+    { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" }
+  ],
+  openai: [
+    { value: "gpt-5-mini", label: "GPT-5 Mini" },
+    { value: "gpt-5", label: "GPT-5" },
+    { value: "gpt-5-nano", label: "GPT-5 Nano" },
+    { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" }
+  ]
+};
 const requiredEls = [
   providerEl,
   modelEl,
@@ -344,6 +358,7 @@ if (requiredEls.some((el) => !el)) {
 }
 function boot() {
   hydrateSettings();
+  syncModelOptions(providerEl.value, modelEl.value);
   wireEvents();
   renderQuickPrompts();
   setupVoiceInput();
@@ -400,9 +415,11 @@ function wireEvents() {
 function onProviderChange() {
   const currentModel = modelEl.value.trim();
   const previousDefault = defaultModelFor(lastProvider);
-  if (!currentModel || currentModel === previousDefault) {
-    modelEl.value = defaultModelFor(providerEl.value);
-  }
+  const nextModel =
+    !currentModel || currentModel === previousDefault
+      ? defaultModelFor(providerEl.value)
+      : currentModel;
+  syncModelOptions(providerEl.value, nextModel);
   lastProvider = providerEl.value;
   applyDebugKeyForProvider();
   persistSettings();
@@ -429,7 +446,7 @@ function hydrateSettings() {
     try {
       const saved = JSON.parse(raw);
       providerEl.value = saved.provider || cfgProvider;
-      modelEl.value = saved.model || defaultModelFor(providerEl.value);
+      syncModelOptions(providerEl.value, saved.model || defaultModelFor(providerEl.value));
       engineEl.value = saved.engine || cfgEngine;
       apiKeyEl.value = saved.apiKey || "";
       preferDebugKeyEl.checked =
@@ -438,23 +455,23 @@ function hydrateSettings() {
           : runtimeConfig.preferDebugKey === true;
     } catch {
       providerEl.value = cfgProvider;
-      modelEl.value = defaultModelFor(providerEl.value);
+      syncModelOptions(providerEl.value, defaultModelFor(providerEl.value));
       engineEl.value = cfgEngine;
       preferDebugKeyEl.checked = runtimeConfig.preferDebugKey === true;
     }
   } else {
     providerEl.value = cfgProvider;
-    modelEl.value = defaultModelFor(providerEl.value);
+    syncModelOptions(providerEl.value, defaultModelFor(providerEl.value));
     engineEl.value = cfgEngine;
     preferDebugKeyEl.checked = runtimeConfig.preferDebugKey === true;
   }
 
   if (runtimeConfig.defaultModel) {
-    modelEl.value = runtimeConfig.defaultModel;
+    syncModelOptions(providerEl.value, runtimeConfig.defaultModel);
   }
 
   if (!modelEl.value.trim()) {
-    modelEl.value = defaultModelFor(providerEl.value);
+    syncModelOptions(providerEl.value, defaultModelFor(providerEl.value));
   }
   applyDebugKeyForProvider();
   lastProvider = providerEl.value;
@@ -481,6 +498,28 @@ function defaultModelFor(provider) {
     return "gpt-5-mini";
   }
   return "gemini-3.1-flash-lite-preview";
+}
+
+function syncModelOptions(provider, selectedValue) {
+  const options = runtimeConfig.modelOptions?.[provider] || MODEL_OPTIONS[provider] || [];
+  modelEl.innerHTML = "";
+
+  for (const option of options) {
+    const node = document.createElement("option");
+    if (typeof option === "string") {
+      node.value = option;
+      node.textContent = option;
+    } else {
+      node.value = option.value;
+      node.textContent = option.label || option.value;
+    }
+    modelEl.appendChild(node);
+  }
+
+  const values = [...modelEl.options].map((option) => option.value);
+  const fallback = defaultModelFor(provider);
+  const nextValue = values.includes(selectedValue) ? selectedValue : (values.includes(fallback) ? fallback : values[0] || "");
+  modelEl.value = nextValue;
 }
 
 function applyDebugKeyForProvider() {
@@ -606,7 +645,7 @@ function setupVoiceInput() {
     return;
   }
 
-  if (navigator.mediaDevices?.getUserMedia && window.MediaRecorder) {
+  if (hasAudioCaptureSupport() && window.MediaRecorder) {
     voiceMode = "recorder";
     voiceBtn.disabled = false;
     setVoiceStatus("Voice: record and transcribe.");
@@ -664,7 +703,7 @@ async function startRecordedVoiceInput() {
   }
 
   try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaStream = await requestMicrophoneStream();
     audioChunks = [];
     mediaRecorder = new MediaRecorder(mediaStream, pickRecorderOptions());
     mediaRecorder.addEventListener("dataavailable", (event) => {
@@ -678,8 +717,81 @@ async function startRecordedVoiceInput() {
     updateVoiceButton();
     setVoiceStatus("Voice: recording...");
   } catch (error) {
-    setVoiceStatus(`Voice error: ${error.message || "microphone unavailable"}.`);
+    setVoiceStatus(`Voice error: ${humanizeVoiceError(error)}.`);
   }
+}
+
+function hasAudioCaptureSupport() {
+  return Boolean(
+    navigator.mediaDevices?.getUserMedia ||
+    navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia
+  );
+}
+
+async function requestMicrophoneStream() {
+  const constraintsToTry = runtimeConfig.voiceConstraints?.length
+    ? runtimeConfig.voiceConstraints
+    : [
+        { audio: true },
+        { audio: {} },
+        { audio: { channelCount: 1 } },
+        {
+          audio: {
+            channelCount: 1,
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        }
+      ];
+
+  let lastError = null;
+  for (const constraints of constraintsToTry) {
+    try {
+      return await getUserMediaCompat(constraints);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("microphone unavailable");
+}
+
+function getUserMediaCompat(constraints) {
+  if (navigator.mediaDevices?.getUserMedia) {
+    return navigator.mediaDevices.getUserMedia(constraints);
+  }
+
+  const legacyGetUserMedia =
+    navigator.getUserMedia ||
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia;
+
+  return new Promise((resolve, reject) => {
+    if (!legacyGetUserMedia) {
+      reject(new Error("browser does not support microphone capture"));
+      return;
+    }
+    legacyGetUserMedia.call(navigator, constraints, resolve, reject);
+  });
+}
+
+function humanizeVoiceError(error) {
+  const message = String(error?.message || error?.name || "microphone unavailable").toLowerCase();
+  if (message.includes("constraint")) {
+    return "Spectacles rejected microphone constraints. Use HTTPS and try a simpler mic permission flow";
+  }
+  if (message.includes("permission") || message.includes("denied") || message.includes("notallowed")) {
+    return "microphone permission denied";
+  }
+  if (message.includes("secure") || message.includes("https")) {
+    return "microphone capture requires HTTPS";
+  }
+  if (message.includes("notfound") || message.includes("device")) {
+    return "no microphone device available";
+  }
+  return error?.message || error?.name || "microphone unavailable";
 }
 
 function pickRecorderOptions() {

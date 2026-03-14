@@ -4,6 +4,13 @@ window.GENXR_CONFIG = {
   defaultModel: "",
   defaultEngine: "three",
 
+  // Optional curated dropdown model lists per provider.
+  // Each item can be a string or { value, label }.
+  modelOptions: {
+    gemini: [],
+    openai: []
+  },
+
   // When true, auto-inject debug key for selected provider.
   // Set false if you always want manual entry.
   preferDebugKey: true,
@@ -13,6 +20,11 @@ window.GENXR_CONFIG = {
     gemini: "",
     openai: ""
   },
+
+  // Optional fallback microphone constraints for browsers with strict capture support.
+  // Example:
+  // voiceConstraints: [{ audio: true }, { audio: { channelCount: 1 } }]
+  voiceConstraints: [],
 
   // Put your temporary debug keys here.
   // Do not commit real production keys.
