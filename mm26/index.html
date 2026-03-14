@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mm26 | SnapML Object Detection Neon Session</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Orbitron:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <canvas id="sparkCanvas" aria-hidden="true"></canvas>
+
+  <header class="hero" id="top">
+    <div class="hero-copy">
+      <p class="eyebrow">Magnificent March | XDG मुंBAI | Build With Snap</p>
+      <h1>SnapML Object Detection in Lens Studio</h1>
+      <p class="hero-sub">
+        In this session, you will learn how to turn the Food & Fruits detection model
+        into a playful interactive Lens that reacts to real snacks in front of the camera.
+      </p>
+      <div class="hero-actions">
+        <a class="cta" href="#flow">Start learning</a>
+      </div>
+    </div>
+
+    <aside class="hero-panel">
+      <p class="panel-kicker">Magnificent March Session Route</p>
+      <ol class="route-list">
+        <li>Intro to Lens Studio</li>
+        <li>Intro to SnapML</li>
+        <li>Start with Object Detection</li>
+        <li>Import Food & Fruits model</li>
+        <li>Swap the model in the template</li>
+        <li>Build your animated mouth lens</li>
+        <li>Train and import your own detector</li>
+        <li>Use vibe coding to move faster</li>
+      </ol>
+    </aside>
+  </header>
+
+  <nav class="flow-rail" id="flow" aria-label="Session flow">
+    <a href="#lens-studio" class="flow-pill active">Lens Studio</a>
+    <a href="#snapml" class="flow-pill">SnapML</a>
+    <a href="#object-detection" class="flow-pill">Object Detection</a>
+    <a href="#food-model" class="flow-pill">Food & Fruits</a>
+    <a href="#swap-model" class="flow-pill">Model Swap</a>
+    <a href="#krazyy-lens" class="flow-pill">Mouth Lens</a>
+    <a href="#your-model" class="flow-pill">Your Model</a>
+    <a href="#vibe-coding" class="flow-pill">Vibe Coding</a>
+  </nav>
+
+  <main class="deck">
+    <section class="panel section" id="lens-studio" data-step="01">
+      <div class="section-head">
+        <p class="section-tag">Build With Snap</p>
+        <h2>Lens Studio is your control room</h2>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <h3>What matters first</h3>
+          <p>
+            Think of Lens Studio as the place where you wire your scene, assets, scripts,
+            preview state, and ML components into one Lens experience.
+          </p>
+          <ul class="check-list">
+            <li><strong>Scene:</strong> place, move, rotate, and scale objects.</li>
+            <li><strong>Scene Hierarchy:</strong> structure what renders and in what order.</li>
+            <li><strong>Inspector:</strong> edit components and wire references.</li>
+            <li><strong>Asset Browser:</strong> import models, textures, scripts, and ONNX files.</li>
+            <li><strong>Preview + Logger:</strong> test quickly and debug what breaks.</li>
+          </ul>
+        </article>
+
+        <article class="card neon-surface">
+          <h3>Fast orientation for the room</h3>
+          <div class="mini-layout">
+            <div>Q / W / E / R / Y</div>
+            <div>Tool switching</div>
+            <div>F</div>
+            <div>Frame selected object</div>
+            <div>A</div>
+            <div>See everything in scene</div>
+            <div>Ctrl + D</div>
+            <div>Duplicate object</div>
+          </div>
+          <p class="callout">
+            Reset if needed: <strong>Window &gt; Default Layout</strong>.
+          </p>
+        </article>
+      </div>
+
+      <div class="doc-visual" aria-label="Lens Studio panels visual">
+        <div class="doc-window">
+          <div class="doc-titlebar">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="doc-grid panels-map">
+            <div class="pane pane-scene">Scene</div>
+            <div class="pane pane-inspector">Inspector</div>
+            <div class="pane pane-hierarchy">Scene Hierarchy</div>
+            <div class="pane pane-preview">Preview</div>
+            <div class="pane pane-assets">Asset Browser</div>
+            <div class="pane pane-logger">Logger</div>
+          </div>
+        </div>
+        <p class="doc-caption">
+          Documentation-inspired panel map based on Snap’s Lens Studio Panels guide.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel section" id="snapml" data-step="02">
+      <div class="section-head">
+        <p class="section-tag">Magnificent March</p>
+        <h2>SnapML adds perception to your Lens</h2>
+      </div>
+      <div class="grid three">
+        <article class="card">
+          <h3>What SnapML does</h3>
+          <p>
+            SnapML lets you run machine learning models directly inside the Lens,
+            so your camera feed becomes something your experience can understand and react to.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Why object detection</h3>
+          <p>
+            You are not just classifying a frame. You are locating objects with bounding boxes
+            and reacting to them spatially on screen.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Creative payoff</h3>
+          <p>
+            Once you know where the food is, you can attach UI, stickers, hints,
+            and game logic exactly where it appears.
+          </p>
+        </article>
+      </div>
+
+      <div class="signal-strip">
+        <span>camera texture</span>
+        <span>ML component</span>
+        <span>raw outputs</span>
+        <span>processed boxes</span>
+        <span>interactive visuals</span>
+      </div>
+
+      <div class="grid two snapml-overview">
+        <article class="card">
+          <h3>What SnapML really means</h3>
+          <p>
+            You may already be using machine learning in Lens Studio through segmentation,
+            skeletal tracking, and other built-in features. SnapML extends that by letting you
+            bring in your own models, so you can go beyond the default capabilities of Lens Studio.
+          </p>
+          <p>
+            Those Lenses still ship like normal Snapchat Lenses, which means people do not need
+            to install anything extra to use them.
+          </p>
+        </article>
+        <article class="card">
+          <h3>How to think about a model</h3>
+          <p>
+            In Lens Studio, a model behaves like a black box. You tell Lens Studio what goes in,
+            such as camera texture or cropped input, and then you tell it how to use what comes out,
+            such as probabilities, coordinates, or images.
+          </p>
+          <ul class="check-list compact">
+            <li>Inputs can be textures, processed image crops, or other model-ready data.</li>
+            <li>Outputs can be numbers, labels, box coordinates, masks, or full textures.</li>
+            <li>That means SnapML supports both analysis and visual effects workflows.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="grid three snapml-deep-cards">
+        <article class="card">
+          <h3>Supported formats</h3>
+          <p>
+            Lens Studio supports <strong>.ONNX</strong> and <strong>.TFLite</strong> models,
+            and you can bring in models created with tools such as PyTorch, TensorFlow, and Roboflow
+            as long as they are exported in a compatible format.
+          </p>
+        </article>
+        <article class="card">
+          <h3>ML Component</h3>
+          <p>
+            The ML Component is where you define the model inputs, outputs, and run behavior:
+            every frame, on demand, or in another thread so your Lens can stay responsive.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Performance story</h3>
+          <p>
+            SnapML handles optimized execution for you and can use device-specific hardware
+            acceleration when it is available.
+          </p>
+        </article>
+      </div>
+
+      <div class="doc-visual" aria-label="SnapML model overview visual">
+        <div class="pipeline-visual">
+          <div class="pipeline-node">Input</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Model Black Box</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Data or Texture Output</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Lens Logic / VFX</div>
+        </div>
+        <p class="doc-caption">
+          A simple SnapML mental model: you provide the right input, the model computes a result, and your Lens reacts to the output.
+        </p>
+      </div>
+
+      <div class="panel-lite">
+        <h3>Templates you can start from</h3>
+        <div class="token-cloud">
+          <span>Classification</span>
+          <span>Object Detection</span>
+          <span>Style Transfer</span>
+          <span>Custom Segmentation</span>
+          <span>Ground Segmentation</span>
+          <span>Keyword Detection</span>
+          <span>Multi Object Detection</span>
+        </div>
+        <p class="panel-lite-copy">
+          These templates already include sample models. You can learn from them directly, or swap in your own similar model and keep the surrounding Lens logic.
+        </p>
+      </div>
+
+      <div class="panel-lite">
+        <h3>Making your own model</h3>
+        <p class="panel-lite-copy">
+          Models are trained outside Lens Studio, but the SnapML template guides and example Python notebooks
+          give you a practical starting point for building your own model and then bringing it back into Lens Studio.
+        </p>
+      </div>
+
+      <div class="sources-card">
+        <p class="sources-title">SnapML overview reference</p>
+        <a href="https://developers.snap.com/lens-studio/features/snap-ml/ml-overview" target="_blank" rel="noreferrer">Snap for Developers: SnapML Overview</a>
+      </div>
+    </section>
+
+    <section class="panel section" id="object-detection" data-step="03">
+      <div class="section-head">
+        <p class="section-tag">XDG मुंBAI</p>
+        <h2>Start with the Object Detection template</h2>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <h3>Core architecture</h3>
+          <ul class="check-list">
+            <li><strong>ML Component:</strong> runs the model on the input texture.</li>
+            <li><strong>MLController:</strong> processes raw outputs and thresholds detections.</li>
+            <li><strong>ObjectDetectionController:</strong> duplicates detection box UI and places it.</li>
+            <li><strong>Hint Controller:</strong> shows guidance when nothing is found.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Built-in behavior to remember</h3>
+          <p>
+            The template already handles smoothing, matching, lost frames, top-k filtering,
+            and non-maximum suppression. That means you can focus on the reaction layer instead of rebuilding the pipeline.
+          </p>
+          <div class="metric-row">
+            <div><span>Confidence</span><strong>skip weak detections</strong></div>
+            <div><span>Smoothing</span><strong>calmer box motion</strong></div>
+            <div><span>Lost frames</span><strong>less flicker</strong></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="doc-visual" aria-label="Object detection flow visual">
+        <div class="pipeline-visual">
+          <div class="pipeline-node">Camera Feed</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">ML Component</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">MLController</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Detection Box UI</div>
+        </div>
+        <p class="doc-caption">
+          Visual summary of the workflow described in Snap’s Object Detection template docs.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel section" id="food-model" data-step="04">
+      <div class="section-head">
+        <p class="section-tag">Build With Snap</p>
+        <h2>Import the Food & Fruits detection model</h2>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <h3>What it detects</h3>
+          <p>
+            The bundled model can detect foods and fruits such as banana, apple, sandwich,
+            orange, broccoli, carrot, hot dog, pizza, donut, and cake.
+          </p>
+          <div class="token-cloud">
+            <span>banana</span>
+            <span>apple</span>
+            <span>orange</span>
+            <span>broccoli</span>
+            <span>pizza</span>
+            <span>donut</span>
+            <span>cake</span>
+            <span>carrot</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Import path</h3>
+          <ol class="steps">
+            <li>Open the Object Detection example or template.</li>
+            <li>Find the Food Detection model in the example assets.</li>
+            <li>If you are using your own model, drag the `.onnx` file into Asset Browser.</li>
+            <li>Select the object that contains the ML Component.</li>
+            <li>Assign the food model in the <strong>Model</strong> field.</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel section" id="swap-model" data-step="05">
+      <div class="section-head">
+        <p class="section-tag">Magnificent March</p>
+        <h2>Replace the existing model without breaking the pipeline</h2>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <h3>Input setup</h3>
+          <p>Use the device camera texture and keep the detector-friendly transformer setup shown in the docs.</p>
+          <ul class="check-list compact">
+            <li>Input shape: <strong>128 × 256 × 3</strong></li>
+            <li>Stretch: <strong>off</strong></li>
+            <li>Horizontal/Vertical align: <strong>center</strong></li>
+            <li>Rotation: <strong>none</strong></li>
+            <li>Fill color: <strong>black</strong></li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Output setup</h3>
+          <p>
+            If your model follows the example structure, keep the output names expected by
+            `MLController`. If not, map the output location and class score names correctly.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Preview prep</h3>
+          <p>
+            Load a preview image or video that clearly shows fruit or food, so you can verify
+            detections before you style the Lens.
+          </p>
+        </article>
+      </div>
+
+      <div class="code-strip" aria-label="Model swap summary">
+        <span>Object Detection template</span>
+        <span>select ML Component</span>
+        <span>swap model</span>
+        <span>verify outputs</span>
+        <span>preview with fruit image</span>
+      </div>
+
+      <div class="doc-visual" aria-label="ML input settings visual">
+        <div class="settings-visual">
+          <div class="settings-header">ML Component Input Settings</div>
+          <div class="settings-row"><span>Input Shape</span><strong>128 × 256 × 3</strong></div>
+          <div class="settings-row"><span>Texture</span><strong>DeviceCameraTexture</strong></div>
+          <div class="settings-row"><span>Stretch</span><strong>Off</strong></div>
+          <div class="settings-row"><span>Align</span><strong>Center / Center</strong></div>
+          <div class="settings-row"><span>Rotation</span><strong>None</strong></div>
+          <div class="settings-row"><span>Fill Color</span><strong>Black</strong></div>
+        </div>
+        <p class="doc-caption">
+          This mirrors the key ML input settings described in Snap’s Object Detection guide.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel section feature-section" id="krazyy-lens" data-step="06">
+      <div class="section-head">
+        <p class="section-tag">XDG मुंBAI</p>
+        <h2>Build this: Food Mouth Lens</h2>
+      </div>
+
+      <div class="concept-shell">
+        <article class="concept-main">
+          <p class="concept-lead">
+            As soon as a food item is detected, your Lens attaches an animated mouth sticker
+            to it so the snack feels alive on screen. The result is simple, funny, and realistic
+            to build inside the Object Detection template.
+          </p>
+
+          <div class="concept-switcher" id="conceptSwitcher">
+            <button class="concept-tab active" data-target="mode-vibe" type="button">Vibe</button>
+            <button class="concept-tab" data-target="mode-build" type="button">Build</button>
+            <button class="concept-tab" data-target="mode-feasibility" type="button">Feasibility</button>
+          </div>
+
+          <div class="concept-panels">
+            <div class="concept-panel active" id="mode-vibe">
+              <ul class="check-list">
+                <li>An apple can grin, chew, or lip-sync with a looping mouth sticker.</li>
+                <li>A donut can get a tiny floating mouth in the center hole for comic effect.</li>
+                <li>A pizza slice can look like it is talking back to the user.</li>
+                <li>If multiple foods appear, each one can get its own mouth for a chaotic scene.</li>
+              </ul>
+            </div>
+            <div class="concept-panel" id="mode-build">
+              <ul class="check-list">
+                <li>You reuse detection box anchors to place a mouth sticker inside each detected box.</li>
+                <li>You replace the default visual children with an animated mouth image or sprite.</li>
+                <li>You keep the mouth centered or slightly lower within the detection area for better placement.</li>
+                <li>You can scale or switch mouth variants based on the detected class label.</li>
+              </ul>
+            </div>
+            <div class="concept-panel" id="mode-feasibility">
+              <ul class="check-list">
+                <li>No retraining required if using bundled food model.</li>
+                <li>Most of the work is 2D UI, sticker animation, and anchor positioning.</li>
+                <li>It is much lower risk than trying to attach full 3D content to food items.</li>
+                <li>You can prototype it quickly by editing the detection box children already in the template.</li>
+                <li>It works well for a workshop because the result is playful but technically realistic.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <aside class="concept-side">
+          <div class="recipe-card">
+            <p class="recipe-title">Why this build works</p>
+            <div class="recipe-row">
+              <span>Input</span>
+              <strong>food bounding boxes</strong>
+            </div>
+            <div class="recipe-row">
+              <span>Output</span>
+              <strong>animated mouth stickers</strong>
+            </div>
+            <div class="recipe-row">
+              <span>Scope</span>
+              <strong>fast to prototype</strong>
+            </div>
+            <div class="recipe-row">
+              <span>Wow factor</span>
+              <strong>funny and memorable</strong>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel section" id="your-model" data-step="07">
+      <div class="section-head">
+        <p class="section-tag">Build With Snap</p>
+        <h2>Train and bring in your own model</h2>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <h3>What is supported</h3>
+          <p>
+            If you use the Roboflow Lens Studio deployment flow, the supported task here is
+            <strong>object detection</strong>. Roboflow also notes that only models trained with
+            <strong>Roboflow Train 3.0</strong> are supported for this export path.
+          </p>
+        </article>
+        <article class="card">
+          <h3>What you do in Roboflow</h3>
+          <ol class="steps">
+            <li>Create or import your dataset.</li>
+            <li>Annotate and generate a version.</li>
+            <li>Train your detector.</li>
+            <li>Open <strong>Deploy</strong> and choose <strong>Export to Lens Studio</strong>.</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>What gets downloaded</h3>
+          <p>
+            You get the Roboflow Lens Studio template plus your model weights. Keep the class list
+            shown during export because you will need that exact order inside Lens Studio.
+          </p>
+        </article>
+      </div>
+
+      <div class="doc-visual" aria-label="Custom model flow visual">
+        <div class="pipeline-visual">
+          <div class="pipeline-node">Dataset</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Annotate</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Train</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Export to Lens Studio</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Import + Class Settings</div>
+        </div>
+        <p class="doc-caption">
+          Quick next-step flow based on the Roboflow Lens Studio deployment docs.
+        </p>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <h3>What you configure in Lens Studio</h3>
+          <ul class="check-list">
+            <li>Open the Roboflow Lens Studio template or your own object detection project.</li>
+            <li>Select the <strong>ML Controller</strong>.</li>
+            <li>Click <strong>ML Model</strong> and import the exported weights.</li>
+            <li>In the import popup, set each input <strong>Scale</strong> to <strong>0.0039</strong>.</li>
+            <li>Leave bias values at their defaults unless your export says otherwise.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>One detail you cannot skip</h3>
+          <p>
+            In <strong>Class Settings</strong>, enter every class name and label in the exact same
+            order shown in Roboflow. If the order is wrong, your detections will map to the wrong labels.
+          </p>
+          <p class="callout">
+            Fast mental model: <strong>weights + correct scale + correct class order = usable custom detector</strong>.
+          </p>
+        </article>
+      </div>
+
+      <div class="sources-card">
+        <p class="sources-title">Next-step references</p>
+        <a href="https://docs.roboflow.com/deploy/sdks/lens-studio" target="_blank" rel="noreferrer">Roboflow Docs: Lens Studio</a>
+        <a href="https://blog.roboflow.com/deploy-to-snap-lens-studio/" target="_blank" rel="noreferrer">Roboflow Blog: Deploy to Snap Lens Studio</a>
+      </div>
+    </section>
+
+    <section class="panel section vibe-section" id="vibe-coding" data-step="08">
+      <div class="section-head">
+        <p class="section-tag">Magnificent March</p>
+        <h2>Use vibe coding to move faster</h2>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <h3>What vibe coding looks like here</h3>
+          <p>
+            You keep one Codex workspace that contains your custom training notebooks,
+            SnapML docs, Lens Studio references, exported models, and experiment notes.
+            Instead of context switching across ten tabs, you build with everything close by.
+          </p>
+          <div class="assistant-picker">
+            <label for="assistantSelect">Choose your coding assistant</label>
+            <select id="assistantSelect">
+              <option value="codex" selected>Codex Environment</option>
+              <option value="claude">Claude Code</option>
+            </select>
+          </div>
+          <p class="callout" id="assistantCallout">
+            With Codex Environment, you can keep notebooks, docs, exported models, and implementation work in one workspace.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Why it helps</h3>
+          <ul class="check-list">
+            <li>You can move from idea to prototype without losing context.</li>
+            <li>You can compare docs, notebooks, and model outputs side by side.</li>
+            <li>You can reuse prompts, snippets, class lists, and config notes.</li>
+            <li>You can iterate on custom detectors much faster.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="doc-visual" aria-label="Vibe coding workflow visual">
+        <div class="pipeline-visual">
+          <div class="pipeline-node">Idea</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Codex Workspace</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Notebooks + Docs</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Train / Export</div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">Lens Prototype</div>
+        </div>
+        <p class="doc-caption">
+          A practical vibe-coding loop for SnapML: keep research, training, and Lens iteration in one working environment.
+        </p>
+      </div>
+
+      <div class="grid two vibe-principles">
+        <article class="card principle-card">
+          <h3>Three simple techniques</h3>
+          <ul class="check-list">
+            <li>Keep a starter prompt library for repeat jobs like model swapping and class mapping.</li>
+            <li>Save every training run with notes on preprocessing, export settings, and preview results.</li>
+            <li>Treat your workspace like a lab bench: docs, notebooks, Lens output, and your assistant in one loop.</li>
+          </ul>
+        </article>
+        <article class="card principle-card">
+          <h3>How to keep it useful</h3>
+          <p class="concept-lead">
+            A strong vibe-coding setup does not replace understanding. It compresses the boring parts:
+            setup, recall, cross-referencing, and repetition. You still make the product decisions.
+          </p>
+          <ul class="check-list">
+            <li>Ask for quick script scaffolds, then inspect and adapt them.</li>
+            <li>Keep your class order, thresholds, and import settings documented.</li>
+            <li>Use the AI to summarize docs, not to replace testing.</li>
+            <li>Always validate your model in Preview and on-device pairing.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="vibe-stack-wrap">
+        <aside class="concept-side">
+          <div class="recipe-card">
+            <p class="recipe-title">Your personal stack</p>
+            <div class="recipe-row">
+              <span>Workspace</span>
+              <strong id="assistantStackLabel">Codex environment</strong>
+            </div>
+            <div class="recipe-row">
+              <span>Training</span>
+              <strong>custom notebooks</strong>
+            </div>
+            <div class="recipe-row">
+              <span>Knowledge</span>
+              <strong>SnapML docs + notes</strong>
+            </div>
+            <div class="recipe-row">
+              <span>Outcome</span>
+              <strong>faster ML lens iteration</strong>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel section" id="presentation-close" data-step="09">
+      <div class="section-head">
+        <p class="section-tag">XDG मुंBAI</p>
+        <h2>What you can do after this</h2>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <h3>You now understand</h3>
+          <p>
+            You now know how to navigate Lens Studio, swap in a SnapML object detection model,
+            preserve the right input settings, and customize the detection UI into a creative Lens.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Try this next</h3>
+          <p>
+            Start with the template, replace the default model with Food & Fruits, style the detection box,
+            then create one reaction per class or one reaction per combo.
+          </p>
+        </article>
+      </div>
+
+      <div class="sources-card">
+        <p class="sources-title">Official references used</p>
+        <a href="https://developers.snap.com/lens-studio/lens-studio-workflow/lens-studio-interface/panels" target="_blank" rel="noreferrer">Lens Studio Panels</a>
+        <a href="https://developers.snap.com/lens-studio/features/snap-ml/snap-ml-templates/object-detection" target="_blank" rel="noreferrer">SnapML Object Detection Template</a>
+        <a href="https://developers.snap.com/spectacles/about-spectacles-features/snapML" target="_blank" rel="noreferrer">SnapML on Spectacles</a>
+      </div>
+    </section>
+  </main>
+
+  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top">↑</button>
+
+  <script src="./app.js"></script>
+</body>
+</html>
