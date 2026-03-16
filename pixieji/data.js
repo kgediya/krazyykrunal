@@ -91,7 +91,8 @@ window.scrapbookData = {
     {
       title: "Autumn Kalm, Soft Kaos",
       caption: "You, the leaves, and that peaceful little moment that somehow still manages to feel cinematic in my head.",
-      image: "./placeholders/Chapter2.mov",
+      image: "./placeholders/Chapter2-mobile.mp4",
+      poster: "./placeholders/Chapter2-poster.jpg",
       tilt: "2.8deg",
       tag: "Chapter 02"
     },
@@ -105,7 +106,8 @@ window.scrapbookData = {
     {
       title: "The Kick To The Kalash",
       caption: "A moving little chapter of us just being cute in real time instead of only in screenshots.",
-      image: "./placeholders/Chapter4.mp4",
+      image: "./placeholders/Chapter4-mobile.mp4",
+      poster: "./placeholders/Chapter4-poster.jpg",
       tilt: "3.6deg",
       tag: "Chapter 04"
     },
@@ -245,7 +247,8 @@ window.scrapbookData = {
     {
       title: "Me You and Our Lil Escape",
       caption: "A moving memory from a table that probably held food, laughter, and at least one look I replay too much.",
-      image: "./placeholders/Chapter23.mp4",
+      image: "./placeholders/Chapter23-mobile.mp4",
+      poster: "./placeholders/Chapter23-poster.jpg",
       tilt: "-2.2deg",
       tag: "Chapter 23"
     },
@@ -278,7 +281,7 @@ window.scrapbookData = {
       tag: "Chapter 27"
     },
     {
-      title: "Drawn Into You",
+      title: "Drawn Into You FOREVER",
       caption: "A little animated memory that feels like tenderness translated into lines, motion, and softness.",
       image: "./placeholders/Chapter28.gif",
       tilt: "3.2deg",

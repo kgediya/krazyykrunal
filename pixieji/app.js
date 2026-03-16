@@ -38,7 +38,8 @@ function isVideo(path) {
 
 function createMediaMarkup(memory) {
   if (isVideo(memory.image)) {
-    return `<video src="${memory.image}" muted autoplay loop playsinline preload="metadata" aria-label="${memory.title}"></video>`;
+    const posterAttr = memory.poster ? ` poster="${memory.poster}"` : "";
+    return `<video src="${memory.image}" muted autoplay loop playsinline preload="metadata"${posterAttr} aria-label="${memory.title}"></video>`;
   }
 
   return `<img src="${memory.image}" alt="${memory.title}" loading="lazy" />`;
@@ -102,11 +103,13 @@ function openMemory(memory) {
     modalImage.alt = "";
     modalVideo.style.display = "block";
     modalVideo.src = memory.image;
+    modalVideo.poster = memory.poster || "";
     modalVideo.currentTime = 0;
     modalVideo.play().catch(() => {});
   } else {
     modalVideo.pause();
     modalVideo.removeAttribute("src");
+    modalVideo.removeAttribute("poster");
     modalVideo.load();
     modalVideo.style.display = "none";
     modalImage.style.display = "block";
@@ -188,6 +191,7 @@ modal.addEventListener("click", (event) => {
 modal.addEventListener("close", () => {
   modalVideo.pause();
   modalVideo.removeAttribute("src");
+  modalVideo.removeAttribute("poster");
   modalVideo.load();
   modalVideo.style.display = "none";
 });
