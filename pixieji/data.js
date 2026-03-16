@@ -2,7 +2,7 @@ window.scrapbookData = {
   pageTitle: "Happiest 5 Months To US",
   hero: {
     eyebrow: "Five months of us",
-    title: "A lovely moments archie for my Priyee, my Pixieji, meri Meghna💘",
+    title: "A Lovely Moments Archive for my Priyee, my Pixieji, meri Meghna💘",
     text: "Tiny moments, soft memories, and all the reasons this story feels like home always.",
     cta: "Open scrapbook"
   },
