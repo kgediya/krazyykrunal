@@ -283,6 +283,7 @@
         let particleTexture = null;
         let festiveMoonVisible = false;
         let festiveMoonAnimStart = 0;
+        let festiveMoonEntered = false;
 
         function isSmallScreen() {
             return window.matchMedia('(max-width: 720px)').matches;
@@ -424,15 +425,22 @@
         }
 
         function setFestiveMoonVisibility(visible) {
-            festiveMoonVisible = !!visible;
+            const nextVisible = !!visible;
+            const shouldEnter = nextVisible && !festiveMoonVisible && !festiveMoonEntered;
+            festiveMoonVisible = nextVisible;
             if (moonGroup) {
                 moonGroup.visible = festiveMoonVisible;
-                if (festiveMoonVisible) {
+                if (shouldEnter) {
                     festiveMoonAnimStart = performance.now();
+                    festiveMoonEntered = true;
                     moonGroup.userData.entering = true;
                     moonGroup.position.set(3.9, 4.35, -7.4);
                     moonGroup.scale.setScalar(0.15);
                     moonGroup.rotation.z = -0.32;
+                } else if (festiveMoonVisible) {
+                    moonGroup.position.copy(moonGroup.userData.basePosition);
+                    moonGroup.scale.setScalar(1);
+                    moonGroup.rotation.z = -0.16;
                 }
             }
         }
@@ -445,13 +453,6 @@
                 new THREE.MeshBasicMaterial({ color: 0xffefc2 })
             );
             group.add(moon);
-
-            const crescentMask = new THREE.Mesh(
-                new THREE.SphereGeometry(0.36, 28, 28),
-                new THREE.MeshBasicMaterial({ color: 0x050505 })
-            );
-            crescentMask.position.set(0.18, 0.03, 0.18);
-            group.add(crescentMask);
 
             const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffdf8d });
             const starA = new THREE.Mesh(new THREE.OctahedronGeometry(0.07, 0), starMaterial);
@@ -751,6 +752,7 @@
             lanterns.length = 0;
             queue.length = 0;
             seenIds.clear();
+            festiveMoonEntered = false;
             setFestiveMoonVisibility(false);
             updateCount();
         }
@@ -858,7 +860,7 @@
                     moonGroup.position.y = base.y + Math.sin(t * 0.0007) * 0.08;
                     moonGroup.position.z = base.z + Math.cos(t * 0.00031) * 0.06;
                     moonGroup.rotation.z = -0.16 + Math.sin(t * 0.00033) * 0.03;
-                    moonGroup.scale.setScalar(1 + Math.sin(t * 0.00052) * 0.015);
+                    moonGroup.scale.setScalar(1);
                 }
             }
 
