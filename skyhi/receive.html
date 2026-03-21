@@ -207,6 +207,7 @@
     <script type="module">
         import * as THREE from 'three';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         const SUPABASE_URL = 'https://pmsvailryexqutzvzcsd.snapcloud.dev';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBtc3ZhaWxyeWV4cXV0enZ6Y3NkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzI3MzMsImV4cCI6MjA4MjUwODczM30.WTvkWsgBddhUPvTYhG6NIBR697Csb4mPzrbR5nUDRbs';
         const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/lantern-processing';
@@ -223,7 +224,7 @@
         let pollTimer = null;
         let activePin = '';
 
-        let renderer, scene, camera, clock;
+        let renderer, scene, camera, clock, controls;
         let starPoints, fireflyPoints, skyAura;
         const lanterns = [];
         const queue = [];
@@ -469,6 +470,17 @@
             return group;
         }
 
+        function computeLanternSlot(index) {
+            const ring = Math.floor(index / 8);
+            const step = index % 8;
+            const baseRadius = 1.2 + ring * 0.52;
+            const angle = -Math.PI * 0.5 + step * (Math.PI / 3.8) + (ring % 2 === 0 ? 0 : Math.PI / 7.6);
+            const x = Math.cos(angle) * baseRadius * 0.92;
+            const z = -2.2 + Math.sin(angle) * baseRadius * 0.42 - ring * 0.22;
+            const y = 1.08 + (step % 3) * 0.2 + ring * 0.06;
+            return new THREE.Vector3(x, y, z);
+        }
+
         function buildLantern(entry, markLive) {
             const isLove = entry.shapeType === 1;
             const root = new THREE.Group();
@@ -503,15 +515,12 @@
             const light = new THREE.PointLight(glowColor, 1.25, 3.8, 1.7);
             root.add(light);
 
-            const lane = lanterns.length;
-            const side = lane % 2 === 0 ? -1 : 1;
-            const band = Math.floor(lane / 2) % 6;
-            const target = new THREE.Vector3(
-                side * (0.95 + band * 0.28 + Math.random() * 0.16),
-                1.35 + (lane % 3) * 0.08 + Math.random() * 0.05,
-                -1.7 - band * 0.36 - Math.random() * 0.24
+            const target = computeLanternSlot(lanterns.length);
+            const start = new THREE.Vector3(
+                target.x + (Math.random() - 0.5) * 1.25,
+                4.25 + Math.random() * 1.25,
+                target.z + 1.35 + Math.random() * 0.35
             );
-            const start = new THREE.Vector3(target.x + (Math.random() - 0.5) * 1.5, 4.4 + Math.random() * 1.6, target.z + 1.2);
             root.position.copy(start);
             root.rotation.y = Math.random() * Math.PI * 2;
             scene.add(root);
@@ -561,11 +570,11 @@
 
         function initScene() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x020202, 0.09);
+            scene.fog = new THREE.FogExp2(0x020202, 0.065);
 
-            camera = new THREE.PerspectiveCamera(56, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 1.65, 3.3);
-            camera.lookAt(0, 1.2, -1.9);
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 1.85, 4.6);
+            camera.lookAt(0, 1.28, -2.2);
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -574,12 +583,31 @@
             renderer.setClearColor(0x050505, 1);
             document.getElementById('scene').appendChild(renderer.domElement);
 
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, 1.28, -2.2);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+            controls.enablePan = true;
+            controls.panSpeed = 0.8;
+            controls.rotateSpeed = 0.75;
+            controls.minDistance = 2.2;
+            controls.maxDistance = 8;
+            controls.minPolarAngle = Math.PI * 0.18;
+            controls.maxPolarAngle = Math.PI * 0.48;
+            controls.screenSpacePanning = true;
+            controls.touches.ONE = THREE.TOUCH.ROTATE;
+            controls.touches.TWO = THREE.TOUCH.DOLLY_PAN;
+            controls.update();
+
             clock = new THREE.Clock();
 
             scene.add(new THREE.HemisphereLight(0x9ab3d2, 0x1c1308, 0.5));
-            const key = new THREE.DirectionalLight(0xffdca2, 0.55);
-            key.position.set(2.2, 4.4, 1.6);
+            const key = new THREE.DirectionalLight(0xffdca2, 0.7);
+            key.position.set(2.4, 4.6, 2.2);
             scene.add(key);
+            const fill = new THREE.PointLight(0xffd08a, 0.4, 10, 1.5);
+            fill.position.set(0, 2.6, 1.8);
+            scene.add(fill);
 
             const dome = new THREE.Mesh(
                 new THREE.SphereGeometry(26, 42, 32),
@@ -612,6 +640,7 @@
             const t = performance.now();
             const dt = clock.getDelta();
 
+            if (controls) controls.update();
             skyAura.material.opacity = 0.07 + Math.sin(t * 0.00033) * 0.025;
             starPoints.rotation.y += dt * 0.004;
             fireflyPoints.rotation.y -= dt * 0.012;
@@ -725,14 +754,6 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-
-            document.addEventListener('pointermove', e => {
-                const nx = (e.clientX / window.innerWidth) * 2 - 1;
-                const ny = (e.clientY / window.innerHeight) * 2 - 1;
-                camera.position.x = nx * 0.22;
-                camera.position.y = 1.65 - ny * 0.08;
-                camera.lookAt(0, 1.2, -1.9);
             });
         }
 
