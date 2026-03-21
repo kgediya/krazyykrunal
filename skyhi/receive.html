@@ -282,6 +282,7 @@
         const modelCache = { normal: null, heart: null };
         let particleTexture = null;
         let festiveMoonVisible = false;
+        let festiveMoonAnimStart = 0;
 
         function isSmallScreen() {
             return window.matchMedia('(max-width: 720px)').matches;
@@ -426,6 +427,13 @@
             festiveMoonVisible = !!visible;
             if (moonGroup) {
                 moonGroup.visible = festiveMoonVisible;
+                if (festiveMoonVisible) {
+                    festiveMoonAnimStart = performance.now();
+                    moonGroup.userData.entering = true;
+                    moonGroup.position.set(3.9, 4.35, -7.4);
+                    moonGroup.scale.setScalar(0.15);
+                    moonGroup.rotation.z = -0.32;
+                }
             }
         }
 
@@ -433,17 +441,26 @@
             const group = new THREE.Group();
 
             const moon = new THREE.Mesh(
-                new THREE.SphereGeometry(0.34, 28, 28),
+                new THREE.SphereGeometry(0.4, 34, 34),
                 new THREE.MeshBasicMaterial({ color: 0xffefc2 })
             );
             group.add(moon);
 
             const crescentMask = new THREE.Mesh(
-                new THREE.SphereGeometry(0.31, 24, 24),
+                new THREE.SphereGeometry(0.36, 28, 28),
                 new THREE.MeshBasicMaterial({ color: 0x050505 })
             );
-            crescentMask.position.set(0.13, 0.02, 0.16);
+            crescentMask.position.set(0.18, 0.03, 0.18);
             group.add(crescentMask);
+
+            const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffdf8d });
+            const starA = new THREE.Mesh(new THREE.OctahedronGeometry(0.07, 0), starMaterial);
+            starA.position.set(0.54, 0.22, 0.08);
+            group.add(starA);
+
+            const starB = new THREE.Mesh(new THREE.OctahedronGeometry(0.045, 0), starMaterial.clone());
+            starB.position.set(0.28, 0.46, 0.05);
+            group.add(starB);
 
             const glow = new THREE.Sprite(
                 new THREE.SpriteMaterial({
@@ -458,7 +475,10 @@
             glow.scale.set(2.4, 2.4, 1);
             group.add(glow);
 
-            group.position.set(2.95, 3.55, -6.2);
+            group.position.set(3.2, 3.7, -6.4);
+            group.scale.setScalar(1);
+            group.userData.basePosition = new THREE.Vector3(3.2, 3.7, -6.4);
+            group.userData.entering = false;
             group.visible = false;
             return group;
         }
@@ -618,14 +638,33 @@
         }
 
         function computeLanternSlot(index) {
-            const ring = Math.floor(index / 6);
-            const step = index % 6;
-            const baseRadius = 1.6 + ring * 0.72;
-            const angle = -Math.PI * 0.5 + step * (Math.PI / 2.9) + (ring % 2 === 0 ? 0 : Math.PI / 5.8);
-            const x = Math.cos(angle) * baseRadius * 1.06;
-            const z = -2.35 + Math.sin(angle) * baseRadius * 0.56 - ring * 0.3;
-            const y = 1 + (step % 2) * 0.28 + ring * 0.08;
-            return new THREE.Vector3(x, y, z);
+            const attempts = 28;
+            const minDistance = 1.1;
+            let candidate = null;
+
+            for (let i = 0; i < attempts; i++) {
+                const spread = 1 + Math.min(index, 24) * 0.06;
+                const x = (Math.random() * 2 - 1) * 2.7 * spread;
+                const y = 0.92 + Math.random() * 1.3 + Math.floor(index / 8) * 0.08;
+                const z = -1.65 - Math.random() * 3.5 - Math.floor(index / 6) * 0.18;
+                const next = new THREE.Vector3(x, y, z);
+
+                let tooClose = false;
+                for (const lantern of lanterns) {
+                    if (lantern && lantern.target && lantern.target.distanceTo(next) < minDistance) {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose) {
+                    candidate = next;
+                    break;
+                }
+                candidate = next;
+            }
+
+            return candidate || new THREE.Vector3(0, 1.2, -2.6);
         }
 
         function buildLantern(entry, markLive) {
@@ -796,6 +835,32 @@
             starPoints.rotation.y += dt * 0.004;
             fireflyPoints.rotation.y -= dt * 0.012;
             fireflyPoints.rotation.x += dt * 0.004;
+
+            if (moonGroup && festiveMoonVisible) {
+                const base = moonGroup.userData.basePosition;
+                const enterT = Math.min((t - festiveMoonAnimStart) / 1400, 1);
+                const eased = 1 - Math.pow(1 - enterT, 3);
+
+                if (moonGroup.userData.entering) {
+                    moonGroup.position.lerpVectors(
+                        new THREE.Vector3(3.9, 4.35, -7.4),
+                        base,
+                        eased
+                    );
+                    const scale = 0.15 + eased * 0.85;
+                    moonGroup.scale.setScalar(scale);
+                    moonGroup.rotation.z = -0.32 + eased * 0.16;
+                    if (enterT >= 1) {
+                        moonGroup.userData.entering = false;
+                    }
+                } else {
+                    moonGroup.position.x = base.x + Math.sin(t * 0.00023) * 0.12;
+                    moonGroup.position.y = base.y + Math.sin(t * 0.0007) * 0.08;
+                    moonGroup.position.z = base.z + Math.cos(t * 0.00031) * 0.06;
+                    moonGroup.rotation.z = -0.16 + Math.sin(t * 0.00033) * 0.03;
+                    moonGroup.scale.setScalar(1 + Math.sin(t * 0.00052) * 0.015);
+                }
+            }
 
             if (queue.length > 0 && t - lastSpawn > 700) {
                 const next = queue.shift();
