@@ -127,10 +127,10 @@
   ],
   "tools": [
     {
-      "title": "LS WebAR Publisher",
-      "description": "A publishing helper built to make Lens Studio to WebAR workflows less annoying.",
+      "title": "KrazyyKam",
+      "description": "A yellow little publishing sidekick for pushing Lens Studio work to the web without the usual friction.",
       "type": "Workflow Utility",
-      "href": "https://krazyy-kam-public.netlify.app",
+      "href": "https://krazyykam.krazyykrunal.com",
       "tags": ["Publishing", "WebAR", "Utility"]
     },
     {

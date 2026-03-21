@@ -1045,11 +1045,14 @@ main {
   }
 
   .hero-top-row {
-    align-items: center;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .brand-lockup {
     gap: 10px;
+    width: 100%;
   }
 
   .brand-kicker {
@@ -1057,7 +1060,19 @@ main {
   }
 
   .nav-bar {
-    display: none;
+    display: flex;
+    width: 100%;
+    justify-content: stretch;
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .nav-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 11px 14px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
   }
 
   .hero-panel {
@@ -1200,8 +1215,27 @@ main {
     height: 52px;
   }
 
+  .brand-lockup {
+    gap: 9px;
+  }
+
+  .brand-copy {
+    min-width: 0;
+  }
+
   .brand-copy h1 {
     font-size: 1.2rem;
+  }
+
+  .nav-bar {
+    gap: 6px;
+    margin-top: 0;
+  }
+
+  .nav-btn {
+    padding: 10px 12px;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
   }
 
   .hero-statement {

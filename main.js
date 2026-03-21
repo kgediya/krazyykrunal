@@ -460,22 +460,25 @@ function renderTools(items) {
 }
 
 function getToolVisual(classifier) {
+  if (classifier.includes('krazyykam')) {
+    return { bgFrom: '#2b2200', bgTo: '#7a5f08', glow: '#ffd54f' };
+  }
   if (classifier.includes('qr')) {
-    return { emoji: '▦', bgFrom: '#111111', bgTo: '#1f1f1f', glow: '#f0f0f0' };
+    return { bgFrom: '#111111', bgTo: '#1f1f1f', glow: '#f0f0f0' };
   }
   if (classifier.includes('skybox') || classifier.includes('portal') || classifier.includes('spatial')) {
-    return { emoji: '◉', bgFrom: '#0d1117', bgTo: '#15202f', glow: '#8fd3ff' };
+    return { bgFrom: '#0d1117', bgTo: '#15202f', glow: '#8fd3ff' };
   }
   if (classifier.includes('audio') || classifier.includes('media') || classifier.includes('music')) {
-    return { emoji: '♫', bgFrom: '#121016', bgTo: '#231c2f', glow: '#c39bff' };
+    return { bgFrom: '#121016', bgTo: '#231c2f', glow: '#c39bff' };
   }
   if (classifier.includes('plan') || classifier.includes('blueprint') || classifier.includes('structure')) {
-    return { emoji: '⌖', bgFrom: '#0f1418', bgTo: '#1a242b', glow: '#95e6ff' };
+    return { bgFrom: '#0f1418', bgTo: '#1a242b', glow: '#95e6ff' };
   }
   if (classifier.includes('link') || classifier.includes('routing') || classifier.includes('campaign')) {
-    return { emoji: '∞', bgFrom: '#121212', bgTo: '#1d1d1d', glow: '#ffc78a' };
+    return { bgFrom: '#121212', bgTo: '#1d1d1d', glow: '#ffc78a' };
   }
-  return { emoji: '✦', bgFrom: '#111111', bgTo: '#1a1a1a', glow: '#ffffff' };
+  return { bgFrom: '#111111', bgTo: '#1a1a1a', glow: '#ffffff' };
 }
 
 function renderSocial(items) {
