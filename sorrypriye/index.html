@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sorry, Priye</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="grain"></div>
+  <div id="floating-hearts" class="floating-hearts" aria-hidden="true"></div>
+
+  <main class="page-shell">
+    <section class="hero-card">
+      <p class="eyebrow">For My Priye</p>
+      <h1>A sorry from the deepest part of my heart.</h1>
+      <p class="hero-copy">
+        This is not to excuse what I did. It is to own it fully, tell you what I understand now,
+        and remind you that my love for you is bigger than my ego, my habits, or one bad night.
+      </p>
+
+      <div class="hero-actions">
+        <button id="open-letter" class="primary-btn" type="button">Open My Heart</button>
+      </div>
+    </section>
+
+    <section id="letter-panel" class="letter-panel" aria-live="polite">
+      <div class="letter-envelope">
+        <div class="envelope-top"></div>
+        <div class="envelope-body"></div>
+        <article class="letter-sheet">
+          <h2>Priye, I am truly sorry.</h2>
+          <p>
+            Last night I made a sarcastic and insensitive joke, and that alone was hurtful.
+            But what hurts me even more to realize is that I let you carry that feeling into sleep.
+            You deserved comfort, softness, and reassurance from me, not a wound to sit with.
+          </p>
+          <p>
+            I also want to own something deeper about me. I have a habit of dragging past topics
+            back into disagreements, arguments, and even jokes. I use it like a defense mechanism
+            to protect myself, to feel like I have the upper hand, and sometimes to make the other
+            person feel guilty. That is unfair, immature, and damaging to the bond we are trying to protect.
+          </p>
+          <p>
+            You are not my opponent. You are my person. I never want my words to become a place where
+            you feel punished instead of loved.
+          </p>
+          <p>
+            I am sorry for the joke. I am sorry for reopening old things. I am sorry for letting my
+            defensiveness speak louder than my love. And I am sorry that you had to sleep with that heaviness.
+            The truth is, it scares me to think that my own actions could ever be the reason I hurt you enough
+            to lose you. That fear does not come from possession. It comes from knowing how deeply I love you
+            and how badly I never want to become careless with your heart.
+          </p>
+          <p class="letter-signoff">
+            I love you to infinity and beyond, Priye.<br />
+            More gently. More honestly. More carefully. Always.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="grid-section">
+      <article class="reflection-card">
+        <p class="card-label">What I did wrong</p>
+        <h3>I hurt you in more than one way.</h3>
+        <div id="issue-list" class="issue-list">
+          <button class="issue-pill active" type="button" data-copy="I chose sarcasm over kindness, even though kindness is what you deserve from me.">Insensitive joke</button>
+          <button class="issue-pill" type="button" data-copy="I let you go to sleep holding onto that hurt, when I should have stayed present and repaired it.">I let the night end badly</button>
+          <button class="issue-pill" type="button" data-copy="I brought old things back up as a shield, which turns love into scorekeeping.">I use the past as defense</button>
+        </div>
+        <p id="issue-copy" class="issue-copy">I chose sarcasm over kindness, even though kindness is what you deserve from me.</p>
+      </article>
+
+      <article class="reflection-card">
+        <p class="card-label">What I understand</p>
+        <h3>Love cannot feel safe if I fight to win.</h3>
+        <div class="truth-list">
+          <label class="truth-row">
+            <input class="truth-check" type="checkbox" />
+            <span>Being defensive may protect my ego for a moment, but it hurts us for much longer.</span>
+          </label>
+          <label class="truth-row">
+            <input class="truth-check" type="checkbox" />
+            <span>Repeating old issues in jokes or arguments creates guilt, not healing.</span>
+          </label>
+          <label class="truth-row">
+            <input class="truth-check" type="checkbox" />
+            <span>Real love means repairing quickly, especially before the night ends.</span>
+          </label>
+        </div>
+      </article>
+    </section>
+
+    <section class="promise-card">
+      <div class="promise-copy">
+        <p class="card-label">What I promise</p>
+        <h3>I want my actions to feel safer than my apology sounds.</h3>
+      </div>
+
+      <div id="promise-stack" class="promise-stack">
+        <button class="promise-note active" type="button">I will pause before I joke, and ask if what I am saying is kind.</button>
+        <button class="promise-note" type="button">I will stop pulling old wounds into new moments just to defend myself.</button>
+        <button class="promise-note" type="button">I will try to repair before sleep, because your peace matters to me.</button>
+        <button class="promise-note" type="button">I will love you in a way that feels gentle, accountable, and real.</button>
+      </div>
+
+      <div class="meter-wrap" aria-hidden="true">
+        <div class="meter-track">
+          <div id="meter-fill" class="meter-fill"></div>
+        </div>
+        <p id="meter-label" class="meter-label">1 / 4 promises opened</p>
+      </div>
+    </section>
+
+    <section class="final-card">
+      <p class="card-label">One last thing</p>
+      <h3>My love for you does not end at "sorry."</h3>
+      <p id="final-message" class="final-message">
+        It keeps learning, correcting itself, and choosing you again.
+      </p>
+      <button id="release-love" class="secondary-btn" type="button">Send You All My Love</button>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+
