@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Priye Playroom Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="screen-glow" aria-hidden="true"></div>
+
+  <main class="cabinet-shell app-shell">
+    <header class="marquee">
+      <p class="marquee-label">Long Distance Lovers Only</p>
+      <h1>Priye Playroom Arcade</h1>
+      <p class="marquee-subtitle">Retro cabinet vibes, private room flow, and proper two-player live arcade sessions.</p>
+    </header>
+
+    <section id="auth-view" class="machine-frame app-view active">
+      <div class="screen-topbar auth-topbar">
+        <span>ROOM ENTRY</span>
+        <span id="connection-status">Not connected</span>
+      </div>
+
+      <section class="auth-grid">
+        <section class="auth-hero panel-surface">
+          <p class="screen-label">Launch Cabinet</p>
+          <h2>Start with a room, then unlock the full arcade together.</h2>
+          <p class="auth-copy">Create a private room for you and your priye, or join an existing code. The full dashboard opens only after the session is live.</p>
+          <div class="auth-features">
+            <article class="mini-meta panel-surface">
+              <span class="mini-meta-title">Step 1</span>
+              <strong>Pick your cute player name</strong>
+            </article>
+            <article class="mini-meta panel-surface">
+              <span class="mini-meta-title">Step 2</span>
+              <strong>Create or join a live room code</strong>
+            </article>
+            <article class="mini-meta panel-surface">
+              <span class="mini-meta-title">Step 3</span>
+              <strong>Wait for both players, then start games</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="auth-card panel-surface">
+          <p class="panel-label">Session Setup</p>
+          <label class="field" for="player-name">
+            <span>Your name</span>
+            <input id="player-name" class="text-input" type="text" maxlength="24" placeholder="Enter your cute name" />
+          </label>
+          <button id="create-room" class="primary-btn full-width" type="button">Create Room</button>
+          <div class="join-stack">
+            <input id="join-code" class="text-input" type="text" maxlength="6" placeholder="ROOM CODE" />
+            <button id="join-room" class="secondary-btn full-width" type="button">Join Room</button>
+          </div>
+          <p id="setup-status" class="panel-note">Start by creating a room or entering your priye's room code.</p>
+          <div class="resume-card">
+            <span class="resume-label">Saved session</span>
+            <strong id="resume-room-display">None</strong>
+            <button id="resume-room" class="secondary-btn full-width" type="button">Resume Session</button>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section id="arcade-view" class="machine-frame app-view">
+      <div class="screen-topbar">
+        <span>VAL TOWN LINKED</span>
+        <span id="dashboard-connection">Connected</span>
+      </div>
+
+      <div class="screen-grid dashboard-grid">
+        <aside class="sidebar room-sidebar">
+          <section class="panel-card panel-surface room-summary-card">
+            <p class="panel-label">Room Session</p>
+            <div class="hud-row"><span>Room</span><strong id="room-code-display">-----</strong></div>
+            <div class="hud-row"><span>You</span><strong id="player-role-display">Guest</strong></div>
+            <div class="hud-row"><span>Host</span><strong id="host-display">Unknown</strong></div>
+            <div class="hud-row"><span>Players</span><strong id="player-count-display">0</strong></div>
+            <div class="hud-row"><span>Status</span><strong id="pair-status-display">Waiting</strong></div>
+            <div class="room-cta-row">
+              <button id="copy-room" class="secondary-btn" type="button">Copy Code</button>
+              <button id="leave-room" class="secondary-btn" type="button">Leave</button>
+            </div>
+          </section>
+
+          <section class="panel-card panel-surface players-card">
+            <p class="panel-label">Players In Room</p>
+            <div id="players-list" class="players-list">
+              <p class="empty-copy">No room joined yet.</p>
+            </div>
+          </section>
+
+          <section class="panel-card panel-surface session-card">
+            <p class="panel-label">Room Status</p>
+            <div id="pair-banner" class="pair-banner waiting">Waiting for both players</div>
+            <div id="global-status" class="global-status">Create or join a room to start syncing live game state.</div>
+          </section>
+        </aside>
+
+        <section class="arcade-screen dashboard-screen">
+          <section class="intro-panel panel-surface dashboard-headline">
+            <div>
+              <p class="screen-label">Mini Arcade Shelf</p>
+              <h2>Pick a cartridge, wait for both players, and launch your next round.</h2>
+            </div>
+            <button id="random-game" class="secondary-btn compact-btn" type="button">Random Pick</button>
+          </section>
+
+          <section class="mini-strip">
+            <article class="mini-meta panel-surface">
+              <span class="mini-meta-title">Proper Flow</span>
+              <strong>Room first, games second, no broken mid-session starts</strong>
+            </article>
+            <article class="mini-meta panel-surface">
+              <span class="mini-meta-title">Presence</span>
+              <strong>Clients leaving or closing tabs are marked offline automatically</strong>
+            </article>
+            <article class="mini-meta panel-surface">
+              <span class="mini-meta-title">Private</span>
+              <strong>Only two connected players can unlock any mini-game</strong>
+            </article>
+          </section>
+
+          <section id="cartridge-grid" class="cartridge-grid">
+            <button class="cartridge active" type="button" data-game="heart-hoops">
+              <span class="cartridge-id">01</span>
+              <strong>Heart Hoops</strong>
+              <small>Tap-Tap Shots energy</small>
+              <span class="cartridge-blurb">Take turns firing glowing love shots through the hoop by tapping at the perfect power.</span>
+              <div class="cartridge-badges"><span>2 Player</span><span>Quick Round</span><span>Timing</span></div>
+            </button>
+            <button class="cartridge" type="button" data-game="drift-to-you">
+              <span class="cartridge-id">02</span>
+              <strong>Drift To You</strong>
+              <small>Drift Boss energy</small>
+              <span class="cartridge-blurb">Survive a romantic neon road by choosing the correct bend before your crash streak ends.</span>
+              <div class="cartridge-badges"><span>2 Player</span><span>Fast</span><span>Arcade</span></div>
+            </button>
+            <button class="cartridge" type="button" data-game="love-drop">
+              <span class="cartridge-id">03</span>
+              <strong>Love Drop</strong>
+              <small>Helix/Layers energy</small>
+              <span class="cartridge-blurb">Choose the best lane on every row, stack hearts, and dodge heartbreak tiles.</span>
+              <div class="cartridge-badges"><span>2 Player</span><span>Casual</span><span>Score Chase</span></div>
+            </button>
+            <button class="cartridge" type="button" data-game="glow-duel">
+              <span class="cartridge-id">04</span>
+              <strong>Glow Duel</strong>
+              <small>GlowIt / party duel energy</small>
+              <span class="cartridge-blurb">Wait for the reactor flash and steal the spark before your priye reacts.</span>
+              <div class="cartridge-badges"><span>2 Player</span><span>Reaction</span><span>Party</span></div>
+            </button>
+            <button class="cartridge" type="button" data-game="love-tic-tac-toe">
+              <span class="cartridge-id">05</span>
+              <strong>Love Tic Tac Toe</strong>
+              <small>Mind duel energy</small>
+              <span class="cartridge-blurb">Classic three-in-a-row, but styled like a neon love duel with crisp turns and winner lines.</span>
+              <div class="cartridge-badges"><span>2 Player</span><span>Thinky</span><span>Board</span></div>
+            </button>
+            <button class="cartridge" type="button" data-game="ludo-love">
+              <span class="cartridge-id">06</span>
+              <strong>Ludo Love</strong>
+              <small>Mini race energy</small>
+              <span class="cartridge-blurb">Roll through a romantic race track packed with boost tiles, slowdowns, and photo-finish tension.</span>
+              <div class="cartridge-badges"><span>2 Player</span><span>Race</span><span>Luck</span></div>
+            </button>
+          </section>
+
+          <section class="stage-panel panel-surface">
+            <div class="stage-head">
+              <div>
+                <p class="screen-label">Cabinet Screen</p>
+                <h3 id="stage-title">Heart Hoops</h3>
+              </div>
+              <p id="stage-subtitle" class="stage-subtitle">Quick-play room multiplayer powered by your live Val Town endpoint.</p>
+            </div>
+            <div class="stage-tags"><span class="stage-tag">Mini</span><span class="stage-tag">Quick Play</span><span class="stage-tag">Online Together</span></div>
+
+            <section id="game-heart-hoops" class="game-screen active theme-hoops"><div class="game-shell"><div class="game-header-row"><div class="score-pill"><span id="hoops-turn">Turn: waiting</span></div><div class="score-pill"><span id="hoops-status">Start when both players connect.</span></div></div><div class="duel-scoreboard"><article class="score-card warm-card"><p id="hoops-player-a">Player A</p><strong id="hoops-score-a">0</strong><span>buckets</span></article><article class="score-card cool-card"><p id="hoops-player-b">Player B</p><strong id="hoops-score-b">0</strong><span>buckets</span></article></div><div class="host-bar host-actions"><button id="hoops-start" class="primary-btn" type="button">Start Shootout</button></div><div class="hoops-arena"><div class="hoop-backboard"></div><div class="hoop-rim"></div><div id="hoops-ball" class="hoops-ball"></div></div><div class="meter-shell"><div class="meter-track"><div id="hoops-meter" class="meter-fill"></div></div><div class="meter-sweetspot"></div></div><button id="hoops-shoot" class="arcade-action" type="button">SHOOT</button></div></section>
+            <section id="game-drift-to-you" class="game-screen theme-drift"><div class="game-shell"><div class="game-header-row"><div class="score-pill"><span id="drift-turn">Turn: waiting</span></div><div class="score-pill"><span id="drift-status">Pick the correct bend to keep drifting.</span></div></div><div class="duel-scoreboard"><article class="score-card warm-card"><p id="drift-player-a">Player A</p><strong id="drift-score-a">0</strong><span>distance</span></article><article class="score-card cool-card"><p id="drift-player-b">Player B</p><strong id="drift-score-b">0</strong><span>distance</span></article></div><div class="host-bar host-actions"><button id="drift-start" class="primary-btn" type="button">Start Drift Run</button></div><div class="drift-road"><div class="road-lines"></div><div id="drift-arrow" class="drift-arrow">?</div></div><div class="choice-row"><button id="drift-left" class="choice-btn" type="button">LEFT</button><button id="drift-right" class="choice-btn" type="button">RIGHT</button></div></div></section>
+            <section id="game-love-drop" class="game-screen theme-drop"><div class="game-shell"><div class="game-header-row"><div class="score-pill"><span id="drop-turn">Turn: waiting</span></div><div class="score-pill"><span id="drop-status">Choose the best lane on each row.</span></div></div><div class="duel-scoreboard"><article class="score-card warm-card"><p id="drop-player-a">Player A</p><strong id="drop-score-a">0</strong><span>stack</span></article><article class="score-card cool-card"><p id="drop-player-b">Player B</p><strong id="drop-score-b">0</strong><span>stack</span></article></div><div class="host-bar host-actions"><button id="drop-start" class="primary-btn" type="button">Drop In</button></div><div id="drop-board" class="drop-board"></div><div class="choice-row triple-row"><button id="drop-lane-0" class="choice-btn" type="button">LEFT</button><button id="drop-lane-1" class="choice-btn" type="button">MID</button><button id="drop-lane-2" class="choice-btn" type="button">RIGHT</button></div></div></section>
+            <section id="game-glow-duel" class="game-screen theme-glow"><div class="game-shell center-shell"><div class="host-bar host-actions"><button id="glow-start" class="primary-btn" type="button">Charge Duel</button></div><div class="glow-reactor"><div class="reactor-ring ring-one"></div><div class="reactor-ring ring-two"></div><div id="glow-countdown" class="glow-core">READY</div></div><p id="glow-status" class="hero-note">Wait for GO, then steal the spark first.</p><button id="glow-claim" class="arcade-action alt" type="button">GRAB THE GLOW</button></div></section>
+            <section id="game-love-tic-tac-toe" class="game-screen theme-ttt"><div class="game-shell"><div class="game-header-row"><div class="score-pill"><span id="ttt-turn">Turn: waiting</span></div><div class="score-pill"><span id="ttt-status">Line up three love marks to win.</span></div></div><div class="duel-scoreboard"><article class="score-card warm-card"><p id="ttt-player-a">Player A</p><strong id="ttt-mark-a">X</strong><span>first mark</span></article><article class="score-card cool-card"><p id="ttt-player-b">Player B</p><strong id="ttt-mark-b">O</strong><span>second mark</span></article></div><div class="host-bar host-actions"><button id="ttt-start" class="primary-btn" type="button">Start Love Grid</button></div><div id="ttt-board" class="ttt-board"></div></div></section>
+            <section id="game-ludo-love" class="game-screen theme-ludo"><div class="game-shell"><div class="game-header-row"><div class="score-pill"><span id="ludo-turn">Turn: waiting</span></div><div class="score-pill"><span id="ludo-status">Roll the dice and race to the final heart tile.</span></div></div><div class="duel-scoreboard"><article class="score-card warm-card"><p id="ludo-player-a">Player A</p><strong id="ludo-pos-a">0</strong><span>spaces</span></article><article class="score-card cool-card"><p id="ludo-player-b">Player B</p><strong id="ludo-pos-b">0</strong><span>spaces</span></article></div><div class="host-bar host-actions"><button id="ludo-start" class="primary-btn" type="button">Start Ludo Love</button></div><div class="ludo-hud"><div class="ludo-roll-card"><span>Last Roll</span><strong id="ludo-roll">-</strong></div><div class="ludo-roll-card accent"><span>Goal</span><strong id="ludo-goal">18</strong></div></div><div id="ludo-track" class="ludo-track"></div><button id="ludo-roll-button" class="arcade-action" type="button">ROLL AND MOVE</button></div></section>
+          </section>
+        </section>
+      </div>
+
+      <footer class="control-deck panel-surface">
+        <div class="joystick"></div>
+        <div class="control-copy"><strong>Live backend</strong><span id="api-display">krazyykrunal--8eafbe7a255711f1926b42dde27851f2.web.val.run</span></div>
+        <div class="button-cluster"><span></span><span></span><span></span></div>
+      </footer>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
