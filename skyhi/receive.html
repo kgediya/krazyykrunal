@@ -127,6 +127,38 @@
             color: var(--muted);
         }
 
+        .immersive-toggle {
+            display: none;
+        }
+
+        body.immersive-mode .panel {
+            opacity: 0;
+            transform: translateY(-18px);
+            pointer-events: none;
+        }
+
+        body.immersive-mode .hud {
+            pointer-events: none;
+        }
+
+        body.immersive-mode .immersive-toggle {
+            pointer-events: auto;
+            display: inline-flex;
+            position: fixed;
+            right: 14px;
+            top: 14px;
+            z-index: 12;
+            min-width: 52px;
+            height: 44px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 214, 138, 0.24);
+            background: rgba(20, 14, 8, 0.72);
+            color: #fff1d2;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+        }
+
         .dot {
             width: 8px;
             height: 8px;
@@ -168,6 +200,16 @@
                 grid-column: 1 / -1;
             }
         }
+
+        @media (max-width: 720px) {
+            .panel {
+                transition: opacity 180ms ease, transform 180ms ease;
+            }
+
+            .controls {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -181,6 +223,7 @@
                 <input id="roomInput" type="text" inputmode="numeric" pattern="[0-9]{3,6}" maxlength="6" placeholder="Sky PIN (3-6 digits)">
                 <button id="watchBtn" type="button">Watch Sky</button>
                 <button id="stopBtn" type="button">Stop</button>
+                <button id="fullscreenBtn" type="button">Fullscreen</button>
                 <a class="link-btn" href="./index.html">Back</a>
             </div>
             <div id="status" class="status">Idle. Enter Sky PIN and tap Watch Sky.</div>
@@ -191,6 +234,8 @@
             </div>
         </section>
     </div>
+
+    <button id="immersiveToggle" class="immersive-toggle" type="button" aria-label="Show controls">UI</button>
 
     <div id="toast"></div>
     <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline hidden></audio>
@@ -215,11 +260,14 @@
         const roomInput = document.getElementById('roomInput');
         const watchBtn = document.getElementById('watchBtn');
         const stopBtn = document.getElementById('stopBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const immersiveToggleBtn = document.getElementById('immersiveToggle');
         const statusEl = document.getElementById('status');
         const countLabel = document.getElementById('countLabel');
         const toastEl = document.getElementById('toast');
         const bgMusic = document.getElementById('bgMusic');
         const receivePinKey = 'skyhi_receive_pin';
+        const immersiveModeKey = 'skyhi_receive_immersive_mode';
 
         let pollTimer = null;
         let activePin = '';
@@ -233,6 +281,43 @@
         const maxLanterns = 40;
         const modelCache = { normal: null, heart: null };
         let particleTexture = null;
+
+        function isSmallScreen() {
+            return window.matchMedia('(max-width: 720px)').matches;
+        }
+
+        async function requestBrowserFullscreen() {
+            const root = document.documentElement;
+            if (!document.fullscreenElement && root.requestFullscreen) {
+                try {
+                    await root.requestFullscreen();
+                } catch (_) {
+                    // Ignore browsers that block fullscreen without a direct gesture.
+                }
+            }
+        }
+
+        function applyImmersiveMode(enabled) {
+            document.body.classList.toggle('immersive-mode', enabled);
+            localStorage.setItem(immersiveModeKey, enabled ? '1' : '0');
+            if (immersiveToggleBtn) {
+                immersiveToggleBtn.textContent = enabled ? 'UI' : 'Hide';
+                immersiveToggleBtn.setAttribute('aria-label', enabled ? 'Show controls' : 'Hide controls');
+            }
+            if (fullscreenBtn) {
+                fullscreenBtn.textContent = enabled ? 'Show Controls' : 'Fullscreen';
+            }
+        }
+
+        async function toggleImmersiveMode(forceValue) {
+            const next = typeof forceValue === 'boolean'
+                ? forceValue
+                : !document.body.classList.contains('immersive-mode');
+            applyImmersiveMode(next);
+            if (next && isSmallScreen()) {
+                await requestBrowserFullscreen();
+            }
+        }
 
         function setStatus(text, isError) {
             statusEl.textContent = text;
@@ -749,11 +834,19 @@
             });
             watchBtn.addEventListener('click', () => watchSky(roomInput.value.trim()));
             stopBtn.addEventListener('click', () => stopWatching());
+            fullscreenBtn.addEventListener('click', () => toggleImmersiveMode());
+            immersiveToggleBtn.addEventListener('click', () => toggleImmersiveMode(false));
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement && document.body.classList.contains('immersive-mode') && !isSmallScreen()) {
+                    applyImmersiveMode(false);
+                }
             });
         }
 
@@ -763,6 +856,7 @@
             initAudio();
             animate();
             await loadLanternModels();
+            applyImmersiveMode(localStorage.getItem(immersiveModeKey) === '1' && isSmallScreen());
 
             const params = new URLSearchParams(window.location.search);
             const urlPin = params.get('pin');
