@@ -375,6 +375,103 @@
             font-size: 11px;
         }
 
+        .auth-panel {
+            display: grid;
+            gap: 12px;
+        }
+
+        .auth-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            max-width: 100%;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 214, 138, 0.16);
+            background: rgba(255, 214, 138, 0.06);
+            color: rgba(255, 242, 218, 0.92);
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .auth-badge::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 194, 96, 0.95);
+            box-shadow: 0 0 12px rgba(255, 194, 96, 0.45);
+        }
+
+        .auth-badge.connected::before {
+            background: #7dffb5;
+            box-shadow: 0 0 12px rgba(125, 255, 181, 0.45);
+        }
+
+        .auth-copy,
+        .auth-note {
+            color: rgba(255, 236, 200, 0.82);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .auth-user {
+            display: none;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 214, 138, 0.1);
+            background: rgba(255, 214, 138, 0.045);
+        }
+
+        .auth-user.show {
+            display: grid;
+        }
+
+        .auth-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 214, 138, 0.18);
+            background:
+                radial-gradient(circle at 30% 30%, rgba(255, 223, 158, 0.24), transparent 52%),
+                rgba(255, 214, 138, 0.08);
+        }
+
+        .auth-avatar.hidden {
+            display: none;
+        }
+
+        .auth-meta {
+            min-width: 0;
+            display: grid;
+            gap: 2px;
+        }
+
+        .auth-name {
+            color: rgba(255, 247, 226, 0.96);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .auth-submeta {
+            color: rgba(255, 236, 200, 0.72);
+            font-size: 11px;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .auth-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
         .small-btn {
             margin-top: 10px;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1486,6 +1583,28 @@
                     <div id="sentMessagesList" class="sent-list" aria-live="polite"></div>
                 </section>
 
+                <section class="panel auth-panel" aria-labelledby="snapLoginHeading">
+                    <div class="panel-title" id="snapLoginHeading">Snap Login</div>
+                    <div id="snapAuthBadge" class="auth-badge">Snapchat disconnected</div>
+                    <p id="snapAuthCopy" class="auth-copy">
+                        Connect Snapchat with OAuth2 PKCE to add trusted account sign-in to the SkyHi web companion.
+                    </p>
+                    <div id="snapUserCard" class="auth-user" aria-live="polite">
+                        <img id="snapAvatar" class="auth-avatar hidden" alt="Snapchat profile avatar">
+                        <div class="auth-meta">
+                            <div id="snapDisplayName" class="auth-name">Snapchat account connected</div>
+                            <div id="snapAuthMeta" class="auth-submeta">OAuth token is active for this browser.</div>
+                        </div>
+                    </div>
+                    <div class="auth-actions">
+                        <button id="snapLoginBtn" class="small-btn" type="button">Log in with Snapchat</button>
+                        <button id="snapLogoutBtn" class="small-btn" type="button">Log out</button>
+                    </div>
+                    <p class="auth-note">
+                        Register this exact page as your Snap redirect URI, then replace the placeholder client id in the page script.
+                    </p>
+                </section>
+
                 <section class="panel creds conn-panel" aria-labelledby="connHeading">
                     <div class="panel-title" id="connHeading">Connection</div>
                     <strong>SUPABASE</strong><br>
@@ -1533,6 +1652,27 @@
         const enableNotifyBtn = document.getElementById('enableNotifyBtn');
         const disableNotifyBtn = document.getElementById('disableNotifyBtn');
         const notifyStatusEl = document.getElementById('notifyStatus');
+        const snapLoginBtn = document.getElementById('snapLoginBtn');
+        const snapLogoutBtn = document.getElementById('snapLogoutBtn');
+        const snapAuthBadgeEl = document.getElementById('snapAuthBadge');
+        const snapAuthCopyEl = document.getElementById('snapAuthCopy');
+        const snapUserCardEl = document.getElementById('snapUserCard');
+        const snapAvatarEl = document.getElementById('snapAvatar');
+        const snapDisplayNameEl = document.getElementById('snapDisplayName');
+        const snapAuthMetaEl = document.getElementById('snapAuthMeta');
+
+        const SNAP_AUTH_CONFIG = {
+            clientId: '6d81f858-2948-4d7d-9bc4-13055a1b1e42',
+            redirectUri: window.location.origin + window.location.pathname,
+            authorizationEndpoint: 'https://accounts.snapchat.com/accounts/oauth2/auth',
+            tokenEndpoint: 'https://accounts.snapchat.com/accounts/oauth2/token',
+            scopes: [
+                'https://auth.snapchat.com/oauth2/api/user.display_name',
+                'https://auth.snapchat.com/oauth2/api/user.external_id',
+                'https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar'
+            ],
+            codeChallengeMethod: 'S256'
+        };
 
         const webSenderId = (() => {
             const key = 'airbox_web_sender_id';
@@ -1552,6 +1692,314 @@
         const currentSkyPinKey = 'skyhi_current_sky_pin';
         const notifySkyPinKey = 'skyhi_notify_sky_pin';
         const pushDeviceIdKey = 'skyhi_push_device_id';
+        const snapSessionKey = 'skyhi_snap_session';
+        const snapPkceVerifierKey = 'skyhi_snap_pkce_verifier';
+        const snapPkceStateKey = 'skyhi_snap_pkce_state';
+
+        function isSnapConfigured() {
+            return (
+                SNAP_AUTH_CONFIG.clientId &&
+                !SNAP_AUTH_CONFIG.clientId.includes('YOUR_SNAP_CLIENT_ID') &&
+                /^https?:\/\//.test(SNAP_AUTH_CONFIG.redirectUri)
+            );
+        }
+
+        function loadSnapSession() {
+            try {
+                const raw = localStorage.getItem(snapSessionKey);
+                const parsed = raw ? JSON.parse(raw) : null;
+                if (!parsed || typeof parsed !== 'object') return null;
+                if (!parsed.accessToken || !parsed.expiresAt) return null;
+                return parsed;
+            } catch (_) {
+                return null;
+            }
+        }
+
+        function saveSnapSession(session) {
+            localStorage.setItem(snapSessionKey, JSON.stringify(session));
+        }
+
+        function clearSnapSession() {
+            localStorage.removeItem(snapSessionKey);
+        }
+
+        function getSnapDisplayName(session) {
+            if (session && session.profile && session.profile.displayName) {
+                return session.profile.displayName;
+            }
+            return 'Snapchat account connected';
+        }
+
+        function updateSnapUi(session, statusText) {
+            const configured = isSnapConfigured();
+            const connected = !!(session && session.accessToken);
+            if (snapAuthBadgeEl) {
+                snapAuthBadgeEl.textContent = connected
+                    ? 'Snapchat connected'
+                    : (configured ? 'Snapchat disconnected' : 'Snap setup needed');
+                snapAuthBadgeEl.classList.toggle('connected', connected);
+            }
+            if (snapAuthCopyEl) {
+                if (statusText) {
+                    snapAuthCopyEl.textContent = statusText;
+                } else if (connected) {
+                    snapAuthCopyEl.textContent = 'Snap OAuth is active in this browser. SkyHi can now use this session as a trusted login layer.';
+                } else if (configured) {
+                    snapAuthCopyEl.textContent = 'Connect Snapchat to add account-backed sign-in to the SkyHi companion using OAuth2 PKCE.';
+                } else {
+                    snapAuthCopyEl.textContent = 'Add your Snap OAuth client id and register this page as the redirect URI to enable Login Kit.';
+                }
+            }
+            if (snapUserCardEl) {
+                snapUserCardEl.classList.toggle('show', connected);
+            }
+            if (snapDisplayNameEl) {
+                snapDisplayNameEl.textContent = getSnapDisplayName(session);
+            }
+            if (snapAuthMetaEl) {
+                if (connected) {
+                    const connectedAt = session.connectedAt
+                        ? new Date(session.connectedAt).toLocaleString()
+                        : 'this session';
+                    const scopeLabel = Array.isArray(session.scopes) && session.scopes.length
+                        ? session.scopes.join(', ')
+                        : 'Snapchat Login scopes granted';
+                    snapAuthMetaEl.textContent = 'Connected ' + connectedAt + '. ' + scopeLabel + '.';
+                } else {
+                    snapAuthMetaEl.textContent = 'OAuth token is not active for this browser.';
+                }
+            }
+            if (snapAvatarEl) {
+                const avatarUrl = session && session.profile && session.profile.avatarUrl ? session.profile.avatarUrl : '';
+                if (avatarUrl) {
+                    snapAvatarEl.src = avatarUrl;
+                    snapAvatarEl.classList.remove('hidden');
+                } else {
+                    snapAvatarEl.removeAttribute('src');
+                    snapAvatarEl.classList.add('hidden');
+                }
+            }
+            if (snapLoginBtn) {
+                snapLoginBtn.disabled = !configured || connected;
+            }
+            if (snapLogoutBtn) {
+                snapLogoutBtn.disabled = !connected;
+            }
+            if (connected && ownerEl) {
+                const currentName = ownerEl.value.trim();
+                if (!currentName || currentName === 'Visitor') {
+                    ownerEl.value = getSnapDisplayName(session);
+                }
+            }
+        }
+
+        function randomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+            const bytes = new Uint8Array(length);
+            crypto.getRandomValues(bytes);
+            let out = '';
+            for (let i = 0; i < bytes.length; i++) {
+                out += chars[bytes[i] % chars.length];
+            }
+            return out;
+        }
+
+        function bytesToBase64Url(bytes) {
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+        }
+
+        async function sha256Base64Url(input) {
+            const data = new TextEncoder().encode(input);
+            const digest = await crypto.subtle.digest('SHA-256', data);
+            return bytesToBase64Url(new Uint8Array(digest));
+        }
+
+        function clearSnapPkceState() {
+            sessionStorage.removeItem(snapPkceVerifierKey);
+            sessionStorage.removeItem(snapPkceStateKey);
+        }
+
+        function cleanupSnapAuthParams() {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('code');
+            url.searchParams.delete('state');
+            url.searchParams.delete('error');
+            url.searchParams.delete('error_description');
+            history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+        }
+
+        async function exchangeSnapCodeForTokens(code, codeVerifier) {
+            const body = new URLSearchParams({
+                grant_type: 'authorization_code',
+                code,
+                redirect_uri: SNAP_AUTH_CONFIG.redirectUri,
+                client_id: SNAP_AUTH_CONFIG.clientId,
+                code_verifier: codeVerifier
+            });
+            const res = await fetch(SNAP_AUTH_CONFIG.tokenEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: body.toString()
+            });
+            const payload = await res.json().catch(() => null);
+            if (!res.ok) {
+                const message = payload && (payload.error_description || payload.error)
+                    ? (payload.error_description || payload.error)
+                    : ('HTTP ' + res.status);
+                throw new Error(message);
+            }
+            return payload || {};
+        }
+
+        async function refreshSnapSession(session) {
+            if (!session || !session.refreshToken) {
+                throw new Error('Snap refresh token unavailable');
+            }
+            const body = new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: session.refreshToken,
+                client_id: SNAP_AUTH_CONFIG.clientId
+            });
+            const res = await fetch(SNAP_AUTH_CONFIG.tokenEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: body.toString()
+            });
+            const payload = await res.json().catch(() => null);
+            if (!res.ok) {
+                const message = payload && (payload.error_description || payload.error)
+                    ? (payload.error_description || payload.error)
+                    : ('HTTP ' + res.status);
+                throw new Error(message);
+            }
+            const nextSession = {
+                accessToken: payload.access_token,
+                refreshToken: payload.refresh_token || session.refreshToken,
+                tokenType: payload.token_type || session.tokenType || 'Bearer',
+                expiresAt: Date.now() + (Number(payload.expires_in || 3600) * 1000),
+                connectedAt: session.connectedAt || Date.now(),
+                scopes: String(payload.scope || '').split(/\s+/).filter(Boolean),
+                profile: session.profile || {}
+            };
+            saveSnapSession(nextSession);
+            updateSnapUi(nextSession);
+            return nextSession;
+        }
+
+        async function ensureFreshSnapSession() {
+            const session = loadSnapSession();
+            if (!session) {
+                updateSnapUi(null);
+                return null;
+            }
+            if ((session.expiresAt - Date.now()) > 60000) {
+                updateSnapUi(session);
+                return session;
+            }
+            try {
+                return await refreshSnapSession(session);
+            } catch (err) {
+                clearSnapSession();
+                updateSnapUi(null, 'Snap session expired. Log in again to reconnect your Snapchat account.');
+                return null;
+            }
+        }
+
+        async function beginSnapLogin() {
+            if (!isSnapConfigured()) {
+                showStatus('Add your Snap client id and registered redirect URI in skyhi/index.html first', 'error');
+                updateSnapUi(null);
+                return;
+            }
+            const state = randomString(48);
+            const codeVerifier = randomString(96);
+            const codeChallenge = await sha256Base64Url(codeVerifier);
+            sessionStorage.setItem(snapPkceStateKey, state);
+            sessionStorage.setItem(snapPkceVerifierKey, codeVerifier);
+
+            const authUrl = new URL(SNAP_AUTH_CONFIG.authorizationEndpoint);
+            authUrl.searchParams.set('response_type', 'code');
+            authUrl.searchParams.set('client_id', SNAP_AUTH_CONFIG.clientId);
+            authUrl.searchParams.set('redirect_uri', SNAP_AUTH_CONFIG.redirectUri);
+            authUrl.searchParams.set('scope', SNAP_AUTH_CONFIG.scopes.join(' '));
+            authUrl.searchParams.set('state', state);
+            authUrl.searchParams.set('code_challenge', codeChallenge);
+            authUrl.searchParams.set('code_challenge_method', SNAP_AUTH_CONFIG.codeChallengeMethod);
+
+            window.location.assign(authUrl.toString());
+        }
+
+        async function handleSnapRedirect() {
+            const url = new URL(window.location.href);
+            const code = url.searchParams.get('code');
+            const state = url.searchParams.get('state');
+            const error = url.searchParams.get('error');
+            const errorDescription = url.searchParams.get('error_description');
+
+            if (error) {
+                cleanupSnapAuthParams();
+                clearSnapPkceState();
+                updateSnapUi(null, 'Snapchat login was not completed: ' + (errorDescription || error) + '.');
+                showStatus('Snapchat login was not completed: ' + (errorDescription || error), 'error');
+                return null;
+            }
+
+            if (!code) {
+                return ensureFreshSnapSession();
+            }
+
+            const expectedState = sessionStorage.getItem(snapPkceStateKey);
+            const codeVerifier = sessionStorage.getItem(snapPkceVerifierKey);
+            cleanupSnapAuthParams();
+
+            if (!expectedState || !codeVerifier || state !== expectedState) {
+                clearSnapPkceState();
+                clearSnapSession();
+                updateSnapUi(null, 'Snapchat login state mismatch. Please try again.');
+                showStatus('Snapchat login could not be verified. Please try again.', 'error');
+                return null;
+            }
+
+            try {
+                const payload = await exchangeSnapCodeForTokens(code, codeVerifier);
+                const nextSession = {
+                    accessToken: payload.access_token,
+                    refreshToken: payload.refresh_token || '',
+                    tokenType: payload.token_type || 'Bearer',
+                    expiresAt: Date.now() + (Number(payload.expires_in || 3600) * 1000),
+                    connectedAt: Date.now(),
+                    scopes: String(payload.scope || SNAP_AUTH_CONFIG.scopes.join(' ')).split(/\s+/).filter(Boolean),
+                    profile: {}
+                };
+                saveSnapSession(nextSession);
+                updateSnapUi(nextSession, 'Snapchat connected. OAuth token exchange completed successfully.');
+                showStatus('Logged in with Snapchat', 'success');
+                return nextSession;
+            } catch (err) {
+                clearSnapSession();
+                updateSnapUi(null, 'Snapchat token exchange failed. Check your client id, redirect URI, and app settings.');
+                showStatus('Snapchat token exchange failed: ' + (err && err.message ? err.message : String(err)), 'error');
+                return null;
+            } finally {
+                clearSnapPkceState();
+            }
+        }
+
+        function logoutSnap() {
+            clearSnapPkceState();
+            clearSnapSession();
+            updateSnapUi(null, 'Snapchat has been disconnected from this browser.');
+            showStatus('Logged out of Snapchat in SkyHi', 'loading');
+        }
 
         function getPushDeviceId() {
             let id = localStorage.getItem(pushDeviceIdKey);
@@ -2035,6 +2483,8 @@
             renderSentMessages();
             showStatus('Cleared sent message history', 'loading');
         });
+        if (snapLoginBtn) snapLoginBtn.addEventListener('click', beginSnapLogin);
+        if (snapLogoutBtn) snapLogoutBtn.addEventListener('click', logoutSnap);
         sendBtn.addEventListener('click', sendMessage);
         messageEl.addEventListener('keypress', e => {
             if (e.key === 'Enter' && e.ctrlKey) sendMessage();
@@ -2059,6 +2509,8 @@
         renderSentMessages();
         initBackgroundMusic();
         syncNotificationState();
+        updateSnapUi(loadSnapSession());
+        handleSnapRedirect();
 
         async function testConnection() {
             const pin = channelEl.value.trim();
