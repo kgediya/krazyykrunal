@@ -40,8 +40,9 @@
                 radial-gradient(circle at 50% 120%, rgba(255, 173, 58, 0.06), transparent 42%),
                 linear-gradient(180deg, #0a0a0a 0%, #050505 55%, #000000 100%);
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
             position: relative;
             overflow-x: hidden;
@@ -105,14 +106,34 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            display: grid;
+            gap: 14px;
             perspective: 1100px;
             transform-style: preserve-3d;
+        }
+
+        .desktop-columns,
+        .desktop-main,
+        .desktop-side {
+            display: grid;
+            gap: 14px;
+        }
+
+        .hero {
+            order: 1;
+        }
+
+        .intro-panel {
+            order: 2;
+        }
+
+        .desktop-columns {
+            order: 3;
         }
 
         .hero {
             text-align: center;
             padding: 14px 8px 12px;
-            margin-bottom: 12px;
             position: relative;
             transform: translateZ(10px);
         }
@@ -157,13 +178,85 @@
 
         .intro-panel {
             margin-bottom: 12px;
+            background:
+                linear-gradient(135deg, rgba(255, 229, 176, 0.12), rgba(255, 255, 255, 0.04)),
+                linear-gradient(180deg, rgba(255, 235, 196, 0.08), rgba(255, 255, 255, 0.03));
+            border-color: rgba(255, 222, 163, 0.22);
+        }
+
+        .intro-panel::before {
+            background:
+                linear-gradient(145deg, rgba(255, 236, 193, 0.1), transparent 42%),
+                radial-gradient(circle at 12% 0%, rgba(255, 214, 138, 0.14), transparent 50%);
+        }
+
+        .intro-layout {
+            display: grid;
+            gap: 16px;
+        }
+
+        .intro-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .intro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 214, 138, 0.18);
+            background: rgba(255, 214, 138, 0.07);
+            color: rgba(255, 244, 221, 0.94);
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .intro-badge::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, rgba(255, 214, 138, 1), rgba(233, 180, 79, 1));
+            box-shadow: 0 0 12px rgba(255, 190, 92, 0.7);
         }
 
         .intro-text {
             color: rgba(255, 244, 221, 0.9);
+            font-size: 14px;
+            line-height: 1.58;
+            margin: 0;
+        }
+
+        .intro-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .intro-point {
+            padding: 12px 13px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 214, 138, 0.12);
+            background: rgba(255, 214, 138, 0.045);
+        }
+
+        .intro-point strong {
+            display: block;
+            margin-bottom: 6px;
+            color: rgba(255, 246, 230, 0.98);
             font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 10px;
+        }
+
+        .intro-point span {
+            color: rgba(255, 236, 200, 0.82);
+            font-size: 12px;
+            line-height: 1.45;
         }
 
         .intro-steps {
@@ -196,10 +289,6 @@
             -webkit-backdrop-filter: blur(12px);
             transform: translateZ(0);
             overflow: hidden;
-        }
-
-        .panel + .panel {
-            margin-top: 12px;
         }
 
         .panel::before {
@@ -260,7 +349,18 @@
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: rgba(255, 226, 170, 0.9);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+        }
+
+        .site-footer {
+            margin: 24px auto 0;
+            width: min(100%, 1120px);
+            text-align: center;
+            color: rgba(255, 241, 214, 0.58);
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            line-height: 1.7;
         }
 
         .creds {
@@ -898,9 +998,9 @@
         }
 
         .quick-link-wrap {
-            margin-top: 10px;
+            margin-top: 2px;
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
@@ -1019,9 +1119,11 @@
             .shell {
                 max-width: 100%;
             }
+            .intro-summary {
+                grid-template-columns: 1fr;
+            }
             .hero {
                 padding: 10px 4px 8px;
-                margin-bottom: 8px;
             }
             .panel {
                 border-radius: 22px;
@@ -1031,8 +1133,8 @@
                     0 4px 10px rgba(255, 170, 52, 0.04),
                     inset 0 1px 0 rgba(255, 235, 196, 0.12);
             }
-            .panel + .panel {
-                margin-top: 10px;
+            .quick-link-wrap {
+                justify-content: center;
             }
             .brand-logo {
                 width: min(232px, 74vw);
@@ -1129,54 +1231,22 @@
 
             .shell {
                 max-width: 1120px;
-                display: grid;
-                grid-template-columns: minmax(520px, 620px) minmax(340px, 430px);
-                grid-template-areas:
-                    "hero hero"
-                    "send view"
-                    "send saved"
-                    "send sent"
-                    "send conn";
-                gap: 16px 18px;
-                align-items: start;
-                justify-content: center;
+                gap: 16px;
             }
 
             .hero {
-                grid-area: hero;
-                margin-bottom: 0;
                 padding: 0 8px 6px;
             }
 
-            .send-panel {
-                grid-area: send;
-                position: sticky;
-                top: 16px;
-                align-self: start;
+            .intro-panel {
+                margin-bottom: 0;
             }
 
-            .view-panel {
-                grid-area: view;
-                align-self: start;
-            }
-
-            .saved-panel {
-                grid-area: saved;
-                align-self: start;
-            }
-
-            .sent-panel {
-                grid-area: sent;
-                align-self: start;
-            }
-
-            .conn-panel {
-                grid-area: conn;
-                align-self: start;
-            }
-
-            .panel + .panel {
-                margin-top: 0;
+            .desktop-columns {
+                grid-template-columns: minmax(520px, 620px) minmax(340px, 430px);
+                gap: 18px;
+                align-items: start;
+                justify-content: center;
             }
 
             .panel {
@@ -1227,8 +1297,17 @@
             .view-panel,
             .saved-panel,
             .sent-panel,
-            .conn-panel {
+            .conn-panel,
+            .notify-panel,
+            .send-panel {
                 min-height: 0;
+            }
+
+            .notify-panel {
+                min-height: 156px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
 
             .view-panel,
@@ -1285,7 +1364,7 @@
 <body>
     <main class="shell">
         <section class="hero" aria-label="SkyHi Web Companion branding">
-            <img class="brand-logo" src="./New Logo 2.png" alt="SkyHi logo" onerror="this.style.display='none';document.getElementById('brandText').hidden=false;">
+            <img class="brand-logo" src="./Logo.png" alt="SkyHi logo" onerror="this.style.display='none';document.getElementById('brandText').hidden=false;">
             <div id="brandText" hidden>
                 <h1 style="font-size: 46px; line-height: 1; font-weight: 700;">SkyHi</h1>
             </div>
@@ -1293,18 +1372,33 @@
         </section>
 
         <section class="panel intro-panel" aria-labelledby="introHeading">
-            <div class="panel-title" id="introHeading">What Is SkyHi?</div>
-            <p class="intro-text">
-                SkyHi is a spatial communication platform built for Spectacles, where sky lanterns are used as the communication medium.
-                This web app is the companion that lets you send lantern messages from your phone/laptop into the same live Sky PIN.
-            </p>
-            <ol class="intro-steps">
-                <li><strong>Send from Web:</strong> You can directly use this companion web app to send SkyHis.</li>
-                <li><strong>Choose Sky PIN:</strong> Create or enter any 3-6 digit Sky PIN for your messages.</li>
-                <li><strong>View on Spectacles:</strong> Open the same Sky PIN in the SkyHi Lens anytime for immersive viewing.</li>
-            </ol>
-            <p class="note" style="margin-top:8px;">Private SkyHis are coming soon.</p>
-            <div class="quick-link-wrap">
+            <div class="intro-layout">
+                <div class="intro-header">
+                    <div>
+                        <div class="panel-title" id="introHeading">What Is SkyHi</div>
+                        <p class="intro-text">
+                            SkyHi is a spatial messaging experience built for Spectacles. This web companion lets you send lantern messages into a shared Sky PIN and jump into the same live sky across devices.
+                        </p>
+                    </div>
+                    <div class="intro-badge">Cross-Device Sky</div>
+                </div>
+
+                <div class="intro-summary" aria-label="SkyHi overview">
+                    <div class="intro-point">
+                        <strong>Send from web</strong>
+                        <span>Write a message here and launch it into the same shared sky.</span>
+                    </div>
+                    <div class="intro-point">
+                        <strong>Choose any Sky PIN</strong>
+                        <span>Create or join a 3 to 6 digit sky that stays consistent across surfaces.</span>
+                    </div>
+                    <div class="intro-point">
+                        <strong>View in Spectacles</strong>
+                        <span>Open the same Sky PIN in the Spectacles experience for immersive viewing.</span>
+                    </div>
+                </div>
+
+                <div class="quick-link-wrap">
                 <a
                     class="quick-link"
                     href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01"
@@ -1321,80 +1415,91 @@
                 >
                     Know More
                 </a>
+                </div>
             </div>
         </section>
 
-        <section class="panel send-panel" aria-labelledby="portalHeading">
-            <div class="panel-title" id="portalHeading">Send To Sky</div>
-            <div class="fields">
-                <div class="field">
-                    <label for="ownerName">Your name</label>
-                    <input type="text" id="ownerName" placeholder="John Doe" value="Visitor">
-                </div>
+        <div class="desktop-columns">
+            <div class="desktop-main">
+                <section class="panel send-panel" aria-labelledby="portalHeading">
+                    <div class="panel-title" id="portalHeading">Send To Sky</div>
+                    <div class="fields">
+                        <div class="field">
+                            <label for="ownerName">Your name</label>
+                            <input type="text" id="ownerName" placeholder="John Doe" value="Visitor">
+                        </div>
 
-                <div class="field">
-                    <label for="channelId">Sky PIN (3-6 digits)</label>
-                    <div class="field-inline">
-                        <input type="text" id="channelId" value="" inputmode="numeric" pattern="[0-9]{3,6}" maxlength="6" placeholder="Enter Sky PIN">
-                        <button id="saveSkyBtn" class="save-btn" type="button">Save Sky</button>
-                        <button id="generateSkyBtn" class="secondary-btn" type="button">New Sky</button>
+                        <div class="field">
+                            <label for="channelId">Sky PIN (3-6 digits)</label>
+                            <div class="field-inline">
+                                <input type="text" id="channelId" value="" inputmode="numeric" pattern="[0-9]{3,6}" maxlength="6" placeholder="Enter Sky PIN">
+                                <button id="saveSkyBtn" class="save-btn" type="button">Save Sky</button>
+                                <button id="generateSkyBtn" class="secondary-btn" type="button">New Sky</button>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="message">Message</label>
+                            <textarea id="message" placeholder="Send a wish to the sky lanterns..." maxlength="500"></textarea>
+                        </div>
+
+                        <div class="field">
+                            <label>Lantern Type</label>
+                            <div class="lantern-type-grid" role="group" aria-label="Lantern type">
+                                <button class="type-btn active" type="button" data-shape-type="0" aria-pressed="true">Normal</button>
+                                <button class="type-btn" type="button" data-shape-type="1" aria-pressed="false">Love</button>
+                            </div>
+                        </div>
+
+                        <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
+                        <div id="status" class="status" role="status" aria-live="polite"></div>
+                        <p class="note">Use the same Sky PIN in the SkyHi Spectacles Lens to see these messages come alive.</p>
                     </div>
-                </div>
+                </section>
 
-                <div class="field">
-                    <label for="message">Message</label>
-                    <textarea id="message" placeholder="Send a wish to the sky lanterns..." maxlength="500"></textarea>
-                </div>
-
-                <div class="field">
-                    <label>Lantern Type</label>
-                    <div class="lantern-type-grid" role="group" aria-label="Lantern type">
-                        <button class="type-btn active" type="button" data-shape-type="0" aria-pressed="true">Normal</button>
-                        <button class="type-btn" type="button" data-shape-type="1" aria-pressed="false">Love</button>
+                <section class="panel notify-panel" aria-labelledby="notifyHeading">
+                    <div class="panel-title" id="notifyHeading">Sky Notifications</div>
+                    <div class="notify-wrap">
+                        <button class="small-btn" id="enableNotifyBtn" type="button">Enable For This Sky PIN</button>
+                        <button class="small-btn" id="disableNotifyBtn" type="button">Disable Notifications</button>
                     </div>
-                </div>
-
-                <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
-                <div id="status" class="status" role="status" aria-live="polite"></div>
-                <p class="note">Use the same Sky PIN in the SkyHi Spectacles Lens to see these messages come alive.</p>
+                    <p class="notify-status" id="notifyStatus" aria-live="polite">Notifications are off</p>
+                </section>
             </div>
-        </section>
 
-        <section class="panel view-panel" aria-labelledby="viewSkyHeading">
-            <div class="panel-title" id="viewSkyHeading">View A Sky</div>
-            <a id="openImmersiveBtn" class="cta" href="./receive.html" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">OPEN IMMERSIVE SKY</a>
-        </section>
+            <div class="desktop-side">
+                <section class="panel view-panel" aria-labelledby="viewSkyHeading">
+                    <div class="panel-title" id="viewSkyHeading">View A Sky</div>
+                    <a id="openImmersiveBtn" class="cta" href="./receive.html" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">OPEN IMMERSIVE SKY</a>
+                </section>
 
-        <section class="panel notify-panel" aria-labelledby="notifyHeading">
-            <div class="panel-title" id="notifyHeading">Sky Notifications</div>
-            <div class="notify-wrap">
-                <button class="small-btn" id="enableNotifyBtn" type="button">Enable For This Sky PIN</button>
-                <button class="small-btn" id="disableNotifyBtn" type="button">Disable Notifications</button>
+                <section class="panel saved-panel" aria-labelledby="savedSkiesHeading">
+                    <div class="panel-title" id="savedSkiesHeading">Saved Skies</div>
+                    <div id="savedSkiesList" class="saved-list" aria-live="polite"></div>
+                </section>
+
+                <section class="panel sent-panel" aria-labelledby="sentMessagesHeading">
+                    <div class="panel-head">
+                        <div class="panel-title" id="sentMessagesHeading">Sent Messages</div>
+                        <button id="clearSentBtn" class="ghost-btn" type="button">Clear History</button>
+                    </div>
+                    <div id="sentMessagesList" class="sent-list" aria-live="polite"></div>
+                </section>
+
+                <section class="panel creds conn-panel" aria-labelledby="connHeading">
+                    <div class="panel-title" id="connHeading">Connection</div>
+                    <strong>SUPABASE</strong><br>
+                    <span id="creds-status">Checking edge gateway...</span><br>
+                    <button class="small-btn" id="testBtn" type="button">Test connection</button>
+                    <button class="small-btn" id="muteAudioBtn" type="button" aria-pressed="false">Mute Audio</button>
+                </section>
             </div>
-            <p class="notify-status" id="notifyStatus" aria-live="polite">Notifications are off</p>
-        </section>
-
-        <section class="panel saved-panel" aria-labelledby="savedSkiesHeading">
-            <div class="panel-title" id="savedSkiesHeading">Saved Skies</div>
-            <div id="savedSkiesList" class="saved-list" aria-live="polite"></div>
-        </section>
-
-        <section class="panel sent-panel" aria-labelledby="sentMessagesHeading">
-            <div class="panel-head">
-                <div class="panel-title" id="sentMessagesHeading">Sent Messages</div>
-                <button id="clearSentBtn" class="ghost-btn" type="button">Clear History</button>
-            </div>
-            <div id="sentMessagesList" class="sent-list" aria-live="polite"></div>
-        </section>
-
-        <section class="panel creds conn-panel" aria-labelledby="connHeading">
-            <div class="panel-title" id="connHeading">Connection</div>
-            <strong>SUPABASE</strong><br>
-            <span id="creds-status">Checking edge gateway...</span><br>
-            <button class="small-btn" id="testBtn" type="button">Test connection</button>
-            <button class="small-btn" id="muteAudioBtn" type="button" aria-pressed="false">Mute Audio</button>
-        </section>
+        </div>
     </main>
+
+    <footer class="site-footer">
+        Made by KrazyyKrunal. Copyright &copy; 2026. SkyHi&trade;
+    </footer>
 
     <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline hidden></audio>
 

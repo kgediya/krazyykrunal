@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XDG Fams Portal</title>
+  <style>
+    :root {
+      --bg: #f5efe3;
+      --surface: rgba(255, 251, 245, 0.82);
+      --surface-strong: #fffaf1;
+      --ink: #1f1a17;
+      --muted: #655a51;
+      --line: rgba(31, 26, 23, 0.12);
+      --brand: #ea5b2a;
+      --brand-deep: #b13c18;
+      --accent: #0f766e;
+      --accent-soft: rgba(15, 118, 110, 0.12);
+      --gold: #f5be45;
+      --shadow: 0 24px 80px rgba(86, 56, 34, 0.12);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 999px;
+      --max-width: 1220px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(245, 190, 69, 0.4), transparent 28%),
+        radial-gradient(circle at top right, rgba(234, 91, 42, 0.18), transparent 24%),
+        linear-gradient(180deg, #f8f2e7 0%, #f2e7d6 48%, #efe2ce 100%);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 50%;
+      filter: blur(24px);
+      opacity: 0.5;
+    }
+
+    body::before {
+      width: 280px;
+      height: 280px;
+      right: -80px;
+      top: 130px;
+      background: rgba(15, 118, 110, 0.18);
+    }
+
+    body::after {
+      width: 220px;
+      height: 220px;
+      left: -60px;
+      bottom: 90px;
+      background: rgba(234, 91, 42, 0.12);
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 24px auto 48px;
+    }
+
+    .hero,
+    .section-card {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+      gap: 24px;
+    }
+
+    .hero-copy {
+      position: relative;
+      padding-right: 12px;
+    }
+
+    .eyebrow,
+    .badge,
+    .chapter-meta span,
+    .event-tags span,
+    .mini-stat span {
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--brand-deep);
+      background: rgba(234, 91, 42, 0.12);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .hero h1 {
+      margin-top: 18px;
+      font-size: clamp(2.6rem, 6vw, 4.9rem);
+      line-height: 0.96;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      margin-top: 18px;
+      max-width: 62ch;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .hero-actions {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: #fff8f2;
+      background: linear-gradient(135deg, var(--brand), #ff8250);
+      box-shadow: 0 14px 30px rgba(234, 91, 42, 0.28);
+    }
+
+    .btn-secondary {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(31, 26, 23, 0.08);
+    }
+
+    .hero-panel {
+      position: relative;
+      border-radius: calc(var(--radius-xl) - 8px);
+      overflow: hidden;
+      padding: 22px;
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0)),
+        linear-gradient(150deg, #0f766e, #0f4d59 60%, #162a31 100%);
+      color: #effcf8;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.22), transparent 20%),
+        radial-gradient(circle at 88% 18%, rgba(245, 190, 69, 0.28), transparent 18%),
+        linear-gradient(transparent 0, transparent calc(100% - 1px), rgba(255, 255, 255, 0.07) calc(100% - 1px)),
+        linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), rgba(255, 255, 255, 0.07) calc(100% - 1px));
+      background-size: auto, auto, 100% 64px, 64px 100%;
+      pointer-events: none;
+    }
+
+    .hero-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-panel h2 {
+      font-size: 1.3rem;
+      margin-bottom: 18px;
+    }
+
+    .schedule-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .schedule-item {
+      padding: 14px 14px 14px 18px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .schedule-item strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .schedule-item span {
+      display: block;
+      color: rgba(239, 252, 248, 0.78);
+      line-height: 1.45;
+      font-size: 0.93rem;
+    }
+
+    .section-card {
+      margin-top: 22px;
+      border-radius: var(--radius-xl);
+      padding: 26px;
+    }
+
+    .stats-grid,
+    .chapters-grid,
+    .events-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stat {
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-top: 12px;
+    }
+
+    .stat p {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 60ch;
+    }
+
+    .chapters-grid {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .chapter-card,
+    .event-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 249, 241, 0.94));
+    }
+
+    .chapter-card {
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chapter-card::after {
+      content: "";
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: rgba(245, 190, 69, 0.18);
+      top: -34px;
+      right: -24px;
+    }
+
+    .chapter-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .chapter-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .city-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), #ff8b60);
+      box-shadow: 0 12px 24px rgba(234, 91, 42, 0.18);
+    }
+
+    .chapter-card h3,
+    .event-card h3 {
+      font-size: 1.28rem;
+    }
+
+    .chapter-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chapter-meta span,
+    .event-tags span,
+    .mini-stat span {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--accent);
+    }
+
+    .chapter-card p,
+    .event-card p {
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .mini-stat {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(31, 26, 23, 0.08);
+    }
+
+    .mini-stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.15rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .filters,
+    .timeline-switch {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip {
+      border: 1px solid rgba(31, 26, 23, 0.12);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink);
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease, border-color 180ms ease;
+    }
+
+    .chip:hover,
+    .chip:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .chip.active {
+      color: #fffaf2;
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .events-grid {
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    }
+
+    .event-card {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 34px rgba(51, 35, 22, 0.08);
+    }
+
+    .event-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      color: #fff7ef;
+      background: linear-gradient(135deg, var(--brand), #ff8a5f);
+      white-space: nowrap;
+    }
+
+    .badge.past {
+      color: var(--ink);
+      background: linear-gradient(135deg, #f2dcc1, #e8c79a);
+    }
+
+    .event-meta {
+      display: grid;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+
+    .event-meta strong {
+      color: var(--brand-deep);
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .event-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .event-card.hidden {
+      display: none;
+    }
+
+    .community-note {
+      margin-top: 20px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.11), rgba(245, 190, 69, 0.12));
+      border: 1px solid rgba(15, 118, 110, 0.12);
+    }
+
+    .community-note p {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 18px 8px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(calc(100% - 20px), var(--max-width));
+        margin-top: 10px;
+      }
+
+      .hero,
+      .section-card {
+        padding: 20px;
+        border-radius: 24px;
+      }
+
+      .hero h1 {
+        max-width: none;
+      }
+
+      .stats-grid,
+      .mini-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head,
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">XDG Network • India Chapters</span>
+        <h1>Find your fam. Show up. Build together.</h1>
+        <p>
+          A meetup-style home for XDG city chapters across India. Discover local fams, catch the next session near you,
+          and revisit the strongest moments from past meetups across Mumbai, Gujarat, Madhyapradesh, Pune, and beyond.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#meetups">Explore Meetups</a>
+          <a class="btn btn-secondary" href="#chapters">Browse Chapters</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-label="Featured schedule">
+        <h2>What’s coming up next</h2>
+        <div class="schedule-list">
+          <article class="schedule-item">
+            <strong>Mumbai Fam Night</strong>
+            <span>April 12 • 6:30 PM • Andheri West</span>
+          </article>
+          <article class="schedule-item">
+            <strong>Gujarat Creator Meetup</strong>
+            <span>April 19 • 11:00 AM • Ahmedabad Design District</span>
+          </article>
+          <article class="schedule-item">
+            <strong>Pune Build Jam</strong>
+            <span>April 27 • 10:30 AM • Baner Community Loft</span>
+          </article>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section-card">
+      <div class="stats-grid">
+        <article class="stat">
+          <span class="eyebrow">Active Fams</span>
+          <strong>08</strong>
+          <p>City-led chapters running monthly circles, demos, and collab nights.</p>
+        </article>
+        <article class="stat">
+          <span class="eyebrow">Upcoming</span>
+          <strong>06</strong>
+          <p>Meetups already lined up across the next 45 days for builders and creators.</p>
+        </article>
+        <article class="stat">
+          <span class="eyebrow">Past Meetups</span>
+          <strong>19</strong>
+          <p>Community sessions, lightning talks, and hands-on builds completed this season.</p>
+        </article>
+        <article class="stat">
+          <span class="eyebrow">Community Reach</span>
+          <strong>1.8K+</strong>
+          <p>Builders, designers, students, and storytellers connected through local fams.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-card" id="chapters">
+      <div class="section-head">
+        <div>
+          <h2>City Chapters</h2>
+          <p>Each fam has its own pace and energy, but they all share the same community-first culture of building, sharing, and showing up for one another.</p>
+        </div>
+      </div>
+
+      <div class="chapters-grid">
+        <article class="chapter-card">
+          <div class="chapter-top">
+            <div>
+              <h3>Mumbai Fam</h3>
+              <div class="chapter-meta">
+                <span>Harbor Circle</span>
+                <span>320 members</span>
+              </div>
+            </div>
+            <div class="city-badge">MB</div>
+          </div>
+          <p>Fast-paced founder energy, creator showcases, after-work demos, and late evening networking with a product-minded crowd.</p>
+          <div class="mini-stats">
+            <div class="mini-stat"><span>Focus</span><strong>XR + Creator Tools</strong></div>
+            <div class="mini-stat"><span>Rhythm</span><strong>2 meetups / month</strong></div>
+          </div>
+        </article>
+
+        <article class="chapter-card">
+          <div class="chapter-top">
+            <div>
+              <h3>Gujarat Fam</h3>
+              <div class="chapter-meta">
+                <span>Maker Circle</span>
+                <span>250 members</span>
+              </div>
+            </div>
+            <div class="city-badge">GJ</div>
+          </div>
+          <p>Strong student and maker participation with practical workshops, prototyping jams, and startup conversations across Ahmedabad and Surat.</p>
+          <div class="mini-stats">
+            <div class="mini-stat"><span>Focus</span><strong>Prototyping + Labs</strong></div>
+            <div class="mini-stat"><span>Rhythm</span><strong>Monthly builder day</strong></div>
+          </div>
+        </article>
+
+        <article class="chapter-card">
+          <div class="chapter-top">
+            <div>
+              <h3>Madhyapradesh Fam</h3>
+              <div class="chapter-meta">
+                <span>Central India Hub</span>
+                <span>190 members</span>
+              </div>
+            </div>
+            <div class="city-badge">MP</div>
+          </div>
+          <p>Community-driven learning sessions that bring together Bhopal, Indore, and nearby campuses for demos, mentorship, and project reviews.</p>
+          <div class="mini-stats">
+            <div class="mini-stat"><span>Focus</span><strong>Learning + Mentorship</strong></div>
+            <div class="mini-stat"><span>Rhythm</span><strong>1 flagship meetup / month</strong></div>
+          </div>
+        </article>
+
+        <article class="chapter-card">
+          <div class="chapter-top">
+            <div>
+              <h3>Pune Fam</h3>
+              <div class="chapter-meta">
+                <span>Campus + Builder Loop</span>
+                <span>280 members</span>
+              </div>
+            </div>
+            <div class="city-badge">PN</div>
+          </div>
+          <p>Hands-on, collaborative, and workshop-heavy. Pune meetups lean into product building, design systems, and student-led demos.</p>
+          <div class="mini-stats">
+            <div class="mini-stat"><span>Focus</span><strong>Build Jams</strong></div>
+            <div class="mini-stat"><span>Rhythm</span><strong>Weekend sessions</strong></div>
+          </div>
+        </article>
+
+        <article class="chapter-card">
+          <div class="chapter-top">
+            <div>
+              <h3>Delhi NCR Fam</h3>
+              <div class="chapter-meta">
+                <span>North Grid</span>
+                <span>340 members</span>
+              </div>
+            </div>
+            <div class="city-badge">DL</div>
+          </div>
+          <p>Strategy-heavy conversations, ecosystem intros, and founder-to-founder sessions with plenty of room for product storytelling.</p>
+          <div class="mini-stats">
+            <div class="mini-stat"><span>Focus</span><strong>Ecosystem + Growth</strong></div>
+            <div class="mini-stat"><span>Rhythm</span><strong>Biweekly mixers</strong></div>
+          </div>
+        </article>
+
+        <article class="chapter-card">
+          <div class="chapter-top">
+            <div>
+              <h3>Bengaluru Fam</h3>
+              <div class="chapter-meta">
+                <span>Tech Deep Dive</span>
+                <span>410 members</span>
+              </div>
+            </div>
+            <div class="city-badge">BL</div>
+          </div>
+          <p>Engineers, product builders, and immersive creators gathering around demos, stack breakdowns, and rapid-fire showcase nights.</p>
+          <div class="mini-stats">
+            <div class="mini-stat"><span>Focus</span><strong>Tech + Product</strong></div>
+            <div class="mini-stat"><span>Rhythm</span><strong>2 themed events / month</strong></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-card" id="meetups">
+      <div class="section-head">
+        <div>
+          <h2>Meetups Board</h2>
+          <p>Filter by chapter and switch between upcoming sessions and past highlights. The page updates instantly so it feels more like a live community board than a static directory.</p>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="filters" aria-label="Chapter filters">
+          <button class="chip active" data-chapter="all">All Fams</button>
+          <button class="chip" data-chapter="Mumbai">Mumbai</button>
+          <button class="chip" data-chapter="Gujarat">Gujarat</button>
+          <button class="chip" data-chapter="Madhyapradesh">Madhyapradesh</button>
+          <button class="chip" data-chapter="Pune">Pune</button>
+          <button class="chip" data-chapter="Delhi NCR">Delhi NCR</button>
+          <button class="chip" data-chapter="Bengaluru">Bengaluru</button>
+        </div>
+
+        <div class="timeline-switch" aria-label="Timeline filters">
+          <button class="chip active" data-timeline="all">All</button>
+          <button class="chip" data-timeline="upcoming">Upcoming</button>
+          <button class="chip" data-timeline="past">Past</button>
+        </div>
+      </div>
+
+      <div class="events-grid">
+        <article class="event-card" data-chapter="Mumbai" data-timeline="upcoming">
+          <div class="event-top">
+            <div>
+              <h3>Mumbai Fam Night: Creator Showcase</h3>
+              <p>Lightning demos, product teardowns, and community intros for new members joining the Mumbai loop.</p>
+            </div>
+            <span class="badge">Upcoming</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> April 12, 2026 • 6:30 PM</div>
+            <div><strong>Venue</strong> Andheri West Studio Commons</div>
+            <div><strong>Format</strong> Talks + networking</div>
+          </div>
+          <div class="event-tags">
+            <span>Mumbai</span>
+            <span>Open RSVP</span>
+            <span>Evening</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Gujarat" data-timeline="upcoming">
+          <div class="event-top">
+            <div>
+              <h3>Gujarat Creator Meetup</h3>
+              <p>A collaborative meetup focused on prototypes, campus projects, and founder-builder matchmaking.</p>
+            </div>
+            <span class="badge">Upcoming</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> April 19, 2026 • 11:00 AM</div>
+            <div><strong>Venue</strong> Ahmedabad Design District</div>
+            <div><strong>Format</strong> Build jam + mentor circles</div>
+          </div>
+          <div class="event-tags">
+            <span>Gujarat</span>
+            <span>Hands-on</span>
+            <span>Student Friendly</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Madhyapradesh" data-timeline="upcoming">
+          <div class="event-top">
+            <div>
+              <h3>MP Central Meetup: Learn and Launch</h3>
+              <p>Short talks, portfolio reviews, and a guided session for builders preparing their first public demo.</p>
+            </div>
+            <span class="badge">Upcoming</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> April 21, 2026 • 4:00 PM</div>
+            <div><strong>Venue</strong> Bhopal Community Lab</div>
+            <div><strong>Format</strong> Talks + reviews</div>
+          </div>
+          <div class="event-tags">
+            <span>Madhyapradesh</span>
+            <span>Mentorship</span>
+            <span>Beginner Friendly</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Pune" data-timeline="upcoming">
+          <div class="event-top">
+            <div>
+              <h3>Pune Build Jam Weekend</h3>
+              <p>An all-day co-building sprint with checkpoints, team formation, and end-of-day rapid demos.</p>
+            </div>
+            <span class="badge">Upcoming</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> April 27, 2026 • 10:30 AM</div>
+            <div><strong>Venue</strong> Baner Community Loft</div>
+            <div><strong>Format</strong> Co-build + showcase</div>
+          </div>
+          <div class="event-tags">
+            <span>Pune</span>
+            <span>Weekend</span>
+            <span>Build Jam</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Delhi NCR" data-timeline="upcoming">
+          <div class="event-top">
+            <div>
+              <h3>Delhi NCR Founder Circle</h3>
+              <p>A smaller, curated meetup for ecosystem updates, startup storytelling, and community partnerships.</p>
+            </div>
+            <span class="badge">Upcoming</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> May 3, 2026 • 5:30 PM</div>
+            <div><strong>Venue</strong> Gurugram Collaboration House</div>
+            <div><strong>Format</strong> Roundtable + mixer</div>
+          </div>
+          <div class="event-tags">
+            <span>Delhi NCR</span>
+            <span>Invite + RSVP</span>
+            <span>Leadership</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Bengaluru" data-timeline="upcoming">
+          <div class="event-top">
+            <div>
+              <h3>Bengaluru Stack Session</h3>
+              <p>Deep technical demos from the community with open mic troubleshooting and architecture reviews.</p>
+            </div>
+            <span class="badge">Upcoming</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> May 10, 2026 • 3:00 PM</div>
+            <div><strong>Venue</strong> Indiranagar Product Garage</div>
+            <div><strong>Format</strong> Technical deep dive</div>
+          </div>
+          <div class="event-tags">
+            <span>Bengaluru</span>
+            <span>Deep Dive</span>
+            <span>Community Q&A</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Mumbai" data-timeline="past">
+          <div class="event-top">
+            <div>
+              <h3>Mumbai Demo Evenings</h3>
+              <p>Six community teams showed prototypes, traded feedback, and matched up for the next collab cycle.</p>
+            </div>
+            <span class="badge past">Past Meetup</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> March 8, 2026</div>
+            <div><strong>Venue</strong> Lower Parel Workbar</div>
+            <div><strong>Turnout</strong> 110 attendees</div>
+          </div>
+          <div class="event-tags">
+            <span>Mumbai</span>
+            <span>Showcase</span>
+            <span>Full House</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Gujarat" data-timeline="past">
+          <div class="event-top">
+            <div>
+              <h3>Ahmedabad Fam Mixer</h3>
+              <p>A relaxed community mixer that brought student clubs, indie creators, and mentors into the same room.</p>
+            </div>
+            <span class="badge past">Past Meetup</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> February 22, 2026</div>
+            <div><strong>Venue</strong> Riverfront Creative Hub</div>
+            <div><strong>Turnout</strong> 87 attendees</div>
+          </div>
+          <div class="event-tags">
+            <span>Gujarat</span>
+            <span>Networking</span>
+            <span>Mentor Rooms</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Madhyapradesh" data-timeline="past">
+          <div class="event-top">
+            <div>
+              <h3>Indore Learn Lab</h3>
+              <p>Builders walked through their early projects, got peer feedback, and joined focused problem-solving circles.</p>
+            </div>
+            <span class="badge past">Past Meetup</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> February 15, 2026</div>
+            <div><strong>Venue</strong> Indore Startup Hall</div>
+            <div><strong>Turnout</strong> 64 attendees</div>
+          </div>
+          <div class="event-tags">
+            <span>Madhyapradesh</span>
+            <span>Learning</span>
+            <span>Peer Review</span>
+          </div>
+        </article>
+
+        <article class="event-card" data-chapter="Pune" data-timeline="past">
+          <div class="event-top">
+            <div>
+              <h3>Pune Workshop Sprint</h3>
+              <p>A practical sprint session where teams formed around prompts and ended with quick stage demos.</p>
+            </div>
+            <span class="badge past">Past Meetup</span>
+          </div>
+          <div class="event-meta">
+            <div><strong>Date</strong> January 25, 2026</div>
+            <div><strong>Venue</strong> Kothrud Builder Space</div>
+            <div><strong>Turnout</strong> 96 attendees</div>
+          </div>
+          <div class="event-tags">
+            <span>Pune</span>
+            <span>Workshop</span>
+            <span>Rapid Demo</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="community-note">
+        <p>
+          This draft is structured as a clean single-page portal so it can be expanded later with RSVP links, speaker pages,
+          chapter leads, or a live data source without needing to redesign the whole experience.
+        </p>
+      </div>
+    </section>
+
+    <footer>XDG Fams Portal • Drafted for community chapters and meetup discovery</footer>
+  </main>
+
+  <script>
+    const chapterChips = [...document.querySelectorAll("[data-chapter]")];
+    const timelineChips = [...document.querySelectorAll("[data-timeline]")];
+    const eventCards = [...document.querySelectorAll(".event-card")];
+
+    const state = {
+      chapter: "all",
+      timeline: "all"
+    };
+
+    function updateCards() {
+      eventCards.forEach((card) => {
+        const chapterMatch = state.chapter === "all" || card.dataset.chapter === state.chapter;
+        const timelineMatch = state.timeline === "all" || card.dataset.timeline === state.timeline;
+        card.classList.toggle("hidden", !(chapterMatch && timelineMatch));
+      });
+    }
+
+    chapterChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        state.chapter = chip.dataset.chapter;
+        chapterChips.forEach((item) => item.classList.toggle("active", item === chip));
+        updateCards();
+      });
+    });
+
+    timelineChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        state.timeline = chip.dataset.timeline;
+        timelineChips.forEach((item) => item.classList.toggle("active", item === chip));
+        updateCards();
+      });
+    });
+  </script>
+</body>
+</html>

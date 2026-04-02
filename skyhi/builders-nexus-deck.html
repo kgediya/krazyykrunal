@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SkyHi | Builder's Nexus Pitch Deck</title>
+    <style>
+        :root {
+            --panel: rgba(27, 22, 17, 0.78);
+            --line: rgba(243, 207, 132, 0.2);
+            --text: #fbf4e7;
+            --muted: rgba(251, 244, 231, 0.72);
+            --accent: #f3cf84;
+            --accent-2: #e9b44f;
+            --awe-cyan: #6fd8ff;
+            --awe-magenta: #ff8ea8;
+            --max: 1180px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", "Helvetica Neue", "Avenir Next", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 14% 16%, rgba(243, 207, 132, 0.18), transparent 24%),
+                radial-gradient(circle at 86% 18%, rgba(111, 216, 255, 0.12), transparent 30%),
+                radial-gradient(circle at 76% 78%, rgba(255, 142, 168, 0.1), transparent 28%),
+                radial-gradient(circle at 50% 84%, rgba(233, 180, 79, 0.08), transparent 34%),
+                linear-gradient(180deg, #120f0a 0%, #090806 38%, #100c10 100%);
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        body::before {
+            background-image:
+                radial-gradient(circle, rgba(255, 239, 205, 0.92) 0 1px, transparent 1.8px),
+                radial-gradient(circle, rgba(243, 207, 132, 0.82) 0 1px, transparent 2px),
+                radial-gradient(circle, rgba(111, 216, 255, 0.68) 0 1px, transparent 2px),
+                radial-gradient(circle, rgba(255, 142, 168, 0.42) 0 1px, transparent 2px);
+            background-size: 160px 160px, 230px 230px, 290px 290px, 340px 340px;
+            background-position: 10% 20%, 80% 14%, 45% 76%, 72% 34%;
+            opacity: 0.8;
+            animation: drift 18s linear infinite;
+        }
+
+        body::after {
+            background:
+                linear-gradient(180deg, rgba(243, 207, 132, 0.06), transparent 28%),
+                radial-gradient(circle at 62% 24%, rgba(111, 216, 255, 0.06), transparent 18%),
+                radial-gradient(circle at 74% 70%, rgba(255, 142, 168, 0.05), transparent 20%),
+                linear-gradient(0deg, rgba(0, 0, 0, 0.2), transparent 34%);
+            z-index: -1;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            width: min(calc(100% - 32px), var(--max));
+            margin: 0 auto;
+            display: grid;
+            gap: 24px;
+            padding: 22px 0 90px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 12px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(27, 22, 17, 0.82), rgba(19, 18, 24, 0.72));
+            backdrop-filter: blur(16px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .brand img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            filter:
+                drop-shadow(0 6px 18px rgba(243, 207, 132, 0.2))
+                drop-shadow(0 0 14px rgba(111, 216, 255, 0.08));
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .top-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .pill-link,
+        .hero-actions a,
+        .story-nav button,
+        .surface-trigger {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 248, 235, 0.03);
+            color: var(--text);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+        }
+
+        .pill-link {
+            padding: 10px 14px;
+            font-size: 12px;
+        }
+
+        .pill-link:hover,
+        .hero-actions a:hover,
+        .story-nav button:hover,
+        .surface-trigger:hover {
+            transform: translateY(-1px);
+            border-color: rgba(243, 207, 132, 0.34);
+            background: linear-gradient(135deg, rgba(243, 207, 132, 0.1), rgba(111, 216, 255, 0.08));
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(320px, 0.92fr) minmax(420px, 1.08fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            position: relative;
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            background:
+                linear-gradient(180deg, rgba(243, 207, 132, 0.06), rgba(255, 255, 255, 0.015)),
+                var(--panel);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 239, 205, 0.08),
+                0 24px 44px rgba(0, 0, 0, 0.18),
+                0 0 0 1px rgba(111, 216, 255, 0.02);
+            overflow: hidden;
+        }
+
+        .hero-copy,
+        .hero-stage,
+        .section-panel,
+        .final-card {
+            padding: clamp(20px, 2.2vw, 28px);
+        }
+
+        .hero-copy {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        h1 {
+            margin-top: 18px;
+            font-size: clamp(42px, 5.4vw, 74px);
+            line-height: 0.96;
+        }
+
+        .hero-lead,
+        .section-copy,
+        .story-step p,
+        .detail-copy,
+        .proof-card p,
+        .impact-card p,
+        .final-card p {
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .hero-lead {
+            margin-top: 18px;
+            max-width: 560px;
+            font-size: 17px;
+            line-height: 1.58;
+        }
+
+        .hero-stage {
+            display: grid;
+            grid-template-rows: auto auto;
+            gap: 18px;
+        }
+
+        .sky-stage {
+            position: relative;
+        }
+
+        .video-placeholder {
+            padding: 6px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .video-card {
+            width: 100%;
+            max-width: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .video-heading {
+            font-size: 18px;
+            margin: 0 0 28px;
+            line-height: 1.2;
+            padding: 2px 0 0;
+        }
+
+        .video-frame {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 1px solid rgba(243, 207, 132, 0.12);
+            border-radius: 20px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(32, 24, 20, 0.32), rgba(0, 0, 0, 0.18)),
+                rgba(0, 0, 0, 0.18);
+            box-shadow:
+                0 18px 34px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(111, 216, 255, 0.03);
+        }
+
+        .video-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .lantern-cloud {
+            position: absolute;
+            inset: 0;
+        }
+
+        .lantern {
+            position: absolute;
+            width: 84px;
+            height: 110px;
+            border-radius: 38px 38px 22px 22px;
+            background: linear-gradient(180deg, rgba(255, 236, 184, 0.86), rgba(255, 177, 87, 0.82));
+            box-shadow:
+                0 0 28px rgba(255, 176, 84, 0.28),
+                inset 0 10px 18px rgba(255, 255, 255, 0.22),
+                inset 0 -18px 28px rgba(120, 58, 14, 0.28);
+            animation: floaty 9s ease-in-out infinite;
+        }
+
+        .lantern::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -22px;
+            width: 2px;
+            height: 20px;
+            transform: translateX(-50%);
+            background: linear-gradient(180deg, rgba(255, 226, 176, 0.8), transparent);
+        }
+
+        .lantern.heart {
+            width: 102px;
+            height: 112px;
+            border-radius: 28px;
+            clip-path: path("M42 96 C14 82 2 58 2 34 C2 13 17 0 33 0 C41 0 47 4 52 10 C57 4 63 0 71 0 C87 0 102 13 102 34 C102 58 90 82 62 96 L52 104 Z");
+            background: linear-gradient(180deg, rgba(255, 208, 224, 0.92), rgba(255, 120, 150, 0.84));
+        }
+
+        .lantern-note {
+            position: absolute;
+            min-width: 140px;
+            max-width: 170px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(12, 14, 27, 0.82);
+            font-size: 13px;
+            line-height: 1.45;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+            animation: notePulse 7s ease-in-out infinite;
+        }
+
+        .stage-caption,
+        .grid-two {
+            display: grid;
+            gap: 24px;
+        }
+
+        .stage-caption {
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .caption-card,
+        .proof-card,
+        .impact-card {
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(243, 207, 132, 0.12);
+            background: linear-gradient(180deg, rgba(243, 207, 132, 0.05), rgba(255, 255, 255, 0.02));
+        }
+
+        .caption-card strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .grid-two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .problem-list,
+        .proof-list,
+        .impact-list,
+        .detail-list,
+        .impact-rail {
+            margin-top: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .problem-item,
+        .proof-item,
+        .impact-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+        }
+
+        .index-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background: rgba(255, 207, 127, 0.1);
+            border: 1px solid rgba(255, 207, 127, 0.18);
+        }
+
+        .story-grid {
+            margin-top: 22px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+
+        .story-nav {
+            display: grid;
+            gap: 10px;
+        }
+
+        .story-nav button {
+            padding: 14px 16px;
+            text-align: left;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .story-nav button.active {
+            background: linear-gradient(135deg, rgba(255, 207, 127, 0.12), rgba(123, 214, 255, 0.08));
+            border-color: rgba(255, 221, 167, 0.3);
+        }
+
+        .story-display,
+        .architecture-detail {
+            border-radius: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .story-display {
+            min-height: 300px;
+            padding: 22px;
+        }
+
+        .story-step {
+            display: none;
+        }
+
+        .story-step.active {
+            display: block;
+            animation: fadeUp 300ms ease;
+        }
+
+        .story-step h3 {
+            font-size: clamp(24px, 3vw, 34px);
+            margin-bottom: 10px;
+        }
+
+        .story-step p {
+            margin: 0 0 16px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .architecture-shell {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 20px;
+            margin-top: 22px;
+        }
+
+        .architecture-map {
+            position: relative;
+            min-height: 520px;
+            padding: 28px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-rows: auto 1fr;
+            align-items: start;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255, 207, 127, 0.06), transparent 40%),
+                rgba(255, 255, 255, 0.025);
+            overflow: hidden;
+        }
+
+        .architecture-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .architecture-lines svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .architecture-lines path {
+            fill: none;
+            stroke: rgba(255, 226, 171, 0.26);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-dasharray: 9 12;
+            animation: dash 16s linear infinite;
+        }
+
+        .surface-node {
+            position: relative;
+            width: 100%;
+            max-width: 220px;
+            padding: 16px;
+            border-radius: 22px;
+            border: 1px solid rgba(243, 207, 132, 0.14);
+            background: linear-gradient(180deg, rgba(37, 28, 21, 0.92), rgba(16, 15, 20, 0.88));
+            box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
+            z-index: 1;
+        }
+
+        .surface-node small {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255, 226, 171, 0.82);
+        }
+
+        .surface-node strong {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .surface-node p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .surface-node button {
+            margin-top: 12px;
+        }
+
+        .surface-trigger {
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .surface-node.active {
+            border-color: rgba(243, 207, 132, 0.34);
+            background:
+                linear-gradient(180deg, rgba(243, 207, 132, 0.1), rgba(111, 216, 255, 0.05)),
+                rgba(18, 16, 20, 0.92);
+        }
+
+        .surface-node.spectacles {
+            grid-column: 1;
+            grid-row: 1;
+            justify-self: start;
+            align-self: start;
+        }
+
+        .surface-node.xr {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: center;
+            align-self: start;
+        }
+
+        .surface-node.web {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: end;
+            align-self: start;
+        }
+
+        .surface-node.watch {
+            grid-column: 1;
+            grid-row: 2;
+            justify-self: start;
+            align-self: end;
+        }
+
+        .surface-node.backend {
+            grid-column: 3;
+            grid-row: 2;
+            justify-self: end;
+            align-self: end;
+        }
+
+        .architecture-detail {
+            padding: 22px;
+        }
+
+        .architecture-detail h3 {
+            font-size: 28px;
+        }
+
+        .detail-list div {
+            padding: 12px 14px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+
+        .proof-grid,
+        .footer-cta {
+            display: grid;
+            gap: 16px;
+        }
+
+        .watch-showcase {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .showcase-card {
+            padding: 24px;
+            border-radius: 26px;
+            border: 1px solid rgba(243, 207, 132, 0.12);
+            background: linear-gradient(180deg, rgba(243, 207, 132, 0.05), rgba(255, 255, 255, 0.02));
+        }
+
+        .showcase-card h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .showcase-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .showcase-frame {
+            margin-top: 18px;
+            width: min(320px, 100%);
+            aspect-ratio: 9 / 16;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(243, 207, 132, 0.12);
+            background: rgba(0, 0, 0, 0.16);
+            box-shadow:
+                0 14px 28px rgba(0, 0, 0, 0.16),
+                0 0 0 1px rgba(111, 216, 255, 0.02);
+        }
+
+        .showcase-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .device-stage {
+            margin-top: 18px;
+            padding: 0;
+            min-height: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .device-shell {
+            width: min(300px, 100%);
+            padding: 10px 10px 14px;
+            border-radius: 30px;
+            background: linear-gradient(180deg, rgba(39, 29, 22, 0.9), rgba(15, 14, 18, 0.9));
+            border: 1px solid rgba(243, 207, 132, 0.12);
+            box-shadow:
+                0 18px 34px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(111, 216, 255, 0.02);
+        }
+
+        .device-screen {
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.14);
+        }
+
+        .device-screen iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+
+        .device-caption {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 13px;
+            color: rgba(247, 243, 235, 0.9);
+        }
+
+        .proof-grid {
+            margin-top: 22px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .proof-card h3,
+        .impact-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .proof-card strong {
+            display: inline-flex;
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: rgba(255, 207, 127, 0.08);
+            border: 1px solid rgba(255, 207, 127, 0.16);
+            font-size: 11px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .footer-cta {
+            grid-template-columns: 1.2fr 0.8fr;
+            align-items: stretch;
+        }
+
+        .deck-footer {
+            text-align: center;
+            color: rgba(251, 244, 231, 0.54);
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            line-height: 1.7;
+            padding-bottom: 8px;
+        }
+
+        .final-card p {
+            margin: 14px 0 0;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .cta-grid {
+            margin-top: 22px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity 500ms ease, transform 500ms ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to { transform: translateY(-160px); }
+        }
+
+        @keyframes floaty {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-14px) scale(1.02); }
+        }
+
+        @keyframes notePulse {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -340; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1180px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-copy {
+                order: 2;
+            }
+
+            .hero-stage {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 1080px) {
+            .hero,
+            .grid-two,
+            .footer-cta,
+            .architecture-shell,
+            .proof-grid,
+            .story-grid,
+            .watch-showcase {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 820px) {
+            .topbar {
+                border-radius: 28px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .top-links {
+                justify-content: flex-start;
+            }
+
+            .hero-metrics,
+            .stage-caption {
+                grid-template-columns: 1fr;
+            }
+
+            .story-nav {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .architecture-map {
+                min-height: auto;
+                grid-template-columns: 1fr;
+                grid-template-rows: none;
+                gap: 16px;
+            }
+
+            .surface-node {
+                max-width: none;
+            }
+
+            .surface-node.spectacles,
+            .surface-node.xr,
+            .surface-node.web,
+            .surface-node.watch,
+            .surface-node.backend {
+                grid-column: 1;
+                justify-self: stretch;
+                align-self: start;
+            }
+
+            .surface-node.spectacles { grid-row: 1; }
+            .surface-node.xr { grid-row: 2; }
+            .surface-node.web { grid-row: 3; }
+            .surface-node.watch { grid-row: 4; }
+            .surface-node.backend { grid-row: 5; }
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                width: min(calc(100% - 20px), var(--max));
+                padding-top: 14px;
+            }
+
+            .video-frame,
+            .showcase-frame,
+            .device-screen {
+                border-radius: 16px;
+            }
+
+            .sky-stage,
+            .panel,
+            .showcase-card {
+                border-radius: 22px;
+            }
+
+            .story-nav {
+                grid-template-columns: 1fr;
+            }
+
+            .pill-link {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand">
+                <img src="./Logo.png" alt="SkyHi">
+                <div>
+                    <div class="eyebrow">Builder's Nexus Submission</div>
+                    <div class="brand-title">SkyHi | Spatial messaging across Spectacles, web, and watch</div>
+                </div>
+            </div>
+            <nav class="top-links" aria-label="Pitch deck links">
+                <a class="pill-link" href="./index.html">Open Web Companion</a>
+                <a class="pill-link" href="./receive.html" target="_blank" rel="noopener noreferrer">Open Immersive Sky</a>
+                <a class="pill-link" href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01" target="_blank" rel="noopener noreferrer">Open Spectacles Lens</a>
+            </nav>
+        </header>
+
+        <section class="hero reveal">
+            <article class="panel hero-copy">
+                <div>
+                    <h1>SkyHi is a cross-device spatial messaging platform for Spectacles.</h1>
+                    <p class="hero-lead">
+                        SkyHi lets people create, send, receive, and revisit messages as spatial lanterns across Spectacles,
+                        web, and watch. It combines embodied input, realtime delivery, and a shared room model in a way that feels native to XR.
+                    </p>
+                </div>
+            </article>
+
+            <aside class="panel hero-stage">
+                <div class="sky-stage" aria-hidden="true">
+                    <div class="video-placeholder">
+                        <div class="video-card">
+                            <div class="video-heading">Product Demo</div>
+                            <div class="video-frame">
+                                <iframe
+                                    src="https://drive.google.com/file/d/1YjdEnx3LQBJWbBFoSnM6pFVbTFt8Jrc0/preview"
+                                    title="SkyHi demo video"
+                                    allow="autoplay; fullscreen"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stage-caption">
+                    <div class="caption-card">
+                        <strong>What this is</strong>
+                        <span>SkyHi turns messaging into a persistent spatial experience that works across Spectacles, web, and watch.</span>
+                    </div>
+                    <div class="caption-card">
+                        <strong>Why it matters</strong>
+                        <span>This already behaves like a product system, not a one-off XR scene, because the experience extends across multiple connected surfaces.</span>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="grid-two">
+            <article class="panel section-panel reveal">
+                <div class="section-kicker">Why this matters</div>
+                <h2>SkyHi addresses a product gap in spatial communication.</h2>
+                <p class="section-copy">
+                    Most XR communication concepts stop at novelty. SkyHi is built as a usable system where a message can be created with embodied input,
+                    delivered in realtime, and found again in a persistent shared sky.
+                </p>
+                <div class="problem-list">
+                    <div class="problem-item">
+                        <div class="index-badge">01</div>
+                        <div>
+                            <strong>Conventional messaging does not leverage spatial context.</strong>
+                            <div class="section-copy">SkyHi uses space, motion, and object state as part of the communication model.</div>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="index-badge">02</div>
+                        <div>
+                            <strong>XR products need support beyond the headset.</strong>
+                            <div class="section-copy">SkyHi already extends the same product model across web and watch surfaces.</div>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="index-badge">03</div>
+                        <div>
+                            <strong>Realtime communication requires a stronger trust boundary.</strong>
+                            <div class="section-copy">The current stack routes access through a controlled edge gateway and restricted table access.</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="panel section-panel reveal">
+                <div class="section-kicker">Investment relevance</div>
+                <h2>Why the product is notable at this stage</h2>
+                <p class="section-copy">
+                    SkyHi already shows platform-oriented execution. It combines Spectacles-native interaction design,
+                    a companion web product, a watch-lite control surface, and backend infrastructure for secure multi-surface delivery.
+                </p>
+                <div class="impact-list">
+                    <div class="impact-item">
+                        <div class="index-badge">A</div>
+                        <div>
+                            <strong>Native XR interaction model</strong>
+                            <div class="section-copy">Voice, pinch, and drag inputs are used as primary controls rather than secondary UI affordances.</div>
+                        </div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="index-badge">B</div>
+                        <div>
+                            <strong>Cross-surface continuity</strong>
+                            <div class="section-copy">The same Sky PIN ties multiple entry points into one consistent room-based experience.</div>
+                        </div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="index-badge">C</div>
+                        <div>
+                            <strong>Visible technical execution</strong>
+                            <div class="section-copy">Realtime feeds, shape state, spatial organization, and gateway routing are already operational in the codebase.</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel section-panel reveal" id="story">
+            <div class="section-kicker">Overview</div>
+            <h2>A concise walkthrough of the end-to-end experience</h2>
+            <p class="section-copy">
+                Here is the simplest way to understand the product from first interaction to cross-device use.
+            </p>
+
+            <div class="story-grid">
+                <div class="story-nav" role="tablist" aria-label="Pitch narrative steps">
+                    <button class="active" type="button" data-story="0">1. The moment</button>
+                    <button type="button" data-story="1">2. Creating a lantern</button>
+                    <button type="button" data-story="2">3. Reading the sky</button>
+                    <button type="button" data-story="3">4. Cross-device reach</button>
+                </div>
+
+                <div class="story-display">
+                    <div class="story-step active" data-step="0">
+                        <h3>SkyHi introduces a spatial messaging format.</h3>
+                        <p>
+                            A message becomes a lantern inside a shared room. It can be created, sent, discovered, and revisited instead of disappearing into a flat thread.
+                        </p>
+                    </div>
+
+                    <div class="story-step" data-step="1">
+                        <h3>On Spectacles, a user creates a lantern through voice and gesture.</h3>
+                        <p>
+                            The sender pinches and speaks into a lantern, then uses directional drag gestures to send it, discard it, or switch its form before delivery.
+                        </p>
+                    </div>
+
+                    <div class="story-step" data-step="2">
+                        <h3>The receiver experiences messages as a spatial inbox.</h3>
+                        <p>
+                            Messages appear as clustered unread lanterns in front of the user and migrate outward when read,
+                            so the environment itself communicates state and priority.
+                        </p>
+                    </div>
+
+                    <div class="story-step" data-step="3">
+                        <h3>The same room model extends across companion surfaces.</h3>
+                        <p>
+                            A web companion already supports sending, immersive receiving, saved skies, and notification hooks.
+                            A watch-lite companion adds a lightweight surface for quick send and inbox refresh.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel section-panel reveal" id="architecture">
+            <div class="section-kicker">System View</div>
+            <h2>Interactive architecture map</h2>
+            <p class="section-copy">
+                Select a surface to see how it fits into the product today.
+            </p>
+
+            <div class="architecture-shell">
+                <div class="architecture-map">
+                    <div class="architecture-lines" aria-hidden="true">
+                        <svg viewBox="0 0 1000 620" preserveAspectRatio="none">
+                            <path d="M162 118 C280 108, 360 108, 500 118"></path>
+                            <path d="M500 118 C648 108, 720 108, 838 118"></path>
+                            <path d="M162 506 C298 472, 390 416, 500 306"></path>
+                            <path d="M838 506 C702 472, 610 416, 500 306"></path>
+                            <path d="M500 118 C500 188, 500 218, 500 306"></path>
+                        </svg>
+                    </div>
+
+                    <div class="surface-node spectacles active" data-surface="spectacles">
+                        <small>Origin</small>
+                        <strong>Spectacles Send</strong>
+                        <p>Voice capture, gesture intent, shape switching, and launch into the shared sky.</p>
+                        <button class="surface-trigger" type="button">Inspect flow</button>
+                    </div>
+
+                    <div class="surface-node xr" data-surface="xr">
+                        <small>Immersive View</small>
+                        <strong>Spectacles Receive</strong>
+                        <p>Unread lanterns spawn forward, migrate when read, and become a spatial inbox.</p>
+                        <button class="surface-trigger" type="button">Inspect flow</button>
+                    </div>
+
+                    <div class="surface-node web" data-surface="web">
+                        <small>Companion</small>
+                        <strong>Web App</strong>
+                        <p>Send lanterns from phone or laptop, open immersive web sky, and manage saved skies.</p>
+                        <button class="surface-trigger" type="button">Inspect flow</button>
+                    </div>
+
+                    <div class="surface-node watch" data-surface="watch">
+                        <small>Ambient Surface</small>
+                        <strong>Watch-Lite</strong>
+                        <p>Quick send, quick inbox refresh, and tiny-footprint access to the same Sky PIN.</p>
+                        <button class="surface-trigger" type="button">Inspect flow</button>
+                    </div>
+
+                    <div class="surface-node backend" data-surface="backend">
+                        <small>Delivery Layer</small>
+                        <strong>Supabase Gateway</strong>
+                        <p>Realtime insert and fetch flow routed through an edge function with locked tables.</p>
+                        <button class="surface-trigger" type="button">Inspect flow</button>
+                    </div>
+                </div>
+
+                <aside class="architecture-detail">
+                    <div class="section-kicker" style="margin-bottom: 8px;">Highlighted surface</div>
+                    <h3 id="surfaceTitle">Spectacles Send</h3>
+                    <div class="detail-copy" id="surfaceCopy">
+                        SkyHi begins with embodied intent. On Spectacles, a user pinches and speaks into a lantern,
+                        then drags to commit the message, discard it, or switch the visual form before sending.
+                    </div>
+                    <div class="detail-list" id="surfacePoints">
+                        <div>High-accuracy voice transcription drives the message content.</div>
+                        <div>Drag thresholds map naturally to send, discard, and shape switching.</div>
+                        <div>Chosen shape state is persisted and synchronized to the backend.</div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section class="panel section-panel reveal" id="proof">
+            <div class="section-kicker">Proof Of Build</div>
+            <h2>The current build already demonstrates product and technical execution.</h2>
+            <p class="section-copy">
+                These are capabilities that are already reflected in the current build.
+            </p>
+
+            <div class="proof-grid">
+                <article class="proof-card">
+                    <strong>XR Interaction</strong>
+                    <h3>Embodied creation flow</h3>
+                    <p>
+                        The Spectacles sender experience already supports voice capture, live transcription updates,
+                        gesture-based intent, and shape toggling between normal and heart lantern variants.
+                    </p>
+                </article>
+
+                <article class="proof-card">
+                    <strong>Spatial Reading</strong>
+                    <h3>Inbox as environment</h3>
+                    <p>
+                        The receiver experience tracks unread and read lantern states, manages front-biased spawn zones,
+                        and relocates read lanterns into an outer ring to keep the sky legible.
+                    </p>
+                </article>
+
+                <article class="proof-card">
+                    <strong>Connected Stack</strong>
+                    <h3>Cross-device delivery</h3>
+                    <p>
+                        The web companion can send and fetch messages through a gateway, the immersive web view renders a live sky,
+                        and the watch-lite surface uses the same room model for inbox and send flows.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel section-panel reveal">
+            <div class="section-kicker">Watch Companion</div>
+            <h2>The watch surface makes SkyHi usable even away from the headset.</h2>
+            <p class="section-copy">
+                The watch companion extends SkyHi into a fast, glanceable interface for quick send, quick refresh, and lightweight access to the same shared sky.
+            </p>
+
+            <div class="watch-showcase">
+                <article class="showcase-card">
+                    <h3>Watch demo</h3>
+                    <p>
+                        This walkthrough shows how the watch companion compresses the product into a compact control surface while preserving the same room model and message flow.
+                    </p>
+                    <div class="showcase-frame">
+                        <iframe
+                            src="https://drive.google.com/file/d/1ZgLMACocM4oJ_OsxQcV2UTbuUvJHvAZH/preview"
+                            title="SkyHi watch demo video"
+                            allow="autoplay; fullscreen"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+                </article>
+
+                <article class="showcase-card">
+                    <h3>Watch companion product view</h3>
+                    <p>
+                        The watch UI gives the system a practical companion touchpoint: fast access to Sky PINs, lightweight inbox review, and quick send actions.
+                    </p>
+                    <div class="device-stage">
+                        <div class="device-shell">
+                            <div class="device-screen">
+                                <iframe
+                                    src="https://drive.google.com/file/d/1_f7tJoefkjbRwv0vSkz_ozHq-JTmowFN/preview"
+                                    title="SkyHi watch companion product image"
+                                    allow="autoplay; fullscreen"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
+                            <div class="device-caption">Watch companion interface</div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="grid-two">
+            <article class="panel section-panel reveal">
+                <div class="section-kicker">Technical Signal</div>
+                <h2>Execution signals</h2>
+                <div class="proof-list">
+                    <div class="proof-item">
+                        <div class="index-badge">01</div>
+                        <div>
+                            <strong>Shape state is synchronized end to end.</strong>
+                            <div class="section-copy">The sender records lantern type, the database stores it, and the receive surfaces honor the chosen variant.</div>
+                        </div>
+                    </div>
+                    <div class="proof-item">
+                        <div class="index-badge">02</div>
+                        <div>
+                            <strong>Realtime is paired with structure.</strong>
+                            <div class="section-copy">Receive flows are not random particle spam; they use session cleanup, dedupe, timers, and placement logic.</div>
+                        </div>
+                    </div>
+                    <div class="proof-item">
+                        <div class="index-badge">03</div>
+                        <div>
+                            <strong>Security posture is improving in the right direction.</strong>
+                            <div class="section-copy">The current migration locks direct client access and moves fetch and send through an edge function.</div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="panel section-panel reveal">
+                <div class="section-kicker">Expansion Path</div>
+                <h2>Next-stage opportunities</h2>
+                <div class="impact-rail">
+                    <div class="impact-card">
+                        <h3>Private and trusted skies</h3>
+                        <p>Invite-only rooms, persistent memory spaces, and stronger identity controls can turn SkyHi into a personal ritual platform.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h3>Ambient social presence</h3>
+                        <p>Watch and web surfaces can become lightweight portals into shared XR worlds even when the headset is not active.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h3>Cultural and event use cases</h3>
+                        <p>Festive skies, memorial spaces, fan activations, and public installations all fit the same message-to-lantern model.</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="footer-cta">
+            <article class="panel final-card reveal">
+                <div class="section-kicker">Closing Position</div>
+                <h2>SkyHi is positioned as a multi-surface XR communication product, not a single-scene prototype.</h2>
+                <p>
+                    The current implementation already combines embodied XR interaction, realtime communication, and cross-surface product design.
+                    The strongest signal is that the concept is supported by working systems across multiple user touchpoints.
+                </p>
+                <p>
+                    For a live presentation, the strongest flow is to start with the embedded demo, move into the architecture map,
+                    and then transition into the web companion and immersive receiver.
+                </p>
+                <div class="cta-grid">
+                    <a class="pill-link" href="./index.html">Demo the web companion</a>
+                    <a class="pill-link" href="./receive.html" target="_blank" rel="noopener noreferrer">Demo the immersive sky</a>
+                </div>
+            </article>
+
+            <article class="panel final-card reveal">
+                <div class="section-kicker">Closing Thought</div>
+                <p>
+                    SkyHi shows how communication in XR can feel native, persistent, and product-ready instead of experimental.
+                </p>
+                <p>
+                    It is already moving in that direction with shared room logic, realtime delivery, and companion surfaces that make the system usable beyond the headset.
+                </p>
+            </article>
+        </section>
+
+        <footer class="deck-footer">
+            Made by KrazyyKrunal. Copyright &copy; 2026. SkyHi&trade;
+        </footer>
+    </div>
+
+    <script>
+        const storyButtons = Array.from(document.querySelectorAll("[data-story]"));
+        const storySteps = Array.from(document.querySelectorAll(".story-step"));
+
+        function setStory(index) {
+            storyButtons.forEach((button, buttonIndex) => {
+                button.classList.toggle("active", buttonIndex === index);
+                button.setAttribute("aria-selected", String(buttonIndex === index));
+            });
+
+            storySteps.forEach((step, stepIndex) => {
+                step.classList.toggle("active", stepIndex === index);
+            });
+        }
+
+        storyButtons.forEach((button, index) => {
+            button.addEventListener("click", () => setStory(index));
+        });
+
+        const surfaceData = {
+            spectacles: {
+                title: "Spectacles Send",
+                copy: "SkyHi begins with embodied intent. On Spectacles, a user pinches and speaks into a lantern, then drags to commit the message, discard it, or switch the visual form before sending.",
+                points: [
+                    "High-accuracy voice transcription drives the message content.",
+                    "Drag thresholds map naturally to send, discard, and shape switching.",
+                    "Chosen shape state is persisted and synchronized to the backend."
+                ]
+            },
+            xr: {
+                title: "Spectacles Receive",
+                copy: "The receive flow turns reading into spatial exploration. Unread lanterns stay clustered in front, then move outward when read so the sky itself becomes an interface with memory.",
+                points: [
+                    "Unread lanterns bias toward a front arc for immediate discovery.",
+                    "Read lanterns migrate into a wider ring to preserve visual order.",
+                    "Interaction timing supports hold-to-read and later manipulation."
+                ]
+            },
+            web: {
+                title: "Web Companion",
+                copy: "The web surface broadens reach without flattening the concept. It lets users send lanterns, save skies, enable notification hooks, and open an immersive web receiver from the same entry point.",
+                points: [
+                    "Users can create or join any 3 to 6 digit Sky PIN.",
+                    "The companion already supports send history and saved skies.",
+                    "A separate immersive receiver creates a second wow moment in-browser."
+                ]
+            },
+            watch: {
+                title: "Watch-Lite",
+                copy: "The watch-lite build proves SkyHi can compress into tiny surfaces without losing identity. It offers fast send, quick inbox refresh, and orbit-based UI interactions tailored to glanceable use.",
+                points: [
+                    "One watch page supports home, inbox, and send states.",
+                    "The same room model works across Spectacles, web, and watch-lite.",
+                    "The circular interaction pattern reinforces the lantern metaphor."
+                ]
+            },
+            backend: {
+                title: "Supabase Gateway",
+                copy: "The backend is already moving toward a tighter trust boundary. Fetch and send are routed through an edge function, while migration work locks direct client access to sensitive tables.",
+                points: [
+                    "Room fetch and send are handled through a dedicated edge function.",
+                    "Rows are retrieved in a bounded, ordered way for receiver surfaces.",
+                    "Security migration denies direct anon and authenticated table access."
+                ]
+            }
+        };
+
+        const surfaceNodes = Array.from(document.querySelectorAll(".surface-node"));
+        const surfaceTitle = document.getElementById("surfaceTitle");
+        const surfaceCopy = document.getElementById("surfaceCopy");
+        const surfacePoints = document.getElementById("surfacePoints");
+
+        function setSurface(surfaceKey) {
+            const entry = surfaceData[surfaceKey];
+            if (!entry) return;
+
+            surfaceNodes.forEach((node) => {
+                node.classList.toggle("active", node.dataset.surface === surfaceKey);
+            });
+
+            surfaceTitle.textContent = entry.title;
+            surfaceCopy.textContent = entry.copy;
+            surfacePoints.innerHTML = entry.points.map((point) => "<div>" + point + "</div>").join("");
+        }
+
+        surfaceNodes.forEach((node) => {
+            node.addEventListener("click", () => setSurface(node.dataset.surface));
+            const trigger = node.querySelector(".surface-trigger");
+            if (trigger) {
+                trigger.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    setSurface(node.dataset.surface);
+                });
+            }
+        });
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+            });
+        }, { threshold: 0.16 });
+
+        document.querySelectorAll(".reveal").forEach((item) => revealObserver.observe(item));
+
+    </script>
+</body>
+</html>
