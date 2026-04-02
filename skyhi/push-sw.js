@@ -9,21 +9,26 @@ self.addEventListener('push', event => {
     const title = data.title || 'SkyHi';
     const body = data.body || 'New lantern message received.';
     const skyPin = data.data && data.data.skyPin ? String(data.data.skyPin) : '';
-    const url = skyPin ? ('./index.html?pin=' + encodeURIComponent(skyPin)) : './index.html';
+    const appUrl = new URL('./index.html', self.registration.scope);
+    if (skyPin) {
+        appUrl.searchParams.set('pin', skyPin);
+    }
+    const iconUrl = new URL('./New Logo 2.png', self.registration.scope).toString();
 
     event.waitUntil(
         self.registration.showNotification(title, {
             body,
-            icon: './New Logo 2.png',
-            badge: './New Logo 2.png',
-            data: { url }
+            icon: iconUrl,
+            badge: iconUrl,
+            data: { url: appUrl.toString() }
         })
     );
 });
 
 self.addEventListener('notificationclick', event => {
     event.notification.close();
-    const targetUrl = (event.notification.data && event.notification.data.url) || './index.html';
+    const targetUrl = (event.notification.data && event.notification.data.url)
+        || new URL('./index.html', self.registration.scope).toString();
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
