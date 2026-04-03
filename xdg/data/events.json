@@ -1,0 +1,167 @@
+[
+  {
+    "id": "mumbai-apr-xr-mixer",
+    "title": "XDG Mumbai XR Mixer",
+    "familyId": "mumbai",
+    "city": "Mumbai",
+    "status": "upcoming",
+    "date": "2026-04-12T18:30:00+05:30",
+    "venue": "Andheri West Studio Commons",
+    "format": "Meet-up + networking",
+    "capacity": 140,
+    "seatsLeft": 38,
+    "theme": "AR / VR creator demos",
+    "description": "A city mixer for builders, designers, and creators sharing live AR and VR work.",
+    "registrationOpen": true
+  },
+  {
+    "id": "gujarat-apr-maker-forum",
+    "title": "Gujarat XR Maker Forum",
+    "familyId": "gujarat",
+    "city": "Ahmedabad",
+    "status": "upcoming",
+    "date": "2026-04-19T11:00:00+05:30",
+    "venue": "Ahmedabad Design District",
+    "format": "Workshop + showcase",
+    "capacity": 110,
+    "seatsLeft": 24,
+    "theme": "AR experiments and rapid prototypes",
+    "description": "Hands-on sessions for XR makers with campus creators and startup builders.",
+    "registrationOpen": true
+  },
+  {
+    "id": "mp-apr-learn-circle",
+    "title": "Madhyapradesh Learn Circle",
+    "familyId": "madhyapradesh",
+    "city": "Bhopal",
+    "status": "upcoming",
+    "date": "2026-04-21T16:00:00+05:30",
+    "venue": "Bhopal Community Lab",
+    "format": "Mentor circle",
+    "capacity": 80,
+    "seatsLeft": 21,
+    "theme": "AR / VR foundations",
+    "description": "A guided learning event focused on first-time builders and immersive technology students.",
+    "registrationOpen": true
+  },
+  {
+    "id": "pune-apr-build-jam",
+    "title": "Pune XR Build Jam",
+    "familyId": "pune",
+    "city": "Pune",
+    "status": "upcoming",
+    "date": "2026-04-27T10:30:00+05:30",
+    "venue": "Baner Community Loft",
+    "format": "Build jam",
+    "capacity": 120,
+    "seatsLeft": 17,
+    "theme": "Rapid XR prototyping",
+    "description": "An all-day builder sprint for immersive prototypes, demos, and team formation.",
+    "registrationOpen": true
+  },
+  {
+    "id": "dilli-may-policy-forum",
+    "title": "Dilli XR Leadership Forum",
+    "familyId": "dilli",
+    "city": "Gurugram",
+    "status": "upcoming",
+    "date": "2026-05-03T17:30:00+05:30",
+    "venue": "Gurugram Collaboration House",
+    "format": "Roundtable",
+    "capacity": 90,
+    "seatsLeft": 29,
+    "theme": "Ecosystem and industry collaboration",
+    "description": "A leadership forum for immersive founders, operators, and ecosystem partners.",
+    "registrationOpen": true
+  },
+  {
+    "id": "mumbai-may-snap-lab",
+    "title": "Mumbai Lens Studio Lab",
+    "familyId": "mumbai",
+    "city": "Mumbai",
+    "status": "upcoming",
+    "date": "2026-05-10T15:00:00+05:30",
+    "venue": "Bandra Product Studio",
+    "format": "Workshop",
+    "capacity": 70,
+    "seatsLeft": 11,
+    "theme": "Lens Studio and WebAR",
+    "description": "A practical lab for AR creators exploring Lens Studio workflows and publishing.",
+    "registrationOpen": true
+  },
+  {
+    "id": "dilli-mar-founder-circle",
+    "title": "Dilli Founder Circle",
+    "familyId": "dilli",
+    "city": "Gurugram",
+    "status": "past",
+    "date": "2026-03-16T18:00:00+05:30",
+    "venue": "Founder House",
+    "format": "Roundtable",
+    "theme": "XR business and partnerships",
+    "description": "A founder-focused association session on ecosystem coordination and growth.",
+    "summary": {
+      "attendees": 96,
+      "speakers": 8,
+      "projects": 14,
+      "highlight": "Three cross-city partnership pilots were initiated after the roundtable."
+    },
+    "gallery": {
+      "mode": "images",
+      "items": [
+        "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=900&q=80"
+      ]
+    }
+  },
+  {
+    "id": "mumbai-sept-studio",
+    "title": "September Studio",
+    "familyId": "mumbai",
+    "city": "Mumbai",
+    "status": "past",
+    "date": "2025-09-20T14:00:00+05:30",
+    "venue": "Mumbai",
+    "format": "Design session",
+    "theme": "Design and immersive technology",
+    "description": "A collaborative session around design, immersive storytelling, and XR practice.",
+    "summary": {
+      "attendees": 182,
+      "speakers": 11,
+      "projects": 22,
+      "highlight": "The event expanded association visibility across designers entering AR and VR."
+    },
+    "gallery": {
+      "mode": "google-photos-link",
+      "url": "https://photos.google.com/",
+      "label": "Open recap gallery"
+    }
+  },
+  {
+    "id": "pune-jan-workshop-sprint",
+    "title": "Pune Workshop Sprint",
+    "familyId": "pune",
+    "city": "Pune",
+    "status": "past",
+    "date": "2026-01-25T10:00:00+05:30",
+    "venue": "Kothrud Builder Space",
+    "format": "Workshop sprint",
+    "theme": "XR maker sessions",
+    "description": "A practical sprint focused on fast prototyping and demo reviews.",
+    "summary": {
+      "attendees": 124,
+      "speakers": 6,
+      "projects": 19,
+      "highlight": "Five teams continued into follow-on build cycles after the event."
+    },
+    "gallery": {
+      "mode": "images",
+      "items": [
+        "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80",
+        "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=80"
+      ]
+    }
+  }
+]

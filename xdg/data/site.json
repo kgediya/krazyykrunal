@@ -1,0 +1,54 @@
+{
+  "associationName": "XDG Association",
+  "kicker": "XDG Association",
+  "title": "One association for AR, VR, and XR families.",
+  "description": "We are XDG. Whether you are here to Design, Develop, or Discover, you are in the right place. XDG is an association of autonomous local families across cities, states, and regions working together around AR, VR, and extended reality technologies.",
+  "heroTags": [
+    "Autonomous local families",
+    "AR / VR / XR events",
+    "Association registrations",
+    "Attendee leaderboards"
+  ],
+  "stats": [
+    {
+      "label": "Active families",
+      "value": "5",
+      "description": "Local families across city and regional geographies."
+    },
+    {
+      "label": "Open registrations",
+      "value": "6",
+      "description": "Upcoming association events accepting signups."
+    },
+    {
+      "label": "Association members",
+      "value": "1.9K+",
+      "description": "Designers, developers, artists, founders, and students."
+    },
+    {
+      "label": "Past event reach",
+      "value": "4.6K+",
+      "description": "Attendees represented across recaps, workshops, and showcases."
+    }
+  ],
+  "adminNote": "Public content is JSON-driven. Registrations go to Firebase when configured.",
+  "dataSources": [
+    {
+      "title": "Association config",
+      "path": "./data/site.json"
+    },
+    {
+      "title": "Families feed",
+      "path": "./data/families.json"
+    },
+    {
+      "title": "Leaderboards feed",
+      "path": "./data/leaders.json"
+    },
+    {
+      "title": "Events feed",
+      "path": "./data/events.json"
+    }
+  ],
+  "footerCopy": "XDG Association for AR / VR / XR families"
+}

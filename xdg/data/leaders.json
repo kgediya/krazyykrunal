@@ -1,0 +1,47 @@
+[
+  {
+    "city": "Mumbai",
+    "familyId": "mumbai",
+    "leaders": [
+      { "name": "Aarya Shah", "role": "XR attendee", "points": 1280, "streak": "9 events", "attended": 14 },
+      { "name": "Neel Merchant", "role": "Community attendee", "points": 980, "streak": "6 events", "attended": 11 },
+      { "name": "Rhea Batra", "role": "Builder attendee", "points": 840, "streak": "5 events", "attended": 9 }
+    ]
+  },
+  {
+    "city": "Madhyapradesh",
+    "familyId": "madhyapradesh",
+    "leaders": [
+      { "name": "Tanvi Dubey", "role": "Learner attendee", "points": 910, "streak": "7 events", "attended": 12 },
+      { "name": "Rajat Soni", "role": "Student attendee", "points": 790, "streak": "5 events", "attended": 9 },
+      { "name": "Mitali Jain", "role": "XR attendee", "points": 660, "streak": "4 events", "attended": 7 }
+    ]
+  },
+  {
+    "city": "Pune",
+    "familyId": "pune",
+    "leaders": [
+      { "name": "Sai Kulkarni", "role": "Build jam attendee", "points": 1020, "streak": "8 events", "attended": 13 },
+      { "name": "Krisha Patil", "role": "Workshop attendee", "points": 860, "streak": "6 events", "attended": 10 },
+      { "name": "Aman Gore", "role": "Prototype attendee", "points": 710, "streak": "5 events", "attended": 8 }
+    ]
+  },
+  {
+    "city": "Gujarat",
+    "familyId": "gujarat",
+    "leaders": [
+      { "name": "Priyal Trivedi", "role": "Maker attendee", "points": 940, "streak": "7 events", "attended": 11 },
+      { "name": "Dhairya Desai", "role": "Campus attendee", "points": 780, "streak": "5 events", "attended": 9 },
+      { "name": "Moksh Patel", "role": "AR attendee", "points": 690, "streak": "4 events", "attended": 7 }
+    ]
+  },
+  {
+    "city": "Dilli",
+    "familyId": "dilli",
+    "leaders": [
+      { "name": "Ananya Bedi", "role": "Association attendee", "points": 1180, "streak": "9 events", "attended": 13 },
+      { "name": "Vivan Arora", "role": "Forum attendee", "points": 920, "streak": "6 events", "attended": 10 },
+      { "name": "Kashvi Malhotra", "role": "Mentorship attendee", "points": 760, "streak": "5 events", "attended": 8 }
+    ]
+  }
+]

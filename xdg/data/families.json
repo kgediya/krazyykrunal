@@ -1,0 +1,62 @@
+[
+  {
+    "id": "mumbai",
+    "name": "Mumbai Fam",
+    "token": "MB",
+    "color": "#2563eb",
+    "scope": "City family",
+    "members": 540,
+    "focus": "Creator showcases, AR lens culture, and network-heavy city meetups.",
+    "cadence": "Twice monthly",
+    "lead": "Association events and partner activations",
+    "heads": ["Aarya Shah", "Neel Merchant"]
+  },
+  {
+    "id": "madhyapradesh",
+    "name": "Madhyapradesh Fam",
+    "token": "MP",
+    "color": "#2f855a",
+    "scope": "Regional family",
+    "members": 280,
+    "focus": "Learning circles, student pathways, and guided AR / VR sessions.",
+    "cadence": "Monthly",
+    "lead": "Education and campus outreach",
+    "heads": ["Tanvi Dubey", "Rajat Soni"]
+  },
+  {
+    "id": "pune",
+    "name": "Pune Fam",
+    "token": "PN",
+    "color": "#dd6b20",
+    "scope": "City family",
+    "members": 360,
+    "focus": "Builder jams, prototyping, and practical XR maker workflows.",
+    "cadence": "Twice monthly",
+    "lead": "Build programs and workshops",
+    "heads": ["Sai Kulkarni", "Krisha Patil"]
+  },
+  {
+    "id": "gujarat",
+    "name": "Gujarat Fam",
+    "token": "GJ",
+    "color": "#7c3aed",
+    "scope": "State family",
+    "members": 310,
+    "focus": "AR experiments, VR prototypes, and founder plus student collaboration.",
+    "cadence": "Monthly",
+    "lead": "Maker ecosystem and hackathons",
+    "heads": ["Priyal Trivedi", "Dhairya Desai"]
+  },
+  {
+    "id": "dilli",
+    "name": "Dilli Fam",
+    "token": "DL",
+    "color": "#dc2626",
+    "scope": "Metro family",
+    "members": 420,
+    "focus": "Ecosystem conversations, immersive tech leadership, and founder circles.",
+    "cadence": "Monthly plus special forums",
+    "lead": "Industry relations and policy-facing dialogue",
+    "heads": ["Ananya Bedi", "Vivan Arora"]
+  }
+]
