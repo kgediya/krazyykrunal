@@ -446,7 +446,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + session.accessToken,
+                    'X-Snap-Access-Token': session.accessToken,
                     'X-Snap-Client-Id': SNAP_CLIENT_ID
                 },
                 body: JSON.stringify(payload)
