@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const CORS_ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type";
+const CORS_ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type, x-snap-client-id";
 const CORS_ALLOW_METHODS = "POST, OPTIONS";
 
 function isAllowedOrigin(origin: string): boolean {
@@ -43,6 +43,12 @@ function normalizePin(value: unknown): string {
   return /^\d{3,6}$/.test(s) ? s : "";
 }
 
+function getBearerToken(authHeader: string | null): string {
+  if (!authHeader) return "";
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : "";
+}
+
 Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
 
@@ -59,6 +65,11 @@ Deno.serve(async (req) => {
 
   if (!origin || !isAllowedOrigin(origin)) {
     return json(403, { error: "Origin not allowed" }, origin);
+  }
+
+  const bearerToken = getBearerToken(req.headers.get("authorization"));
+  if (!bearerToken) {
+    return json(401, { error: "Authentication required" }, origin);
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
