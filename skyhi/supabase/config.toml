@@ -1,0 +1,5 @@
+[functions.lantern-processing]
+verify_jwt = false
+
+[functions.snap-session]
+verify_jwt = false

@@ -1643,10 +1643,10 @@
                 <button id="snapLogoutBtn" class="small-btn auth-btn auth-logout-btn hidden" type="button">Log out</button>
             </div>
             <p class="gate-note">
-                SkyHi now treats Snapchat login as the first stage. After sign-in, the web companion uses your authenticated Snapchat session when it talks to the message gateway.
+                SkyHi now treats Snapchat login as the first stage. After sign-in, the web companion uses a secure server-issued SkyHi session when it talks to the message gateway.
             </p>
             <p class="auth-note">
-                Register this exact page as your Snap redirect URI, then replace the placeholder client id in the page script.
+                Register this exact page as your Snap redirect URI and keep the confidential Snap client secret only in the edge-function secrets.
             </p>
         </section>
 
@@ -1781,6 +1781,7 @@
         const SUPABASE_URL = 'https://pmsvailryexqutzvzcsd.snapcloud.dev';
         const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/lantern-processing';
         const SKY_SUBSCRIBE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/sky-subscribe';
+        const SNAP_SESSION_FUNCTION_URL = SUPABASE_URL + '/functions/v1/snap-session';
         const VAPID_PUBLIC_KEY = 'BL5MT5cHhIvOAs_vI7PejeJGZkZTuzeOye0bXQesWiHu4e2bRAgRajQsznR-7wtLcyTT7jljW1DEH0zceYQasoU';
 
         const cs = document.getElementById('creds-status');
@@ -1819,10 +1820,9 @@
         const identityMetaEl = document.getElementById('identityMeta');
 
         const SNAP_AUTH_CONFIG = {
-            clientId: '2a623d50-d907-446f-9bb9-d4b5c0d0b301',
+            clientId: 'ffddb9d7-7bf7-46dc-a651-c77999e09279',
             redirectUri: window.location.origin + window.location.pathname,
             authorizationEndpoint: 'https://accounts.snapchat.com/accounts/oauth2/auth',
-            tokenEndpoint: 'https://accounts.snapchat.com/accounts/oauth2/token',
             scopes: [
                 'https://auth.snapchat.com/oauth2/api/user.display_name',
                 'https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar'
@@ -1851,13 +1851,9 @@
         const snapSessionKey = 'skyhi_snap_session';
         const snapPkceVerifierKey = 'skyhi_snap_pkce_verifier';
         const snapPkceStateKey = 'skyhi_snap_pkce_state';
-        let snapSdkReadyPromise = null;
-        let snapSdkMountedToken = '';
-
         function isSnapConfigured() {
             return (
                 SNAP_AUTH_CONFIG.clientId &&
-                !SNAP_AUTH_CONFIG.clientId.includes('YOUR_SNAP_CLIENT_ID') &&
                 /^https?:\/\//.test(SNAP_AUTH_CONFIG.redirectUri)
             );
         }
@@ -1867,7 +1863,7 @@
                 const raw = localStorage.getItem(snapSessionKey);
                 const parsed = raw ? JSON.parse(raw) : null;
                 if (!parsed || typeof parsed !== 'object') return null;
-                if (!parsed.accessToken || !parsed.expiresAt) return null;
+                if (!parsed.sessionToken || !parsed.expiresAt) return null;
                 return parsed;
             } catch (_) {
                 return null;
@@ -1889,118 +1885,33 @@
         }
 
         function normalizeSnapProfile(result) {
-            const me = result && result.data && result.data.me ? result.data.me : null;
-            if (!me) return {};
             return {
-                displayName: typeof me.displayName === 'string' ? me.displayName.trim() : '',
-                avatarUrl: me.bitmoji && typeof me.bitmoji.avatar === 'string' ? me.bitmoji.avatar : ''
+                displayName: result && typeof result.displayName === 'string' ? result.displayName.trim() : '',
+                avatarUrl: result && typeof result.avatarUrl === 'string' ? result.avatarUrl : ''
             };
         }
 
-        function loadSnapSdk() {
-            if (snapSdkReadyPromise) return snapSdkReadyPromise;
-            snapSdkReadyPromise = new Promise((resolve, reject) => {
-                if (window.snap && window.snap.loginkit) {
-                    resolve(window.snap);
-                    return;
-                }
-
-                window.snapKitInit = function () {
-                    if (window.snap && window.snap.loginkit) {
-                        resolve(window.snap);
-                    } else {
-                        reject(new Error('Snap Login SDK loaded without loginkit'));
-                    }
-                };
-
-                const existing = document.getElementById('loginkit-sdk');
-                if (existing) {
-                    existing.addEventListener('error', () => reject(new Error('Failed to load Snap Login SDK')), { once: true });
-                    return;
-                }
-
-                const script = document.createElement('script');
-                script.id = 'loginkit-sdk';
-                script.src = 'https://sdk.snapkit.com/js/v1/login.js';
-                script.async = true;
-                script.onerror = () => reject(new Error('Failed to load Snap Login SDK'));
-                document.head.appendChild(script);
-            });
-            return snapSdkReadyPromise;
-        }
-
-        async function ensureSnapSdkMounted(accessToken) {
-            const snapSdk = await loadSnapSdk();
-            if (!snapSdk || !snapSdk.loginkit) {
-                throw new Error('Snap Login SDK unavailable');
-            }
-            if (snapSdkMountedToken === accessToken) return snapSdk;
-
-            snapSdk.loginkit.mountButton('snapSdkBridge', {
-                clientId: SNAP_AUTH_CONFIG.clientId,
-                redirectURI: SNAP_AUTH_CONFIG.redirectUri,
-                scopeList: ['user.display_name', 'user.bitmoji.avatar'],
-                handleAuthGrantFlowCallback: beginSnapLogin,
-                handleResponseCallback: function () {}
-            }, accessToken);
-
-            snapSdkMountedToken = accessToken;
-            return snapSdk;
-        }
-
-        async function fetchSnapProfileDirect(accessToken) {
-            const res = await fetch('https://kit.snapchat.com/v1/me', {
+        async function exchangeSnapCodeForSession(code, codeVerifier) {
+            const res = await fetch(SNAP_SESSION_FUNCTION_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + accessToken
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    query: '{me{displayName bitmoji{avatar}}}'
+                    action: 'exchange',
+                    code,
+                    codeVerifier,
+                    redirectUri: SNAP_AUTH_CONFIG.redirectUri
                 })
             });
             const payload = await res.json().catch(() => null);
             if (!res.ok) {
-                const message = payload && payload.errors && payload.errors[0] && payload.errors[0].message
-                    ? payload.errors[0].message
+                const message = payload && (payload.detail || payload.error)
+                    ? (payload.detail || payload.error)
                     : ('HTTP ' + res.status);
                 throw new Error(message);
             }
-            return normalizeSnapProfile(payload);
-        }
-
-        async function fetchSnapProfile(session) {
-            if (!session || !session.accessToken) return session;
-            let profile = {};
-
-            try {
-                const snapSdk = await ensureSnapSdkMounted(session.accessToken);
-                const result = await snapSdk.loginkit.fetchUserInfo();
-                profile = normalizeSnapProfile(result);
-            } catch (_) {
-                profile = {};
-            }
-
-            if (!profile.displayName && !profile.avatarUrl) {
-                try {
-                    profile = await fetchSnapProfileDirect(session.accessToken);
-                } catch (_) {
-                    profile = {};
-                }
-            }
-
-            if (!profile.displayName && !profile.avatarUrl) {
-                return session;
-            }
-            const nextSession = {
-                ...session,
-                profile: {
-                    ...(session.profile || {}),
-                    ...profile
-                }
-            };
-            saveSnapSession(nextSession);
-            return nextSession;
+            return payload || {};
         }
 
         function getSnapDisplayName(session) {
@@ -2012,7 +1923,7 @@
 
         function updateSnapUi(session, statusText) {
             const configured = isSnapConfigured();
-            const connected = !!(session && session.accessToken);
+            const connected = !!(session && session.sessionToken);
             setExperienceAccess(connected);
             if (snapAuthBadgeEl) {
                 snapAuthBadgeEl.textContent = connected
@@ -2024,9 +1935,9 @@
                 if (statusText) {
                     snapAuthCopyEl.textContent = statusText;
                 } else if (connected) {
-                    snapAuthCopyEl.textContent = 'Snap OAuth is active in this browser. SkyHi unlocks after login and now uses this authenticated session for gateway requests.';
+                    snapAuthCopyEl.textContent = 'SkyHi is using a secure server-issued Snapchat session for gateway requests in this browser.';
                 } else if (configured) {
-                    snapAuthCopyEl.textContent = 'Connect Snapchat first to unlock the SkyHi companion and use your authenticated session for shared-sky actions.';
+                    snapAuthCopyEl.textContent = 'Connect Snapchat first to unlock the SkyHi companion and establish a secure server-side Snapchat session.';
                 } else {
                     snapAuthCopyEl.textContent = 'Add your Snap OAuth client id and register this page as the redirect URI to enable Login Kit.';
                 }
@@ -2045,9 +1956,9 @@
                     const scopeLabel = Array.isArray(session.scopes) && session.scopes.length
                         ? session.scopes.join(', ')
                         : 'Snapchat Login scopes granted';
-                    snapAuthMetaEl.textContent = 'Connected ' + connectedAt + '. ' + scopeLabel + '.';
+                    snapAuthMetaEl.textContent = 'Connected ' + connectedAt + '. ' + scopeLabel + '. Server-issued SkyHi session active.';
                 } else {
-                    snapAuthMetaEl.textContent = 'OAuth token is not active for this browser.';
+                    snapAuthMetaEl.textContent = 'SkyHi session is not active for this browser.';
                 }
             }
             if (snapAvatarEl) {
@@ -2135,69 +2046,6 @@
             history.replaceState({}, document.title, url.pathname + url.search + url.hash);
         }
 
-        async function exchangeSnapCodeForTokens(code, codeVerifier) {
-            const body = new URLSearchParams({
-                grant_type: 'authorization_code',
-                code,
-                redirect_uri: SNAP_AUTH_CONFIG.redirectUri,
-                client_id: SNAP_AUTH_CONFIG.clientId,
-                code_verifier: codeVerifier
-            });
-            const res = await fetch(SNAP_AUTH_CONFIG.tokenEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: body.toString()
-            });
-            const payload = await res.json().catch(() => null);
-            if (!res.ok) {
-                const message = payload && (payload.error_description || payload.error)
-                    ? (payload.error_description || payload.error)
-                    : ('HTTP ' + res.status);
-                throw new Error(message);
-            }
-            return payload || {};
-        }
-
-        async function refreshSnapSession(session) {
-            if (!session || !session.refreshToken) {
-                throw new Error('Snap refresh token unavailable');
-            }
-            const body = new URLSearchParams({
-                grant_type: 'refresh_token',
-                refresh_token: session.refreshToken,
-                client_id: SNAP_AUTH_CONFIG.clientId
-            });
-            const res = await fetch(SNAP_AUTH_CONFIG.tokenEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: body.toString()
-            });
-            const payload = await res.json().catch(() => null);
-            if (!res.ok) {
-                const message = payload && (payload.error_description || payload.error)
-                    ? (payload.error_description || payload.error)
-                    : ('HTTP ' + res.status);
-                throw new Error(message);
-            }
-            const nextSession = {
-                accessToken: payload.access_token,
-                refreshToken: payload.refresh_token || session.refreshToken,
-                tokenType: payload.token_type || session.tokenType || 'Bearer',
-                expiresAt: Date.now() + (Number(payload.expires_in || 3600) * 1000),
-                connectedAt: session.connectedAt || Date.now(),
-                scopes: String(payload.scope || '').split(/\s+/).filter(Boolean),
-                profile: session.profile || {}
-            };
-            const hydratedSession = await fetchSnapProfile(nextSession).catch(() => nextSession);
-            saveSnapSession(hydratedSession);
-            updateSnapUi(hydratedSession);
-            return hydratedSession;
-        }
-
         async function ensureFreshSnapSession() {
             const session = loadSnapSession();
             if (!session) {
@@ -2208,18 +2056,14 @@
                 updateSnapUi(session);
                 return session;
             }
-            try {
-                return await refreshSnapSession(session);
-            } catch (err) {
-                clearSnapSession();
-                updateSnapUi(null, 'Snap session expired. Log in again to reconnect your Snapchat account.');
-                return null;
-            }
+            clearSnapSession();
+            updateSnapUi(null, 'Your SkyHi Snapchat session expired. Log in again to reconnect.');
+            return null;
         }
 
         async function requireSnapSession(options = {}) {
             const session = await ensureFreshSnapSession();
-            if (session && session.accessToken) {
+            if (session && session.sessionToken) {
                 return session;
             }
 
@@ -2239,8 +2083,7 @@
             });
             return {
                 'Content-Type': 'application/json',
-                'X-Snap-Access-Token': session.accessToken,
-                'X-Snap-Client-Id': SNAP_AUTH_CONFIG.clientId
+                'X-SkyHi-Session': session.sessionToken
             };
         }
 
@@ -2300,25 +2143,22 @@
             }
 
             try {
-                const payload = await exchangeSnapCodeForTokens(code, codeVerifier);
+                const payload = await exchangeSnapCodeForSession(code, codeVerifier);
                 const nextSession = {
-                    accessToken: payload.access_token,
-                    refreshToken: payload.refresh_token || '',
-                    tokenType: payload.token_type || 'Bearer',
-                    expiresAt: Date.now() + (Number(payload.expires_in || 3600) * 1000),
-                    connectedAt: Date.now(),
-                    scopes: String(payload.scope || SNAP_AUTH_CONFIG.scopes.join(' ')).split(/\s+/).filter(Boolean),
-                    profile: {}
+                    sessionToken: payload.sessionToken,
+                    expiresAt: Number(payload.expiresAt || (Date.now() + (7 * 24 * 60 * 60 * 1000))),
+                    connectedAt: Number(payload.connectedAt || Date.now()),
+                    scopes: Array.isArray(payload.scopes) ? payload.scopes : SNAP_AUTH_CONFIG.scopes.slice(),
+                    profile: normalizeSnapProfile(payload.profile || {})
                 };
-                const hydratedSession = await fetchSnapProfile(nextSession).catch(() => nextSession);
-                saveSnapSession(hydratedSession);
-                updateSnapUi(hydratedSession, 'Snapchat connected. OAuth token exchange completed successfully.');
+                saveSnapSession(nextSession);
+                updateSnapUi(nextSession, 'Snapchat connected. Secure server session established successfully.');
                 showStatus('Logged in with Snapchat', 'success');
-                return hydratedSession;
+                return nextSession;
             } catch (err) {
                 clearSnapSession();
-                updateSnapUi(null, 'Snapchat token exchange failed. Check your client id, redirect URI, and app settings.');
-                showStatus('Snapchat token exchange failed: ' + (err && err.message ? err.message : String(err)), 'error');
+                updateSnapUi(null, 'Snapchat session setup failed. Check the edge-function secret, client id, and redirect URI.');
+                showStatus('Snapchat session setup failed: ' + (err && err.message ? err.message : String(err)), 'error');
                 return null;
             } finally {
                 clearSnapPkceState();
@@ -2328,7 +2168,6 @@
         function logoutSnap() {
             clearSnapPkceState();
             clearSnapSession();
-            snapSdkMountedToken = '';
             updateSnapUi(null, 'Snapchat has been disconnected from this browser.');
             showStatus('Logged out of Snapchat in SkyHi', 'loading');
         }

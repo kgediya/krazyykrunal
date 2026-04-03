@@ -282,7 +282,6 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         const SUPABASE_URL = 'https://pmsvailryexqutzvzcsd.snapcloud.dev';
         const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/lantern-processing';
-        const SNAP_CLIENT_ID = '2a623d50-d907-446f-9bb9-d4b5c0d0b301';
 
         const roomInput = document.getElementById('roomInput');
         const watchBtn = document.getElementById('watchBtn');
@@ -384,7 +383,7 @@
                 const raw = localStorage.getItem(snapSessionKey);
                 const parsed = raw ? JSON.parse(raw) : null;
                 if (!parsed || typeof parsed !== 'object') return null;
-                if (!parsed.accessToken || !parsed.expiresAt) return null;
+                if (!parsed.sessionToken || !parsed.expiresAt) return null;
                 return parsed;
             } catch (_) {
                 return null;
@@ -395,40 +394,6 @@
             localStorage.setItem(snapSessionKey, JSON.stringify(session));
         }
 
-        async function refreshSnapSession(session) {
-            if (!session || !session.refreshToken) {
-                throw new Error('Snap session unavailable. Return to the SkyHi web companion and log in again.');
-            }
-            const body = new URLSearchParams({
-                grant_type: 'refresh_token',
-                refresh_token: session.refreshToken,
-                client_id: SNAP_CLIENT_ID
-            });
-            const res = await fetch('https://accounts.snapchat.com/accounts/oauth2/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: body.toString()
-            });
-            const payload = await res.json().catch(() => null);
-            if (!res.ok) {
-                const message = payload && (payload.error_description || payload.error)
-                    ? (payload.error_description || payload.error)
-                    : ('HTTP ' + res.status);
-                throw new Error(message);
-            }
-            const nextSession = {
-                ...session,
-                accessToken: payload.access_token,
-                refreshToken: payload.refresh_token || session.refreshToken,
-                tokenType: payload.token_type || session.tokenType || 'Bearer',
-                expiresAt: Date.now() + (Number(payload.expires_in || 3600) * 1000)
-            };
-            saveSnapSession(nextSession);
-            return nextSession;
-        }
-
         async function requireSnapSession() {
             const session = loadSnapSession();
             if (!session) {
@@ -437,7 +402,8 @@
             if ((session.expiresAt - Date.now()) > 60000) {
                 return session;
             }
-            return refreshSnapSession(session);
+            localStorage.removeItem(snapSessionKey);
+            throw new Error('Your SkyHi Snapchat session expired. Return to the web companion and log in again.');
         }
 
         async function callGateway(payload) {
@@ -446,8 +412,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Snap-Access-Token': session.accessToken,
-                    'X-Snap-Client-Id': SNAP_CLIENT_ID
+                    'X-SkyHi-Session': session.sessionToken
                 },
                 body: JSON.stringify(payload)
             });

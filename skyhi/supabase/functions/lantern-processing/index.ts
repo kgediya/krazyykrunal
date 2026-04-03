@@ -1,14 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { verifySkyHiSessionToken } from "../_shared/skyhi-session.ts";
 
-const CORS_ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type, x-snap-client-id, x-snap-access-token";
+const CORS_ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type, x-skyhi-session, x-watch-key";
 const CORS_ALLOW_METHODS = "POST, OPTIONS";
 
 function isAllowedOrigin(origin: string): boolean {
   try {
     const u = new URL(origin);
     if (u.protocol === "https:" && (u.hostname === "krazyykrunal.com" || u.hostname === "www.krazyykrunal.com")) return true;
-    if (u.hostname === "localhost") return true;
-    if (u.hostname === "127.0.0.1") return true;
     return false;
   } catch {
     return false;
@@ -45,6 +44,8 @@ function normalizePin(value: unknown): string {
 
 Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
+  const watchKeyHeader = req.headers.get("x-watch-key")?.trim() ?? "";
+  const watchKeyEnv = Deno.env.get("WATCH_APP_KEY")?.trim() ?? "";
 
   if (req.method === "OPTIONS") {
     if (!origin || !isAllowedOrigin(origin)) {
@@ -57,13 +58,23 @@ Deno.serve(async (req) => {
     return json(405, { error: "Method not allowed" }, origin);
   }
 
-  if (!origin || !isAllowedOrigin(origin)) {
-    return json(403, { error: "Origin not allowed" }, origin);
+  const isWebAllowed = !!origin && isAllowedOrigin(origin);
+  const isWatchAllowed = !origin && !!watchKeyEnv && watchKeyHeader === watchKeyEnv;
+
+  if (!(isWebAllowed || isWatchAllowed)) {
+    return json(403, { error: "Origin/device not allowed" }, origin);
   }
 
-  const snapAccessToken = req.headers.get("x-snap-access-token")?.trim() ?? "";
-  if (!snapAccessToken) {
-    return json(401, { error: "Authentication required" }, origin);
+  let sessionClaims = null;
+  if (isWebAllowed) {
+    const sessionToken = req.headers.get("x-skyhi-session")?.trim() ?? "";
+    if (!sessionToken) {
+      return json(401, { error: "Authentication required" }, origin);
+    }
+    sessionClaims = await verifySkyHiSessionToken(sessionToken);
+    if (!sessionClaims) {
+      return json(401, { error: "Invalid or expired SkyHi session" }, origin);
+    }
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -108,7 +119,11 @@ Deno.serve(async (req) => {
 
   if (action === "send") {
     const messageText = String(payload.messageText ?? "").trim();
-    const senderName = String(payload.senderName ?? "Anonymous").trim() || "Anonymous";
+    const senderName = (
+      String(payload.senderName ?? "").trim() ||
+      sessionClaims?.displayName ||
+      "Anonymous"
+    );
     const shapeTypeRaw = Number(payload.shapeType ?? 0);
     const shapeType = shapeTypeRaw === 1 ? 1 : 0;
 
