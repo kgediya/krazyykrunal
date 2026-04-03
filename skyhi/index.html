@@ -1628,26 +1628,18 @@
         <section class="panel auth-panel" aria-labelledby="snapLoginHeading">
             <div class="panel-title" id="snapLoginHeading">Snap Login</div>
             <div id="snapAuthBadge" class="auth-badge">Snapchat disconnected</div>
-            <p id="snapAuthCopy" class="auth-copy">
-                Connect Snapchat first to unlock the SkyHi web companion and its authenticated message gateway.
-            </p>
+            <p id="snapAuthCopy" class="auth-copy"></p>
             <div id="snapUserCard" class="auth-user" aria-live="polite">
                 <img id="snapAvatar" class="auth-avatar hidden" alt="Snapchat profile avatar">
                 <div class="auth-meta">
                     <div id="snapDisplayName" class="auth-name">Snapchat account connected</div>
-                    <div id="snapAuthMeta" class="auth-submeta">OAuth token is active for this browser.</div>
+                    <div id="snapAuthMeta" class="auth-submeta"></div>
                 </div>
             </div>
             <div class="auth-actions">
                 <button id="snapLoginBtn" class="small-btn auth-btn auth-login-btn" type="button">Continue with Snapchat</button>
                 <button id="snapLogoutBtn" class="small-btn auth-btn auth-logout-btn hidden" type="button">Log out</button>
             </div>
-            <p class="gate-note">
-                SkyHi now treats Snapchat login as the first stage. After sign-in, the web companion uses a secure server-issued SkyHi session when it talks to the message gateway.
-            </p>
-            <p class="auth-note">
-                Register this exact page as your Snap redirect URI and keep the confidential Snap client secret only in the edge-function secrets.
-            </p>
         </section>
 
         <section class="panel intro-panel" aria-labelledby="introHeading">
@@ -1692,7 +1684,7 @@
                         <div class="identity-copy">
                             <div class="identity-kicker">Signed In As</div>
                             <div id="identityName" class="identity-name">Snapchat account connected</div>
-                            <div id="identityMeta" class="identity-meta">Your authenticated Snapchat profile powers the SkyHi web companion.</div>
+                            <div id="identityMeta" class="identity-meta"></div>
                         </div>
                         <div class="identity-badge">Authenticated</div>
                     </div>
@@ -1726,7 +1718,6 @@
 
                         <button id="sendBtn" class="cta" type="button">SEND TO SKY</button>
                         <div id="status" class="status" role="status" aria-live="polite"></div>
-                        <p class="note">Use the same Sky PIN in the SkyHi Spectacles Lens to see these messages come alive.</p>
                     </div>
                 </section>
 
@@ -1934,12 +1925,13 @@
             if (snapAuthCopyEl) {
                 if (statusText) {
                     snapAuthCopyEl.textContent = statusText;
+                    snapAuthCopyEl.style.display = '';
                 } else if (connected) {
-                    snapAuthCopyEl.textContent = 'SkyHi is using a secure server-issued Snapchat session for gateway requests in this browser.';
-                } else if (configured) {
-                    snapAuthCopyEl.textContent = 'Connect Snapchat first to unlock the SkyHi companion and establish a secure server-side Snapchat session.';
+                    snapAuthCopyEl.textContent = '';
+                    snapAuthCopyEl.style.display = 'none';
                 } else {
-                    snapAuthCopyEl.textContent = 'Add your Snap OAuth client id and register this page as the redirect URI to enable Login Kit.';
+                    snapAuthCopyEl.textContent = '';
+                    snapAuthCopyEl.style.display = 'none';
                 }
             }
             if (snapUserCardEl) {
@@ -1949,17 +1941,8 @@
                 snapDisplayNameEl.textContent = getSnapDisplayName(session);
             }
             if (snapAuthMetaEl) {
-                if (connected) {
-                    const connectedAt = session.connectedAt
-                        ? new Date(session.connectedAt).toLocaleString()
-                        : 'this session';
-                    const scopeLabel = Array.isArray(session.scopes) && session.scopes.length
-                        ? session.scopes.join(', ')
-                        : 'Snapchat Login scopes granted';
-                    snapAuthMetaEl.textContent = 'Connected ' + connectedAt + '. ' + scopeLabel + '. Server-issued SkyHi session active.';
-                } else {
-                    snapAuthMetaEl.textContent = 'SkyHi session is not active for this browser.';
-                }
+                snapAuthMetaEl.textContent = '';
+                snapAuthMetaEl.style.display = 'none';
             }
             if (snapAvatarEl) {
                 const avatarUrl = session && session.profile && session.profile.avatarUrl ? session.profile.avatarUrl : '';
@@ -1978,8 +1961,8 @@
             }
             if (identityMetaEl) {
                 identityMetaEl.textContent = connected
-                    ? 'Your authenticated Snapchat profile powers the SkyHi web companion.'
-                    : 'Unlock SkyHi to send lanterns, save skies, and use the authenticated message gateway.';
+                    ? ''
+                    : '';
             }
             if (identityAvatarEl) {
                 const avatarUrl = session && session.profile && session.profile.avatarUrl ? session.profile.avatarUrl : '';
@@ -2520,7 +2503,7 @@
             const items = getSentMessages();
 
             if (!items.length) {
-                sentMessagesListEl.innerHTML = '<div class=\"sent-empty\">No sent messages yet. Your successful sends will appear here.</div>';
+                sentMessagesListEl.innerHTML = '<div class=\"sent-empty\">No sent messages yet.</div>';
                 return;
             }
 
@@ -2547,7 +2530,7 @@
             const skies = getSavedSkies();
 
             if (!skies.length) {
-                savedSkiesListEl.innerHTML = '<div class=\"saved-empty\">No saved skies yet. Enter a Sky PIN and tap Save Sky.</div>';
+                savedSkiesListEl.innerHTML = '<div class=\"saved-empty\">No saved skies yet.</div>';
                 return;
             }
 
