@@ -7,16 +7,16 @@
     <style>
         :root {
             --bg: #060606;
-            --panel: rgba(250, 246, 236, 0.14);
-            --panel-strong: rgba(250, 246, 236, 0.2);
-            --line: rgba(255, 255, 255, 0.18);
-            --text: #f6f2ea;
-            --muted: rgba(246, 242, 234, 0.72);
+            --panel: rgba(255, 244, 223, 0.1);
+            --panel-strong: rgba(255, 240, 211, 0.16);
+            --line: rgba(255, 230, 184, 0.18);
+            --text: #f8f2e7;
+            --muted: rgba(244, 236, 219, 0.68);
             --gold: #f3cf84;
-            --gold-2: #e9b44f;
+            --gold-2: #d79d2d;
             --shadow: rgba(0, 0, 0, 0.42);
-            --input: rgba(255, 255, 255, 0.08);
-            --input-focus: rgba(255, 255, 255, 0.14);
+            --input: rgba(255, 226, 172, 0.05);
+            --input-focus: rgba(255, 225, 165, 0.1);
         }
 
         body.theme-love {
@@ -34,16 +34,16 @@
             font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             color: var(--text);
             background:
-                radial-gradient(circle at 50% 12%, rgba(255, 208, 102, 0.14), transparent 40%),
-                radial-gradient(circle at 75% 30%, rgba(227, 165, 52, 0.1), transparent 34%),
-                radial-gradient(circle at 20% 72%, rgba(255, 210, 120, 0.05), transparent 36%),
-                radial-gradient(circle at 50% 120%, rgba(255, 173, 58, 0.06), transparent 42%),
+                radial-gradient(circle at 50% 8%, rgba(255, 208, 102, 0.16), transparent 34%),
+                radial-gradient(circle at 75% 24%, rgba(227, 165, 52, 0.1), transparent 30%),
+                radial-gradient(circle at 20% 72%, rgba(255, 210, 120, 0.06), transparent 34%),
+                radial-gradient(circle at 50% 120%, rgba(255, 173, 58, 0.08), transparent 40%),
                 linear-gradient(180deg, #0a0a0a 0%, #050505 55%, #000000 100%);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
-            padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+            padding: 22px 18px calc(24px + env(safe-area-inset-bottom, 0px));
             position: relative;
             overflow-x: hidden;
         }
@@ -102,42 +102,39 @@
 
         .shell {
             width: 100%;
-            max-width: 560px;
+            max-width: 1240px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
             display: grid;
-            gap: 16px;
+            gap: 22px;
             perspective: 1100px;
             transform-style: preserve-3d;
         }
 
+        .top-grid,
         .desktop-columns,
         .desktop-main,
         .desktop-side {
             display: grid;
-            gap: 14px;
+            gap: 18px;
         }
 
         .hero {
             order: 1;
         }
 
-        .intro-panel {
+        .top-grid {
             order: 2;
         }
 
-        .auth-panel {
-            order: 3;
-        }
-
         .desktop-columns {
-            order: 4;
+            order: 3;
         }
 
         .hero {
             text-align: center;
-            padding: 14px 8px 12px;
+            padding: 18px 8px 8px;
             position: relative;
             transform: translateZ(10px);
         }
@@ -174,14 +171,18 @@
         }
 
         .hero-title {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--muted);
-            letter-spacing: 0.1em;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
         }
 
+        .top-grid {
+            grid-template-columns: minmax(0, 1fr);
+            align-items: stretch;
+        }
+
         .intro-panel {
-            margin-bottom: 12px;
             background:
                 linear-gradient(135deg, rgba(255, 229, 176, 0.12), rgba(255, 255, 255, 0.04)),
                 linear-gradient(180deg, rgba(255, 235, 196, 0.08), rgba(255, 255, 255, 0.03));
@@ -196,14 +197,15 @@
 
         .intro-layout {
             display: grid;
-            gap: 16px;
+            gap: 18px;
+            min-height: 100%;
         }
 
         .intro-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            gap: 12px;
+            gap: 18px;
             flex-wrap: wrap;
         }
 
@@ -232,9 +234,10 @@
 
         .intro-text {
             color: rgba(255, 244, 221, 0.9);
-            font-size: 14px;
-            line-height: 1.58;
+            font-size: 15px;
+            line-height: 1.7;
             margin: 0;
+            max-width: 60ch;
         }
 
         .intro-summary {
@@ -280,17 +283,19 @@
 
         .panel {
             position: relative;
-            background: linear-gradient(180deg, rgba(255, 235, 196, 0.1), rgba(255, 255, 255, 0.04));
+            background:
+                linear-gradient(180deg, rgba(255, 235, 196, 0.1), rgba(255, 255, 255, 0.04)),
+                radial-gradient(circle at top left, rgba(255, 230, 183, 0.08), transparent 44%);
             border: 1px solid rgba(255, 214, 138, 0.14);
-            border-radius: 26px;
-            padding: 16px;
+            border-radius: 30px;
+            padding: 20px;
             box-shadow:
-                0 16px 34px rgba(0, 0, 0, 0.42),
-                0 4px 12px rgba(255, 180, 60, 0.05),
+                0 22px 48px rgba(0, 0, 0, 0.42),
+                0 8px 18px rgba(255, 180, 60, 0.05),
                 inset 0 1px 0 rgba(255, 235, 196, 0.12),
                 inset 0 -10px 24px rgba(0, 0, 0, 0.16);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             transform: translateZ(0);
             overflow: hidden;
         }
@@ -381,7 +386,8 @@
 
         .auth-panel {
             display: grid;
-            gap: 12px;
+            gap: 14px;
+            align-content: start;
         }
 
         .auth-badge {
@@ -476,77 +482,6 @@
             gap: 8px;
         }
 
-        .identity-strip {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 14px;
-            padding: 14px;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 214, 138, 0.12);
-            background:
-                radial-gradient(circle at 12% 16%, rgba(255, 228, 176, 0.12), transparent 52%),
-                rgba(255, 214, 138, 0.05);
-        }
-
-        .identity-avatar {
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            object-fit: cover;
-            border: 1px solid rgba(255, 214, 138, 0.2);
-            background:
-                radial-gradient(circle at 30% 30%, rgba(255, 223, 158, 0.26), transparent 52%),
-                rgba(255, 214, 138, 0.08);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .identity-avatar.hidden {
-            display: none;
-        }
-
-        .identity-copy {
-            min-width: 0;
-            display: grid;
-            gap: 2px;
-        }
-
-        .identity-kicker {
-            color: rgba(255, 223, 158, 0.84);
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-
-        .identity-name {
-            color: rgba(255, 247, 226, 0.96);
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .identity-meta {
-            color: rgba(255, 236, 200, 0.72);
-            font-size: 12px;
-            line-height: 1.45;
-        }
-
-        .identity-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 12px;
-            border-radius: 999px;
-            border: 1px solid rgba(125, 255, 181, 0.2);
-            background: rgba(125, 255, 181, 0.08);
-            color: #dfffe9;
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
         .auth-btn {
             margin-top: 0;
             min-height: 44px;
@@ -583,9 +518,15 @@
         }
 
         .auth-logout-btn {
-            border: 1px solid rgba(255, 214, 138, 0.18);
-            background: rgba(255, 214, 138, 0.08);
-            color: var(--text);
+            border: 1px solid rgba(255, 119, 119, 0.26);
+            background: linear-gradient(180deg, rgba(255, 123, 123, 0.24), rgba(134, 24, 24, 0.24));
+            color: #fff1f1;
+            box-shadow: 0 12px 24px rgba(96, 17, 17, 0.24), inset 0 1px 0 rgba(255, 225, 225, 0.18);
+        }
+
+        .auth-logout-btn:hover {
+            background: linear-gradient(180deg, rgba(255, 135, 135, 0.3), rgba(153, 29, 29, 0.3));
+            box-shadow: 0 14px 28px rgba(96, 17, 17, 0.28), inset 0 1px 0 rgba(255, 230, 230, 0.2);
         }
 
         .snap-sdk-bridge {
@@ -616,19 +557,20 @@
         }
 
         .small-btn {
-            margin-top: 10px;
+            margin-top: 0;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(255, 214, 138, 0.07);
             color: var(--text);
             border-radius: 999px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             font-size: 12px;
             cursor: pointer;
-            transition: background 0.15s ease, transform 0.12s ease;
+            transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
         }
 
         .small-btn:hover {
             background: rgba(255, 255, 255, 0.14);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.18);
         }
 
         .small-btn:active {
@@ -734,8 +676,8 @@
 
         .field-inline {
             display: flex;
-            gap: 8px;
-            align-items: center;
+            gap: 10px;
+            align-items: stretch;
             flex-wrap: wrap;
         }
 
@@ -1105,8 +1047,8 @@
         }
 
         textarea {
-            min-height: 100px;
-            max-height: 220px;
+            min-height: 128px;
+            max-height: 260px;
             resize: vertical;
         }
 
@@ -1221,8 +1163,8 @@
         .notify-wrap {
             margin-top: 0;
             display: flex;
-            gap: 8px;
-            justify-content: center;
+            gap: 10px;
+            justify-content: flex-start;
             flex-wrap: wrap;
         }
 
@@ -1232,7 +1174,7 @@
 
         .notify-status {
             margin-top: 8px;
-            text-align: center;
+            text-align: left;
             font-size: 12px;
             color: rgba(255, 236, 200, 0.86);
         }
@@ -1354,17 +1296,18 @@
 
         @media (max-width: 700px) {
             body {
-                padding: 12px 12px calc(16px + env(safe-area-inset-bottom, 0px));
+                padding: 12px 12px calc(18px + env(safe-area-inset-bottom, 0px));
             }
             .shell {
                 max-width: 100%;
+                gap: 16px;
             }
             .hero {
                 padding: 10px 4px 8px;
             }
             .panel {
-                border-radius: 22px;
-                padding: 14px;
+                border-radius: 24px;
+                padding: 16px;
                 box-shadow:
                     0 14px 28px rgba(0, 0, 0, 0.4),
                     0 4px 10px rgba(255, 170, 52, 0.04),
@@ -1431,16 +1374,6 @@
             .creds {
                 font-size: 11px;
             }
-
-            .identity-strip {
-                grid-template-columns: auto 1fr;
-                padding: 12px;
-            }
-
-            .identity-badge {
-                grid-column: 1 / -1;
-                justify-self: start;
-            }
         }
 
         @media (max-width: 420px) {
@@ -1473,41 +1406,42 @@
 
         @media (min-width: 980px) and (orientation: landscape) {
             body {
-                padding: 22px 28px calc(28px + env(safe-area-inset-bottom, 0px));
+                padding: 26px 30px calc(30px + env(safe-area-inset-bottom, 0px));
             }
 
             .shell {
                 max-width: 1240px;
-                gap: 18px;
+                gap: 24px;
             }
 
             .hero {
-                padding: 0 8px 6px;
+                padding: 4px 8px 10px;
             }
 
-            .intro-panel {
-                margin-bottom: 0;
+            .top-grid {
+                grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+                gap: 20px;
             }
 
             .desktop-columns {
-                grid-template-columns: minmax(620px, 1.3fr) minmax(340px, 0.74fr);
+                grid-template-columns: minmax(0, 1.16fr) minmax(320px, 0.84fr);
                 gap: 20px;
                 align-items: start;
                 justify-content: stretch;
             }
 
             .panel {
-                border-radius: 24px;
-                padding: 18px 18px;
+                border-radius: 28px;
+                padding: 22px 22px;
             }
 
             .brand-logo {
-                width: clamp(190px, 17vw, 235px);
+                width: clamp(210px, 18vw, 260px);
             }
 
             .hero-title {
-                font-size: 11px;
-                letter-spacing: 0.15em;
+                font-size: 12px;
+                letter-spacing: 0.24em;
                 margin-top: 0;
             }
 
@@ -1532,7 +1466,7 @@
             }
 
             textarea {
-                min-height: 118px;
+                min-height: 164px;
             }
 
             .cta {
@@ -1604,9 +1538,10 @@
 
             .auth-panel,
             .intro-panel {
-                max-width: 760px;
-                justify-self: center;
+                max-width: none;
+                justify-self: stretch;
                 width: 100%;
+                min-height: 100%;
             }
         }
 
@@ -1625,69 +1560,62 @@
             <p class="hero-title">SkyHi Web Companion</p>
         </section>
 
-        <section class="panel auth-panel" aria-labelledby="snapLoginHeading">
-            <div class="panel-title" id="snapLoginHeading">Snap Login</div>
-            <div id="snapAuthBadge" class="auth-badge">Snapchat disconnected</div>
-            <p id="snapAuthCopy" class="auth-copy"></p>
-            <div id="snapUserCard" class="auth-user" aria-live="polite">
-                <img id="snapAvatar" class="auth-avatar hidden" alt="Snapchat profile avatar">
-                <div class="auth-meta">
-                    <div id="snapDisplayName" class="auth-name">Snapchat account connected</div>
-                    <div id="snapAuthMeta" class="auth-submeta"></div>
-                </div>
-            </div>
-            <div class="auth-actions">
-                <button id="snapLoginBtn" class="small-btn auth-btn auth-login-btn" type="button">Continue with Snapchat</button>
-                <button id="snapLogoutBtn" class="small-btn auth-btn auth-logout-btn hidden" type="button">Log out</button>
-            </div>
-        </section>
-
-        <section class="panel intro-panel" aria-labelledby="introHeading">
-            <div class="intro-layout">
-                <div class="intro-header">
-                    <div>
-                        <div class="panel-title" id="introHeading">What Is SkyHi</div>
-                        <p class="intro-text">
-                            SkyHi is a spatial messaging experience built for Spectacles. This web companion lets you send lantern messages into a shared Sky PIN and jump into the same live sky across devices.
-                        </p>
+        <div class="top-grid">
+            <section class="panel intro-panel" aria-labelledby="introHeading">
+                <div class="intro-layout">
+                    <div class="intro-header">
+                        <div>
+                            <div class="panel-title" id="introHeading">What Is SkyHi</div>
+                            <p class="intro-text">
+                                SkyHi is a spatial messaging experience built for Spectacles. This web companion lets you send lantern messages into a shared Sky PIN and jump into the same live sky across devices.
+                            </p>
+                        </div>
+                        <div class="intro-badge">Cross-Device Sky</div>
                     </div>
-                    <div class="intro-badge">Cross-Device Sky</div>
-                </div>
 
-                <div class="quick-link-wrap">
-                <a
-                    class="quick-link"
-                    href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Open Spectacles Lens
-                </a>
-                <a
-                    class="quick-link"
-                    href="https://www.linkedin.com/posts/krazyykrunal_spatialcommunicationusingspectacles-snapcloud-activity-7433691151527911424-2x-3?utm_source=share&utm_medium=member_desktop&rcm=ACoAABrf9V0B5ypR3xhNIZMcahSS9bDPsiX3kl8"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Know More
-                </a>
+                    <div class="quick-link-wrap">
+                    <a
+                        class="quick-link"
+                        href="https://www.spectacles.com/lens/51bff601d0544bb49a3aef1c56d7999b?type=SNAPCODE&metadata=01"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open Spectacles Lens
+                    </a>
+                    <a
+                        class="quick-link"
+                        href="https://www.linkedin.com/posts/krazyykrunal_spatialcommunicationusingspectacles-snapcloud-activity-7433691151527911424-2x-3?utm_source=share&utm_medium=member_desktop&rcm=ACoAABrf9V0B5ypR3xhNIZMcahSS9bDPsiX3kl8"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Know More
+                    </a>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <section class="panel auth-panel" aria-labelledby="snapLoginHeading">
+                <div class="panel-title" id="snapLoginHeading">Snap Login</div>
+                <div id="snapAuthBadge" class="auth-badge">Snapchat disconnected</div>
+                <p id="snapAuthCopy" class="auth-copy"></p>
+                <div id="snapUserCard" class="auth-user" aria-live="polite">
+                    <img id="snapAvatar" class="auth-avatar hidden" alt="Snapchat profile avatar">
+                    <div class="auth-meta">
+                        <div id="snapDisplayName" class="auth-name">Snapchat account connected</div>
+                        <div id="snapAuthMeta" class="auth-submeta"></div>
+                    </div>
+                </div>
+                <div class="auth-actions">
+                    <button id="snapLoginBtn" class="small-btn auth-btn auth-login-btn" type="button">Continue with Snapchat</button>
+                    <button id="snapLogoutBtn" class="small-btn auth-btn auth-logout-btn hidden" type="button">Log out</button>
+                </div>
+            </section>
+        </div>
 
         <div id="experienceShell" class="desktop-columns experience-shell locked">
             <div class="desktop-main">
                 <section class="panel send-panel" aria-labelledby="portalHeading">
                     <div class="panel-title" id="portalHeading">Send To Sky</div>
-                    <div id="identityStrip" class="identity-strip" aria-live="polite">
-                        <img id="identityAvatar" class="identity-avatar hidden" alt="Bitmoji avatar">
-                        <div class="identity-copy">
-                            <div class="identity-kicker">Signed In As</div>
-                            <div id="identityName" class="identity-name">Snapchat account connected</div>
-                            <div id="identityMeta" class="identity-meta"></div>
-                        </div>
-                        <div class="identity-badge">Authenticated</div>
-                    </div>
                     <div class="fields">
                         <div class="field">
                             <label for="ownerName">Your name</label>
@@ -1737,6 +1665,17 @@
                     <a id="openImmersiveBtn" class="cta" href="./receive.html" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">OPEN IMMERSIVE SKY</a>
                 </section>
 
+                <section class="panel creds conn-panel" aria-labelledby="connHeading">
+                    <div class="panel-head">
+                        <div class="panel-title" id="connHeading">Companion Controls</div>
+                        <span id="creds-status">Ready</span>
+                    </div>
+                    <div class="notify-wrap">
+                        <button class="small-btn" id="testBtn" type="button">Test Connection</button>
+                        <button class="small-btn" id="muteAudioBtn" type="button" aria-pressed="true">Unmute Audio</button>
+                    </div>
+                </section>
+
                 <section class="panel saved-panel" aria-labelledby="savedSkiesHeading">
                     <div class="panel-title" id="savedSkiesHeading">Saved Skies</div>
                     <div id="savedSkiesList" class="saved-list" aria-live="polite"></div>
@@ -1750,13 +1689,6 @@
                     <div id="sentMessagesList" class="sent-list" aria-live="polite"></div>
                 </section>
 
-                <section class="panel creds conn-panel" aria-labelledby="connHeading">
-                    <div class="panel-title" id="connHeading">Connection</div>
-                    <strong>SUPABASE</strong><br>
-                    <span id="creds-status">Checking edge gateway...</span><br>
-                    <button class="small-btn" id="testBtn" type="button">Test connection</button>
-                    <button class="small-btn" id="muteAudioBtn" type="button" aria-pressed="false">Mute Audio</button>
-                </section>
             </div>
         </div>
     </main>
@@ -1765,7 +1697,7 @@
         Made by KrazyyKrunal. Copyright &copy; 2026. SkyHi&trade;
     </footer>
 
-    <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline hidden></audio>
+    <audio id="bgMusic" src="./Background.mp3" preload="auto" autoplay loop playsinline muted hidden></audio>
     <div id="snapSdkBridge" class="snap-sdk-bridge" aria-hidden="true"></div>
 
     <script>
@@ -1806,9 +1738,6 @@
         const snapAvatarEl = document.getElementById('snapAvatar');
         const snapDisplayNameEl = document.getElementById('snapDisplayName');
         const snapAuthMetaEl = document.getElementById('snapAuthMeta');
-        const identityAvatarEl = document.getElementById('identityAvatar');
-        const identityNameEl = document.getElementById('identityName');
-        const identityMetaEl = document.getElementById('identityMeta');
 
         const SNAP_AUTH_CONFIG = {
             clientId: 'ffddb9d7-7bf7-46dc-a651-c77999e09279',
@@ -1952,26 +1881,6 @@
                 } else {
                     snapAvatarEl.removeAttribute('src');
                     snapAvatarEl.classList.add('hidden');
-                }
-            }
-            if (identityNameEl) {
-                identityNameEl.textContent = connected
-                    ? getSnapDisplayName(session)
-                    : 'Log in with Snapchat';
-            }
-            if (identityMetaEl) {
-                identityMetaEl.textContent = connected
-                    ? ''
-                    : '';
-            }
-            if (identityAvatarEl) {
-                const avatarUrl = session && session.profile && session.profile.avatarUrl ? session.profile.avatarUrl : '';
-                if (avatarUrl) {
-                    identityAvatarEl.src = avatarUrl;
-                    identityAvatarEl.classList.remove('hidden');
-                } else {
-                    identityAvatarEl.removeAttribute('src');
-                    identityAvatarEl.classList.add('hidden');
                 }
             }
             if (snapLoginBtn) {
@@ -2338,7 +2247,8 @@
         function initBackgroundMusic() {
             if (!bgMusicEl) return;
             bgMusicEl.volume = 0.4;
-            bgMusicEl.muted = localStorage.getItem(bgMusicMutedKey) === '1';
+            localStorage.setItem(bgMusicMutedKey, '1');
+            bgMusicEl.muted = true;
             updateMuteButton();
 
             const tryPlay = () => {
