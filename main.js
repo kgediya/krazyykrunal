@@ -70,6 +70,13 @@ const fallbackPortfolio = {
   ],
   tools: [
     {
+      title: 'XFrame',
+      description: 'A fast social art tool for turning X posts into story-first visuals with exportable polish.',
+      type: 'Social Creator Tool',
+      href: '/xframe/',
+      tags: ['X', 'Story', 'Creator']
+    },
+    {
       title: 'XR Planner',
       description: 'A planning tool for immersive build workflows.',
       type: 'Planning Tool',
@@ -460,6 +467,9 @@ function renderTools(items) {
 }
 
 function getToolVisual(classifier) {
+  if (classifier.includes('xframe') || classifier.includes('social creator') || classifier.includes('instagram')) {
+    return { bgFrom: '#0d1117', bgTo: '#191144', glow: '#7dd3fc' };
+  }
   if (classifier.includes('krazyykam')) {
     return { bgFrom: '#2b2200', bgTo: '#7a5f08', glow: '#ffd54f' };
   }

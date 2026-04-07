@@ -127,60 +127,103 @@
   ],
   "tools": [
     {
+      "title": "XFrame",
+      "description": "Turn any X post into a polished Instagram-ready story or post with fast styling, export, and creator-friendly controls.",
+      "type": "Social Creator Tool",
+      "href": "/xframe/",
+      "tags": [
+        "X",
+        "Instagram",
+        "Creator"
+      ]
+    },
+    {
       "title": "KrazyyKam",
       "description": "A yellow little publishing sidekick for pushing Lens Studio work to the web without the usual friction.",
       "type": "Workflow Utility",
       "href": "https://krazyykam.krazyykrunal.com",
-      "tags": ["Publishing", "WebAR", "Utility"]
+      "tags": [
+        "Publishing",
+        "WebAR",
+        "Utility"
+      ]
     },
     {
       "title": "Skybox Generator",
       "description": "A quick way to build spatial backdrops without wrestling the setup every time.",
       "type": "Creator Tool",
       "href": "/portalcreator/",
-      "tags": ["Skybox", "Environment", "XR"]
+      "tags": [
+        "Skybox",
+        "Environment",
+        "XR"
+      ]
     },
     {
       "title": "Dynalinks",
       "description": "A small utility for making links and campaign routing feel a bit smarter.",
       "type": "Growth Tool",
       "href": "/dynalinks/",
-      "tags": ["Links", "Campaign", "Routing"]
+      "tags": [
+        "Links",
+        "Campaign",
+        "Routing"
+      ]
     },
     {
       "title": "Kustom MakQR",
       "description": "A QR maker for when default generators feel too plain and too limiting.",
       "type": "Utility Tool",
       "href": "/makqr/",
-      "tags": ["QR", "Branding", "Utility"]
+      "tags": [
+        "QR",
+        "Branding",
+        "Utility"
+      ]
     },
     {
       "title": "Blueprint 3D",
       "description": "A 3D-first helper for figuring out how an experience should actually take shape.",
       "type": "Prototype Tool",
       "href": "/blueprint/",
-      "tags": ["3D", "Structure", "Prototype"]
+      "tags": [
+        "3D",
+        "Structure",
+        "Prototype"
+      ]
     },
     {
       "title": "Media Helper",
       "description": "A helper tool for media tasks that keep showing up in immersive workflows.",
       "type": "Support Tool",
       "href": "/audiohelper/",
-      "tags": ["Media", "Workflow", "Helper"]
+      "tags": [
+        "Media",
+        "Workflow",
+        "Helper"
+      ]
     },
     {
       "title": "AirMusic",
       "description": "A playful audio interaction build that sits between utility and experiment.",
       "type": "Interactive Tool",
       "href": "/airmusic/",
-      "tags": ["Audio", "Interaction", "Experiment"]
+      "tags": [
+        "Audio",
+        "Interaction",
+        "Experiment"
+      ]
     },
     {
       "title": "SkyHi",
       "description": "A lightweight spatial side project with a product-tool feel.",
       "type": "Product Tool",
       "href": "/skyhi/",
-      "tags": ["Product", "Spatial", "Experiment"]
+      "tags": [
+        "Product",
+        "Spatial",
+        "Experiment"
+      ]
     }
   ]
 }
