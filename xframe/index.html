@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XFrame | Krazyy Krunal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="control-panel">
+      <div class="hero-card">
+        <p class="eyebrow">Krazyy Krunal Tools</p>
+        <h1>XFrame</h1>
+        <p class="hero-copy">
+          Turn an X post into a polished post or story card, then export a crisp image that feels ready to share.
+        </p>
+      </div>
+
+      <section class="panel-section">
+        <div class="section-head">
+          <h2>Import</h2>
+          <button class="ghost-btn" id="demoFillBtn" type="button">Reset sample</button>
+        </div>
+        <label class="field">
+          <span>X or Twitter URL</span>
+          <textarea id="sourceUrl" rows="3"></textarea>
+        </label>
+        <div class="button-row">
+          <button id="parseUrlBtn" type="button">Import post</button>
+          <button class="ghost-btn" id="randomizeBtn" type="button">Shuffle style</button>
+        </div>
+        <p class="helper-text" id="parseStatus">Import an X link to fill the author, text, and available public details.</p>
+      </section>
+
+      <section class="panel-section">
+        <div class="section-head">
+          <h2>Content</h2>
+          <button class="ghost-btn" id="copySpecBtn" type="button">Copy spec</button>
+        </div>
+        <label class="field half">
+          <span>Author name</span>
+          <input id="authorName" type="text">
+        </label>
+        <label class="field half">
+          <span>Handle</span>
+          <input id="authorHandle" type="text">
+        </label>
+        <label class="field">
+          <span>Headline kicker</span>
+          <input id="headline" type="text">
+        </label>
+        <label class="field">
+          <span>Post text</span>
+          <textarea id="tweetText" rows="7"></textarea>
+        </label>
+        <div class="triple-grid">
+          <label class="field compact">
+            <span>Replies</span>
+            <input id="replyCount" type="number" min="0" value="128">
+          </label>
+          <label class="field compact">
+            <span>Reposts</span>
+            <input id="repostCount" type="number" min="0" value="420">
+          </label>
+          <label class="field compact">
+            <span>Likes</span>
+            <input id="likeCount" type="number" min="0" value="3200">
+          </label>
+        </div>
+        <label class="field half">
+          <span>Timestamp</span>
+          <input id="timestamp" type="text">
+        </label>
+        <label class="field half">
+          <span>Source badge</span>
+          <input id="sourceBadge" type="text">
+        </label>
+        <label class="field">
+          <span>Avatar upload</span>
+          <input id="avatarUpload" type="file" accept="image/png, image/jpeg, image/webp">
+        </label>
+      </section>
+
+      <section class="panel-section">
+        <h2>Format</h2>
+        <div class="option-grid two">
+          <button class="chip is-active" data-aspect="post" type="button">IG Post</button>
+          <button class="chip" data-aspect="story" type="button">IG Story</button>
+          <button class="chip" data-layout="editorial" type="button">Editorial</button>
+          <button class="chip is-active" data-layout="spotlight" type="button">Spotlight</button>
+          <button class="chip" data-layout="minimal" type="button">Minimal</button>
+          <button class="chip" data-layout="stacked" type="button">Stacked</button>
+        </div>
+        <div class="option-grid three preset-grid">
+          <button class="preset-btn is-active" data-preset="solar" type="button">Solar</button>
+          <button class="preset-btn" data-preset="midnight" type="button">Midnight</button>
+          <button class="preset-btn" data-preset="mint" type="button">Mint</button>
+          <button class="preset-btn" data-preset="berry" type="button">Berry</button>
+          <button class="preset-btn" data-preset="sand" type="button">Sand</button>
+          <button class="preset-btn" data-preset="signal" type="button">Signal</button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Style Controls</h2>
+        <div class="dual-color-row">
+          <label class="field compact">
+            <span>Accent</span>
+            <input id="accentColor" type="color" value="#ff7b54">
+          </label>
+          <label class="field compact">
+            <span>Canvas tint</span>
+            <input id="canvasTint" type="color" value="#fff3eb">
+          </label>
+        </div>
+        <label class="field">
+          <span>Cover image</span>
+          <input id="mediaUpload" type="file" accept="image/png, image/jpeg, image/webp">
+        </label>
+        <div class="toggle-list">
+          <label class="toggle">
+            <input id="darkTheme" type="checkbox">
+            <span>Use dark composition theme</span>
+          </label>
+          <label class="toggle">
+            <input id="showCoverImage" type="checkbox" checked>
+            <span>Show cover image panel</span>
+          </label>
+          <label class="toggle">
+            <input id="showMetrics" type="checkbox" checked>
+            <span>Show engagement strip</span>
+          </label>
+          <label class="toggle">
+            <input id="showSource" type="checkbox" checked>
+            <span>Show source badge</span>
+          </label>
+          <label class="toggle">
+            <input id="showQuoteMarks" type="checkbox" checked>
+            <span>Show oversized quote mark</span>
+          </label>
+          <label class="toggle">
+            <input id="showAvatar" type="checkbox" checked>
+            <span>Show avatar</span>
+          </label>
+          <label class="toggle">
+            <input id="showWatermark" type="checkbox">
+            <span>Show watermark</span>
+          </label>
+        </div>
+        <label class="field compact hidden" id="watermarkField">
+          <span>Watermark line</span>
+          <input id="watermarkText" type="text">
+        </label>
+        <label class="range-field">
+          <span>Text scale</span>
+          <input id="textScale" type="range" min="88" max="132" value="100">
+        </label>
+        <label class="range-field">
+          <span>Card radius</span>
+          <input id="cardRadius" type="range" min="18" max="44" value="28">
+        </label>
+      </section>
+
+      <section class="panel-section">
+        <h2>Export</h2>
+        <div class="button-row">
+          <button id="downloadBtn" type="button">Download PNG</button>
+          <button class="ghost-btn" id="openImageBtn" type="button">Open image</button>
+        </div>
+        <p class="helper-text">Import uses your Val Town first, then falls back to public oEmbed text import if needed.</p>
+      </section>
+    </aside>
+
+    <main class="preview-panel">
+      <div class="preview-topbar">
+        <div>
+          <p class="eyebrow">Live Preview</p>
+          <h2>X-first social artwork</h2>
+        </div>
+        <p id="modeLabel">light � 1080 x 1350 post</p>
+      </div>
+
+      <div class="preview-stage">
+        <div class="preview-frame aspect-post" id="exportRoot">
+          <div class="ambient ambient-a"></div>
+          <div class="ambient ambient-b"></div>
+          <div class="ambient ambient-c"></div>
+
+          <div class="canvas-grid has-cover" id="canvasGrid">
+            <section class="text-card layout-spotlight" id="textCard">
+              <div class="typography-glow"></div>
+              <div class="text-card-top">
+                <p class="kicker" id="previewHeadline">What everyone is reposting today</p>
+                <div class="author-row">
+                  <div class="avatar-badge" id="avatarBadge"><img id="avatarImage" alt="Author avatar"></div>
+                  <div class="author-copy">
+                    <p class="author-name" id="previewAuthorName">Krunal Gediya</p>
+                    <p class="author-handle" id="previewAuthorHandle">@buildwithkrunal</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quote-wrap">
+                <span class="quote-mark" id="quoteMark">&quot;</span>
+                <p class="tweet-copy" id="previewTweetText">
+                  Tiny tools become products when the output feels good enough to post immediately. That last 10% of polish is usually the actual differentiator.
+                </p>
+              </div>
+
+              <div class="text-card-bottom">
+                <div class="meta-row">
+                  <span class="timestamp" id="previewTimestamp">8:12 PM - Apr 8, 2026</span>
+                  <span class="source-pill" id="previewSourceBadge">x.com / design-build</span>
+                </div>
+
+                <div class="metrics-row" id="previewMetrics">
+                  <span><strong id="previewReplies">84</strong> Replies</span>
+                  <span><strong id="previewReposts">196</strong> Reposts</span>
+                  <span><strong id="previewLikes">2.8K</strong> Likes</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="media-card" id="mediaCard">
+              <div class="media-shell" id="mediaShell">
+                <div class="media-overlay"></div>
+                <div class="media-badge">Visual Layer</div>
+                <div class="media-placeholder" id="mediaPlaceholder">
+                  <p>Visual panel ready.</p>
+                  <span>Add your own cover art or keep the composition typography-first.</span>
+                </div>
+              </div>
+              <div class="footer-note">
+                <span class="mini-dot"></span>
+                <p id="footerNote">Built for shareable X-to-Instagram compositions.</p>
+              </div>
+            </section>
+          </div>
+
+          <div class="watermark hidden" id="previewWatermark">Made with love by krazyykrunal</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+
