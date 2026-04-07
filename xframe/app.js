@@ -303,11 +303,24 @@ function syncActiveButtons() {
   });
 }
 
+function hexToRgbTriplet(hex) {
+  const normalized = (hex || "").replace("#", "").trim();
+  if (normalized.length !== 6) return null;
+  const value = Number.parseInt(normalized, 16);
+  if (Number.isNaN(value)) return null;
+  return `${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}`;
+}
+
 function updateCssVariables() {
   document.documentElement.style.setProperty("--accent", state.accent);
   document.documentElement.style.setProperty("--canvas-tint", state.tint);
   document.documentElement.style.setProperty("--text-scale", `${state.textScale / 100}`);
   document.documentElement.style.setProperty("--card-radius", `${state.cardRadius}px`);
+
+  const accentRgb = hexToRgbTriplet(state.accent);
+  const tintRgb = hexToRgbTriplet(state.tint);
+  if (accentRgb) document.documentElement.style.setProperty("--accent-rgb", accentRgb);
+  if (tintRgb) document.documentElement.style.setProperty("--tint-rgb", tintRgb);
 }
 
 function renderPreview() {
