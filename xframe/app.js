@@ -180,11 +180,16 @@ function hydratePersistedState() {
   }
 }
 
-function formatCompactNumber(value) {
-  const number = Number(value) || 0;
-  if (number >= 1000000) return `${(number / 1000000).toFixed(1).replace(".0", "")}M`;
-  if (number >= 1000) return `${(number / 1000).toFixed(1).replace(".0", "")}K`;
-  return `${number}`;
+function formatMetricValue(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "0";
+  if (!/^\d+(?:\.\d+)?$/.test(raw)) return raw;
+
+  const number = Number(raw);
+  if (!Number.isFinite(number)) return raw;
+  if (number >= 1000000) return (number / 1000000).toFixed(1).replace(".0", "") + "M";
+  if (number >= 1000) return (number / 1000).toFixed(1).replace(".0", "") + "K";
+  return raw;
 }
 
 function normalizeHandle(handle) {
@@ -441,9 +446,9 @@ function renderPreview() {
   DOM.previewTweetText.textContent = state.tweetText || "Add your post text here and shape it the way you like.";
   DOM.previewTimestamp.textContent = state.timestamp || "No timestamp";
   DOM.previewSourceBadge.textContent = state.sourceBadge || "x.com";
-  DOM.previewReplies.textContent = formatCompactNumber(state.replyCount);
-  DOM.previewReposts.textContent = formatCompactNumber(state.repostCount);
-  DOM.previewLikes.textContent = formatCompactNumber(state.likeCount);
+  DOM.previewReplies.textContent = formatMetricValue(state.replyCount);
+  DOM.previewReposts.textContent = formatMetricValue(state.repostCount);
+  DOM.previewLikes.textContent = formatMetricValue(state.likeCount);
   DOM.previewWatermark.textContent = state.watermarkText || DEMO_DATA.watermarkText;
 
   DOM.exportRoot.classList.toggle("dark-theme", state.darkTheme);
