@@ -551,7 +551,7 @@ input[type="file"]::file-selector-button {
   overflow-y: auto;
 }
 
-.preview-viewport {
+ .preview-viewport {
   --preview-scale: 1;
   position: relative;
   width: calc(var(--canvas-width) * var(--preview-scale));
@@ -559,6 +559,9 @@ input[type="file"]::file-selector-button {
   min-width: 0;
   margin-inline: auto;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .preview-viewport.aspect-story {
@@ -569,11 +572,18 @@ input[type="file"]::file-selector-button {
   height: calc(1075px * var(--preview-scale));
 }
 
-.preview-frame {
-  position: absolute;
-  top: 0;
-  left: 50%;
+.preview-scale-shell {
+  display: block;
   width: var(--canvas-width, 860px);
+  margin-inline: auto;
+  transform: scale(var(--preview-scale));
+  transform-origin: top center;
+}
+
+.preview-frame {
+  position: relative;
+  width: var(--canvas-width, 860px);
+  max-width: none;
   overflow: hidden;
   border-radius: 42px;
   background:
@@ -591,13 +601,25 @@ input[type="file"]::file-selector-button {
     linear-gradient(155deg, #0c1018 0%, rgba(var(--accent-rgb), 0.16) 54%, #171c29 100%);
 }
 
+.preview-frame.story-cover {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.06), rgba(255, 252, 247, 0.16)),
+    radial-gradient(circle at 86% 14%, rgba(var(--accent-rgb), 0.18), transparent 28%),
+    var(--cover-image) center / cover no-repeat,
+    linear-gradient(155deg, var(--canvas-tint), rgba(var(--accent-rgb), 0.22));
+}
+
+.preview-frame.dark-theme.story-cover {
+  background:
+    linear-gradient(180deg, rgba(7, 10, 16, 0.08), rgba(7, 10, 16, 0.42)),
+    radial-gradient(circle at 84% 12%, rgba(var(--accent-rgb), 0.22), transparent 28%),
+    var(--cover-image) center / cover no-repeat,
+    linear-gradient(155deg, #0c1018 0%, rgba(var(--accent-rgb), 0.16) 54%, #171c29 100%);
+}
+
 .aspect-post { --canvas-width: 860px; aspect-ratio: 4 / 5; }
 .aspect-story { --canvas-width: 560px; aspect-ratio: 9 / 16; }
 
-.preview-viewport .preview-frame {
-  transform: translateX(-50%) scale(var(--preview-scale));
-  transform-origin: top center;
-}
 
 .ambient { position: absolute; border-radius: 999px; filter: blur(8px); opacity: 0.82; }
 .ambient-a { width: 300px; height: 300px; background: rgba(255, 152, 114, 0.72); top: -88px; right: -70px; }
@@ -616,8 +638,14 @@ input[type="file"]::file-selector-button {
   height: 100%;
   padding: 22px;
 }
-.canvas-grid.no-cover { grid-template-columns: 1fr; }
-.aspect-story .canvas-grid { grid-template-columns: 1fr; }
+.canvas-grid.no-cover,
+.canvas-grid.story-cover-mode {
+  grid-template-columns: 1fr !important;
+}
+
+.aspect-story .canvas-grid {
+  grid-template-columns: 1fr !important;
+}
 
 .text-card,
 .media-card { border-radius: var(--card-radius); box-shadow: var(--card-shadow); }
@@ -812,6 +840,35 @@ input[type="file"]::file-selector-button {
 .canvas-grid.no-cover .metrics-row { grid-template-columns: repeat(3, minmax(0, 1fr)); display: grid; gap: 12px; }
 .canvas-grid.no-cover .metrics-row span { padding: 14px 16px; border-radius: 18px; background: rgba(255,255,255,0.34); }
 .preview-frame.dark-theme .canvas-grid.no-cover .metrics-row span { background: rgba(255,255,255,0.06); }
+
+.canvas-grid.story-cover-mode .text-card {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+  align-self: stretch;
+  background:
+    linear-gradient(180deg, rgba(255, 253, 249, 0.28), rgba(255, 252, 248, 0.12)),
+    linear-gradient(135deg, rgba(255,255,255,0.12), rgba(var(--tint-rgb), 0.08));
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: 0 22px 54px rgba(30, 18, 10, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.preview-frame.dark-theme .canvas-grid.story-cover-mode .text-card {
+  background:
+    linear-gradient(180deg, rgba(12, 17, 27, 0.38), rgba(8, 10, 16, 0.22)),
+    linear-gradient(135deg, rgba(255,255,255,0.04), rgba(var(--tint-rgb), 0.04));
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 26px 56px rgba(0, 0, 0, 0.22);
+}
+
+.canvas-grid.story-cover-mode .text-card-top {
+  max-width: 100%;
+}
+
+.canvas-grid.story-cover-mode .tweet-copy {
+  max-width: 12.5ch;
+}
 
 .text-card-top,
 .text-card-bottom,

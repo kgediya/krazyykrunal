@@ -79,6 +79,9 @@ const state = {
 };
 
 let fitFrame = 0;
+let validatedCoverSource = "";
+let validatedCoverOkay = false;
+let coverValidationInFlight = "";
 
 const DOM = {
   sourceUrl: document.getElementById("sourceUrl"),
@@ -115,6 +118,7 @@ const DOM = {
   openImageBtn: document.getElementById("openImageBtn"),
   previewStage: document.getElementById("previewStage"),
   previewViewport: document.getElementById("previewViewport"),
+  previewScaleShell: document.getElementById("previewScaleShell"),
   exportRoot: document.getElementById("exportRoot"),
   canvasGrid: document.getElementById("canvasGrid"),
   textCard: document.getElementById("textCard"),
@@ -319,6 +323,51 @@ function hexToRgbTriplet(hex) {
   return `${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}`;
 }
 
+function isRenderableImageSource(value) {
+  if (typeof value !== "string") return false;
+  const source = value.trim();
+  if (!source) return false;
+  return source.startsWith("data:image/") || source.startsWith("http://") || source.startsWith("https://");
+}
+
+function canUseCoverImage() {
+  return isRenderableImageSource(state.uploadedImage) && validatedCoverSource === state.uploadedImage && validatedCoverOkay;
+}
+
+function validateCoverImage(source) {
+  if (!isRenderableImageSource(source)) {
+    validatedCoverSource = source || "";
+    validatedCoverOkay = false;
+    return;
+  }
+
+  if (validatedCoverSource === source && validatedCoverOkay) {
+    return;
+  }
+
+  if (coverValidationInFlight === source) {
+    return;
+  }
+
+  coverValidationInFlight = source;
+  const img = new Image();
+  img.onload = () => {
+    if (coverValidationInFlight !== source) return;
+    validatedCoverSource = source;
+    validatedCoverOkay = true;
+    coverValidationInFlight = "";
+    renderPreview();
+  };
+  img.onerror = () => {
+    if (coverValidationInFlight !== source) return;
+    validatedCoverSource = source;
+    validatedCoverOkay = false;
+    coverValidationInFlight = "";
+    renderPreview();
+  };
+  img.src = source;
+}
+
 function updateCssVariables() {
   document.documentElement.style.setProperty("--accent", state.accent);
   document.documentElement.style.setProperty("--canvas-tint", state.tint);
@@ -376,6 +425,9 @@ function updatePreviewScale() {
 
   DOM.previewViewport.classList.toggle("aspect-story", state.aspect === "story");
   DOM.previewViewport.classList.toggle("aspect-post", state.aspect === "post");
+  DOM.previewScaleShell.classList.toggle("aspect-story", state.aspect === "story");
+  DOM.previewScaleShell.classList.toggle("aspect-post", state.aspect === "post");
+  DOM.previewScaleShell.style.setProperty("--preview-scale", scale.toFixed(4));
   DOM.previewViewport.style.setProperty("--preview-scale", scale.toFixed(4));
 }
 
@@ -399,13 +451,19 @@ function renderPreview() {
   DOM.avatarBadge.classList.toggle("has-image", Boolean(state.avatarDataUrl));
   DOM.avatarImage.src = state.avatarDataUrl || "";
   DOM.avatarImage.alt = `${state.authorName || "Author"} avatar`;
+  validateCoverImage(state.uploadedImage);
+  const hasRenderableCover = state.showCoverImage && canUseCoverImage();
+  const useBackdropCover = hasRenderableCover && state.aspect === "story";
+
   DOM.exportRoot.classList.toggle("aspect-post", state.aspect === "post");
   DOM.exportRoot.classList.toggle("aspect-story", state.aspect === "story");
+  DOM.exportRoot.classList.toggle("story-cover", useBackdropCover);
   DOM.previewViewport.classList.toggle("aspect-post", state.aspect === "post");
   DOM.previewViewport.classList.toggle("aspect-story", state.aspect === "story");
-  DOM.canvasGrid.classList.toggle("no-cover", !state.showCoverImage);
-  DOM.canvasGrid.classList.toggle("has-cover", state.showCoverImage);
-  DOM.mediaCard.classList.toggle("hidden", !state.showCoverImage);
+  DOM.canvasGrid.classList.toggle("no-cover", !hasRenderableCover || useBackdropCover);
+  DOM.canvasGrid.classList.toggle("has-cover", hasRenderableCover);
+  DOM.canvasGrid.classList.toggle("story-cover-mode", useBackdropCover);
+  DOM.mediaCard.classList.toggle("hidden", !hasRenderableCover || useBackdropCover);
   DOM.watermarkField.classList.toggle("hidden", !state.showWatermark);
   DOM.previewWatermark.classList.toggle("hidden", !state.showWatermark);
 
@@ -421,11 +479,18 @@ function renderPreview() {
     ? `Made in XFrame from ${parseTweetUrl(state.sourceUrl).ok ? "a post link" : "your own words"}.`
     : "Made in XFrame to help you share a post beautifully.";
 
-  if (state.uploadedImage && state.showCoverImage) {
+  if (useBackdropCover) {
+    DOM.exportRoot.style.setProperty("--cover-image", `url(${state.uploadedImage})`);
+    DOM.mediaShell.classList.remove("has-image");
+    DOM.mediaShell.style.backgroundImage = "";
+    DOM.mediaPlaceholder.classList.add("hidden");
+  } else if (hasRenderableCover) {
+    DOM.exportRoot.style.removeProperty("--cover-image");
     DOM.mediaShell.classList.add("has-image");
     DOM.mediaShell.style.backgroundImage = `linear-gradient(180deg, rgba(18, 12, 10, 0.10), rgba(18, 12, 10, 0.40)), url(${state.uploadedImage})`;
     DOM.mediaPlaceholder.classList.add("hidden");
   } else {
+    DOM.exportRoot.style.removeProperty("--cover-image");
     DOM.mediaShell.classList.remove("has-image");
     DOM.mediaShell.style.backgroundImage = "";
     DOM.mediaPlaceholder.classList.remove("hidden");
@@ -541,6 +606,9 @@ async function handleMediaUpload(event) {
 
   try {
     state.uploadedImage = await readImageFile(file);
+    validatedCoverSource = "";
+    validatedCoverOkay = false;
+    coverValidationInFlight = "";
     state.showCoverImage = true;
     persistState();
     syncInputsFromState();
@@ -594,6 +662,49 @@ function updateStateFromFields() {
   renderPreview();
 }
 
+function createExportClone() {
+  const exportShell = document.createElement("div");
+  exportShell.style.position = "fixed";
+  exportShell.style.left = "-10000px";
+  exportShell.style.top = "0";
+  exportShell.style.pointerEvents = "none";
+  exportShell.style.zIndex = "-1";
+  exportShell.style.padding = "0";
+  exportShell.style.margin = "0";
+  exportShell.style.background = "transparent";
+
+  const clone = DOM.exportRoot.cloneNode(true);
+  clone.id = "exportRootClone";
+  clone.style.transform = "none";
+  clone.style.width = state.aspect === "story" ? "560px" : "860px";
+  clone.style.maxWidth = "none";
+  clone.style.margin = "0";
+  clone.style.left = "auto";
+  clone.style.top = "auto";
+  clone.style.position = "relative";
+
+  exportShell.appendChild(clone);
+  document.body.appendChild(exportShell);
+  return { exportShell, clone };
+}
+
+function slugifyFilenamePart(value, fallback = "xframe") {
+  const cleaned = String(value || "")
+    .toLowerCase()
+    .replace(/https?:\/\//g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+  return cleaned || fallback;
+}
+
+function buildExportFilename() {
+  const handle = slugifyFilenamePart(normalizeHandle(state.authorHandle).replace(/^@/, ""), "post");
+  const textSeed = slugifyFilenamePart(state.tweetText || state.headline, "story");
+  const mode = state.aspect === "story" ? "story" : "post";
+  return "xframe-" + handle + "-" + textSeed + "-" + mode + ".png";
+}
+
 function attachFieldSync() {
   [
     DOM.sourceUrl,
@@ -626,7 +737,7 @@ function attachFieldSync() {
 
 async function exportPng(openInNewTab = false) {
   const originalStatus = DOM.parseStatus.textContent;
-  const filename = `xframe-${state.aspect}-${state.darkTheme ? "dark" : "light"}.png`;
+  const filename = buildExportFilename();
   const popup = openInNewTab ? window.open("", "_blank") : null;
 
   if (openInNewTab && !popup) {
@@ -649,14 +760,21 @@ async function exportPng(openInNewTab = false) {
     }
 
     await document.fonts.ready;
-    const canvas = await html2canvas(DOM.exportRoot, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-      allowTaint: false,
-      imageTimeout: 15000,
-      logging: false
-    });
+    const { exportShell, clone } = createExportClone();
+    let canvas;
+
+    try {
+      canvas = await html2canvas(clone, {
+        backgroundColor: null,
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        imageTimeout: 15000,
+        logging: false
+      });
+    } finally {
+      exportShell.remove();
+    }
 
     const blob = await new Promise((resolve, reject) => {
       canvas.toBlob((result) => {
