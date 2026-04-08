@@ -667,7 +667,8 @@ function updateStateFromFields() {
   renderPreview();
 }
 
-function createExportClone() {
+function createExportClone(options = {}) {
+  const { exportSafe = false } = options;
   const exportShell = document.createElement("div");
   exportShell.style.position = "fixed";
   exportShell.style.left = "-10000px";
@@ -680,7 +681,9 @@ function createExportClone() {
 
   const clone = DOM.exportRoot.cloneNode(true);
   clone.id = "exportRootClone";
-  clone.classList.add("export-render");
+  if (exportSafe) {
+    clone.classList.add("export-render");
+  }
   clone.style.transform = "none";
   clone.style.width = state.aspect === "story" ? "560px" : "860px";
   clone.style.maxWidth = "none";
@@ -692,6 +695,97 @@ function createExportClone() {
   exportShell.appendChild(clone);
   document.body.appendChild(exportShell);
   return { exportShell, clone };
+}
+
+async function renderExportBlob() {
+  await document.fonts.ready;
+  const width = state.aspect === "story" ? 560 : 860;
+  const height = state.aspect === "story" ? Math.round((560 * 16) / 9) : Math.round((860 * 5) / 4);
+  const htmlToImageApi = window.htmlToImage;
+
+  if (htmlToImageApi && typeof htmlToImageApi.toBlob === "function") {
+    const { exportShell, clone } = createExportClone();
+    try {
+      const fontEmbedCSS = await getExportFontEmbedCss();
+      const blob = await htmlToImageApi.toBlob(clone, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: null,
+        width,
+        height,
+        canvasWidth: width * 2,
+        canvasHeight: height * 2,
+        fontEmbedCSS,
+        preferredFontFormat: "woff2",
+        style: {
+          transform: "none",
+          margin: "0"
+        }
+      });
+
+      if (blob) {
+        return blob;
+      }
+    } finally {
+      exportShell.remove();
+    }
+  }
+
+  if (typeof html2canvas !== "function") {
+    throw new Error("No supported export renderer is available");
+  }
+
+  const { exportShell, clone } = createExportClone({ exportSafe: true });
+  try {
+    const canvas = await html2canvas(clone, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+      allowTaint: false,
+      imageTimeout: 15000,
+      logging: false
+    });
+
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob((result) => {
+        if (result) {
+          resolve(result);
+          return;
+        }
+        reject(new Error("Canvas blob generation failed"));
+      }, "image/png");
+    });
+  } finally {
+    exportShell.remove();
+  }
+}
+
+let exportFontEmbedCssPromise = null;
+
+async function getExportFontEmbedCss() {
+  if (exportFontEmbedCssPromise) {
+    return exportFontEmbedCssPromise;
+  }
+
+  exportFontEmbedCssPromise = (async () => {
+    const fontLink = document.querySelector('link[href*="fonts.googleapis.com/css2"]');
+    if (!fontLink) {
+      return "";
+    }
+
+    try {
+      const response = await fetch(fontLink.href, { mode: "cors" });
+      if (!response.ok) {
+        return "";
+      }
+      return await response.text();
+    } catch (error) {
+      console.warn("Could not fetch export font CSS", error);
+      return "";
+    }
+  })();
+
+  return exportFontEmbedCssPromise;
 }
 
 function slugifyFilenamePart(value, fallback = "xframe") {
@@ -761,37 +855,7 @@ async function exportPng(openInNewTab = false) {
     DOM.openImageBtn.disabled = true;
     setStatus("Getting your image ready...", "");
 
-    if (typeof html2canvas !== "function") {
-      throw new Error("html2canvas is not available");
-    }
-
-    await document.fonts.ready;
-    const { exportShell, clone } = createExportClone();
-    let canvas;
-
-    try {
-      canvas = await html2canvas(clone, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        imageTimeout: 15000,
-        logging: false
-      });
-    } finally {
-      exportShell.remove();
-    }
-
-    const blob = await new Promise((resolve, reject) => {
-      canvas.toBlob((result) => {
-        if (result) {
-          resolve(result);
-          return;
-        }
-        reject(new Error("Canvas blob generation failed"));
-      }, "image/png");
-    });
-
+    const blob = await renderExportBlob();
     const objectUrl = URL.createObjectURL(blob);
 
     if (popup) {
