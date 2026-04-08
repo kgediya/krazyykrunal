@@ -664,6 +664,7 @@ input[type="file"]::file-selector-button {
   --quote-left: -10px;
   --quote-top: -36px;
   --quote-opacity: 0.2;
+  --quote-alpha: var(--quote-opacity);
   --quote-shadow: 0 8px 24px rgba(33, 24, 20, 0.08);
   --fit-scale: 1;
   position: relative;
@@ -937,15 +938,15 @@ input[type="file"]::file-selector-button {
   font-size: calc(var(--quote-size-base) * var(--text-scale) * var(--fit-scale));
   line-height: 0.82;
   font-weight: 700;
-  color: rgb(33, 24, 20);
-  opacity: var(--quote-opacity);
+  color: rgba(33, 24, 20, var(--quote-alpha));
+  opacity: 1;
   text-shadow: var(--quote-shadow);
   transform-origin: left top;
   pointer-events: none;
 }
 .preview-frame.dark-theme .quote-mark {
-  color: rgb(var(--accent-rgb));
-  opacity: var(--quote-opacity);
+  color: rgba(var(--accent-rgb), var(--quote-alpha));
+  opacity: 1;
   text-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.14);
 }
 
@@ -974,7 +975,7 @@ input[type="file"]::file-selector-button {
 .layout-cinema .tweet-copy { --copy-size-base: 1.84rem; max-width: 12.8ch; }
 .layout-poster .meta-row,
 .layout-stacked .meta-row { justify-content: space-between; }
-.layout-minimal .quote-mark { opacity: 0.18; transform: rotate(-5deg) scale(0.96); }
+.layout-minimal .quote-mark { transform: rotate(-5deg) scale(0.96); }
 .layout-signature .quote-mark { transform: rotate(-6deg); }
 .layout-editorial .quote-mark { transform: rotate(-4deg); }
 .layout-spotlight .quote-mark { transform: scale(1.06); }
@@ -1102,8 +1103,8 @@ input[type="file"]::file-selector-button {
   display: none;
 }
 
-.text-card.is-micro .quote-mark {
-  opacity: max(0.04, calc(var(--quote-opacity) * 0.7));
+.text-card.is-micro {
+  --quote-alpha: max(0.04, calc(var(--quote-opacity) * 0.7));
 }
 
 .media-card { display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-height: 100%; }
