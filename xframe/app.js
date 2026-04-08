@@ -768,6 +768,52 @@ function updateStateFromFields() {
   renderPreview();
 }
 
+function waitForImageReady(image) {
+  return new Promise((resolve) => {
+    if (!image) {
+      resolve();
+      return;
+    }
+
+    const finish = () => resolve();
+    if (image.complete && image.naturalWidth > 0) {
+      finish();
+      return;
+    }
+
+    image.addEventListener('load', finish, { once: true });
+    image.addEventListener('error', finish, { once: true });
+
+    if (typeof image.decode === 'function') {
+      image.decode().then(finish).catch(finish);
+    }
+  });
+}
+
+async function prepareCloneForExport(clone) {
+  const cloneAvatar = clone.querySelector('#avatarImage');
+  const cloneAvatarBadge = clone.querySelector('#avatarBadge');
+  const activeAvatarSrc = DOM.avatarImage.currentSrc || DOM.avatarImage.src || state.avatarDataUrl || '';
+
+  if (cloneAvatar) {
+    cloneAvatar.loading = 'eager';
+    cloneAvatar.decoding = 'sync';
+    cloneAvatar.fetchPriority = 'high';
+    if (activeAvatarSrc) {
+      cloneAvatar.src = activeAvatarSrc;
+    } else {
+      cloneAvatar.removeAttribute('src');
+    }
+  }
+
+  if (cloneAvatarBadge) {
+    cloneAvatarBadge.classList.toggle('has-image', Boolean(activeAvatarSrc));
+  }
+
+  const images = Array.from(clone.querySelectorAll('img'));
+  await Promise.all(images.map(waitForImageReady));
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
 function createExportClone(options = {}) {
   const { exportSafe = false } = options;
   const exportShell = document.createElement("div");
@@ -1076,4 +1122,5 @@ function init() {
 }
 
 init();
+
 
