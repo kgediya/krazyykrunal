@@ -12,28 +12,11 @@
 <body>
   <div class="app-shell">
     <aside class="control-panel">
-      <div class="hero-card">
-        <p class="eyebrow">All Things Krazyy Presents</p>
-        <h1>XFrame</h1>
-        <p class="hero-copy">
-          Turn an X post into a beautiful story or post you can style, tweak, and save in a few taps.
-        </p>
-      </div>
-
-      <section class="panel-section">
+      <section class="panel-section panel-section-intro compact-hidden">
         <div class="section-head">
-          <h2>Start Here</h2>
-          <button class="ghost-btn" id="demoFillBtn" type="button">Try demo</button>
+          <h2>Quick Start</h2>
         </div>
-        <label class="field">
-          <span>Paste your X link</span>
-          <textarea id="sourceUrl" rows="3" placeholder="https://x.com/..."></textarea>
-        </label>
-        <div class="button-row">
-          <button id="parseUrlBtn" type="button">Bring it in</button>
-          <button class="ghost-btn" id="randomizeBtn" type="button">Surprise me</button>
-        </div>
-        <p class="helper-text" id="parseStatus">Paste a post link and XFrame will do its best to pull everything in for you.</p>
+        <p class="helper-text">Use the bar above to paste a post, pull it in, or jump into a demo.</p>
       </section>
 
       <section class="panel-section">
@@ -180,16 +163,29 @@
     </aside>
 
     <main class="preview-panel">
-      <div class="preview-topbar">
-        <div>
-          <p class="eyebrow">Preview</p>
-          <h2>Your post, styled beautifully</h2>
+      <div class="preview-topbar preview-command-bar">
+        <div class="command-bar-head">
+          <div class="brand-lockup">
+            <h1>XFrame</h1>
+            <span class="brand-by">by</span>
+            <a class="brand-chip" href="https://www.krazyykrunal.com" target="_blank" rel="noopener noreferrer">Krazyy Krunal</a>
+          </div>
+          <p class="hero-copy">Turn an X post into a beautiful story or post you can style, tweak, and save in a few taps.</p>
         </div>
-        <div class="preview-topbar-side">
-          <p id="modeLabel">dark / 1080 x 1920 story</p>
-          <div class="preview-actions">
+        <div class="command-bar-main">
+          <label class="field command-url-field">
+            <span>Paste your X link</span>
+            <input id="sourceUrl" type="text" placeholder="https://x.com/...">
+          </label>
+          <div class="command-actions-grid">
+            <button id="parseUrlBtn" type="button">Bring it in</button>
+            <button class="ghost-btn" id="randomizeBtn" type="button">Surprise me</button>
             <button id="downloadBtn" type="button">Save image</button>
             <button class="ghost-btn" id="openImageBtn" type="button">Preview image</button>
+          </div>
+          <div class="command-bar-meta">
+            <p class="helper-text command-status" id="parseStatus">Paste a post link and XFrame will do its best to pull everything in for you.</p>
+            <p id="modeLabel">dark / 1080 x 1920 story</p>
           </div>
         </div>
       </div>

@@ -515,14 +515,8 @@ async function hydrateFromUrl() {
 function randomizeLook() {
   const presetNames = Object.keys(PRESETS);
   const layouts = ["signature", "spotlight", "editorial", "minimal", "stacked", "poster", "cinema"];
-  const aspects = ["post", "story"];
   state.preset = presetNames[Math.floor(Math.random() * presetNames.length)];
   state.layout = layouts[Math.floor(Math.random() * layouts.length)];
-  state.aspect = aspects[Math.floor(Math.random() * aspects.length)];
-  state.textScale = 92 + Math.floor(Math.random() * 27);
-  state.cardRadius = 22 + Math.floor(Math.random() * 17);
-  state.showCoverImage = Math.random() > 0.28;
-  state.darkTheme = Math.random() > 0.5;
   const preset = PRESETS[state.preset];
   state.accent = preset.accent;
   state.tint = preset.tint;
@@ -785,7 +779,7 @@ function init() {
 
   DOM.parseUrlBtn.addEventListener("click", hydrateFromUrl);
   DOM.randomizeBtn.addEventListener("click", randomizeLook);
-  DOM.demoFillBtn.addEventListener("click", loadDemo);
+  if (DOM.demoFillBtn) DOM.demoFillBtn.addEventListener("click", loadDemo);
   DOM.copySpecBtn.addEventListener("click", copySpec);
   DOM.downloadBtn.addEventListener("click", () => exportPng(false));
   DOM.openImageBtn.addEventListener("click", () => exportPng(true));
@@ -794,7 +788,6 @@ function init() {
   window.addEventListener("resize", queueFitTextCard);
 
   renderPreview();
-  setStatus("XFrame is ready. Your latest look will stay here when you come back.", "success");
 }
 
 init();
