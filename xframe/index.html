@@ -141,19 +141,7 @@
             <input id="showAvatar" type="checkbox" checked>
             <span>Show profile image</span>
           </label>
-          <label class="toggle">
-            <input id="showWatermark" type="checkbox">
-            <span>Show signature line</span>
-          </label>
         </div>
-        <label class="field compact hidden" id="watermarkField">
-          <span>Signature line</span>
-          <input id="watermarkText" type="text">
-        </label>
-        <label class="range-field">
-          <span>Text size</span>
-          <input id="textScale" type="range" min="88" max="132" value="100">
-        </label>
         <label class="range-field">
           <span>Corner roundness</span>
           <input id="cardRadius" type="range" min="18" max="44" value="28">
@@ -236,10 +224,9 @@
             <section class="media-card" id="mediaCard">
               <div class="media-shell" id="mediaShell">
                 <div class="media-overlay"></div>
-                <div class="media-badge">Image area</div>
                 <div class="media-placeholder" id="mediaPlaceholder">
-                  <p>Your image can live here.</p>
-                  <span>Add a photo or keep it clean and text-first.</span>
+                  <p id="mediaPlaceholderTitle">Your image can live here.</p>
+                  <span id="mediaPlaceholderText">Add a photo or keep it clean and text-first.</span>
                 </div>
               </div>
               <div class="footer-note">
@@ -249,7 +236,6 @@
             </section>
           </div>
 
-          <div class="watermark hidden" id="previewWatermark">Made with love by krazyykrunal</div>
         </div>
         </div>
         </div>

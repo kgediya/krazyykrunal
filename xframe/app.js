@@ -37,11 +37,11 @@ const DEMO_DATA = {
   showSource: true,
   showQuoteMarks: true,
   showAvatar: true,
-  showWatermark: false,
-  watermarkText: "Made with love by krazyykrunal",
-  textScale: 100,
   cardRadius: 30,
-  uploadedImage: ""
+  uploadedImage: "",
+  importedMediaUrl: "",
+  importedMediaType: "",
+  importedMediaPoster: ""
 };
 
 const PERSISTED_KEYS = [
@@ -67,11 +67,11 @@ const PERSISTED_KEYS = [
   "showSource",
   "showQuoteMarks",
   "showAvatar",
-  "showWatermark",
-  "watermarkText",
-  "textScale",
   "cardRadius",
-  "uploadedImage"
+  "uploadedImage",
+  "importedMediaUrl",
+  "importedMediaType",
+  "importedMediaPoster"
 ];
 
 const state = {
@@ -104,10 +104,6 @@ const DOM = {
   showSource: document.getElementById("showSource"),
   showQuoteMarks: document.getElementById("showQuoteMarks"),
   showAvatar: document.getElementById("showAvatar"),
-  showWatermark: document.getElementById("showWatermark"),
-  watermarkField: document.getElementById("watermarkField"),
-  watermarkText: document.getElementById("watermarkText"),
-  textScale: document.getElementById("textScale"),
   cardRadius: document.getElementById("cardRadius"),
   parseUrlBtn: document.getElementById("parseUrlBtn"),
   parseStatus: document.getElementById("parseStatus"),
@@ -125,6 +121,8 @@ const DOM = {
   mediaCard: document.getElementById("mediaCard"),
   mediaShell: document.getElementById("mediaShell"),
   mediaPlaceholder: document.getElementById("mediaPlaceholder"),
+  mediaPlaceholderTitle: document.getElementById("mediaPlaceholderTitle"),
+  mediaPlaceholderText: document.getElementById("mediaPlaceholderText"),
   quoteMark: document.getElementById("quoteMark"),
   avatarBadge: document.getElementById("avatarBadge"),
   avatarImage: document.getElementById("avatarImage"),
@@ -138,7 +136,6 @@ const DOM = {
   previewReplies: document.getElementById("previewReplies"),
   previewReposts: document.getElementById("previewReposts"),
   previewLikes: document.getElementById("previewLikes"),
-  previewWatermark: document.getElementById("previewWatermark"),
   footerNote: document.getElementById("footerNote"),
   modeLabel: document.getElementById("modeLabel"),
   aspectButtons: Array.from(document.querySelectorAll("[data-aspect]")),
@@ -190,6 +187,98 @@ function formatMetricValue(value) {
   if (number >= 1000000) return (number / 1000000).toFixed(1).replace(".0", "") + "M";
   if (number >= 1000) return (number / 1000).toFixed(1).replace(".0", "") + "K";
   return raw;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderTweetMarkup(text) {
+  const source = String(text || "").replace(/\r\n/g, "\n");
+  if (!source.trim()) {
+    return escapeHtml("Add your post text here and shape it the way you like.");
+  }
+
+  const tokenPattern = /(https?:\/\/\S+|[@#][\p{L}\p{N}_]+)/gu;
+  let lastIndex = 0;
+  let markup = "";
+
+  source.replace(tokenPattern, (token, _match, offset) => {
+    markup += escapeHtml(source.slice(lastIndex, offset));
+    const cls = token.startsWith("#")
+      ? "tweet-token tweet-token-hash"
+      : token.startsWith("@")
+        ? "tweet-token tweet-token-mention"
+        : "tweet-token tweet-token-link";
+    markup += '<span class="' + cls + '">' + escapeHtml(token) + '</span>';
+    lastIndex = offset + token.length;
+    return token;
+  });
+
+  markup += escapeHtml(source.slice(lastIndex));
+  return markup.replace(/\n/g, "<br>");
+}
+
+function pickImportedMedia(payload) {
+  const mediaItems = Array.isArray(payload.media) ? payload.media : [];
+  const imageCandidates = [
+    payload.mediaUrl,
+    payload.imageUrl,
+    payload.media_image_url,
+    payload.photoUrl,
+    ...mediaItems.map((item) => item?.url),
+    ...mediaItems.map((item) => item?.mediaUrl),
+    ...mediaItems.map((item) => item?.imageUrl)
+  ];
+  const posterCandidates = [
+    payload.videoPosterUrl,
+    payload.videoThumbnailUrl,
+    payload.mediaPosterUrl,
+    payload.mediaThumbnailUrl,
+    payload.posterUrl,
+    payload.thumbnailUrl,
+    ...mediaItems.map((item) => item?.posterUrl),
+    ...mediaItems.map((item) => item?.thumbnailUrl),
+    ...mediaItems.map((item) => item?.previewImageUrl)
+  ];
+  const mediaType = String(payload.mediaType || payload.media_kind || payload.type || mediaItems[0]?.type || "").toLowerCase();
+  const firstImage = imageCandidates.find((value) => isRenderableImageSource(value));
+  const firstPoster = posterCandidates.find((value) => isRenderableImageSource(value));
+
+  if (mediaType.includes("video")) {
+    return {
+      type: "video",
+      url: firstPoster || "",
+      poster: firstPoster || ""
+    };
+  }
+
+  return {
+    type: firstImage ? "image" : mediaType,
+    url: firstImage || firstPoster || "",
+    poster: firstPoster || ""
+  };
+}
+
+function getActiveMedia() {
+  if (isRenderableImageSource(state.uploadedImage)) {
+    return { kind: "custom", type: "image", source: state.uploadedImage };
+  }
+
+  if (state.importedMediaType === "video" && isRenderableImageSource(state.importedMediaPoster)) {
+    return { kind: "post-video", type: "video", source: state.importedMediaPoster };
+  }
+
+  if (isRenderableImageSource(state.importedMediaUrl)) {
+    return { kind: state.importedMediaType === "video" ? "post-video" : "post-image", type: state.importedMediaType || "image", source: state.importedMediaUrl };
+  }
+
+  return null;
 }
 
 function normalizeHandle(handle) {
@@ -302,9 +391,6 @@ function syncInputsFromState() {
   DOM.showSource.checked = state.showSource;
   DOM.showQuoteMarks.checked = state.showQuoteMarks;
   DOM.showAvatar.checked = state.showAvatar;
-  DOM.showWatermark.checked = state.showWatermark;
-  DOM.watermarkText.value = state.watermarkText;
-  DOM.textScale.value = state.textScale;
   DOM.cardRadius.value = state.cardRadius;
 }
 
@@ -335,8 +421,8 @@ function isRenderableImageSource(value) {
   return source.startsWith("data:image/") || source.startsWith("http://") || source.startsWith("https://");
 }
 
-function canUseCoverImage() {
-  return isRenderableImageSource(state.uploadedImage) && validatedCoverSource === state.uploadedImage && validatedCoverOkay;
+function canUseCoverImage(source) {
+  return isRenderableImageSource(source) && validatedCoverSource === source && validatedCoverOkay;
 }
 
 function validateCoverImage(source) {
@@ -376,7 +462,7 @@ function validateCoverImage(source) {
 function updateCssVariables() {
   document.documentElement.style.setProperty("--accent", state.accent);
   document.documentElement.style.setProperty("--canvas-tint", state.tint);
-  document.documentElement.style.setProperty("--text-scale", `${state.textScale / 100}`);
+  document.documentElement.style.setProperty("--text-scale", "1");
   document.documentElement.style.setProperty("--card-radius", `${state.cardRadius}px`);
 
   const accentRgb = hexToRgbTriplet(state.accent);
@@ -390,8 +476,19 @@ function cardIsOverflowing() {
 }
 
 function fitTextCard() {
-  DOM.textCard.classList.remove("is-tight", "is-compact", "is-micro", "hide-decor");
+  const text = (state.tweetText || "").trim();
+  const tweetLength = text.length;
+  const lineBreaks = (text.match(/\n/g) || []).length;
+  const isShort = tweetLength > 0 && tweetLength <= 90 && lineBreaks <= 1;
+  const isMedium = tweetLength > 90 && tweetLength <= 180 && lineBreaks <= 3;
+  const isLongform = tweetLength > 180 || lineBreaks > 3;
+
+  DOM.textCard.classList.remove("is-short", "is-medium", "is-tight", "is-compact", "is-micro", "hide-decor", "is-longform");
   DOM.textCard.style.removeProperty("--fit-scale");
+
+  if (isShort) DOM.textCard.classList.add("is-short");
+  if (isMedium) DOM.textCard.classList.add("is-medium");
+  if (isLongform) DOM.textCard.classList.add("is-longform");
 
   const steps = ["is-tight", "is-compact", "is-micro"];
   for (const step of steps) {
@@ -405,14 +502,12 @@ function fitTextCard() {
     return;
   }
 
-  if (cardIsOverflowing()) {
-    DOM.textCard.classList.add("hide-decor");
-  }
+  DOM.textCard.classList.add("hide-decor");
 
-  let scale = 0.72;
-  while (cardIsOverflowing() && scale >= 0.56) {
+  let scale = isLongform ? 0.72 : isShort ? 0.88 : 0.8;
+  while (cardIsOverflowing() && scale >= 0.44) {
     DOM.textCard.style.setProperty("--fit-scale", scale.toFixed(2));
-    scale -= 0.04;
+    scale -= 0.02;
   }
 }
 
@@ -443,34 +538,31 @@ function renderPreview() {
   DOM.previewHeadline.textContent = state.headline || "Untitled post";
   DOM.previewAuthorName.textContent = state.authorName || "Unknown author";
   DOM.previewAuthorHandle.textContent = normalizeHandle(state.authorHandle) || "@unknown";
-  DOM.previewTweetText.textContent = state.tweetText || "Add your post text here and shape it the way you like.";
+  DOM.previewTweetText.innerHTML = renderTweetMarkup(state.tweetText);
   DOM.previewTimestamp.textContent = state.timestamp || "No timestamp";
   DOM.previewSourceBadge.textContent = state.sourceBadge || "x.com";
   DOM.previewReplies.textContent = formatMetricValue(state.replyCount);
   DOM.previewReposts.textContent = formatMetricValue(state.repostCount);
   DOM.previewLikes.textContent = formatMetricValue(state.likeCount);
-  DOM.previewWatermark.textContent = state.watermarkText || DEMO_DATA.watermarkText;
 
   DOM.exportRoot.classList.toggle("dark-theme", state.darkTheme);
   DOM.avatarBadge.classList.toggle("hidden", !state.showAvatar);
   DOM.avatarBadge.classList.toggle("has-image", Boolean(state.avatarDataUrl));
   DOM.avatarImage.src = state.avatarDataUrl || "";
   DOM.avatarImage.alt = `${state.authorName || "Author"} avatar`;
-  validateCoverImage(state.uploadedImage);
-  const hasRenderableCover = state.showCoverImage && canUseCoverImage();
-  const useBackdropCover = hasRenderableCover && state.aspect === "story";
+  const activeMedia = state.showCoverImage ? getActiveMedia() : null;
+  validateCoverImage(activeMedia ? activeMedia.source : "");
+  const hasRenderableCover = Boolean(activeMedia && canUseCoverImage(activeMedia.source));
 
   DOM.exportRoot.classList.toggle("aspect-post", state.aspect === "post");
   DOM.exportRoot.classList.toggle("aspect-story", state.aspect === "story");
-  DOM.exportRoot.classList.toggle("story-cover", useBackdropCover);
+  DOM.exportRoot.classList.remove("story-cover");
   DOM.previewViewport.classList.toggle("aspect-post", state.aspect === "post");
   DOM.previewViewport.classList.toggle("aspect-story", state.aspect === "story");
-  DOM.canvasGrid.classList.toggle("no-cover", !hasRenderableCover || useBackdropCover);
+  DOM.canvasGrid.classList.toggle("no-cover", !hasRenderableCover);
   DOM.canvasGrid.classList.toggle("has-cover", hasRenderableCover);
-  DOM.canvasGrid.classList.toggle("story-cover-mode", useBackdropCover);
-  DOM.mediaCard.classList.toggle("hidden", !hasRenderableCover || useBackdropCover);
-  DOM.watermarkField.classList.toggle("hidden", !state.showWatermark);
-  DOM.previewWatermark.classList.toggle("hidden", !state.showWatermark);
+  DOM.canvasGrid.classList.remove("story-cover-mode");
+  DOM.mediaCard.classList.toggle("hidden", !hasRenderableCover);
 
   DOM.textCard.classList.remove("layout-signature", "layout-editorial", "layout-spotlight", "layout-minimal", "layout-stacked", "layout-poster", "layout-cinema");
   DOM.textCard.classList.add(`layout-${state.layout}`);
@@ -484,21 +576,23 @@ function renderPreview() {
     ? `Made in XFrame from ${parseTweetUrl(state.sourceUrl).ok ? "a post link" : "your own words"}.`
     : "Made in XFrame to help you share a post beautifully.";
 
-  if (useBackdropCover) {
-    DOM.exportRoot.style.setProperty("--cover-image", `url(${state.uploadedImage})`);
-    DOM.mediaShell.classList.remove("has-image");
-    DOM.mediaShell.style.backgroundImage = "";
-    DOM.mediaPlaceholder.classList.add("hidden");
-  } else if (hasRenderableCover) {
-    DOM.exportRoot.style.removeProperty("--cover-image");
+  DOM.exportRoot.style.removeProperty("--cover-image");
+  if (hasRenderableCover && activeMedia) {
     DOM.mediaShell.classList.add("has-image");
-    DOM.mediaShell.style.backgroundImage = `linear-gradient(180deg, rgba(18, 12, 10, 0.10), rgba(18, 12, 10, 0.40)), url(${state.uploadedImage})`;
+    DOM.mediaShell.style.backgroundImage = `linear-gradient(180deg, rgba(18, 12, 10, 0.08), rgba(18, 12, 10, 0.34)), url(${activeMedia.source})`;
     DOM.mediaPlaceholder.classList.add("hidden");
+    DOM.footerNote.textContent = activeMedia.kind === "post-video" ? "Video posts use the post poster image when one is available." : DOM.footerNote.textContent;
   } else {
-    DOM.exportRoot.style.removeProperty("--cover-image");
     DOM.mediaShell.classList.remove("has-image");
     DOM.mediaShell.style.backgroundImage = "";
     DOM.mediaPlaceholder.classList.remove("hidden");
+    if (state.importedMediaType === "video") {
+      DOM.mediaPlaceholderTitle.textContent = "This post includes video.";
+      DOM.mediaPlaceholderText.textContent = "If there is no poster image available yet, add your own image to bring the split layout back.";
+    } else {
+      DOM.mediaPlaceholderTitle.textContent = "Your image can live here.";
+      DOM.mediaPlaceholderText.textContent = "Add a photo or keep it clean and text-first.";
+    }
   }
 
   updatePreviewScale();
@@ -549,6 +643,13 @@ async function hydrateFromUrl() {
     state.timestamp = data.timestamp || state.timestamp;
     state.sourceBadge = data.sourceBadge || state.sourceBadge;
     state.avatarDataUrl = data.avatarDataUrl || "";
+    const importedMedia = pickImportedMedia(data);
+    state.importedMediaUrl = importedMedia.url;
+    state.importedMediaType = importedMedia.type;
+    state.importedMediaPoster = importedMedia.poster;
+    if (importedMedia.url || importedMedia.poster) {
+      state.showCoverImage = true;
+    }
     state.headline = `${state.authorName} on X`;
     persistState();
     syncInputsFromState();
@@ -564,6 +665,9 @@ async function hydrateFromUrl() {
       state.authorHandle = fallback.authorHandle || state.authorHandle;
       state.tweetText = fallback.tweetText || state.tweetText;
       state.timestamp = fallback.timestamp || state.timestamp;
+      state.importedMediaUrl = "";
+      state.importedMediaType = "";
+      state.importedMediaPoster = "";
       state.headline = `${state.authorName} on X`;
       persistState();
       syncInputsFromState();
@@ -645,7 +749,7 @@ function updateStateFromFields() {
   state.authorName = DOM.authorName.value.trim();
   state.authorHandle = DOM.authorHandle.value.trim();
   state.headline = DOM.headline.value.trim();
-  state.tweetText = DOM.tweetText.value.trim();
+  state.tweetText = DOM.tweetText.value.replace(/\r\n/g, "\n").trim();
   state.replyCount = DOM.replyCount.value;
   state.repostCount = DOM.repostCount.value;
   state.likeCount = DOM.likeCount.value;
@@ -659,9 +763,6 @@ function updateStateFromFields() {
   state.showSource = DOM.showSource.checked;
   state.showQuoteMarks = DOM.showQuoteMarks.checked;
   state.showAvatar = DOM.showAvatar.checked;
-  state.showWatermark = DOM.showWatermark.checked;
-  state.watermarkText = DOM.watermarkText.value.trim() || DEMO_DATA.watermarkText;
-  state.textScale = Number(DOM.textScale.value);
   state.cardRadius = Number(DOM.cardRadius.value);
   persistState();
   renderPreview();
@@ -825,9 +926,6 @@ function attachFieldSync() {
     DOM.showSource,
     DOM.showQuoteMarks,
     DOM.showAvatar,
-    DOM.showWatermark,
-    DOM.watermarkText,
-    DOM.textScale,
     DOM.cardRadius
   ].forEach((element) => {
     element.addEventListener("input", updateStateFromFields);
@@ -897,9 +995,9 @@ async function copySpec() {
     headline: state.headline,
     darkTheme: state.darkTheme,
     coverEnabled: state.showCoverImage,
-    watermark: {
-      enabled: state.showWatermark,
-      text: state.watermarkText
+    importedMedia: {
+      type: state.importedMediaType || null,
+      available: Boolean(state.importedMediaUrl || state.importedMediaPoster)
     },
     metrics: {
       replies: Number(state.replyCount) || 0,
@@ -912,7 +1010,6 @@ async function copySpec() {
       preset: state.preset,
       accent: state.accent,
       tint: state.tint,
-      textScale: state.textScale,
       cardRadius: state.cardRadius
     }
   };
