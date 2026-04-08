@@ -680,6 +680,7 @@ function createExportClone() {
 
   const clone = DOM.exportRoot.cloneNode(true);
   clone.id = "exportRootClone";
+  clone.classList.add("export-render");
   clone.style.transform = "none";
   clone.style.width = state.aspect === "story" ? "560px" : "860px";
   clone.style.maxWidth = "none";
