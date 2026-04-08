@@ -7,7 +7,11 @@ const PRESETS = {
   mint: { accent: "#21b18a", tint: "#ecfff8" },
   berry: { accent: "#d65ca7", tint: "#fff0fa" },
   sand: { accent: "#b48547", tint: "#f8f0df" },
-  signal: { accent: "#ff5f45", tint: "#fff4e8" }
+  signal: { accent: "#ff5f45", tint: "#fff4e8" },
+  aurora: { accent: "#6ce5b1", tint: "#eafff7" },
+  electric: { accent: "#7b7cff", tint: "#edf0ff" },
+  ember: { accent: "#ff8f3f", tint: "#fff1e4" },
+  orchid: { accent: "#b96cff", tint: "#f5ecff" }
 };
 
 const DEMO_DATA = {
@@ -15,7 +19,7 @@ const DEMO_DATA = {
   authorName: "Krunal Gediya",
   authorHandle: "@buildwithkrunal",
   avatarDataUrl: "",
-  headline: "From X post to polished frame",
+  headline: "Turn a post into something worth sharing",
   tweetText: "Tiny tools become products when the output feels good enough to post immediately. That last 10% of polish is usually the actual differentiator.",
   replyCount: 84,
   repostCount: 196,
@@ -23,7 +27,7 @@ const DEMO_DATA = {
   timestamp: "8:12 PM - Apr 8, 2026",
   sourceBadge: "x.com / design-build",
   aspect: "story",
-  layout: "stacked",
+  layout: "signature",
   preset: "solar",
   accent: PRESETS.solar.accent,
   tint: PRESETS.solar.tint,
@@ -73,6 +77,8 @@ const PERSISTED_KEYS = [
 const state = {
   ...DEMO_DATA
 };
+
+let fitFrame = 0;
 
 const DOM = {
   sourceUrl: document.getElementById("sourceUrl"),
@@ -323,6 +329,44 @@ function updateCssVariables() {
   if (tintRgb) document.documentElement.style.setProperty("--tint-rgb", tintRgb);
 }
 
+function cardIsOverflowing() {
+  return DOM.textCard.scrollHeight - DOM.textCard.clientHeight > 2 || DOM.textCard.scrollWidth - DOM.textCard.clientWidth > 2;
+}
+
+function fitTextCard() {
+  DOM.textCard.classList.remove("is-tight", "is-compact", "is-micro", "hide-decor");
+  DOM.textCard.style.removeProperty("--fit-scale");
+
+  const steps = ["is-tight", "is-compact", "is-micro"];
+  for (const step of steps) {
+    if (!cardIsOverflowing()) {
+      return;
+    }
+    DOM.textCard.classList.add(step);
+  }
+
+  if (!cardIsOverflowing()) {
+    return;
+  }
+
+  if (cardIsOverflowing()) {
+    DOM.textCard.classList.add("hide-decor");
+  }
+
+  let scale = 0.72;
+  while (cardIsOverflowing() && scale >= 0.56) {
+    DOM.textCard.style.setProperty("--fit-scale", scale.toFixed(2));
+    scale -= 0.04;
+  }
+}
+
+function queueFitTextCard() {
+  window.cancelAnimationFrame(fitFrame);
+  fitFrame = window.requestAnimationFrame(() => {
+    fitTextCard();
+  });
+}
+
 function renderPreview() {
   updateCssVariables();
   syncActiveButtons();
@@ -330,7 +374,7 @@ function renderPreview() {
   DOM.previewHeadline.textContent = state.headline || "Untitled post";
   DOM.previewAuthorName.textContent = state.authorName || "Unknown author";
   DOM.previewAuthorHandle.textContent = normalizeHandle(state.authorHandle) || "@unknown";
-  DOM.previewTweetText.textContent = state.tweetText || "Add tweet text to start designing your Instagram frame.";
+  DOM.previewTweetText.textContent = state.tweetText || "Add your post text here and shape it the way you like.";
   DOM.previewTimestamp.textContent = state.timestamp || "No timestamp";
   DOM.previewSourceBadge.textContent = state.sourceBadge || "x.com";
   DOM.previewReplies.textContent = formatCompactNumber(state.replyCount);
@@ -351,17 +395,17 @@ function renderPreview() {
   DOM.watermarkField.classList.toggle("hidden", !state.showWatermark);
   DOM.previewWatermark.classList.toggle("hidden", !state.showWatermark);
 
-  DOM.textCard.classList.remove("layout-editorial", "layout-spotlight", "layout-minimal", "layout-stacked");
+  DOM.textCard.classList.remove("layout-signature", "layout-editorial", "layout-spotlight", "layout-minimal", "layout-stacked", "layout-poster", "layout-cinema");
   DOM.textCard.classList.add(`layout-${state.layout}`);
   DOM.previewMetrics.classList.toggle("hidden", !state.showMetrics);
   DOM.previewSourceBadge.classList.toggle("hidden", !state.showSource);
   DOM.quoteMark.classList.toggle("hidden", !state.showQuoteMarks);
 
-  const resolutionLabel = `${state.darkTheme ? "dark" : "light"} � ${state.aspect === "story" ? "1080 x 1920 story" : "1080 x 1350 post"}`;
+  const resolutionLabel = `${state.darkTheme ? "dark" : "light"} / ${state.aspect === "story" ? "1080 x 1920 story" : "1080 x 1350 post"}`;
   DOM.modeLabel.textContent = resolutionLabel;
   DOM.footerNote.textContent = state.sourceUrl
-    ? `Crafted in XFrame from ${parseTweetUrl(state.sourceUrl).ok ? "a pasted X link" : "custom source text"}.`
-    : "Crafted in XFrame for shareable X-to-Instagram compositions.";
+    ? `Made in XFrame from ${parseTweetUrl(state.sourceUrl).ok ? "a post link" : "your own words"}.`
+    : "Made in XFrame to help you share a post beautifully.";
 
   if (state.uploadedImage && state.showCoverImage) {
     DOM.mediaShell.classList.add("has-image");
@@ -372,6 +416,8 @@ function renderPreview() {
     DOM.mediaShell.style.backgroundImage = "";
     DOM.mediaPlaceholder.classList.remove("hidden");
   }
+
+  queueFitTextCard();
 }
 
 function applyPreset(name) {
@@ -394,7 +440,7 @@ async function hydrateFromUrl() {
 
   const originalLabel = DOM.parseUrlBtn.textContent;
   DOM.parseUrlBtn.disabled = true;
-  DOM.parseUrlBtn.textContent = "Importing...";
+  DOM.parseUrlBtn.textContent = "Bringing it in...";
 
   state.sourceUrl = parsed.normalizedUrl;
   state.authorHandle = `@${parsed.username}`;
@@ -407,7 +453,7 @@ async function hydrateFromUrl() {
   persistState();
   syncInputsFromState();
   renderPreview();
-  setStatus(`Parsed @${parsed.username}. Trying Val Town import...`, "");
+  setStatus(`Found @${parsed.username}. Pulling in the post now...`, "");
 
   try {
     const data = await importFromValTown(parsed.normalizedUrl);
@@ -422,10 +468,10 @@ async function hydrateFromUrl() {
     persistState();
     syncInputsFromState();
     renderPreview();
-    setStatus(`Val Town import succeeded.${state.avatarDataUrl ? ' Avatar loaded too.' : ' Avatar was empty in the response.'}`, "success");
+    setStatus(state.avatarDataUrl ? "Your post is ready, including the profile image." : "Your post is in. You can add a profile image if you want.", "success");
   } catch (error) {
     console.error(error);
-    setStatus(`Val Town failed: ${error instanceof Error ? error.message : 'Unknown error'}. Falling back to public text import...`, "error");
+    setStatus("That post needs a lighter import path, so I'm trying a simpler read next.", "error");
 
     try {
       const fallback = await importViaOEmbed(parsed.normalizedUrl);
@@ -437,13 +483,13 @@ async function hydrateFromUrl() {
       persistState();
       syncInputsFromState();
       renderPreview();
-      setStatus("Text import succeeded via public oEmbed. Avatar still needs Val Town or manual upload.", "success");
+      setStatus("The words came through. If the profile image is missing, you can add one yourself.", "success");
     } catch (fallbackError) {
       console.error(fallbackError);
       persistState();
       syncInputsFromState();
       renderPreview();
-      setStatus("Both Val Town and public fallback failed. You can still edit manually and upload an avatar.", "error");
+      setStatus("That link didn't come through cleanly, but you can still paste the words in and keep going.", "error");
     }
   } finally {
     DOM.parseUrlBtn.disabled = false;
@@ -453,7 +499,7 @@ async function hydrateFromUrl() {
 
 function randomizeLook() {
   const presetNames = Object.keys(PRESETS);
-  const layouts = ["spotlight", "editorial", "minimal", "stacked"];
+  const layouts = ["signature", "spotlight", "editorial", "minimal", "stacked", "poster", "cinema"];
   const aspects = ["post", "story"];
   state.preset = presetNames[Math.floor(Math.random() * presetNames.length)];
   state.layout = layouts[Math.floor(Math.random() * layouts.length)];
@@ -468,7 +514,7 @@ function randomizeLook() {
   persistState();
   syncInputsFromState();
   renderPreview();
-  setStatus("Style randomized. Keep tweaking from here.", "success");
+  setStatus("Here's a fresh look to build from.", "success");
 }
 
 function readImageFile(file) {
@@ -490,9 +536,9 @@ async function handleMediaUpload(event) {
     persistState();
     syncInputsFromState();
     renderPreview();
-    setStatus(`Loaded "${file.name}" into the cover panel.`, "success");
+    setStatus(`Added "${file.name}" to the image area.`, "success");
   } catch {
-    setStatus("Could not read that image file.", "error");
+    setStatus("That image didn't load properly. Try another one.", "error");
   }
 }
 
@@ -506,9 +552,9 @@ async function handleAvatarUpload(event) {
     persistState();
     syncInputsFromState();
     renderPreview();
-    setStatus(`Loaded "${file.name}" as the avatar.`, "success");
+    setStatus(`Added "${file.name}" as the profile image.`, "success");
   } catch {
-    setStatus("Could not read that avatar file.", "error");
+    setStatus("That profile image didn't load properly. Try another one.", "error");
   }
 }
 
@@ -575,19 +621,19 @@ async function exportPng(openInNewTab = false) {
   const popup = openInNewTab ? window.open("", "_blank") : null;
 
   if (openInNewTab && !popup) {
-    setStatus("The preview popup was blocked by the browser. Allow popups and try again.", "error");
+    setStatus("Your browser blocked the preview window. Please allow pop-ups and try again.", "error");
     return;
   }
 
   if (popup) {
-    popup.document.write('<title>XFrame Export</title><p style="font-family:Arial,sans-serif;padding:24px;background:#111;color:#fff;">Rendering export preview...</p>');
+    popup.document.write('<title>XFrame Export</title><p style="font-family:Arial,sans-serif;padding:24px;background:#111;color:#fff;">Getting your image ready...</p>');
     popup.document.close();
   }
 
   try {
     DOM.downloadBtn.disabled = true;
     DOM.openImageBtn.disabled = true;
-    setStatus("Rendering export...", "");
+    setStatus("Getting your image ready...", "");
 
     if (typeof html2canvas !== "function") {
       throw new Error("html2canvas is not available");
@@ -617,7 +663,7 @@ async function exportPng(openInNewTab = false) {
 
     if (popup) {
       popup.location.href = objectUrl;
-      setStatus("Opened export preview.", "success");
+      setStatus("Your image preview is open.", "success");
       return;
     }
 
@@ -628,13 +674,13 @@ async function exportPng(openInNewTab = false) {
     link.click();
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
-    setStatus("PNG downloaded successfully.", "success");
+    setStatus("Your image is saved.", "success");
   } catch (error) {
     console.error(error);
     if (popup && !popup.closed) {
       popup.close();
     }
-    setStatus("Export failed. Refresh once and try again. If it still fails, disable browser extensions on this page.", "error");
+    setStatus("Saving didn't work this time. Refresh once and try again.", "error");
   } finally {
     DOM.downloadBtn.disabled = false;
     DOM.openImageBtn.disabled = false;
@@ -676,9 +722,9 @@ async function copySpec() {
 
   try {
     await navigator.clipboard.writeText(JSON.stringify(spec, null, 2));
-    setStatus("Current composition spec copied to clipboard.", "success");
+    setStatus("Your current setup is copied.", "success");
   } catch {
-    setStatus("Clipboard copy failed in this browser.", "error");
+    setStatus("Copying didn't work in this browser.", "error");
   }
 }
 
@@ -687,7 +733,7 @@ function loadDemo() {
   persistState();
   syncInputsFromState();
   renderPreview();
-  setStatus("Sample composition loaded.", "success");
+  setStatus("Demo look loaded.", "success");
 }
 
 function attachModeButtons() {
@@ -730,9 +776,10 @@ function init() {
   DOM.openImageBtn.addEventListener("click", () => exportPng(true));
   DOM.mediaUpload.addEventListener("change", handleMediaUpload);
   DOM.avatarUpload.addEventListener("change", handleAvatarUpload);
+  window.addEventListener("resize", queueFitTextCard);
 
   renderPreview();
-  setStatus("XFrame is ready. Your latest setup will persist on refresh.", "success");
+  setStatus("XFrame is ready. Your latest look will stay here when you come back.", "success");
 }
 
 init();
