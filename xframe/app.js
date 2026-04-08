@@ -113,6 +113,8 @@ const DOM = {
   copySpecBtn: document.getElementById("copySpecBtn"),
   downloadBtn: document.getElementById("downloadBtn"),
   openImageBtn: document.getElementById("openImageBtn"),
+  previewStage: document.getElementById("previewStage"),
+  previewViewport: document.getElementById("previewViewport"),
   exportRoot: document.getElementById("exportRoot"),
   canvasGrid: document.getElementById("canvasGrid"),
   textCard: document.getElementById("textCard"),
@@ -367,6 +369,16 @@ function queueFitTextCard() {
   });
 }
 
+function updatePreviewScale() {
+  const logicalWidth = state.aspect === "story" ? 560 : 860;
+  const stageWidth = DOM.previewStage ? DOM.previewStage.clientWidth - 32 : logicalWidth;
+  const scale = Math.min(1, Math.max(0.34, stageWidth / logicalWidth));
+
+  DOM.previewViewport.classList.toggle("aspect-story", state.aspect === "story");
+  DOM.previewViewport.classList.toggle("aspect-post", state.aspect === "post");
+  DOM.previewViewport.style.setProperty("--preview-scale", scale.toFixed(4));
+}
+
 function renderPreview() {
   updateCssVariables();
   syncActiveButtons();
@@ -389,6 +401,8 @@ function renderPreview() {
   DOM.avatarImage.alt = `${state.authorName || "Author"} avatar`;
   DOM.exportRoot.classList.toggle("aspect-post", state.aspect === "post");
   DOM.exportRoot.classList.toggle("aspect-story", state.aspect === "story");
+  DOM.previewViewport.classList.toggle("aspect-post", state.aspect === "post");
+  DOM.previewViewport.classList.toggle("aspect-story", state.aspect === "story");
   DOM.canvasGrid.classList.toggle("no-cover", !state.showCoverImage);
   DOM.canvasGrid.classList.toggle("has-cover", state.showCoverImage);
   DOM.mediaCard.classList.toggle("hidden", !state.showCoverImage);
@@ -417,6 +431,7 @@ function renderPreview() {
     DOM.mediaPlaceholder.classList.remove("hidden");
   }
 
+  updatePreviewScale();
   queueFitTextCard();
 }
 

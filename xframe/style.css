@@ -307,12 +307,35 @@ input[type="file"]::file-selector-button {
   padding: 16px;
   min-height: calc(100vh - 132px);
   display: grid;
-  place-items: center;
+  justify-items: center;
+  align-items: start;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.preview-viewport {
+  --preview-scale: 1;
+  position: relative;
+  width: calc(var(--canvas-width) * var(--preview-scale));
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+  overflow: hidden;
+}
+
+.preview-viewport.aspect-story {
+  height: calc(995.556px * var(--preview-scale));
+}
+
+.preview-viewport.aspect-post {
+  height: calc(1075px * var(--preview-scale));
 }
 
 .preview-frame {
-  position: relative;
-  width: min(100%, 860px);
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--canvas-width, 860px);
   overflow: hidden;
   border-radius: 42px;
   background:
@@ -330,8 +353,13 @@ input[type="file"]::file-selector-button {
     linear-gradient(155deg, #0c1018 0%, rgba(var(--accent-rgb), 0.16) 54%, #171c29 100%);
 }
 
-.aspect-post { aspect-ratio: 4 / 5; }
-.aspect-story { aspect-ratio: 9 / 16; width: min(100%, 560px); }
+.aspect-post { --canvas-width: 860px; aspect-ratio: 4 / 5; }
+.aspect-story { --canvas-width: 560px; aspect-ratio: 9 / 16; }
+
+.preview-viewport .preview-frame {
+  transform: translateX(-50%) scale(var(--preview-scale));
+  transform-origin: top center;
+}
 
 .ambient { position: absolute; border-radius: 999px; filter: blur(8px); opacity: 0.82; }
 .ambient-a { width: 300px; height: 300px; background: rgba(255, 152, 114, 0.72); top: -88px; right: -70px; }
@@ -867,17 +895,9 @@ input[type="file"]::file-selector-button {
     min-height: auto;
     padding: 14px;
     max-height: none;
-    overflow: visible;
+    overflow: auto;
     display: grid;
     place-items: center;
-  }
-  .preview-frame.aspect-story {
-    width: min(100%, 560px);
-    zoom: 1;
-  }
-  .preview-frame.aspect-post {
-    width: min(100%, 640px);
-    zoom: 1;
   }
 }
 
@@ -929,16 +949,10 @@ input[type="file"]::file-selector-button {
     max-height: none;
     display: grid;
     place-items: center;
+    overflow: auto;
   }
   .preview-frame {
-    width: 100%;
-    max-width: 100%;
     border-radius: 26px;
-  }
-  .preview-frame.aspect-story,
-  .preview-frame.aspect-post {
-    width: min(100%, 520px);
-    zoom: 1;
   }
   .canvas-grid,
   .canvas-grid.no-cover { grid-template-columns: 1fr; padding: 14px; }
