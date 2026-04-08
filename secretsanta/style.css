@@ -1,0 +1,218 @@
+:root {
+    --bg-top: #09163f;
+    --bg-mid: #10295f;
+    --bg-bottom: #050c21;
+    --card-surface: rgba(7, 16, 44, 0.64);
+    --card-border: rgba(255, 255, 255, 0.14);
+    --text-main: #f8f5ef;
+    --text-muted: rgba(244, 242, 235, 0.74);
+    --accent-red: #ff5a67;
+    --accent-gold: #ffcf70;
+    --status-loading: rgba(213, 232, 255, 0.9);
+    --status-ready: rgba(222, 255, 234, 0.92);
+    --status-error: rgba(255, 216, 220, 0.94);
+    --shadow-strong: 0 28px 80px rgba(0, 0, 0, 0.42);
+    --shadow-soft: 0 14px 40px rgba(4, 10, 26, 0.28);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    overflow: hidden;
+    font-family: "Manrope", "Segoe UI", sans-serif;
+    color: var(--text-main);
+    background: linear-gradient(180deg, var(--bg-mid), var(--bg-top) 36%, var(--bg-bottom));
+}
+
+.app-shell {
+    position: relative;
+    min-height: 100vh;
+    isolation: isolate;
+}
+
+.background-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(4, 8, 26, 0.52), rgba(5, 9, 24, 0.72)),
+        url("./Background_Scene.jpg") center center / cover no-repeat;
+    transform: scale(1.02);
+}
+
+.background-layer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(255, 205, 108, 0.08), rgba(255, 205, 108, 0) 30%),
+        linear-gradient(180deg, rgba(3, 7, 20, 0.46), rgba(3, 7, 20, 0.24) 28%, rgba(3, 7, 20, 0.62));
+}
+
+.scene-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: transparent;
+}
+
+.scene-layer canvas {
+    display: block;
+}
+
+.scene-aura {
+    position: fixed;
+    z-index: 0;
+    pointer-events: none;
+    width: 32vw;
+    height: 32vw;
+    border-radius: 50%;
+    filter: blur(42px);
+    opacity: 0.32;
+}
+
+.scene-aura-left {
+    top: 6vh;
+    left: -10vw;
+    background: radial-gradient(circle, rgba(255, 87, 104, 0.45), rgba(255, 87, 104, 0));
+}
+
+.scene-aura-right {
+    right: -8vw;
+    bottom: 18vh;
+    background: radial-gradient(circle, rgba(255, 203, 110, 0.34), rgba(255, 203, 110, 0));
+}
+
+.ui-layer {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px clamp(18px, 3vw, 40px) 34px;
+    pointer-events: none;
+}
+
+.portal-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: clamp(8px, 3vh, 24px);
+    width: min(100%, 520px);
+    text-align: center;
+}
+
+.logo-image {
+    width: min(390px, 82vw);
+    filter: drop-shadow(0 20px 44px rgba(0, 0, 0, 0.42));
+    pointer-events: auto;
+}
+
+.greeting-text {
+    margin: 16px 0 0;
+    max-width: 28rem;
+    font-family: "Mountains of Christmas", "Fraunces", Georgia, serif;
+    font-size: clamp(2.15rem, 4.4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+    color: #fff6ea;
+    text-shadow:
+        0 3px 0 rgba(153, 33, 45, 0.96),
+        0 8px 22px rgba(0, 0, 0, 0.34),
+        0 0 24px rgba(255, 210, 119, 0.18);
+}
+
+.status-text {
+    margin: 14px 0 0;
+    max-width: min(90vw, 480px);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.35;
+    color: #07253b;
+    background: var(--status-loading);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(16px);
+}
+
+.status-text[data-state="ready"] {
+    background: var(--status-ready);
+}
+
+.status-text[data-state="error"] {
+    background: var(--status-error);
+}
+
+.reveal-button {
+    margin-top: auto;
+    margin-bottom: max(12px, 4vh);
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 180ms ease, opacity 180ms ease, filter 180ms ease;
+    filter: drop-shadow(0 24px 32px rgba(0, 0, 0, 0.38));
+    pointer-events: auto;
+}
+
+.reveal-button img {
+    display: block;
+    width: min(360px, 78vw);
+    height: auto;
+}
+
+.reveal-button:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+}
+
+.reveal-button:active:not(:disabled) {
+    transform: translateY(0) scale(0.985);
+}
+
+.reveal-button:disabled {
+    opacity: 0.58;
+    cursor: progress;
+    filter: grayscale(0.12) drop-shadow(0 20px 28px rgba(0, 0, 0, 0.32));
+}
+
+.reveal-button.is-hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.no-script {
+    position: fixed;
+    inset: auto 12px 12px;
+    z-index: 4;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+}
+
+@media (max-width: 720px) {
+    .ui-layer {
+        justify-content: space-between;
+        padding-bottom: 22px;
+    }
+
+    .greeting-text {
+        font-size: clamp(1.95rem, 9vw, 2.7rem);
+    }
+}

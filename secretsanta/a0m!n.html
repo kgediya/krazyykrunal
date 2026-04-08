@@ -1,224 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secret Santa | Admin</title>
-    <style>
-        @font-face {
-            font-family: 'PF Tempesta Five';
-            font-style: normal;
-            font-weight: 400;
-            src: local('PF Tempesta Five'), url('../assets/pf_tempesta_five.woff') format('woff');
-        }
-    
-        body {
-            font-family: 'PF Tempesta Five', sans-serif;
-            font-size: small;
-            background-color: #f1f8f6; /* Light wintery background */
-            color: #2e4c46; /* Festive green for text */
-            background-image: url('background.png'); /* Optional: Add a snowflake pattern */
-            background-repeat: no-repeat;
-            background-size: cover;
-            padding: 20px;
-        }
-    
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border: 1px solid #c0392b; /* Christmas red border */
-        }
-    
-        table, th, td {
-            border: 1px solid #c0392b; /* Christmas red border */
-        }
-    
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
-    
-        th {
-            background-color: #e74c3c; /* Christmas red */
-            color: white;
-        }
-    
-        td {
-            background-color: #ecf0f1; /* Light snow-like background for cells */
-        }
-    
-        tr:nth-child(even) {
-            background-color: #bdc3c7; /* Alternating row colors for better readability */
-        }
-    
-        tr:hover {
-            background-color: #f39c12; /* Hover effect in golden color for festive touch */
-        }
-    
-        .christmas-header {
-            font-size: 2rem;
-            color: #d35400; /* Bright orange for a festive title */
-            text-align: center;
-            margin-bottom: 30px;
-        }
-    
-        .christmas-footer {
-            text-align: center;
-            color: #8e44ad; /* Festive purple for footer */
-            font-size: 1.2rem;
-            margin-top: 20px;
-        }
-    
-        button {
-            font-family: 'PF Tempesta Five', sans-serif;
-            background-color: #e74c3c; /* Christmas red background */
-            color: white; /* White text */
-            padding: 10px 20px; /* Button padding */
-            border: 2px solid rgb(255, 255, 255); /* Remove default border */
-            border-radius: 25px; /* Rounded corners */
-            cursor: pointer; /* Pointer cursor on hover */
-          
-            transition: background-color 0.3s ease; /* Smooth color transition on hover */
-        }
-    
-        button:hover {
-            background-color: #c0392b; /* Darker red on hover */
-        }
-    
-        input, select {
-            font-family: 'PF Tempesta Five', sans-serif;
-            padding: 10px;
-            border-radius: 8px; /* Rounded corners for inputs and selects */
-            border: 1px solid #c0392b; /* Christmas red border */
-            margin: 5px 0;
-        }
-    </style>
-    
-    
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./admin.css">
+    <script type="module" src="./admin.js"></script>
 </head>
-
 <body>
-    <h2>Secret Santa Admin Console 🎅</h2>
-    <h4>Add Participant</h4>
-    <input  type="text" style="font-family: 'PF Tempesta Five'; width: 50vw;" id="name_id" placeholder="Participant's Name">
-    <button style="font-family: 'PF Tempesta Five';" id="submit-new">Submit</button>
-    <br>
-    <h4>Remove Participant</h4>
-    <select name="attendees_name" style="font-family: 'PF Tempesta Five';" id="attendees"></select>
-    <button style="font-family: 'PF Tempesta Five';" id="submit-remove">Submit</button>
+    <main class="admin-shell">
+        <section class="hero">
+            <div class="hero-copy-block">
+                <p class="eyebrow">Secret Santa Control Room</p>
+                <h1>Manage the whole holiday portal from one polished dashboard.</h1>
+                <p class="hero-copy">
+                    Add people, retire old invites, validate reveal mappings, and keep your participant list neat without jumping between scattered controls.
+                </p>
+            </div>
 
-    <br>
-    <h4>Select Your Name To Know Who's Your Giftee </h4>
-    <select name="attendees_name" style="font-family: 'PF Tempesta Five';" id="secret-santa"></select>
-    <button style="font-family: 'PF Tempesta Five';" id="submit-santa">Reveal</button>
+            <div class="hero-metrics">
+                <article class="metric-card">
+                    <p class="metric-label">Participants</p>
+                    <p class="metric-value" id="participant_total">0</p>
+                    <p class="metric-meta">Live roster count</p>
+                </article>
+                <article class="metric-card">
+                    <p class="metric-label">Portal Status</p>
+                    <p class="metric-value metric-value-small" id="portal_state">Syncing</p>
+                    <p class="metric-meta">Backend connection health</p>
+                </article>
+            </div>
+        </section>
 
-    <h4>Participants List</h4>
-    <table id="participants-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Target</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Participant rows will be populated here -->
-        </tbody>
-    </table>
+        <section class="status-banner" id="status_banner" data-state="loading">
+            Loading participants...
+        </section>
 
-    <script type="module">
-        const selectElement = document.getElementById('attendees')
-        const lambdaURL = "https://klowln2vbpv2qlzkyirioteeeu0fucxh.lambda-url.us-east-1.on.aws/"
+        <section class="command-grid">
+            <article class="panel panel-emphasis">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker">Roster</p>
+                        <h2>Add Participant</h2>
+                    </div>
+                    <span class="panel-badge">Fast add</span>
+                </div>
+                <p class="panel-description">Drop a new name into the pool and immediately refresh the reveal roster.</p>
+                <div class="row">
+                    <input type="text" id="name_id" placeholder="Participant name" autocomplete="off">
+                    <button id="submit-new" type="button">Add</button>
+                </div>
+            </article>
 
-        var submit_new_btn = document.getElementById('submit-new')
-        submit_new_btn.onclick = function () {
-            callAwsLambdaFunction({ 'operation': 'add_attendee', 'name': document.getElementById('name_id').value }, () => {
-                updateSelectData(selectElement)
-                updateSelectData(document.getElementById('secret-santa'))
-                updateParticipantsTable()  // Update the table with the new participant
-                document.getElementById('name_id').value = ''
-                alert('Attendee Added')
-            })
-        }
+            <article class="panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker">Cleanup</p>
+                        <h2>Remove Participant</h2>
+                    </div>
+                </div>
+                <p class="panel-description">Retire a participant and keep the list current before the reveal links go out.</p>
+                <div class="row">
+                    <select id="attendees"></select>
+                    <button id="submit-remove" type="button">Remove</button>
+                </div>
+            </article>
 
-        var submit_remove_btn = document.getElementById('submit-remove')
-        submit_remove_btn.onclick = function () {
-            console.log(document.getElementById('attendees').value)
-            callAwsLambdaFunction({ 'operation': 'remove_attendee', 'name': document.getElementById('attendees').value }, () => {
-                updateSelectData(selectElement)
-                updateSelectData(document.getElementById('secret-santa'))
-                updateParticipantsTable()  // Update the table after removal
-                alert('Attendee Removed')
-            })
-        }
+            <article class="panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="panel-kicker">Validation</p>
+                        <h2>Quick Reveal Check</h2>
+                    </div>
+                    <span class="panel-badge panel-badge-soft">Preview</span>
+                </div>
+                <p class="panel-description">Peek at the assigned giftee for any participant before sharing their reveal link.</p>
+                <div class="row">
+                    <select id="secret-santa"></select>
+                    <button id="submit-santa" type="button">Reveal</button>
+                </div>
+                <p class="panel-note" id="reveal_result">Select a participant to preview their giftee.</p>
+            </article>
+        </section>
 
-        updateSelectData(selectElement)
-        updateSelectData(document.getElementById('secret-santa'))
-        updateParticipantsTable()  // Initial load of the participants table
-
-        var submit_santa_btn = document.getElementById('submit-santa')
-        submit_santa_btn.onclick = function () {
-            alert('No CHEATING MAN')
-            callAwsLambdaFunction({ 'operation': 'map_giftee','name':document.getElementById('secret-santa').value},function(response){
-               console.log(response)
-               response = JSON.parse(response)
-               alert('Your Giftee Name Is '+response.name)
-            })
-        }
-
-        function updateSelectData(parent) {
-            callAwsLambdaFunction({ 'operation': 'get_attendees' }, function (response) {
-                parent.innerHTML = ''
-                JSON.parse(response).Items.forEach(element => {
-                    var option = document.createElement('option')
-                    option.style = "font-family: 'PF Tempesta Five';"
-                    option.innerText = element.name
-                    option.name = element.name
-                    parent.appendChild(option)
-                });
-            })
-        }
-
-        function updateParticipantsTable() {
-            callAwsLambdaFunction({ 'operation': 'get_attendees' }, function (response) {
-                const tableBody = document.getElementById('participants-table').getElementsByTagName('tbody')[0];
-                tableBody.innerHTML = '';  // Clear the current table data
-
-                const attendees = JSON.parse(response).Items;
-                attendees.forEach(element => {
-                    const row = document.createElement('tr');
-                    const nameCell = document.createElement('td');
-                    nameCell.textContent = element.name;
-                    const uuidCell = document.createElement('td');
-                    const uuidLink = document.createElement('a');
-                    uuidLink.href = "https://krazyykrunal.com/secretsanta/?id=" + element.uuid;  // Generate the URL with UUID
-                    uuidLink.textContent = "LINK";
-                    uuidLink.target = "_blank";  // Open the link in a new tab
-                    uuidCell.appendChild(uuidLink);
-
-                    row.appendChild(nameCell);
-                    row.appendChild(uuidCell);
-                    tableBody.appendChild(row);
-                });
-            })
-        }
-
-        function callAwsLambdaFunction(data, callback) {
-            var xhttp = new XMLHttpRequest();
-
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    callback(this.responseText);
-                }
-            };
-            xhttp.open("POST", lambdaURL, true);
-            xhttp.setRequestHeader('Content-type', 'application/json');
-            xhttp.send(JSON.stringify(data));
-        }
-    </script>
+        <section class="panel table-panel">
+            <div class="table-header">
+                <div>
+                    <p class="panel-kicker">Directory</p>
+                    <h2>Invite Links</h2>
+                </div>
+                <button id="refresh-data" type="button" class="ghost-button">Refresh data</button>
+            </div>
+            <div class="table-wrap">
+                <table id="participants-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Invite Link</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </body>
-
 </html>
