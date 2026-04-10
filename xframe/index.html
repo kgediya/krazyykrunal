@@ -15,6 +15,7 @@
       <section class="panel-section panel-section-intro compact-hidden">
         <div class="section-head">
           <h2>Quick Start</h2>
+          <button class="ghost-btn" id="demoFillBtn" type="button">Load demo</button>
         </div>
         <p class="helper-text">Use the bar above to paste a post, pull it in, or jump into a demo.</p>
       </section>
@@ -116,6 +117,25 @@
           <span>Add an image</span>
           <input id="mediaUpload" type="file" accept="image/png, image/jpeg, image/webp">
         </label>
+        <label class="field">
+          <span>Background graphic</span>
+          <input id="backgroundUpload" type="file" accept="image/png, image/jpeg, image/webp">
+        </label>
+        <div class="option-group-label">Background Pattern</div>
+        <div class="option-grid two graphic-options">
+          <button class="chip is-active" data-graphic="orbs" type="button">Orbs</button>
+          <button class="chip" data-graphic="grid" type="button">Grid</button>
+          <button class="chip" data-graphic="waves" type="button">Waves</button>
+          <button class="chip" data-graphic="dots" type="button">Dots</button>
+          <button class="chip" data-graphic="gradient" type="button">Gradient</button>
+          <button class="chip" data-graphic="stripes" type="button">Stripes</button>
+          <button class="chip" data-graphic="blur-mesh" type="button">Blur Mesh</button>
+          <button class="chip" data-graphic="custom" type="button">Custom</button>
+        </div>
+        <label class="range-field">
+          <span>Card opacity</span>
+          <input id="cardOpacity" type="range" min="55" max="100" value="86">
+        </label>
         <div class="toggle-list">
           <label class="toggle">
             <input id="darkTheme" type="checkbox">
@@ -185,6 +205,7 @@
           <div class="ambient ambient-a"></div>
           <div class="ambient ambient-b"></div>
           <div class="ambient ambient-c"></div>
+          <div class="graphic-layer" id="graphicLayer"></div>
 
           <div class="canvas-grid no-cover" id="canvasGrid">
             <section class="text-card layout-signature" id="textCard">

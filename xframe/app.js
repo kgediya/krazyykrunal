@@ -38,6 +38,9 @@ const DEMO_DATA = {
   showQuoteMarks: true,
   showAvatar: true,
   cardRadius: 30,
+  cardOpacity: 86,
+  backgroundGraphic: "orbs",
+  backgroundGraphicUpload: "",
   uploadedImage: "",
   importedMediaUrl: "",
   importedMediaType: "",
@@ -68,6 +71,9 @@ const PERSISTED_KEYS = [
   "showQuoteMarks",
   "showAvatar",
   "cardRadius",
+  "cardOpacity",
+  "backgroundGraphic",
+  "backgroundGraphicUpload",
   "uploadedImage",
   "importedMediaUrl",
   "importedMediaType",
@@ -96,7 +102,9 @@ const DOM = {
   sourceBadge: document.getElementById("sourceBadge"),
   accentColor: document.getElementById("accentColor"),
   canvasTint: document.getElementById("canvasTint"),
+  cardOpacity: document.getElementById("cardOpacity"),
   mediaUpload: document.getElementById("mediaUpload"),
+  backgroundUpload: document.getElementById("backgroundUpload"),
   avatarUpload: document.getElementById("avatarUpload"),
   darkTheme: document.getElementById("darkTheme"),
   showCoverImage: document.getElementById("showCoverImage"),
@@ -116,6 +124,7 @@ const DOM = {
   previewViewport: document.getElementById("previewViewport"),
   previewScaleShell: document.getElementById("previewScaleShell"),
   exportRoot: document.getElementById("exportRoot"),
+  graphicLayer: document.getElementById("graphicLayer"),
   canvasGrid: document.getElementById("canvasGrid"),
   textCard: document.getElementById("textCard"),
   mediaCard: document.getElementById("mediaCard"),
@@ -140,7 +149,8 @@ const DOM = {
   modeLabel: document.getElementById("modeLabel"),
   aspectButtons: Array.from(document.querySelectorAll("[data-aspect]")),
   layoutButtons: Array.from(document.querySelectorAll("[data-layout]")),
-  presetButtons: Array.from(document.querySelectorAll("[data-preset]"))
+  presetButtons: Array.from(document.querySelectorAll("[data-preset]")),
+  graphicButtons: Array.from(document.querySelectorAll("[data-graphic]"))
 };
 
 function setStatus(message, tone = "") {
@@ -198,8 +208,16 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+function stripRenderedAttachmentLinks(text) {
+  return String(text || "")
+    .replace(/(^|\s)(?:https?:\/\/)?pic\.twitter\.com\/\S+/gim, "$1")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function renderTweetMarkup(text) {
-  const source = String(text || "").replace(/\r\n/g, "\n");
+  const source = stripRenderedAttachmentLinks(String(text || "").replace(/\r\n/g, "\n"));
   if (!source.trim()) {
     return escapeHtml("Add your post text here and shape it the way you like.");
   }
@@ -385,6 +403,7 @@ function syncInputsFromState() {
   DOM.sourceBadge.value = state.sourceBadge;
   DOM.accentColor.value = state.accent;
   DOM.canvasTint.value = state.tint;
+  DOM.cardOpacity.value = state.cardOpacity;
   DOM.darkTheme.checked = state.darkTheme;
   DOM.showCoverImage.checked = state.showCoverImage;
   DOM.showMetrics.checked = state.showMetrics;
@@ -403,6 +422,9 @@ function syncActiveButtons() {
   });
   DOM.presetButtons.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.preset === state.preset);
+  });
+  DOM.graphicButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.graphic === state.backgroundGraphic);
   });
 }
 
@@ -464,11 +486,65 @@ function updateCssVariables() {
   document.documentElement.style.setProperty("--canvas-tint", state.tint);
   document.documentElement.style.setProperty("--text-scale", "1");
   document.documentElement.style.setProperty("--card-radius", `${state.cardRadius}px`);
+  document.documentElement.style.setProperty("--card-overlay-alpha", (Math.max(0.55, Math.min(1, Number(state.cardOpacity || 86) / 100))).toFixed(2));
+  document.documentElement.style.setProperty("--export-card-safe-opacity", (0.72 + (Math.max(55, Math.min(100, Number(state.cardOpacity || 86))) - 55) / 45 * 0.27).toFixed(3));
 
   const accentRgb = hexToRgbTriplet(state.accent);
   const tintRgb = hexToRgbTriplet(state.tint);
   if (accentRgb) document.documentElement.style.setProperty("--accent-rgb", accentRgb);
   if (tintRgb) document.documentElement.style.setProperty("--tint-rgb", tintRgb);
+}
+
+function renderBackgroundGraphics() {
+  if (!DOM.graphicLayer) return;
+  
+  DOM.graphicLayer.innerHTML = "";
+  DOM.graphicLayer.style.backgroundImage = "";
+  DOM.graphicLayer.style.backgroundColor = "transparent";
+  DOM.graphicLayer.style.filter = "none";
+  DOM.graphicLayer.classList.remove("graphic-orbs", "graphic-grid", "graphic-waves", "graphic-custom", "graphic-dots", "graphic-gradient", "graphic-stripes", "graphic-blur-mesh");
+  
+  // Hide ambient elements unless using orbs
+  const ambients = DOM.exportRoot.querySelectorAll(".ambient");
+  ambients.forEach(el => el.style.display = "none");
+
+  const accentRgb = hexToRgbTriplet(state.accent);
+  const tintRgb = hexToRgbTriplet(state.tint);
+
+  if (state.backgroundGraphic === "custom" && state.backgroundGraphicUpload) {
+    DOM.graphicLayer.style.backgroundImage = `url(${state.backgroundGraphicUpload})`;
+    DOM.graphicLayer.style.backgroundSize = "cover";
+    DOM.graphicLayer.style.backgroundPosition = "center";
+    DOM.graphicLayer.classList.add("graphic-custom");
+  } else if (state.backgroundGraphic === "grid") {
+    DOM.graphicLayer.classList.add("graphic-grid");
+    DOM.graphicLayer.style.backgroundImage = `linear-gradient(0deg, transparent 24%, rgba(${accentRgb}, 0.08) 25%, rgba(${accentRgb}, 0.08) 26%, transparent 27%, transparent 74%, rgba(${accentRgb}, 0.08) 75%, rgba(${accentRgb}, 0.08) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(${accentRgb}, 0.08) 25%, rgba(${accentRgb}, 0.08) 26%, transparent 27%, transparent 74%, rgba(${accentRgb}, 0.08) 75%, rgba(${accentRgb}, 0.08) 76%, transparent 77%, transparent)`;
+    DOM.graphicLayer.style.backgroundSize = "50px 50px";
+  } else if (state.backgroundGraphic === "waves") {
+    DOM.graphicLayer.classList.add("graphic-waves");
+    DOM.graphicLayer.style.backgroundImage = `linear-gradient(90deg, transparent 48%, rgba(${accentRgb}, 0.12) 49%, rgba(${accentRgb}, 0.12) 51%, transparent 52%), linear-gradient(0deg, transparent 48%, rgba(${accentRgb}, 0.08) 49%, rgba(${accentRgb}, 0.08) 51%, transparent 52%), linear-gradient(45deg, transparent 44%, rgba(${accentRgb}, 0.06) 45%, rgba(${accentRgb}, 0.06) 55%, transparent 56%), linear-gradient(-45deg, transparent 44%, rgba(${accentRgb}, 0.06) 45%, rgba(${accentRgb}, 0.06) 55%, transparent 56%)`;
+    DOM.graphicLayer.style.backgroundSize = "60px 60px, 60px 60px, 84.84px 84.84px, 84.84px 84.84px";
+    DOM.graphicLayer.style.backgroundPosition = "0 0";
+  } else if (state.backgroundGraphic === "dots") {
+    DOM.graphicLayer.classList.add("graphic-dots");
+    DOM.graphicLayer.style.backgroundImage = `radial-gradient(circle, rgba(${accentRgb}, 0.15) 2px, transparent 2px)`;
+    DOM.graphicLayer.style.backgroundSize = "40px 40px";
+  } else if (state.backgroundGraphic === "gradient") {
+    DOM.graphicLayer.classList.add("graphic-gradient");
+    DOM.graphicLayer.style.background = `linear-gradient(135deg, rgba(${accentRgb}, 0.08) 0%, rgba(${tintRgb}, 0.04) 50%, rgba(${accentRgb}, 0.06) 100%)`;
+  } else if (state.backgroundGraphic === "stripes") {
+    DOM.graphicLayer.classList.add("graphic-stripes");
+    DOM.graphicLayer.style.backgroundImage = `linear-gradient(45deg, transparent 48%, rgba(${accentRgb}, 0.1) 49%, rgba(${accentRgb}, 0.1) 51%, transparent 52%)`;
+    DOM.graphicLayer.style.backgroundSize = "30px 30px";
+  } else if (state.backgroundGraphic === "blur-mesh") {
+    DOM.graphicLayer.classList.add("graphic-blur-mesh");
+    DOM.graphicLayer.style.background = `radial-gradient(at 20% 30%, rgba(${accentRgb}, 0.15) 0px, transparent 50%), radial-gradient(at 80% 70%, rgba(${tintRgb}, 0.12) 0px, transparent 50%), radial-gradient(at 40% 80%, rgba(${accentRgb}, 0.1) 0px, transparent 50%)`;
+    DOM.graphicLayer.style.filter = "blur(40px)";
+  } else {
+    // orbs (default) - show ambient elements
+    DOM.graphicLayer.classList.add("graphic-orbs");
+    ambients.forEach(el => el.style.display = "block");
+  }
 }
 
 function cardIsOverflowing() {
@@ -485,10 +561,70 @@ function fitTextCard() {
 
   DOM.textCard.classList.remove("is-short", "is-medium", "is-tight", "is-compact", "is-micro", "hide-decor", "is-longform");
   DOM.textCard.style.removeProperty("--fit-scale");
+  DOM.textCard.style.removeProperty("--post-quote-gap");
+  DOM.textCard.style.removeProperty("--story-quote-gap-top");
+  DOM.textCard.style.removeProperty("--story-quote-gap-bottom");
+  DOM.textCard.style.removeProperty("--story-line-height");
+  DOM.textCard.style.removeProperty("--story-copy-scale");
+  DOM.textCard.style.removeProperty("--story-top-gap");
+  DOM.textCard.style.removeProperty("--story-meta-pad-top");
 
   if (isShort) DOM.textCard.classList.add("is-short");
   if (isMedium) DOM.textCard.classList.add("is-medium");
   if (isLongform) DOM.textCard.classList.add("is-longform");
+
+  const isPost = state.aspect === "post";
+  const isStory = state.aspect === "story";
+
+  // For post mode, dynamically boost vertical spacing when content is short
+  if (isPost && !cardIsOverflowing()) {
+    const spare = DOM.textCard.clientHeight - DOM.textCard.scrollHeight;
+    if (spare > 160 && isShort) {
+      DOM.textCard.style.setProperty("--post-quote-gap", "68px");
+    } else if (spare > 120) {
+      DOM.textCard.style.setProperty("--post-quote-gap", "56px");
+    } else if (spare > 80) {
+      DOM.textCard.style.setProperty("--post-quote-gap", "48px");
+    } else if (spare > 40) {
+      DOM.textCard.style.setProperty("--post-quote-gap", "40px");
+    }
+  }
+
+  // Story mode: measure actual visual gap between header and footer using getBoundingClientRect().
+  // scrollHeight - clientHeight is always ~0 with justify-content:space-between, so we can't use it.
+  // Only expand here — the is-tight/is-compact/is-micro + fit-scale chain handles overflow.
+  if (isStory) {
+    const quoteEl = DOM.textCard.querySelector('.quote-wrap');
+    const topEl   = DOM.textCard.querySelector('.text-card-top');
+    const metaEl  = DOM.textCard.querySelector('.meta-row') || DOM.textCard.querySelector('.text-card-bottom');
+    if (quoteEl && topEl && metaEl) {
+      const qR = quoteEl.getBoundingClientRect();
+      const tR = topEl.getBoundingClientRect();
+      const mR = metaEl.getBoundingClientRect();
+      // bandH = visual space between bottom of author block and top of footer row
+      const bandH  = mR.top - tR.bottom;
+      const quoteH = qR.height;
+      if (bandH > 20 && quoteH > 10) {
+        const fillRatio = quoteH / bandH;
+        const TARGET    = 0.80; // text block should fill ~80% of the band
+        if (fillRatio < TARGET - 0.04) {
+          // Scale font up proportionally. ch units are font-relative, so wrapping stays intact
+          // and height scales approximately linearly with font size.
+          const scale = Math.min((bandH * TARGET) / quoteH, 2.8);
+          DOM.textCard.style.setProperty("--story-copy-scale", scale.toFixed(3));
+          // Gently increase line-height at larger sizes for readability
+          const lh = Math.min(0.96 + (scale - 1) * 0.06, 1.12);
+          DOM.textCard.style.setProperty("--story-line-height", lh.toFixed(2));
+          // Distribute remaining band space as equal top/bottom margins
+          const rem  = bandH * (1 - TARGET);
+          const gTop = Math.round(Math.max(rem * 0.5, 12));
+          const gBot = Math.round(Math.max(rem * 0.5, 10));
+          DOM.textCard.style.setProperty("--story-quote-gap-top",    `${gTop}px`);
+          DOM.textCard.style.setProperty("--story-quote-gap-bottom", `${gBot}px`);
+        }
+      }
+    }
+  }
 
   const steps = ["is-tight", "is-compact", "is-micro"];
   for (const step of steps) {
@@ -504,8 +640,10 @@ function fitTextCard() {
 
   DOM.textCard.classList.add("hide-decor");
 
-  let scale = isLongform ? 0.72 : isShort ? 0.88 : 0.8;
-  while (cardIsOverflowing() && scale >= 0.44) {
+  let scale = isLongform ? (isPost ? 0.82 : 0.72) : isShort ? (isPost ? 0.94 : 0.88) : (isPost ? 0.88 : 0.8);
+  const minScale = isPost ? 0.54 : 0.44;
+
+  while (cardIsOverflowing() && scale >= minScale) {
     DOM.textCard.style.setProperty("--fit-scale", scale.toFixed(2));
     scale -= 0.02;
   }
@@ -533,6 +671,7 @@ function updatePreviewScale() {
 
 function renderPreview() {
   updateCssVariables();
+  renderBackgroundGraphics();
   syncActiveButtons();
 
   DOM.previewHeadline.textContent = state.headline || "Untitled post";
@@ -566,6 +705,25 @@ function renderPreview() {
 
   DOM.textCard.classList.remove("layout-signature", "layout-editorial", "layout-spotlight", "layout-minimal", "layout-stacked", "layout-poster", "layout-cinema");
   DOM.textCard.classList.add(`layout-${state.layout}`);
+  
+  // Apply card background opacity only (not text)
+  const opacityRatio = Math.max(0.55, Math.min(1, Number(state.cardOpacity || 86) / 100));
+  // Create adjusted background with opacity
+  if (state.darkTheme) {
+    DOM.textCard.style.background = `
+      radial-gradient(circle at top right, rgba(var(--accent-rgb), ${0.16 * opacityRatio}), transparent 30%),
+      linear-gradient(180deg, rgba(14, 18, 27, ${0.9 * opacityRatio}), rgba(7, 10, 16, ${0.95 * opacityRatio})),
+      linear-gradient(90deg, rgba(var(--tint-rgb), ${0.04 * opacityRatio}), rgba(255,255,255,0))
+    `.trim();
+  } else {
+    DOM.textCard.style.background = `
+      radial-gradient(circle at top right, rgba(var(--accent-rgb), ${0.12 * opacityRatio}), transparent 30%),
+      linear-gradient(180deg, rgba(255, 253, 250, ${0.66 * opacityRatio}), rgba(255, 247, 240, ${0.78 * opacityRatio})),
+      linear-gradient(90deg, rgba(var(--tint-rgb), ${0.3 * opacityRatio}), rgba(39, 24, 14, 0))
+    `.trim();
+  }
+  DOM.textCard.style.color = "inherit";
+  
   DOM.previewMetrics.classList.toggle("hidden", !state.showMetrics);
   DOM.previewSourceBadge.classList.toggle("hidden", !state.showSource);
   DOM.quoteMark.classList.toggle("hidden", !state.showQuoteMarks);
@@ -728,6 +886,22 @@ async function handleMediaUpload(event) {
   }
 }
 
+async function handleBackgroundUpload(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    state.backgroundGraphicUpload = await readImageFile(file);
+    state.backgroundGraphic = "custom";
+    persistState();
+    syncInputsFromState();
+    renderPreview();
+    setStatus(`Added "${file.name}" as the background graphic.`, "success");
+  } catch {
+    setStatus("That background graphic didn't load properly. Try another one.", "error");
+  }
+}
+
 async function handleAvatarUpload(event) {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
@@ -764,6 +938,7 @@ function updateStateFromFields() {
   state.showQuoteMarks = DOM.showQuoteMarks.checked;
   state.showAvatar = DOM.showAvatar.checked;
   state.cardRadius = Number(DOM.cardRadius.value);
+  state.cardOpacity = Number(DOM.cardOpacity.value);
   persistState();
   renderPreview();
 }
@@ -793,6 +968,8 @@ function waitForImageReady(image) {
 async function prepareCloneForExport(clone) {
   const cloneAvatar = clone.querySelector('#avatarImage');
   const cloneAvatarBadge = clone.querySelector('#avatarBadge');
+  const cloneGraphicLayer = clone.querySelector('#graphicLayer');
+  const cloneTextCard = clone.querySelector('#textCard');
   const activeAvatarSrc = DOM.avatarImage.currentSrc || DOM.avatarImage.src || state.avatarDataUrl || '';
 
   if (cloneAvatar) {
@@ -808,6 +985,36 @@ async function prepareCloneForExport(clone) {
 
   if (cloneAvatarBadge) {
     cloneAvatarBadge.classList.toggle('has-image', Boolean(activeAvatarSrc));
+  }
+
+  // Copy graphic layer styles
+  if (cloneGraphicLayer && DOM.graphicLayer) {
+    cloneGraphicLayer.style.cssText = DOM.graphicLayer.style.cssText;
+    cloneGraphicLayer.className = DOM.graphicLayer.className;
+  }
+
+  // Recompute text card background with resolved values for export
+  if (cloneTextCard) {
+    const opacityRatio = Math.max(0.55, Math.min(1, Number(state.cardOpacity || 86) / 100));
+    const accentRgb = hexToRgbTriplet(state.accent);
+    const tintRgb = hexToRgbTriplet(state.tint);
+    
+    // Compute opacity-adjusted alpha values
+    const radialAlpha = state.darkTheme ? 0.16 * opacityRatio : 0.12 * opacityRatio;
+    const linearAlpha1 = state.darkTheme ? 0.9 * opacityRatio : 0.66 * opacityRatio;
+    const linearAlpha2 = state.darkTheme ? 0.95 * opacityRatio : 0.78 * opacityRatio;
+    const linearAlpha3 = state.darkTheme ? 0.04 * opacityRatio : 0.3 * opacityRatio;
+    
+    let background = '';
+    if (state.darkTheme) {
+      background = `radial-gradient(circle at top right, rgba(${accentRgb}, ${radialAlpha.toFixed(3)}), transparent 30%), linear-gradient(180deg, rgba(14, 18, 27, ${linearAlpha1.toFixed(3)}), rgba(7, 10, 16, ${linearAlpha2.toFixed(3)})), linear-gradient(90deg, rgba(${tintRgb}, ${linearAlpha3.toFixed(3)}), rgba(255,255,255,0))`;
+    } else {
+      background = `radial-gradient(circle at top right, rgba(${accentRgb}, ${radialAlpha.toFixed(3)}), transparent 30%), linear-gradient(180deg, rgba(255, 253, 250, ${linearAlpha1.toFixed(3)}), rgba(255, 247, 240, ${linearAlpha2.toFixed(3)})), linear-gradient(90deg, rgba(${tintRgb}, ${linearAlpha3.toFixed(3)}), rgba(39, 24, 14, 0))`;
+    }
+    
+    // Use setProperty with !important to ensure override of CSS class styles
+    cloneTextCard.style.setProperty('background', background, 'important');
+    cloneTextCard.style.setProperty('color', 'inherit', 'important');
   }
 
   const images = Array.from(clone.querySelectorAll('img'));
@@ -848,11 +1055,12 @@ async function renderExportBlob() {
   await document.fonts.ready;
   const width = state.aspect === "story" ? 560 : 860;
   const height = state.aspect === "story" ? Math.round((560 * 16) / 9) : Math.round((860 * 5) / 4);
-  const htmlToImageApi = window.htmlToImage;
+  const htmlToImageApi = window.html2image;
 
   if (htmlToImageApi && typeof htmlToImageApi.toBlob === "function") {
     const { exportShell, clone } = createExportClone();
     try {
+      await prepareCloneForExport(clone);
       const fontEmbedCSS = await getExportFontEmbedCss();
       const blob = await htmlToImageApi.toBlob(clone, {
         cacheBust: true,
@@ -878,13 +1086,14 @@ async function renderExportBlob() {
     }
   }
 
-  if (typeof html2canvas !== "function") {
+  if (typeof window.html2canvas !== "function") {
     throw new Error("No supported export renderer is available");
   }
 
   const { exportShell, clone } = createExportClone({ exportSafe: true });
   try {
-    const canvas = await html2canvas(clone, {
+    await prepareCloneForExport(clone);
+    const canvas = await window.html2canvas(clone, {
       backgroundColor: null,
       scale: 2,
       useCORS: true,
@@ -966,6 +1175,7 @@ function attachFieldSync() {
     DOM.sourceBadge,
     DOM.accentColor,
     DOM.canvasTint,
+    DOM.cardOpacity,
     DOM.darkTheme,
     DOM.showCoverImage,
     DOM.showMetrics,
@@ -1003,8 +1213,38 @@ async function exportPng(openInNewTab = false) {
     const objectUrl = URL.createObjectURL(blob);
 
     if (popup) {
-      popup.location.href = objectUrl;
-      setStatus("Your image preview is open.", "success");
+      // Ensure popup is properly set up before showing the image
+      try {
+        popup.document.open();
+        popup.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>XFrame Export</title>
+            <style>
+              body { margin: 0; padding: 0; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+              img { max-width: 100%; max-height: 100vh; display: block; }
+            </style>
+          </head>
+          <body>
+            <img src="${objectUrl}" alt="XFrame Export" />
+          </body>
+          </html>
+        `);
+        popup.document.close();
+        setStatus("Your image preview is open.", "success");
+      } catch (popupError) {
+        console.error("Popup display error:", popupError);
+        // Fallback: download instead
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+        setStatus("Your image is saved (preview failed, downloading instead).", "success");
+      }
       return;
     }
 
@@ -1098,6 +1338,15 @@ function attachModeButtons() {
       applyPreset(button.dataset.preset);
     });
   });
+
+  DOM.graphicButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.backgroundGraphic = button.dataset.graphic;
+      state.backgroundGraphicUpload = "";
+      persistState();
+      renderPreview();
+    });
+  });
 }
 
 function init() {
@@ -1115,6 +1364,7 @@ function init() {
   DOM.downloadBtn.addEventListener("click", () => exportPng(false));
   DOM.openImageBtn.addEventListener("click", () => exportPng(true));
   DOM.mediaUpload.addEventListener("change", handleMediaUpload);
+  DOM.backgroundUpload.addEventListener("change", handleBackgroundUpload);
   DOM.avatarUpload.addEventListener("change", handleAvatarUpload);
   window.addEventListener("resize", queueFitTextCard);
 
@@ -1122,5 +1372,12 @@ function init() {
 }
 
 init();
+
+
+
+
+
+
+
 
 
