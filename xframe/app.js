@@ -216,8 +216,14 @@ function stripRenderedAttachmentLinks(text) {
     .trim();
 }
 
+function stripLeadingRenderedQuote(text) {
+  return String(text || "").replace(/^\s*["“”]+\s*/, "");
+}
+
 function renderTweetMarkup(text) {
-  const source = stripRenderedAttachmentLinks(String(text || "").replace(/\r\n/g, "\n"));
+  const source = stripLeadingRenderedQuote(
+    stripRenderedAttachmentLinks(String(text || "").replace(/\r\n/g, "\n"))
+  );
   if (!source.trim()) {
     return escapeHtml("Add your post text here and shape it the way you like.");
   }
@@ -687,6 +693,8 @@ function renderPreview() {
   DOM.exportRoot.classList.toggle("dark-theme", state.darkTheme);
   DOM.avatarBadge.classList.toggle("hidden", !state.showAvatar);
   DOM.avatarBadge.classList.toggle("has-image", Boolean(state.avatarDataUrl));
+  DOM.avatarImage.crossOrigin = "anonymous";
+  DOM.avatarImage.referrerPolicy = "no-referrer";
   DOM.avatarImage.src = state.avatarDataUrl || "";
   DOM.avatarImage.alt = `${state.authorName || "Author"} avatar`;
   const activeMedia = state.showCoverImage ? getActiveMedia() : null;
@@ -867,6 +875,32 @@ function readImageFile(file) {
   });
 }
 
+function readBlobAsDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function getExportImageSource(source) {
+  const value = String(source || '').trim();
+  if (!isRenderableImageSource(value)) return '';
+  if (value.startsWith('data:image/')) return value;
+
+  try {
+    const response = await fetch(value, { mode: 'cors', credentials: 'omit' });
+    if (!response.ok) {
+      return value;
+    }
+    const blob = await response.blob();
+    return await readBlobAsDataUrl(blob);
+  } catch {
+    return value;
+  }
+}
+
 async function handleMediaUpload(event) {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
@@ -971,20 +1005,34 @@ async function prepareCloneForExport(clone) {
   const cloneGraphicLayer = clone.querySelector('#graphicLayer');
   const cloneTextCard = clone.querySelector('#textCard');
   const activeAvatarSrc = DOM.avatarImage.currentSrc || DOM.avatarImage.src || state.avatarDataUrl || '';
+  const exportAvatarSrc = await getExportImageSource(activeAvatarSrc);
 
   if (cloneAvatar) {
     cloneAvatar.loading = 'eager';
     cloneAvatar.decoding = 'sync';
     cloneAvatar.fetchPriority = 'high';
-    if (activeAvatarSrc) {
-      cloneAvatar.src = activeAvatarSrc;
+    cloneAvatar.crossOrigin = 'anonymous';
+    cloneAvatar.referrerPolicy = 'no-referrer';
+    if (exportAvatarSrc) {
+      cloneAvatar.src = exportAvatarSrc;
     } else {
       cloneAvatar.removeAttribute('src');
     }
   }
 
   if (cloneAvatarBadge) {
-    cloneAvatarBadge.classList.toggle('has-image', Boolean(activeAvatarSrc));
+    cloneAvatarBadge.classList.toggle('has-image', Boolean(exportAvatarSrc));
+    if (exportAvatarSrc) {
+      cloneAvatarBadge.style.backgroundImage = `url(${exportAvatarSrc})`;
+      cloneAvatarBadge.style.backgroundSize = 'cover';
+      cloneAvatarBadge.style.backgroundPosition = 'center';
+      cloneAvatarBadge.style.backgroundRepeat = 'no-repeat';
+    } else {
+      cloneAvatarBadge.style.removeProperty('background-image');
+      cloneAvatarBadge.style.removeProperty('background-size');
+      cloneAvatarBadge.style.removeProperty('background-position');
+      cloneAvatarBadge.style.removeProperty('background-repeat');
+    }
   }
 
   // Copy graphic layer styles
