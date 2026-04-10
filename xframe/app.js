@@ -505,10 +505,12 @@ function renderBackgroundGraphics() {
   if (!DOM.graphicLayer) return;
   
   DOM.graphicLayer.innerHTML = "";
+  DOM.graphicLayer.style.background = "";
   DOM.graphicLayer.style.backgroundImage = "";
   DOM.graphicLayer.style.backgroundColor = "transparent";
+  DOM.graphicLayer.style.backgroundBlendMode = "normal";
   DOM.graphicLayer.style.filter = "none";
-  DOM.graphicLayer.classList.remove("graphic-orbs", "graphic-grid", "graphic-waves", "graphic-custom", "graphic-dots", "graphic-gradient", "graphic-stripes", "graphic-blur-mesh");
+  DOM.graphicLayer.classList.remove("graphic-orbs", "graphic-grid", "graphic-waves", "graphic-custom", "graphic-dots", "graphic-gradient", "graphic-stripes", "graphic-blur-mesh", "graphic-grain", "graphic-constellation");
   
   // Hide ambient elements unless using orbs
   const ambients = DOM.exportRoot.querySelectorAll(".ambient");
@@ -528,24 +530,31 @@ function renderBackgroundGraphics() {
     DOM.graphicLayer.style.backgroundSize = "50px 50px";
   } else if (state.backgroundGraphic === "waves") {
     DOM.graphicLayer.classList.add("graphic-waves");
-    DOM.graphicLayer.style.backgroundImage = `linear-gradient(90deg, transparent 48%, rgba(${accentRgb}, 0.12) 49%, rgba(${accentRgb}, 0.12) 51%, transparent 52%), linear-gradient(0deg, transparent 48%, rgba(${accentRgb}, 0.08) 49%, rgba(${accentRgb}, 0.08) 51%, transparent 52%), linear-gradient(45deg, transparent 44%, rgba(${accentRgb}, 0.06) 45%, rgba(${accentRgb}, 0.06) 55%, transparent 56%), linear-gradient(-45deg, transparent 44%, rgba(${accentRgb}, 0.06) 45%, rgba(${accentRgb}, 0.06) 55%, transparent 56%)`;
-    DOM.graphicLayer.style.backgroundSize = "60px 60px, 60px 60px, 84.84px 84.84px, 84.84px 84.84px";
-    DOM.graphicLayer.style.backgroundPosition = "0 0";
+    DOM.graphicLayer.style.background = `radial-gradient(circle at 18% 22%, rgba(${accentRgb}, 0.18), transparent 28%), radial-gradient(circle at 82% 16%, rgba(${tintRgb}, 0.16), transparent 24%), radial-gradient(circle at 74% 76%, rgba(${accentRgb}, 0.12), transparent 26%), linear-gradient(130deg, transparent 18%, rgba(${accentRgb}, 0.14) 34%, transparent 50%, rgba(${tintRgb}, 0.12) 68%, transparent 82%), linear-gradient(180deg, rgba(255,255,255,0), rgba(${accentRgb}, 0.06))`;
+    DOM.graphicLayer.style.backgroundBlendMode = "screen, screen, normal, screen, normal";
   } else if (state.backgroundGraphic === "dots") {
     DOM.graphicLayer.classList.add("graphic-dots");
-    DOM.graphicLayer.style.backgroundImage = `radial-gradient(circle, rgba(${accentRgb}, 0.15) 2px, transparent 2px)`;
-    DOM.graphicLayer.style.backgroundSize = "40px 40px";
+    DOM.graphicLayer.style.backgroundImage = `radial-gradient(circle at 1px 1px, rgba(${accentRgb}, 0.22) 1.2px, transparent 1.8px), radial-gradient(circle at 2px 2px, rgba(${tintRgb}, 0.16) 1px, transparent 1.6px), radial-gradient(circle at 50% 18%, rgba(${accentRgb}, 0.10), transparent 24%), radial-gradient(circle at 72% 72%, rgba(${tintRgb}, 0.08), transparent 28%)`;
+    DOM.graphicLayer.style.backgroundSize = "22px 22px, 34px 34px, 100% 100%, 100% 100%";
+    DOM.graphicLayer.style.backgroundPosition = "0 0, 11px 11px, 0 0, 0 0";
   } else if (state.backgroundGraphic === "gradient") {
     DOM.graphicLayer.classList.add("graphic-gradient");
-    DOM.graphicLayer.style.background = `linear-gradient(135deg, rgba(${accentRgb}, 0.08) 0%, rgba(${tintRgb}, 0.04) 50%, rgba(${accentRgb}, 0.06) 100%)`;
+    DOM.graphicLayer.style.background = `radial-gradient(circle at 14% 18%, rgba(${tintRgb}, 0.16), transparent 26%), radial-gradient(circle at 88% 10%, rgba(${accentRgb}, 0.18), transparent 24%), linear-gradient(145deg, rgba(${accentRgb}, 0.14) 0%, rgba(${tintRgb}, 0.08) 42%, rgba(${accentRgb}, 0.04) 100%)`;
   } else if (state.backgroundGraphic === "stripes") {
     DOM.graphicLayer.classList.add("graphic-stripes");
-    DOM.graphicLayer.style.backgroundImage = `linear-gradient(45deg, transparent 48%, rgba(${accentRgb}, 0.1) 49%, rgba(${accentRgb}, 0.1) 51%, transparent 52%)`;
-    DOM.graphicLayer.style.backgroundSize = "30px 30px";
+    DOM.graphicLayer.style.background = `linear-gradient(118deg, transparent 12%, rgba(${tintRgb}, 0.16) 24%, transparent 34%), linear-gradient(128deg, transparent 28%, rgba(${accentRgb}, 0.18) 42%, transparent 54%), linear-gradient(138deg, transparent 48%, rgba(${tintRgb}, 0.10) 60%, transparent 72%), radial-gradient(circle at 78% 22%, rgba(${accentRgb}, 0.14), transparent 24%)`;
+    DOM.graphicLayer.style.backgroundBlendMode = "screen, screen, screen, normal";
   } else if (state.backgroundGraphic === "blur-mesh") {
     DOM.graphicLayer.classList.add("graphic-blur-mesh");
-    DOM.graphicLayer.style.background = `radial-gradient(at 20% 30%, rgba(${accentRgb}, 0.15) 0px, transparent 50%), radial-gradient(at 80% 70%, rgba(${tintRgb}, 0.12) 0px, transparent 50%), radial-gradient(at 40% 80%, rgba(${accentRgb}, 0.1) 0px, transparent 50%)`;
-    DOM.graphicLayer.style.filter = "blur(40px)";
+    DOM.graphicLayer.style.background = `repeating-radial-gradient(circle at 18% 24%, rgba(${accentRgb}, 0.10) 0 2px, transparent 2px 20px), repeating-radial-gradient(circle at 74% 68%, rgba(${tintRgb}, 0.08) 0 2px, transparent 2px 24px), linear-gradient(180deg, rgba(255,255,255,0), rgba(${accentRgb}, 0.05))`;
+  } else if (state.backgroundGraphic === "grain") {
+    DOM.graphicLayer.classList.add("graphic-grain");
+    DOM.graphicLayer.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"), radial-gradient(circle at 22% 18%, rgba(${accentRgb}, 0.10), transparent 26%), radial-gradient(circle at 80% 74%, rgba(${tintRgb}, 0.10), transparent 30%)`;
+    DOM.graphicLayer.style.backgroundSize = "180px 180px, 100% 100%, 100% 100%";
+    DOM.graphicLayer.style.backgroundPosition = "0 0, 0 0, 0 0";
+  } else if (state.backgroundGraphic === "constellation") {
+    DOM.graphicLayer.classList.add("graphic-constellation");
+    DOM.graphicLayer.style.background = `radial-gradient(circle at 16% 24%, rgba(${tintRgb}, 0.55) 0 1.2px, transparent 2px), radial-gradient(circle at 28% 52%, rgba(${accentRgb}, 0.44) 0 1.4px, transparent 2.2px), radial-gradient(circle at 72% 18%, rgba(${tintRgb}, 0.44) 0 1.2px, transparent 2px), radial-gradient(circle at 84% 44%, rgba(${accentRgb}, 0.38) 0 1.3px, transparent 2px), radial-gradient(circle at 66% 72%, rgba(${tintRgb}, 0.4) 0 1.1px, transparent 2px), linear-gradient(115deg, transparent 32%, rgba(${tintRgb}, 0.08) 33%, rgba(${tintRgb}, 0.08) 33.5%, transparent 34%), linear-gradient(148deg, transparent 48%, rgba(${accentRgb}, 0.08) 49%, rgba(${accentRgb}, 0.08) 49.5%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(${accentRgb}, 0.08), transparent 58%)`;
   } else {
     // orbs (default) - show ambient elements
     DOM.graphicLayer.classList.add("graphic-orbs");
@@ -723,14 +732,15 @@ function renderPreview() {
       linear-gradient(180deg, rgba(14, 18, 27, ${0.9 * opacityRatio}), rgba(7, 10, 16, ${0.95 * opacityRatio})),
       linear-gradient(90deg, rgba(var(--tint-rgb), ${0.04 * opacityRatio}), rgba(255,255,255,0))
     `.trim();
+    DOM.textCard.style.color = "#edf3fb";
   } else {
     DOM.textCard.style.background = `
       radial-gradient(circle at top right, rgba(var(--accent-rgb), ${0.12 * opacityRatio}), transparent 30%),
       linear-gradient(180deg, rgba(255, 253, 250, ${0.66 * opacityRatio}), rgba(255, 247, 240, ${0.78 * opacityRatio})),
       linear-gradient(90deg, rgba(var(--tint-rgb), ${0.3 * opacityRatio}), rgba(39, 24, 14, 0))
     `.trim();
+    DOM.textCard.style.color = "#211814";
   }
-  DOM.textCard.style.color = "inherit";
   
   DOM.previewMetrics.classList.toggle("hidden", !state.showMetrics);
   DOM.previewSourceBadge.classList.toggle("hidden", !state.showSource);
@@ -1062,7 +1072,7 @@ async function prepareCloneForExport(clone) {
     
     // Use setProperty with !important to ensure override of CSS class styles
     cloneTextCard.style.setProperty('background', background, 'important');
-    cloneTextCard.style.setProperty('color', 'inherit', 'important');
+    cloneTextCard.style.setProperty('color', state.darkTheme ? '#edf3fb' : '#211814', 'important');
   }
 
   const images = Array.from(clone.querySelectorAll('img'));

@@ -670,6 +670,14 @@ input[type="file"]::file-selector-button {
   opacity: 0.92;
 }
 
+.graphic-layer.graphic-grain {
+  opacity: 0.82;
+}
+
+.graphic-layer.graphic-constellation {
+  opacity: 0.94;
+}
+
 .graphic-layer.graphic-orbs {
   background: none;
   opacity: 1;
