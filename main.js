@@ -222,7 +222,7 @@ function smoothScrollToY(targetY, duration = 1000) {
 }
 
 function loadPortfolio() {
-  fetch('portfolio-data.json')
+  fetch('portfolio-data.json?v=' + Date.now(), { cache: 'no-cache' })
     .then((response) => {
       if (!response.ok) throw new Error('Unable to fetch portfolio-data.json');
       return response.json();
