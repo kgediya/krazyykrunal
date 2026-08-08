@@ -71,7 +71,7 @@ const fallbackPortfolio = {
   tools: [
     {
       title: 'Projekt Kanvas',
-      description: 'Professional WebGL interactive projection mapping studio for quad surfaces, curved 3D mesh deformation, GLSL procedural shaders, audio FFT reactivity, and dual-monitor output.',
+      description: 'An interactive WebGL studio for quad surface mapping, 3D mesh deformation, and GLSL visual output.',
       type: 'Projection Studio',
       href: '/projektkanvas/',
       tags: ['WebGL', 'Projection', '3D Mesh', 'GLSL']
