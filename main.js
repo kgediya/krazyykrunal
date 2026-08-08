@@ -474,6 +474,9 @@ function renderTools(items) {
 }
 
 function getToolVisual(classifier) {
+  if (classifier.includes('projekt kanvas') || classifier.includes('projection') || classifier.includes('webgl')) {
+    return { bgFrom: '#08080C', bgTo: '#1e1438', glow: '#00f3ff' };
+  }
   if (classifier.includes('xframe') || classifier.includes('social creator') || classifier.includes('instagram')) {
     return { bgFrom: '#0d1117', bgTo: '#191144', glow: '#7dd3fc' };
   }
