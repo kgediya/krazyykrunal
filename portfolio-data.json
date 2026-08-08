@@ -127,6 +127,18 @@
   ],
   "tools": [
     {
+      "title": "Projekt Kanvas",
+      "description": "Professional WebGL interactive projection mapping studio for quad surfaces, curved 3D mesh deformation, GLSL procedural shaders, audio FFT reactivity, and dual-monitor output.",
+      "type": "Projection Studio",
+      "href": "/projektkanvas/",
+      "tags": [
+        "WebGL",
+        "Projection Mapping",
+        "3D Mesh",
+        "GLSL"
+      ]
+    },
+    {
       "title": "XFrame",
       "description": "Turn any X post into a polished Instagram-ready story or post with fast styling, export, and creator-friendly controls.",
       "type": "Social Creator Tool",

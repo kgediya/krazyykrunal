@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const greetings = [
     'કેમ છો',
     'Hola',
@@ -69,6 +69,13 @@ const fallbackPortfolio = {
     }
   ],
   tools: [
+    {
+      title: 'Projekt Kanvas',
+      description: 'Professional WebGL interactive projection mapping studio for quad surfaces, curved 3D mesh deformation, GLSL procedural shaders, audio FFT reactivity, and dual-monitor output.',
+      type: 'Projection Studio',
+      href: '/projektkanvas/',
+      tags: ['WebGL', 'Projection', '3D Mesh', 'GLSL']
+    },
     {
       title: 'XFrame',
       description: 'A fast social art tool for turning X posts into story-first visuals with exportable polish.',
