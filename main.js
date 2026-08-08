@@ -73,7 +73,7 @@ const fallbackPortfolio = {
       title: 'Projekt Kanvas',
       description: 'An interactive WebGL studio for quad surface mapping, 3D mesh deformation, and GLSL visual output.',
       type: 'Projection Studio',
-      href: '/projektkanvas/',
+      href: 'https://projektkanvas.krazyykrunal.com',
       tags: ['WebGL', 'Projection', '3D Mesh', 'GLSL']
     },
     {
