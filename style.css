@@ -459,6 +459,144 @@ main {
   gap: 18px;
 }
 
+.xr-entry-card {
+  position: relative;
+  min-height: 390px;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.86fr) minmax(0, 1fr);
+  gap: clamp(18px, 4vw, 46px);
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(18px, 4vw, 32px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 22px;
+  color: inherit;
+  background:
+    radial-gradient(circle at 20% 14%, rgba(102, 242, 207, 0.13), transparent 34%),
+    radial-gradient(circle at 80% 18%, rgba(255, 122, 217, 0.11), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.018)),
+    var(--panel-strong);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.42);
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.xr-entry-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.2), transparent 46%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  z-index: 0;
+}
+
+.xr-entry-card:hover,
+.xr-entry-card:focus-within {
+  border-color: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 28px 62px rgba(0, 0, 0, 0.5);
+}
+
+.xr-entry-card:hover::before,
+.xr-entry-card:focus-within::before {
+  opacity: 1;
+}
+
+.xr-entry-visual,
+.xr-entry-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.xr-entry-visual {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+}
+
+.xr-entry-core {
+  width: min(64vw, 190px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 4.6rem);
+  font-weight: 800;
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.12) 26%, transparent 58%),
+    linear-gradient(145deg, rgba(102, 242, 207, 0.25), rgba(143, 211, 255, 0.14), rgba(255, 122, 217, 0.2));
+  box-shadow:
+    0 0 56px rgba(143, 211, 255, 0.2),
+    inset 0 0 34px rgba(255, 255, 255, 0.1);
+}
+
+.xr-entry-orbit {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  transform: rotateX(68deg) rotateZ(0);
+  animation: xrOrbit 15s linear infinite;
+}
+
+.orbit-a {
+  width: min(84%, 330px);
+  aspect-ratio: 1;
+}
+
+.orbit-b {
+  width: min(68%, 260px);
+  aspect-ratio: 1;
+  animation-duration: 11s;
+  animation-direction: reverse;
+}
+
+.xr-entry-chip {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: rgba(0, 0, 0, 0.62);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.chip-ar {
+  left: 12%;
+  top: 24%;
+}
+
+.chip-vr {
+  right: 14%;
+  top: 18%;
+}
+
+.chip-mr {
+  right: 20%;
+  bottom: 22%;
+}
+
+.xr-entry-copy {
+  max-width: 640px;
+}
+
+.xr-entry-actions {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@keyframes xrOrbit {
+  to {
+    transform: rotateX(68deg) rotateZ(360deg);
+  }
+}
+
 .embed-grid {
   display: grid;
   grid-auto-flow: column;
@@ -1110,6 +1248,21 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .xr-entry-card {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 8px;
+  }
+
+  .xr-entry-visual {
+    min-height: 280px;
+    order: 2;
+  }
+
+  .xr-entry-copy {
+    order: 1;
+  }
+
   .embed-grid {
     grid-auto-columns: minmax(300px, 84vw);
   }
@@ -1266,6 +1419,25 @@ main {
   .hero-cta {
     width: 100%;
     text-align: center;
+  }
+
+  .xr-entry-card {
+    border-radius: 18px;
+    padding: 16px;
+  }
+
+  .xr-entry-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .xr-entry-visual {
+    min-height: 230px;
+  }
+
+  .xr-entry-chip {
+    padding: 7px 10px;
+    font-size: 0.64rem;
   }
 
   #project-gallery,

@@ -239,13 +239,14 @@ function setupMobileSectionNav() {
   const sectionToNavId = {
     'hero-top': 'hero-top',
     'roles-section': 'roles-section',
+    'xr-entry': 'xr-entry',
     'featured-work': 'featured-work',
     'recent-builds': 'featured-work',
     'tools-section': 'tools-section',
     'social-log': 'social-log'
   };
   const sectionIds = links.map((link) => link.getAttribute('data-section-link')).filter(Boolean);
-  const trackedSectionIds = ['hero-top', 'roles-section', 'featured-work', 'recent-builds', 'tools-section', 'social-log'];
+  const trackedSectionIds = ['hero-top', 'roles-section', 'xr-entry', 'featured-work', 'recent-builds', 'tools-section', 'social-log'];
   const sections = trackedSectionIds
     .map((id) => document.getElementById(id))
     .filter(Boolean);
@@ -620,7 +621,7 @@ function processInstagramEmbeds() {
 }
 
 function enableCardTilt() {
-  const cards = document.querySelectorAll('.feature-card, .work-card, .tool-card, .social-card, .role-card');
+  const cards = document.querySelectorAll('.feature-card, .work-card, .tool-card, .social-card, .role-card, .xr-entry-card');
   cards.forEach((card) => {
     card.addEventListener('pointermove', (event) => {
       const rect = card.getBoundingClientRect();
@@ -761,7 +762,7 @@ function initSpectaclesCursor() {
   });
 
   document.addEventListener('pointerover', (event) => {
-    const hoverable = event.target.closest('a, button, .tool-card, .work-card, .feature-card, .role-card');
+    const hoverable = event.target.closest('a, button, .tool-card, .work-card, .feature-card, .role-card, .xr-entry-card');
     document.body.classList.toggle('cursor-hover', Boolean(hoverable));
   });
 
@@ -788,4 +789,3 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
   return escapeHtml(value);
 }
-

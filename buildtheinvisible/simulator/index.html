@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Ray-Ban Display Simulator</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <main class="sim-app-shell">
+    
+    <!-- Top Header -->
+    <header class="sim-header">
+      <div class="sim-brand">
+        <h1>META RAY-BAN DISPLAY SIMULATOR</h1>
+        <span>600×600 Additive Optical Waveguide Rig</span>
+      </div>
+      <div class="sim-header-tags">
+        <span class="meta-tag">Meta WebApp Standard</span>
+        <a href="../index.html" class="btn-back">← Back to Overview</a>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="sim-workspace-grid">
+      
+      <!-- Left Controls Panel -->
+      <aside class="sim-sidebar">
+        
+        <!-- App Selector -->
+        <div class="panel-box">
+          <span class="panel-label">LOAD HUD TEMPLATE</span>
+          <div class="app-button-list">
+            <button class="app-select-btn active" data-template="1_minimal_hello.html">
+              <strong>01. XDG Mumbai HUD</strong>
+              <small>Welcome + D-pad Cue Loop</small>
+            </button>
+            <button class="app-select-btn" data-template="2_vision_ai.html">
+              <strong>02. Vision AI Pulse</strong>
+              <small>Camera OCR & Landmark Glance</small>
+            </button>
+            <button class="app-select-btn" data-template="3_spatial_wayfinder.html">
+              <strong>03. Spatial Wayfinder</strong>
+              <small>Turn-by-Turn Navigation HUD</small>
+            </button>
+            <button class="app-select-btn" data-template="4_location_card.html">
+              <strong>04. Location Card</strong>
+              <small>Paired Phone Geolocation</small>
+            </button>
+            <button class="app-select-btn" data-template="5_sensor_tilt.html">
+              <strong>05. Sensor Tilt</strong>
+              <small>Orientation Permission + IMU</small>
+            </button>
+            <button class="app-select-btn" data-template="6_persistent_counter.html">
+              <strong>06. Persistent Counter</strong>
+              <small>Local Storage State</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Scene Lighting Selector -->
+        <div class="panel-box">
+          <span class="panel-label">WAVEGUIDE BACKGROUND SCENE</span>
+          <div class="env-button-grid">
+            <button class="env-btn active" data-scene="black">Pure Black (#000)</button>
+            <button class="env-btn" data-scene="tokyo">Tokyo Night</button>
+            <button class="env-btn" data-scene="cafe">Cafe Daylight</button>
+            <button class="env-btn" data-scene="subway">Metro Transit</button>
+            <button class="env-btn" data-scene="lab">Tech Lab</button>
+            <button class="env-btn" id="btnWebcam">Live Webcam 📷</button>
+          </div>
+          <p class="scene-hint">
+            <strong>Optical Law:</strong> Pure black (<code>#000000</code>) emits zero photons and renders 100% transparent.
+          </p>
+        </div>
+
+      </aside>
+
+      <!-- Center Simulator Stage -->
+      <section class="sim-viewport-stage">
+        
+        <div class="rayban-hardware-bezel">
+          
+          <!-- Top Bezel Status Bar -->
+          <div class="bezel-top-bar">
+            <div class="brand-signature">
+              <span class="rb-script">Ray-Ban</span>
+              <span class="rb-sub">| Meta Display</span>
+            </div>
+            <div class="bezel-telemetry">
+              <span class="camera-led-bulb" title="Camera Privacy LED"></span>
+              <span class="battery-readout">92%</span>
+              <span class="res-chip">600×600</span>
+            </div>
+          </div>
+
+          <!-- 600×600 Optical Lens Viewport -->
+          <div class="optical-lens-viewport" id="lensViewport">
+            <div class="env-backdrop-layer env-black" id="sceneBackdrop">
+              <video id="webcamVideo" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+            </div>
+            <div class="hud-frame-scale" id="hudFrameScale"><iframe id="hudScreenFrame" class="hud-screen-iframe" title="Meta Ray-Ban Display Screen" src="./templates/1_minimal_hello.html"></iframe></div>
+          </div>
+
+          <!-- Bottom Bezel & Virtual D-Pad -->
+          <div class="bezel-bottom-bar">
+            <div class="bezel-hint-text">
+              <span class="live-dot"></span>
+              <span>Click lens & use Arrow keys + [Enter] Pinch</span>
+            </div>
+
+            <div class="blend-mode-control" role="group" aria-label="Display blend mode">
+              <span class="blend-label">BLEND</span>
+              <button class="blend-btn active" data-blend="additive">ADDITIVE</button>
+              <button class="blend-btn" data-blend="opaque">OPAQUE</button>
+            </div>
+
+            <div class="virtual-dpad-module">
+              <button class="dpad-btn up" onclick="dispatchLensKey('ArrowUp')">▲</button>
+              <div class="dpad-row">
+                <button class="dpad-btn left" onclick="dispatchLensKey('ArrowLeft')">◄</button>
+                <button class="dpad-btn enter" onclick="dispatchLensKey('Enter')">PINCH<br><small>[ENTER]</small></button>
+                <button class="dpad-btn right" onclick="dispatchLensKey('ArrowRight')">►</button>
+              </div>
+              <button class="dpad-btn down" onclick="dispatchLensKey('ArrowDown')">▼</button>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

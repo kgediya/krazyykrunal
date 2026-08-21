@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- MRBD Web App discovery and fixed 600x600 display viewport. -->
+  <meta name="mrbd-web-app-capable" content="yes">
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <title>Sensor Tilt</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { width:600px; height:600px; overflow:hidden; margin:0; padding:24px; background:#000; color:#fff; font:18px system-ui; display:grid; align-content:center; }
+    .card { border:2px solid #00d4ff; border-radius:18px; padding:24px; background:rgba(8,14,24,.92); }
+    .eyebrow { color:#00d4ff; font:13px monospace; } h1 { font-size:34px; margin:22px 0 8px; } p { color:#cbd5e1; line-height:1.4; }
+    button { min-height:64px; padding:12px 18px; color:#fff; background:#0878f9; border:0; font-weight:700; } button:focus { outline:3px solid #e5f46b; outline-offset:4px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="eyebrow">IMU / DEVICE ORIENTATION</span>
+    <h1 id="tilt">READY</h1>
+    <p id="reading">Motion permission is requested only after Select.</p>
+    <!-- Sensor permission must be triggered by a user gesture. -->
+    <button id="start" tabindex="0">ENABLE TILT</button>
+  </main>
+  <script>
+    const tilt = document.querySelector('#tilt');
+    const reading = document.querySelector('#reading');
+    function startSensors() {
+      // DeviceOrientationEvent exposes heading, tilt, and roll on supported runtimes.
+      window.addEventListener('deviceorientation', (event) => {
+        const roll = Number(event.gamma || 0).toFixed(0);
+        tilt.textContent = `${roll}° ROLL`;
+        reading.textContent = `Heading ${Number(event.alpha || 0).toFixed(0)}° · Tilt ${Number(event.beta || 0).toFixed(0)}°`;
+      });
+      reading.textContent = 'Listening for device orientation...';
+    }
+    document.querySelector('#start').addEventListener('click', async () => {
+      if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
+        const state = await DeviceOrientationEvent.requestPermission();
+        if (state !== 'granted') { reading.textContent = 'Sensor permission denied.'; return; }
+      }
+      startSensors();
+    });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Enter') document.querySelector('#start').click(); });
+  </script>
+</body>
+</html>

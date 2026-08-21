@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- MRBD discovery and fixed display viewport. -->
+  <meta name="mrbd-web-app-capable" content="yes">
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <title>Persistent Counter</title>
+  <style>
+    * { box-sizing:border-box; } body { width:600px; height:600px; overflow:hidden; margin:0; padding:24px; background:#000; color:#fff; font:18px system-ui; display:grid; align-content:center; }
+    .card { border:2px solid #e5f46b; border-radius:18px; padding:24px; background:rgba(8,14,24,.92); } .eyebrow { color:#e5f46b; font:13px monospace; }
+    h1 { font-size:70px; line-height:1; margin:22px 0 8px; } p { color:#cbd5e1; line-height:1.4; } button { min-height:64px; padding:12px 18px; color:#101522; background:#e5f46b; border:0; font-weight:700; } button:focus { outline:3px solid #00d4ff; outline-offset:4px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="eyebrow">LOCAL STORAGE / LIGHTWEIGHT STATE</span>
+    <h1 id="count">0</h1>
+    <p>Items remembered across sessions on this device.</p>
+    <!-- localStorage is appropriate for small preferences and counters, not large media. -->
+    <button id="add" tabindex="0">ADD ITEM</button>
+  </main>
+  <script>
+    let count = Number(localStorage.getItem('mrbd-count') || 0);
+    const countView = document.querySelector('#count');
+    function addItem() { count += 1; countView.textContent = count; localStorage.setItem('mrbd-count', String(count)); }
+    document.querySelector('#add').addEventListener('click', addItem);
+    // Select arrives as Enter from temple touch or the Neural Band.
+    document.addEventListener('keydown', (event) => { if (event.key === 'Enter') addItem(); });
+    countView.textContent = count;
+  </script>
+</body>
+</html>

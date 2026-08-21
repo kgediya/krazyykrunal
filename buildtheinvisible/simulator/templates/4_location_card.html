@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- MRBD discovery and fixed display viewport. -->
+  <meta name="mrbd-web-app-capable" content="yes">
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <title>Location Card</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { width: 600px; height: 600px; overflow: hidden; margin: 0; padding: 24px; background: #000; color: #fff; font: 18px system-ui; display: grid; align-content: center; }
+    .card { border: 2px solid #5b9dff; border-radius: 18px; padding: 24px; background: rgba(8,14,24,.92); }
+    .eyebrow { color: #5b9dff; font: 13px monospace; }
+    h1 { font-size: 27px; margin: 22px 0 10px; } p { color: #cbd5e1; line-height: 1.4; }
+    button { min-height: 64px; padding: 12px 18px; color: #fff; background: #0878f9; border: 0; font-weight: 700; }
+    button:focus { outline: 3px solid #17d4e4; outline-offset: 4px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="eyebrow">LOCATION / PAIRED PHONE GPS</span>
+    <h1 id="coords">Requesting location...</h1>
+    <p id="state">Select the button to ask for permission.</p>
+    <!-- Permission requests must start from a user gesture. -->
+    <button id="locate" tabindex="0">GET LOCATION</button>
+  </main>
+  <script>
+    const coords = document.querySelector('#coords');
+    const state = document.querySelector('#state');
+    document.querySelector('#locate').addEventListener('click', () => {
+      if (!navigator.geolocation) { state.textContent = 'Geolocation unavailable.'; return; }
+      navigator.geolocation.getCurrentPosition(
+        (position) => { coords.textContent = `${position.coords.latitude.toFixed(4)}°, ${position.coords.longitude.toFixed(4)}°`; state.textContent = 'Location received from the paired phone.'; },
+        (error) => { state.textContent = `Location unavailable (${error.code}).`; },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+      );
+    });
+    // MRBD Arrow/Enter input is delivered as standard keyboard events.
+    document.addEventListener('keydown', (event) => { if (event.key === 'Enter') document.querySelector('#locate').click(); });
+  </script>
+</body>
+</html>

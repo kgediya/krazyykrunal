@@ -1,0 +1,544 @@
+<!-- STEP-BY-STEP GOOGLE CODELAB REVEAL ENGINE -->
+<div class="codelab-google-container">
+  
+  <!-- Left Rail: Codelab Stepper Sidebar -->
+  <aside class="codelab-stepper-sidebar">
+    <div class="codelab-meta-header">
+      <span class="codelab-kicker">GOOGLE CODELAB STYLE</span>
+      <h3>Building Your First Meta Ray-Ban Display WebApp</h3>
+      <div class="codelab-meta-row">
+        <span class="meta-time">⏱️ 15 min</span>
+        <span class="meta-diff">Beginner</span>
+        <span class="meta-target">HTML / CSS / JS</span>
+      </div>
+    </div>
+
+    <!-- Stepper Navigation List -->
+    <nav class="codelab-steps-nav" id="codelabStepsNav">
+      <button class="step-nav-btn is-active" data-step-idx="0">
+        <span class="step-nav-num">1</span>
+        <span class="step-nav-title">Before You Begin & Setup</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="1">
+        <span class="step-nav-num">2</span>
+        <span class="step-nav-title">Understanding MRBD Architecture</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="2">
+        <span class="step-nav-num">3</span>
+        <span class="step-nav-title">Step 1: HTML Head & Meta Tags</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="3">
+        <span class="step-nav-num">4</span>
+        <span class="step-nav-title">Step 2: Optical Waveguide CSS</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="4">
+        <span class="step-nav-num">5</span>
+        <span class="step-nav-title">Step 3: D-Pad & Pinch Listeners</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="5">
+        <span class="step-nav-num">6</span>
+        <span class="step-nav-title">Step 4: Live Interactive Sandbox</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="6">
+        <span class="step-nav-num">7</span>
+        <span class="step-nav-title">Step 5: 10-Sec HTTPS Deploy</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="7">
+        <span class="step-nav-num">8</span>
+        <span class="step-nav-title">Step 6: Load on Meta AI Glasses</span>
+      </button>
+      <button class="step-nav-btn" data-step-idx="8">
+        <span class="step-nav-num">9</span>
+        <span class="step-nav-title">Congratulations & Resources</span>
+      </button>
+    </nav>
+
+    <!-- Quick External Doc Shortcuts -->
+    <div class="codelab-quick-docs">
+      <h5>OFFICIAL META DOCS</h5>
+      <a href="https://wearables.developer.meta.com/docs/develop/webapps" target="_blank">🌐 WebApps Overview ↗</a>
+      <a href="https://wearables.developer.meta.com/docs/develop/webapps/build/" target="_blank">🔨 Build Documentation ↗</a>
+      <a href="https://wearables.developer.meta.com/docs/develop/webapps/test/" target="_blank">🧪 Testing & Debugging ↗</a>
+      <a href="https://mcp.developer.meta.com/wearables" target="_blank">🤖 Wearables MCP Server ↗</a>
+    </div>
+  </aside>
+
+  <!-- Right: Active Codelab Instruction Stage -->
+  <main class="codelab-main-stage">
+    
+    <!-- Codelab Step Views Container -->
+    <div class="codelab-steps-viewport" id="codelabStepsViewport">
+      
+      <!-- STEP 1: Introduction & Prerequisites -->
+      <article class="codelab-step-page is-active" data-step-page="0">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 1 OF 9 · INTRODUCTION</span>
+          <h2 class="step-title">Before You Begin & Prerequisites</h2>
+          
+          <div class="codelab-callout info">
+            <strong>What you'll build:</strong> A fully functioning, responsive glanceable WebApp locked to 600×600 px with optical transparency, ready to run on the Meta Ray-Ban Display!
+          </div>
+
+          <p class="paragraph">
+            Welcome to the <strong>Build The Invisible</strong> hands-on codelab! In this guide, you will learn how to write, style, test, and deploy a web application specifically tailored for <strong>Meta Ray-Ban Display (MRBD)</strong> smart glasses.
+          </p>
+
+          <h3 class="section-title">What You'll Need</h3>
+          <ul class="bullet-list">
+            <li>Any modern web browser (Google Chrome, Brave, Edge, or Safari).</li>
+            <li>A basic understanding of standard HTML, CSS, and vanilla JavaScript.</li>
+            <li>Zero hardware required! You can test everything right in this browser sandbox.</li>
+          </ul>
+
+          <h3 class="section-title">What You'll Learn</h3>
+          <ul class="bullet-list">
+            <li>How optical waveguide displays handle transparency using additive RGB light.</li>
+            <li>The mandatory <code>&lt;meta&gt;</code> tags required for Meta glasses recognition.</li>
+            <li>How to handle keyboard and neural sEMG wristband pinch micro-gestures.</li>
+            <li>How to deploy in 10 seconds to free HTTPS hosting (Vercel / GitHub Pages).</li>
+          </ul>
+
+          <div class="step-nav-footer">
+            <div></div>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(1)">
+              <span>Next: Understanding MRBD Architecture ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 2: Architecture & Constraints -->
+      <article class="codelab-step-page" data-step-page="1">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 2 OF 9 · ARCHITECTURE</span>
+          <h2 class="step-title">Understanding the MRBD Display Physics</h2>
+          
+          <p class="paragraph">
+            Unlike a phone or laptop screen, the Meta Ray-Ban Display uses a <strong>monocular optical see-through waveguide</strong> located in the right lens. Understanding this hardware makes coding for it intuitive:
+          </p>
+
+          <div class="codelab-cards-grid">
+            <div class="concept-card">
+              <div class="concept-icon">⬛</div>
+              <h4>1. Additive Color Physics</h4>
+              <p>Black (<code>#000000</code>) emits 0 light from the micro-LED projector, which means the wearer sees straight through to the real world!</p>
+            </div>
+            <div class="concept-card">
+              <div class="concept-icon">📐</div>
+              <h4>2. Fixed 600×600 Viewport</h4>
+              <p>The display is fixed at 600×600 pixels. Avoid scrollbars by designing modular, glanceable cards.</p>
+            </div>
+            <div class="concept-card">
+              <div class="concept-icon">🤏</div>
+              <h4>3. sEMG Neural Microgestures</h4>
+              <p>The wearer navigates using thumb swipes (mapped to Arrow keys) and finger pinches (mapped to the <code>Enter</code> key).</p>
+            </div>
+          </div>
+
+          <div class="codelab-callout tip">
+            <strong>Pro-tip:</strong> Always give interactive cards <code>tabindex="0"</code> and distinct <code>:focus</code> styles so the wearer knows what item is selected.
+          </div>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(0)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(2)">
+              <span>Next: Step 1 HTML Meta Tags ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 3: HTML Head & Meta Tags Reveal -->
+      <article class="codelab-step-page" data-step-page="2">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 3 OF 9 · CODE STEP 1</span>
+          <h2 class="step-title">Step 1: HTML Skeleton & Required Meta Tags</h2>
+
+          <p class="paragraph">
+            Create an <code>index.html</code> file. The Meta Ray-Ban Display operating system looks for specific meta tags in the document <code>&lt;head&gt;</code> to recognize and optimize your WebApp.
+          </p>
+
+          <div class="code-reveal-box">
+            <div class="code-reveal-header">
+              <span class="file-name">index.html (HTML Skeleton)</span>
+              <button class="btn-copy-snippet" onclick="navigator.clipboard.writeText(document.getElementById('snippetStep1').innerText); alert('Copied snippet!');">Copy Code</button>
+            </div>
+            <pre class="code-snippet-body"><code id="snippetStep1">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  
+  &lt;!-- 1. Mandatory tag for Meta Wearables OS recognition --&gt;
+  &lt;meta name="mrbd-web-app-capable" content="yes"&gt;
+  
+  &lt;!-- 2. Fixed 600x600 non-scalable viewport --&gt;
+  &lt;meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no"&gt;
+  
+  &lt;title&gt;My First MRBD WebApp&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="hud-header"&gt;
+    &lt;span class="badge"&gt;RAY-BAN GLANCE&lt;/span&gt;
+    &lt;span id="clock"&gt;18:30&lt;/span&gt;
+  &lt;/header&gt;
+
+  &lt;main class="hud-card" tabindex="0" id="mainCard"&gt;
+    &lt;h2&gt;Hello XDG Mumbai! 👓&lt;/h2&gt;
+    &lt;p&gt;Press [Enter] or pinch fingers to trigger an action.&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+
+          <h3 class="section-title">Key Meta Tag Breakdown</h3>
+          <ul class="bullet-list">
+            <li><code>&lt;meta name="mrbd-web-app-capable" content="yes"&gt;</code>: Tells the Meta AI App and glasses to launch this in full-screen HUD mode without standard browser chrome.</li>
+            <li><code>&lt;meta name="viewport" content="width=600, height=600..."&gt;</code>: Locks pixel rendering to the monocular display grid.</li>
+          </ul>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(1)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(3)">
+              <span>Next: Step 2 Optical CSS ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 4: Optical Waveguide CSS Reveal -->
+      <article class="codelab-step-page" data-step-page="3">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 4 OF 9 · CODE STEP 2</span>
+          <h2 class="step-title">Step 2: Optical Waveguide CSS (Black = Transparent)</h2>
+
+          <p class="paragraph">
+            Next, we apply styles. Notice how setting <code>background: #000000;</code> makes the canvas 100% see-through, while translucent backgrounds like <code>rgba(14, 22, 34, 0.9)</code> provide rich contrast against brightly lit real-world rooms.
+          </p>
+
+          <div class="code-reveal-box">
+            <div class="code-reveal-header">
+              <span class="file-name">style.css (Optical Styling)</span>
+              <button class="btn-copy-snippet" onclick="navigator.clipboard.writeText(document.getElementById('snippetStep2').innerText); alert('Copied snippet!');">Copy Code</button>
+            </div>
+            <pre class="code-snippet-body"><code id="snippetStep2">/* Reset default margins and fix dimensions */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 600px;
+  height: 600px;
+  overflow: hidden;
+  background: #000000; /* Pure black is 100% transparent in optical waveguides! */
+  color: #ffffff;
+  font-family: system-ui, sans-serif;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Translucent HUD Card */
+.hud-card {
+  background: rgba(14, 22, 34, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* Highlighted Focus State (Crucial for D-Pad / Wristband navigation!) */
+.hud-card:focus, .hud-card.is-active {
+  border-color: #00f0ff;
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  transform: scale(1.02);
+}</code></pre>
+          </div>
+
+          <div class="codelab-callout important">
+            <strong>Rule of thumb:</strong> Keep font sizes at or above <strong>16px</strong>. When wearers are walking, tiny text causes eye strain.
+          </div>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(2)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(4)">
+              <span>Next: Step 3 D-Pad & Pinch Listeners ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 5: D-Pad & Pinch Gesture Listeners Reveal -->
+      <article class="codelab-step-page" data-step-page="4">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 5 OF 9 · CODE STEP 3</span>
+          <h2 class="step-title">Step 3: D-Pad Navigation & Pinch Microgestures</h2>
+
+          <p class="paragraph">
+            The Meta Neural Wristband maps human muscle pinches directly to keyboard events. Add a standard <code>keydown</code> event listener:
+          </p>
+
+          <div class="code-reveal-box">
+            <div class="code-reveal-header">
+              <span class="file-name">app.js (Gesture Interaction)</span>
+              <button class="btn-copy-snippet" onclick="navigator.clipboard.writeText(document.getElementById('snippetStep3').innerText); alert('Copied snippet!');">Copy Code</button>
+            </div>
+            <pre class="code-snippet-body"><code id="snippetStep3">const card = document.getElementById('mainCard');
+card.focus(); // Automatically focus the card on launch
+
+// Listen for keyboard & neural band pinch events
+card.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    // Neural Wristband finger pinch or [ENTER] pressed!
+    card.style.borderColor = '#10b981';
+    card.querySelector('h2').innerText = 'Pinch Detected! ✨';
+    card.querySelector('p').innerText = 'Triggered an instant action in your smart glasses.';
+  } else if (event.key === 'Escape') {
+    // Back gesture triggered
+    console.log('Back navigation requested');
+  }
+});</code></pre>
+          </div>
+
+          <div class="codelab-callout tip">
+            <strong>Ready to test?</strong> Next up is the <strong>Live Interactive Sandbox</strong> where you can edit this exact code and see it running live in a simulated optical waveguide!
+          </div>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(3)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next highlight" onclick="window.app.goToCodelabStep(5)">
+              <span>Next: Step 4 Live Sandbox Playground ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 6: LIVE INTERACTIVE SANDBOX PLAYGROUND -->
+      <article class="codelab-step-page" data-step-page="5">
+        <div class="step-page-content full-bleed-sandbox">
+          
+          <div class="sandbox-top-header">
+            <div>
+              <span class="step-crumb">STEP 6 OF 9 · LIVE PLAYGROUND</span>
+              <h2 class="step-title">Interactive Sandbox: Edit & Run Code</h2>
+            </div>
+            <div class="sandbox-template-bar">
+              <span>Template:</span>
+              <select class="template-select" id="codeTemplateSelect">
+                <option value="minimal">Template 1: Minimal Hello HUD</option>
+                <option value="voice-ai">Template 2: Vision & AI Glance</option>
+                <option value="turn-nav">Template 3: Directions Wayfinder</option>
+                <option value="soundbox">Template 4: Paytm SoundBox Glass</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Widescreen Editor + Optical Preview Split Stage -->
+          <div class="sandbox-workspace-grid">
+            
+            <!-- Left: Live Code Editor -->
+            <div class="sandbox-editor-panel">
+              <div class="editor-action-bar">
+                <span class="badge-editor">HTML5 + CSS + JS</span>
+                <div class="editor-btn-group">
+                  <button class="btn-tool-light" id="btnRunSandbox" title="Run Code (Ctrl+Enter)">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>Run [Ctrl+Enter]</span>
+                  </button>
+                  <button class="btn-tool-light" id="btnCopySandboxCode" title="Copy Code">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span>Copy</span>
+                  </button>
+                  <button class="btn-tool-light primary" id="btnExportZip" title="Download Ready-to-Deploy Bundle">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    <span>Export index.html</span>
+                  </button>
+                </div>
+              </div>
+              <div class="editor-textarea-wrapper">
+                <textarea id="sandboxCodeInput" spellcheck="false" class="code-editor-area"></textarea>
+              </div>
+              <div class="editor-status-bar">
+                <span id="editorLineCount">Lines: 48</span>
+                <span class="status-sep">|</span>
+                <span>Meta Ray-Ban Display Ready</span>
+              </div>
+            </div>
+
+            <!-- Right: 600x600 Optical Preview -->
+            <div class="sandbox-preview-panel">
+              <div class="preview-action-bar">
+                <span class="preview-title">600×600 OPTICAL WAVEGUIDE</span>
+                <div class="preview-btn-group">
+                  <button class="btn-mini-light" id="btnSandboxEnvToggle">Change Scene 🏙️</button>
+                  <button class="btn-mini-light" id="btnFocusSandboxFrame">Test Arrow Keys ⌨️</button>
+                </div>
+              </div>
+              
+              <div class="sandbox-optical-lens">
+                <div class="sandbox-env-bg" id="sandboxEnvBg"></div>
+                <div class="sandbox-frame-wrapper">
+                  <iframe id="sandboxIframe" class="sandbox-iframe-600" title="Live Sandbox Preview" sandbox="allow-scripts allow-same-origin"></iframe>
+                </div>
+              </div>
+              
+              <div class="sandbox-controls-helper">
+                <p>💡 Click inside the preview above, then press <strong>Arrow Keys</strong> & <strong>[Enter]</strong> (Pinch) on your keyboard to test!</p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(4)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(6)">
+              <span>Next: Step 5 HTTPS Deployment ➔</span>
+            </button>
+          </div>
+
+        </div>
+      </article>
+
+      <!-- STEP 7: 10-Second HTTPS Deploy -->
+      <article class="codelab-step-page" data-step-page="6">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 7 OF 9 · DEPLOYMENT</span>
+          <h2 class="step-title">Step 5: 10-Second HTTPS Deployment</h2>
+
+          <p class="paragraph">
+            Meta Ray-Ban Display requires all WebApps to be served over a secure <strong>HTTPS URL</strong>. Here are the 2 fastest free ways to get a live URL in 10 seconds:
+          </p>
+
+          <div class="deploy-cards-grid">
+            <div class="deploy-method-card">
+              <div class="deploy-header">
+                <span class="deploy-num">OPTION A</span>
+                <h4>Vercel (Drag & Drop)</h4>
+              </div>
+              <ol class="deploy-list">
+                <li>Click <strong>Export index.html</strong> from Step 4.</li>
+                <li>Go to <a href="https://vercel.com" target="_blank">vercel.com</a> and sign in.</li>
+                <li>Drag and drop your project folder onto Vercel dashboard.</li>
+                <li>Your HTTPS URL is live instantly! (e.g. <code>https://my-app.vercel.app</code>)</li>
+              </ol>
+            </div>
+
+            <div class="deploy-method-card">
+              <div class="deploy-header">
+                <span class="deploy-num">OPTION B</span>
+                <h4>GitHub Pages</h4>
+              </div>
+              <ol class="deploy-list">
+                <li>Create a new repository on GitHub.</li>
+                <li>Upload your <code>index.html</code> file.</li>
+                <li>Go to <strong>Settings ➔ Pages ➔ Deploy from Branch (main)</strong>.</li>
+                <li>Your URL is live at <code>https://username.github.io/repo</code></li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(5)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(7)">
+              <span>Next: Step 6 Load on Glasses ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 8: Loading on Meta AI Glasses -->
+      <article class="codelab-step-page" data-step-page="7">
+        <div class="step-page-content">
+          <span class="step-crumb">STEP 8 OF 9 · HARDWARE CONNECTION</span>
+          <h2 class="step-title">Step 6: Loading on Meta Ray-Ban Display Glasses</h2>
+
+          <p class="paragraph">
+            To load your live HTTPS WebApp onto real Meta Ray-Ban Display hardware during today's hackathon:
+          </p>
+
+          <div class="hardware-flow-steps">
+            <div class="hw-step-item">
+              <span class="hw-step-badge">1</span>
+              <div>
+                <strong>Enable Developer Mode</strong>
+                <p>Open the <strong>Meta AI Companion App</strong> on your phone. Go to <strong>Settings ➔ About</strong> and tap the Version Number <strong>5 times</strong> until "Developer Mode Enabled" appears.</p>
+              </div>
+            </div>
+
+            <div class="hw-step-item">
+              <span class="hw-step-badge">2</span>
+              <div>
+                <strong>Add Your WebApp URL</strong>
+                <p>Navigate to <strong>Developer Options ➔ App Connections ➔ Add a Web App</strong> and paste your live HTTPS URL.</p>
+              </div>
+            </div>
+
+            <div class="hw-step-item">
+              <span class="hw-step-badge">3</span>
+              <div>
+                <strong>Put on Glasses & Test!</strong>
+                <p>Put on the Meta Ray-Ban Display glasses, pinch your fingers or use the wristband to open your custom HUD app in your right eye!</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-nav-footer">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(6)">
+              <span>⬅ Previous</span>
+            </button>
+            <button class="codelab-nav-btn next" onclick="window.app.goToCodelabStep(8)">
+              <span>Next: Congratulations & Resources ➔</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 9: Congratulations & Next Steps -->
+      <article class="codelab-step-page" data-step-page="8">
+        <div class="step-page-content text-center">
+          <div class="congrats-trophy">🏆</div>
+          <span class="step-crumb">STEP 9 OF 9 · COMPLETED</span>
+          <h2 class="step-title big">Congratulations! You're Ready to Hack</h2>
+          <p class="step-subhead">
+            You now know the core mechanics of building, styling, and deploying WebApps for the Meta Ray-Ban Display.
+          </p>
+
+          <div class="congrats-action-grid">
+            <div class="congrats-box" onclick="window.app.goToCodelabStep(5)">
+              <span class="icon-lg">💻</span>
+              <h4>Return to Live Sandbox</h4>
+              <p>Keep editing code and building your hackathon prototype.</p>
+            </div>
+
+            <div class="congrats-box" onclick="window.app.switchMode('keynote')">
+              <span class="icon-lg">📊</span>
+              <h4>Back to Event Deck</h4>
+              <p>Review the presentation slides and competition rules.</p>
+            </div>
+          </div>
+
+          <div class="step-nav-footer" style="justify-content:center;">
+            <button class="codelab-nav-btn prev" onclick="window.app.goToCodelabStep(0)">
+              <span>🔄 Restart Codelab</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+    </div> <!-- /codelab-steps-viewport -->
+
+  </main>
+
+</div>

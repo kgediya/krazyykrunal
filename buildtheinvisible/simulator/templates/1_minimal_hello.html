@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="mrbd-web-app-capable" content="yes">
+  <meta name="viewport" content="width=600, height=600, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>XDG Mumbai HUD</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      width: 600px;
+      height: 600px;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 42px;
+    }
+    .hud {
+      width: 100%;
+      height: 100%;
+      border: 2px solid #17d4e4;
+      border-radius: 28px;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      outline: none;
+      box-shadow: 0 0 34px rgba(23, 212, 228, 0.22);
+    }
+    .hud:focus {
+      border-color: #e5f46b;
+      box-shadow: 0 0 38px rgba(229, 244, 107, 0.32);
+    }
+    .meta, .controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: #17d4e4;
+      font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: 68px;
+      line-height: .92;
+      letter-spacing: -.06em;
+    }
+    .accent { color: #0878f9; }
+    p {
+      max-width: 390px;
+      margin: 18px 0 0;
+      color: #c7d3e3;
+      font-size: 22px;
+      line-height: 1.28;
+    }
+    .state {
+      color: #e5f46b;
+      font: 16px ui-monospace, SFMono-Regular, Menlo, monospace;
+      letter-spacing: .08em;
+    }
+  </style>
+</head>
+<body>
+  <main class="hud" id="hud" tabindex="0">
+    <div class="meta"><span>XDG</span><span>मुंBAI</span></div>
+    <section>
+      <h1>Welcome to<br><span class="accent">XDG मुंBAI</span></h1>
+      <p id="message">A tiny MRBD Web App that teaches itself one glance at a time.</p>
+    </section>
+    <div class="controls"><span id="state">Ready</span><span>← → Enter Esc</span></div>
+  </main>
+  <script>
+    const messages = [
+      'A tiny MRBD Web App that teaches itself one glance at a time.',
+      'Black stays transparent. Bright pixels become the interface.',
+      'Arrow keys move the moment. Enter confirms. Escape resets.'
+    ];
+    let index = 0;
+    let selected = false;
+    const hud = document.getElementById('hud');
+    const message = document.getElementById('message');
+    const state = document.getElementById('state');
+
+    function render() {
+      message.textContent = messages[index];
+      state.textContent = selected ? 'Selected' : 'Cue ' + String(index + 1).padStart(2, '0');
+    }
+
+    hud.focus();
+    document.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight') { index = (index + 1) % messages.length; selected = false; }
+      if (event.key === 'ArrowLeft') { index = (index + messages.length - 1) % messages.length; selected = false; }
+      if (event.key === 'Enter') selected = true;
+      if (event.key === 'Escape') { index = 0; selected = false; }
+      render();
+    });
+    render();
+  </script>
+</body>
+</html>
