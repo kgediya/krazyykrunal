@@ -424,3 +424,191 @@ html, body {
   .bezel-bottom-bar { align-items: center; }
   .bezel-hint-text { font-size: .55rem; }
 }
+
+/* Mobile refinement for the standalone simulator. */
+@media(max-width: 860px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .sim-app-shell {
+    width: 100%;
+    max-width: none;
+    padding: 14px;
+  }
+
+  .sim-header {
+    align-items: flex-start;
+  }
+
+  .sim-brand {
+    min-width: 0;
+  }
+
+  .sim-brand h1 {
+    line-height: 1;
+  }
+
+  .sim-header-tags {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .meta-tag,
+  .btn-back {
+    font-size: .65rem;
+  }
+
+  .sim-sidebar {
+    order: 2;
+  }
+
+  .sim-viewport-stage {
+    order: 1;
+  }
+
+  .sim-workspace-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel-box {
+    padding: 14px;
+  }
+
+  .app-button-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: none;
+    overflow: visible;
+  }
+
+  .app-select-btn {
+    min-height: 74px;
+  }
+
+  .rayban-hardware-bezel {
+    border-radius: 14px;
+    padding: 10px;
+  }
+
+  .bezel-top-bar {
+    gap: 10px;
+  }
+
+  .brand-signature {
+    min-width: 0;
+  }
+
+  .rb-script {
+    font-size: .95rem;
+  }
+
+  .rb-sub {
+    display: block;
+    margin-left: 0;
+    font-size: .6rem;
+  }
+
+  .optical-lens-viewport {
+    width: min(100%, calc(100vw - 52px));
+  }
+
+  .bezel-bottom-bar {
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .bezel-hint-text {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .blend-mode-control {
+    order: 1;
+    margin: 0;
+  }
+
+  .virtual-dpad-module {
+    order: 2;
+  }
+}
+
+@media(max-width: 520px) {
+  .sim-app-shell {
+    padding: 12px;
+  }
+
+  .sim-header-tags {
+    align-items: stretch;
+  }
+
+  .meta-tag,
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+  }
+
+  .app-button-list,
+  .env-button-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rayban-hardware-bezel {
+    width: 100%;
+    border-width: 3px;
+  }
+
+  .bezel-top-bar {
+    align-items: flex-start;
+  }
+
+  .bezel-telemetry {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .optical-lens-viewport {
+    width: min(100%, calc(100vw - 44px));
+  }
+
+  .blend-mode-control {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .blend-btn {
+    flex: 1 1 120px;
+    min-height: 34px;
+  }
+
+  .virtual-dpad-module {
+    width: 100%;
+  }
+
+  .dpad-btn.up,
+  .dpad-btn.down {
+    width: 56px;
+    height: 28px;
+  }
+
+  .dpad-btn.left,
+  .dpad-btn.right {
+    width: 40px;
+    height: 42px;
+  }
+
+  .dpad-btn.enter {
+    width: 88px;
+    height: 42px;
+  }
+}

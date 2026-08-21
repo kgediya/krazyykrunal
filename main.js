@@ -239,14 +239,13 @@ function setupMobileSectionNav() {
   const sectionToNavId = {
     'hero-top': 'hero-top',
     'roles-section': 'roles-section',
-    'xr-entry': 'xr-entry',
     'featured-work': 'featured-work',
     'recent-builds': 'featured-work',
     'tools-section': 'tools-section',
     'social-log': 'social-log'
   };
   const sectionIds = links.map((link) => link.getAttribute('data-section-link')).filter(Boolean);
-  const trackedSectionIds = ['hero-top', 'roles-section', 'xr-entry', 'featured-work', 'recent-builds', 'tools-section', 'social-log'];
+  const trackedSectionIds = ['hero-top', 'roles-section', 'featured-work', 'recent-builds', 'tools-section', 'social-log'];
   const sections = trackedSectionIds
     .map((id) => document.getElementById(id))
     .filter(Boolean);
