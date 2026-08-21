@@ -127,18 +127,6 @@
   ],
   "tools": [
     {
-      "title": "Build The Invisible",
-      "description": "An interactive deck, codelab, and 600 x 600 Meta Ray-Ban Display web app studio for teaching XR, multimodal AI, neural input, and glanceable interfaces.",
-      "type": "MRBD Workshop Lab",
-      "href": "/buildtheinvisible/",
-      "tags": [
-        "Meta Ray-Ban Display",
-        "Wearables",
-        "AI",
-        "Codelab"
-      ]
-    },
-    {
       "title": "CineDub Studio",
       "description": "Dub popular scenes from Hollywood & Bollywood movies with live teleprompter, Web Audio DSP voice morphing, and shareable app links.",
       "type": "Interactive Voice Studio",
