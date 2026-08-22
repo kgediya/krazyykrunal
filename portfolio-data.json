@@ -127,18 +127,6 @@
   ],
   "tools": [
     {
-      "title": "CineDub Studio",
-      "description": "Dub popular scenes from Hollywood & Bollywood movies with live teleprompter, Web Audio DSP voice morphing, and shareable app links.",
-      "type": "Interactive Voice Studio",
-      "href": "/cinedub/",
-      "tags": [
-        "Voiceover",
-        "Hollywood",
-        "Bollywood",
-        "Web Audio"
-      ]
-    },
-    {
       "title": "Projekt Kanvas",
       "description": "An interactive WebGL studio for quad surface mapping, 3D mesh deformation, and GLSL visual output.",
       "type": "Projection Studio",

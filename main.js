@@ -242,10 +242,11 @@ function setupMobileSectionNav() {
     'featured-work': 'featured-work',
     'recent-builds': 'featured-work',
     'tools-section': 'tools-section',
+    'learn-xrai': 'learn-xrai',
     'social-log': 'social-log'
   };
   const sectionIds = links.map((link) => link.getAttribute('data-section-link')).filter(Boolean);
-  const trackedSectionIds = ['hero-top', 'roles-section', 'featured-work', 'recent-builds', 'tools-section', 'social-log'];
+  const trackedSectionIds = ['hero-top', 'roles-section', 'featured-work', 'recent-builds', 'tools-section', 'learn-xrai', 'social-log'];
   const sections = trackedSectionIds
     .map((id) => document.getElementById(id))
     .filter(Boolean);
